@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Değişim Koleji · Ders Atlası — Robotik · Kodlama · Yapay Zeka · Satranç · Akıl Oyunları</title>
+<style>
+:root{
+  --bg:#070b18; --bg2:#0b1327; --panel:#111c36; --panel2:#0e1830;
+  --kart:#16233f; --cizgi:#233457; --metin:#eaf0ff; --soluk:#93a4c8; --soluk2:#63739a;
+  --mor:#7c3aed; --mor2:#a78bfa; --turuncu:#ea580c; --turuncu2:#fb923c;
+  --mavi:#0891b2; --mavi2:#22d3ee; --yesil:#059669; --yesil2:#34d399;
+  --pembe:#db2777; --pembe2:#f472b6; --gri:#64748b; --gri2:#94a3b8;
+  --altin:#fbbf24; --vurgu:#22d3ee;
+  --golge:0 10px 40px rgba(0,0,0,.45);
+  --r:18px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(1200px 600px at 12% -8%, rgba(124,58,237,.20), transparent 60%),
+    radial-gradient(1000px 560px at 100% 0%, rgba(8,145,178,.18), transparent 55%),
+    radial-gradient(900px 500px at 50% 120%, rgba(219,39,119,.14), transparent 55%),
+    var(--bg);
+  color:var(--metin);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif;
+  line-height:1.55; min-height:100vh; overflow-x:hidden;
+}
+a{color:var(--mavi2);text-decoration:none}
+.wrap{max-width:1240px;margin:0 auto;padding:0 16px 120px}
+
+/* ÜST BAŞLIK */
+.hero{
+  position:relative;margin:14px 0 8px;padding:26px 26px 22px;border-radius:24px;overflow:hidden;
+  background:linear-gradient(120deg,rgba(124,58,237,.28),rgba(8,145,178,.24) 55%,rgba(219,39,119,.22));
+  border:1px solid rgba(167,139,250,.28);box-shadow:var(--golge);
+}
+.hero:before{content:"";position:absolute;inset:0;background:
+  radial-gradient(600px 220px at 85% 0%, rgba(34,211,238,.28), transparent 60%),
+  radial-gradient(500px 240px at 0% 100%, rgba(251,191,36,.16), transparent 60%);pointer-events:none}
+.hero-top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;position:relative;z-index:1}
+.logo{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;font-size:30px;
+  background:linear-gradient(135deg,#7c3aed,#22d3ee);box-shadow:0 8px 24px rgba(34,211,238,.35);flex:0 0 auto}
+.hero h1{margin:0;font-size:clamp(20px,3.4vw,32px);font-weight:800;letter-spacing:-.5px;
+  background:linear-gradient(90deg,#fff,#c7d6ff 60%,#a7f3d0);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .alt{color:#dbe6ff;font-size:13.5px;margin-top:3px;opacity:.92}
+.hero .rozetler{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;position:relative;z-index:1}
+.rozet{font-size:12px;font-weight:700;padding:6px 11px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#eaf0ff}
+.hero .ogretmen{position:relative;z-index:1;margin-left:auto;text-align:right;font-size:12.5px;color:#dbe6ff}
+.hero .ogretmen b{display:block;font-size:15px;color:#fff}
+
+/* SEKME ŞERİDİ */
+.seritler{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 10px}
+.seri{cursor:pointer;border:1px solid var(--cizgi);background:var(--panel);color:var(--soluk);
+  padding:10px 16px;border-radius:13px;font-weight:700;font-size:14px;display:inline-flex;gap:8px;align-items:center;transition:.15s}
+.seri:hover{color:#fff;border-color:var(--mor2)}
+.seri.aktif{background:linear-gradient(135deg,var(--mor),var(--mavi));color:#fff;border-color:transparent;box-shadow:0 6px 18px rgba(124,58,237,.35)}
+
+/* SINIF SEÇİCİ */
+.siniflar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:6px 0 4px}
+.siniflar .et{font-size:12.5px;color:var(--soluk2);margin-right:4px;font-weight:700}
+.snf{cursor:pointer;border:1px solid var(--cizgi);background:var(--panel2);color:var(--soluk);
+  min-width:42px;text-align:center;padding:9px 12px;border-radius:12px;font-weight:800;font-size:13.5px;transition:.15s}
+.snf:hover{color:#fff;border-color:var(--altin)}
+.snf.aktif{background:linear-gradient(135deg,var(--altin),#f59e0b);color:#1a1206;border-color:transparent;box-shadow:0 6px 16px rgba(251,191,36,.3)}
+.duzey-bilgi{margin:12px 0 4px;padding:12px 14px;border-radius:14px;background:var(--panel);border:1px dashed var(--cizgi);
+  font-size:13.5px;color:var(--soluk);display:flex;gap:10px;align-items:flex-start}
+.duzey-bilgi b{color:#fff}
+.duzey-bilgi .ib{font-size:20px;flex:0 0 auto}
+
+/* FİLTRE */
+.filtre{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 6px;align-items:center}
+.fbtn{cursor:pointer;font-size:12.5px;font-weight:700;padding:7px 12px;border-radius:999px;border:1px solid var(--cizgi);
+  background:var(--panel2);color:var(--soluk);display:inline-flex;gap:6px;align-items:center;transition:.15s}
+.fbtn:hover{color:#fff}
+.fbtn.aktif{color:#fff;border-color:transparent}
+.ara{margin-left:auto;position:relative}
+.ara input{background:var(--panel2);border:1px solid var(--cizgi);border-radius:11px;color:#fff;padding:9px 30px 9px 12px;font-size:13.5px;width:200px;outline:none}
+.ara input:focus{border-color:var(--mavi2)}
+.ara .x{position:absolute;right:8px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--soluk2);display:none}
+
+/* HAFTA IZGARASI */
+.donem-baslik{margin:22px 0 10px;display:flex;align-items:center;gap:10px;font-size:15px;font-weight:800;color:#fff}
+.donem-baslik .cizgi{flex:1;height:1px;background:linear-gradient(90deg,var(--cizgi),transparent)}
+.izgara{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:14px}
+.hkart{position:relative;border-radius:var(--r);padding:15px 15px 14px;cursor:pointer;overflow:hidden;
+  background:var(--kart);border:1px solid var(--cizgi);transition:.16s;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.hkart:hover{transform:translateY(-3px);border-color:var(--dr);box-shadow:0 12px 30px rgba(0,0,0,.4)}
+.hkart .serit{position:absolute;left:0;top:0;bottom:0;width:6px;background:linear-gradient(var(--dr),var(--dr2))}
+.hkart .ust{display:flex;align-items:center;gap:9px;margin-bottom:8px;padding-left:6px}
+.hkart .no{font-size:11.5px;font-weight:800;color:var(--soluk2);letter-spacing:.5px}
+.hkart .dersrozet{margin-left:auto;font-size:11px;font-weight:800;padding:4px 9px;border-radius:999px;color:#fff;
+  background:linear-gradient(135deg,var(--dr),var(--dr2));display:inline-flex;gap:5px;align-items:center}
+.hkart h4{margin:2px 0 8px;font-size:15px;font-weight:800;color:#fff;padding-left:6px;line-height:1.3}
+.hkart .oz{font-size:12.5px;color:var(--soluk);padding-left:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.hkart .mini-araclar{display:flex;gap:5px;flex-wrap:wrap;margin-top:10px;padding-left:6px}
+.mini-arac{font-size:15px;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08)}
+.hkart .git{position:absolute;right:12px;bottom:12px;font-size:12px;color:var(--soluk2);opacity:.8}
+
+/* GENEL BAKIŞ / VELİ SUNUMU */
+.veli-hero{border-radius:22px;padding:26px;margin:6px 0 16px;background:linear-gradient(135deg,rgba(16,35,63,.9),rgba(11,19,39,.9));
+  border:1px solid var(--cizgi);box-shadow:var(--golge)}
+.veli-hero h2{margin:0 0 6px;font-size:clamp(20px,3vw,28px);font-weight:800}
+.veli-hero p.big{color:var(--soluk);font-size:15px;max-width:820px}
+.istat{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:20px}
+.istat .it{background:var(--panel);border:1px solid var(--cizgi);border-radius:16px;padding:16px;text-align:center}
+.istat .num{font-size:30px;font-weight:900;background:linear-gradient(135deg,#a78bfa,#22d3ee);-webkit-background-clip:text;background-clip:text;color:transparent}
+.istat .lbl{font-size:12.5px;color:var(--soluk);margin-top:4px;font-weight:600}
+.ders-kartlari{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+.dk{border-radius:18px;padding:18px;border:1px solid var(--cizgi);position:relative;overflow:hidden;
+  background:linear-gradient(160deg,color-mix(in srgb,var(--dr) 22%, var(--panel)),var(--panel))}
+.dk .ib{font-size:34px}
+.dk h3{margin:8px 0 4px;font-size:17px;color:#fff}
+.dk p{margin:0;font-size:13px;color:var(--soluk)}
+.dk .tag{display:inline-block;margin-top:10px;font-size:11px;font-weight:800;color:#fff;padding:4px 10px;border-radius:999px;background:linear-gradient(135deg,var(--dr),var(--dr2))}
+.sunum-not{margin-top:18px;padding:14px 16px;border-radius:14px;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);font-size:13px;color:#f6e6b8}
+
+.pedagoji{margin-top:20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.ped{background:var(--panel);border:1px solid var(--cizgi);border-radius:16px;padding:16px}
+.ped .ib{font-size:24px}
+.ped h4{margin:8px 0 5px;font-size:15px;color:#fff}
+.ped p{margin:0;font-size:12.5px;color:var(--soluk)}
+
+/* ARAÇ KÜTÜPHANESİ */
+.arac-grup{margin:20px 0 6px}
+.arac-grup .gb{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:800;color:#fff;margin-bottom:12px}
+.arac-grup .gb .ik{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;font-size:20px;color:#fff;
+  background:linear-gradient(135deg,var(--dr),var(--dr2))}
+.arac-izgara{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.akart{display:block;background:var(--kart);border:1px solid var(--cizgi);border-radius:16px;padding:15px;transition:.15s;position:relative}
+.akart:hover{transform:translateY(-2px);border-color:var(--dr2);box-shadow:0 10px 26px rgba(0,0,0,.35)}
+.akart .ust{display:flex;align-items:center;gap:10px}
+.akart .ik{font-size:24px;width:40px;height:40px;border-radius:11px;display:grid;place-items:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08)}
+.akart h4{margin:0;font-size:15px;color:#fff}
+.akart .yas{font-size:11px;color:var(--soluk2);font-weight:700}
+.akart p{margin:9px 0 0;font-size:12.5px;color:var(--soluk)}
+.akart .ac{margin-top:11px;font-size:12px;font-weight:800;color:var(--mavi2);display:inline-flex;gap:5px;align-items:center}
+.akart .dr-etiket{position:absolute;top:12px;right:12px;font-size:10px;font-weight:800;padding:3px 8px;border-radius:999px;color:#fff;background:linear-gradient(135deg,var(--dr),var(--dr2))}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(4,8,18,.72);backdrop-filter:blur(6px);z-index:80;display:none;
+  align-items:flex-start;justify-content:center;padding:28px 14px;overflow-y:auto}
+.modal-bg.acik{display:flex}
+.modal{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--cizgi);border-radius:22px;
+  max-width:720px;width:100%;box-shadow:var(--golge);animation:pop .18s ease;overflow:hidden}
+@keyframes pop{from{transform:translateY(10px) scale(.98);opacity:0}to{transform:none;opacity:1}}
+.modal .mbas{padding:18px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--cizgi);position:relative}
+.modal .mbas .ik{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:22px;color:#fff;background:linear-gradient(135deg,var(--dr,#7c3aed),var(--dr2,#22d3ee))}
+.modal .mbas h3{margin:0;font-size:17px;color:#fff}
+.modal .mbas .alt{font-size:12px;color:var(--soluk)}
+.kapat{margin-left:auto;cursor:pointer;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;
+  background:rgba(255,255,255,.06);border:1px solid var(--cizgi);color:var(--soluk);font-size:18px}
+.kapat:hover{color:#fff;background:rgba(255,255,255,.12)}
+.modal .mgov{padding:18px 20px 22px;max-height:70vh;overflow-y:auto}
+.blok{margin-bottom:16px}
+.blok .bh{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--dr2,#22d3ee);margin-bottom:6px;display:flex;gap:7px;align-items:center}
+.blok .bt{font-size:14px;color:var(--metin)}
+.arac-satir{display:flex;gap:8px;flex-wrap:wrap}
+.arac-cip{display:inline-flex;gap:7px;align-items:center;background:var(--kart);border:1px solid var(--cizgi);border-radius:11px;padding:8px 11px;font-size:12.5px;font-weight:700;color:#fff;transition:.14s}
+.arac-cip:hover{border-color:var(--mavi2);transform:translateY(-1px)}
+.arac-cip .ik{font-size:16px}
+.uy-kutu{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.22);border-radius:12px;padding:11px 13px;font-size:13px;color:#f6e6b8}
+
+/* AI CEVAP MODALI */
+#aiModal .modal{max-width:760px}
+.ai-konusma{display:flex;flex-direction:column;gap:12px}
+.ai-balon{border-radius:14px;padding:13px 15px;font-size:14px;line-height:1.6}
+.ai-balon.user{align-self:flex-end;max-width:85%;background:linear-gradient(135deg,var(--mor),#6d28d9);color:#fff;border-bottom-right-radius:4px}
+.ai-balon.ai{align-self:stretch;background:var(--kart);border:1px solid var(--cizgi);border-bottom-left-radius:4px}
+.ai-balon.ai .prose :is(h1,h2,h3){font-size:15px;margin:10px 0 6px;color:#fff}
+.ai-balon.ai .prose p{margin:7px 0}
+.ai-balon.ai .prose ul,.ai-balon.ai .prose ol{margin:7px 0;padding-left:20px}
+.ai-balon.ai .prose li{margin:3px 0}
+.ai-balon.ai .prose code{background:rgba(255,255,255,.08);padding:1px 5px;border-radius:5px;font-size:12.5px}
+.ai-balon.ai .prose table{display:block;overflow-x:auto;border-collapse:collapse;margin:8px 0;width:max-content;max-width:100%}
+.ai-balon.ai .prose th,.ai-balon.ai .prose td{border:1px solid var(--cizgi);padding:6px 9px;font-size:12.5px;min-width:70px}
+.ai-balon.ai .prose th{background:rgba(52,211,153,.15);color:#a7f3d0}
+.zk-ok{color:#22d3ee;font-weight:800}
+.ai-arac{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.ai-arac button{cursor:pointer;font-size:12px;font-weight:700;border:1px solid var(--cizgi);background:var(--panel2);color:var(--soluk);
+  padding:7px 10px;border-radius:9px;display:inline-flex;gap:5px;align-items:center;transition:.14s}
+.ai-arac button:hover{color:#fff;border-color:var(--mavi2)}
+.ai-hizli{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+.ai-hizli button{cursor:pointer;font-size:12px;font-weight:700;border:1px solid var(--cizgi);background:var(--kart);color:#dbe6ff;
+  padding:8px 11px;border-radius:999px;transition:.14s}
+.ai-hizli button:hover{border-color:var(--mor2);color:#fff}
+.ai-giris{display:flex;gap:8px;margin-top:14px;position:relative}
+.ai-giris textarea{flex:1;background:var(--panel2);border:1px solid var(--cizgi);border-radius:12px;color:#fff;padding:11px 12px;font-size:14px;resize:none;outline:none;font-family:inherit;max-height:120px}
+.ai-giris textarea:focus{border-color:var(--mavi2)}
+.ai-giris .gonder{cursor:pointer;background:linear-gradient(135deg,var(--mor),var(--mavi));border:none;color:#fff;border-radius:12px;padding:0 16px;font-weight:800;font-size:15px}
+.gizlilik-not{font-size:11px;color:var(--soluk2);margin-top:8px;display:flex;gap:6px;align-items:center}
+.spin{display:inline-flex;gap:9px;align-items:center;color:var(--soluk);font-size:13.5px}
+.spin .d{width:16px;height:16px;border-radius:50%;border:2px solid var(--cizgi);border-top-color:var(--mavi2);animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* AYARLAR */
+.ay-sek{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.ay-sek button{cursor:pointer;font-size:12.5px;font-weight:700;border:1px solid var(--cizgi);background:var(--panel2);color:var(--soluk);padding:7px 12px;border-radius:10px}
+.ay-sek button.aktif{background:var(--mor);color:#fff;border-color:transparent}
+.ay-pan{display:none}.ay-pan.acik{display:block}
+label.fl{display:block;font-size:12.5px;font-weight:700;color:var(--soluk);margin:12px 0 6px}
+textarea.key,input.key{width:100%;background:var(--panel2);border:1px solid var(--cizgi);border-radius:11px;color:#fff;padding:11px;font-size:13px;font-family:ui-monospace,Menlo,monospace;outline:none}
+textarea.key{min-height:90px;resize:vertical}
+.btnsira{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.btn{cursor:pointer;font-size:13px;font-weight:800;border:none;border-radius:11px;padding:10px 14px;display:inline-flex;gap:7px;align-items:center;transition:.14s}
+.btn.p{background:linear-gradient(135deg,var(--mor),var(--mavi));color:#fff}
+.btn.g{background:var(--kart);color:#dbe6ff;border:1px solid var(--cizgi)}
+.btn.y{background:linear-gradient(135deg,var(--yesil),var(--yesil2));color:#052012}
+.btn:hover{transform:translateY(-1px);filter:brightness(1.06)}
+.saglik{margin-top:14px;display:flex;flex-direction:column;gap:8px}
+.saglik .sr{display:flex;align-items:center;gap:10px;background:var(--panel2);border:1px solid var(--cizgi);border-radius:11px;padding:10px 12px;font-size:13px}
+.saglik .sr .dot{width:12px;height:12px;border-radius:50%;flex:0 0 auto}
+.saglik .sr .msk{font-family:ui-monospace,monospace;color:var(--soluk);font-size:12px}
+.saglik .sr .dr{margin-left:auto;font-size:12px;font-weight:700}
+.rehber{background:var(--panel2);border:1px solid var(--cizgi);border-radius:13px;padding:14px;font-size:13px;color:var(--soluk);margin-top:6px}
+.rehber ol{margin:8px 0 0;padding-left:20px}.rehber li{margin:5px 0}
+.rehber b{color:#fff}
+.fl-satir{display:flex;align-items:center;gap:10px;background:var(--panel2);border:1px solid var(--cizgi);border-radius:11px;padding:10px 12px;margin-bottom:8px}
+.fl-satir .ad{font-size:13.5px;font-weight:700;color:#fff}
+.fl-satir .sw{margin-left:auto}
+.switch{position:relative;width:46px;height:26px;display:inline-block}
+.switch input{display:none}
+.switch .sl{position:absolute;inset:0;background:var(--cizgi);border-radius:999px;transition:.2s;cursor:pointer}
+.switch .sl:before{content:"";position:absolute;width:20px;height:20px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+.switch input:checked+.sl{background:var(--yesil)}
+.switch input:checked+.sl:before{transform:translateX(20px)}
+
+/* YÜZEN KONTROLLER */
+.fabgrup{position:fixed;right:14px;bottom:14px;z-index:70;display:flex;flex-direction:column;gap:10px;align-items:flex-end}
+.fab{position:relative;width:52px;height:52px;border-radius:16px;display:grid;place-items:center;cursor:pointer;font-size:22px;
+  background:linear-gradient(135deg,rgba(30,45,80,.85),rgba(17,28,54,.9));border:1px solid rgba(167,139,250,.3);
+  backdrop-filter:blur(8px);box-shadow:0 8px 22px rgba(0,0,0,.4);color:#fff;animation:fabin .3s ease}
+.fab.ai{background:linear-gradient(135deg,#7c3aed,#22d3ee);border-color:transparent;box-shadow:0 8px 24px rgba(124,58,237,.5)}
+@keyframes fabin{from{transform:translateY(8px);opacity:0}to{transform:none;opacity:1}}
+.fab .x{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;background:#ef4444;color:#fff;font-size:12px;
+  display:grid;place-items:center;border:2px solid var(--bg);cursor:pointer}
+.pill{position:fixed;left:14px;bottom:14px;z-index:70;font-size:12px;font-weight:700;color:var(--soluk);
+  background:rgba(17,28,54,.7);backdrop-filter:blur(8px);border:1px solid var(--cizgi);border-radius:999px;padding:7px 12px;
+  display:flex;gap:8px;align-items:center;opacity:.55;transition:.2s;cursor:pointer}
+.pill:hover{opacity:1}
+.pill .x{cursor:pointer;color:var(--soluk2);font-size:14px}
+
+/* TOAST + BANT */
+.toastlar{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:90;display:flex;flex-direction:column;gap:8px;align-items:center}
+.toast{font-size:13px;font-weight:700;color:#fff;padding:10px 16px;border-radius:12px;box-shadow:var(--golge);animation:tin .25s ease}
+.toast.ok{background:linear-gradient(135deg,#059669,#34d399);color:#052012}
+.toast.err{background:linear-gradient(135deg,#dc2626,#f87171)}
+.toast.info{background:linear-gradient(135deg,#0891b2,#22d3ee);color:#04202a}
+@keyframes tin{from{transform:translateY(-10px);opacity:0}to{transform:none;opacity:1}}
+.uyari-bant{position:fixed;left:14px;bottom:74px;z-index:60;max-width:340px;background:rgba(17,28,54,.92);backdrop-filter:blur(8px);
+  border:1px solid rgba(251,191,36,.3);border-radius:14px;padding:12px 14px;font-size:12px;color:#f6e6b8;box-shadow:var(--golge);display:none}
+.uyari-bant.acik{display:block}
+.uyari-bant .kb{position:absolute;top:8px;right:10px;cursor:pointer;color:var(--soluk2)}
+
+/* KARŞILAMA */
+.hg{text-align:center}
+.hg .ib{font-size:44px}
+.hg h2{margin:10px 0 4px;font-size:22px}
+.hg ol{text-align:left;max-width:520px;margin:16px auto 0;padding-left:22px}
+.hg ol li{margin:9px 0;font-size:14px;color:var(--soluk)}
+.hg ol li b{color:#fff}
+
+/* QR */
+.qr-govde{text-align:center}
+.qr-kutu{background:#fff;display:inline-block;padding:14px;border-radius:14px;margin:6px 0 12px}
+.qr-kutu img,.qr-kutu canvas,.qr-kutu table{display:block}
+.qr-adres{font-size:12px;color:var(--soluk);word-break:break-all;background:var(--panel2);border:1px solid var(--cizgi);border-radius:10px;padding:9px;margin-bottom:10px}
+
+@media (max-width:640px){
+  .hero{padding:20px 16px}
+  .ara{margin-left:0;width:100%}.ara input{width:100%}
+  .hero .ogretmen{margin-left:0;text-align:left;width:100%}
+  .izgara{grid-template-columns:1fr}
+}
+@media print{ html{zoom:1 !important} .fabgrup,.pill,.uyari-bant,.toastlar,.seritler,.filtre{display:none !important} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="hero-top">
+      <div class="logo">🎓</div>
+      <div style="min-width:0">
+        <h1>Değişim Koleji · Ders Atlası</h1>
+        <div class="alt">Robotik &nbsp;•&nbsp; Kodlama &nbsp;•&nbsp; Yapay Zeka &nbsp;•&nbsp; Satranç &nbsp;•&nbsp; Akıl-Zeka Oyunları</div>
+      </div>
+      <div class="ogretmen">
+        <span>Ders Öğretmeni</span>
+        <b>Barış</b>
+        <span style="opacity:.8">2025–2026 Yıllık Program</span>
+      </div>
+    </div>
+    <div class="rozetler">
+      <span class="rozet">📅 36 Haftalık Plan</span>
+      <span class="rozet">👧 Anaokulu → 8. Sınıf</span>
+      <span class="rozet">🧰 25+ Çevrimiçi Araç</span>
+      <span class="rozet">✨ Yapay Zeka Destekli Asistan</span>
+      <span class="rozet">📺 Akıllı Tahta Uyumlu</span>
+    </div>
+  </div>
+
+  <div class="seritler" id="seritler">
+    <div class="seri aktif" data-v="veli">🏛️ Genel Bakış / Veli Sunumu</div>
+    <div class="seri" data-v="plan">📅 Yıllık Plan</div>
+    <div class="seri" data-v="araclar">🧰 Araç Kütüphanesi</div>
+  </div>
+
+  <!-- GENEL BAKIŞ -->
+  <div id="v-veli"></div>
+
+  <!-- YILLIK PLAN -->
+  <div id="v-plan" style="display:none">
+    <div class="siniflar" id="siniflar"><span class="et">Sınıf:</span></div>
+    <div class="duzey-bilgi" id="duzeyBilgi"></div>
+    <div class="filtre" id="filtre">
+      <span class="et" style="font-size:12.5px;color:var(--soluk2);font-weight:700">Ders:</span>
+      <span class="ara"><input id="araInput" placeholder="Konu ara…"><span class="x" id="araX">✕</span></span>
+    </div>
+    <div id="planIzgara"></div>
+  </div>
+
+  <!-- ARAÇLAR -->
+  <div id="v-araclar" style="display:none"></div>
+
+</div>
+
+<!-- YÜZEN KONTROLLER -->
+<div class="fabgrup" id="fabgrup"></div>
+<div id="pillYuva"></div>
+
+<!-- TOASTLAR -->
+<div class="toastlar" id="toastlar"></div>
+
+<!-- UYARI BANDI -->
+<div class="uyari-bant" id="uyariBant">
+  <span class="kb" onclick="document.getElementById('uyariBant').classList.remove('acik')">✕</span>
+  <b>ℹ️ Yapay zekâ hakkında:</b> Bu paneldeki asistan yapay zekâdır, %100 doğru olmayabilir. Önemli konularda kaynaktan teyit edin.
+</div>
+
+<!-- MODAL: HAFTA -->
+<div class="modal-bg" id="haftaModal"><div class="modal" id="haftaModalIc"></div></div>
+<!-- MODAL: AI -->
+<div class="modal-bg" id="aiModal"><div class="modal" id="aiModalIc"></div></div>
+<!-- MODAL: AYARLAR -->
+<div class="modal-bg" id="ayarModal"><div class="modal" id="ayarModalIc"></div></div>
+<!-- MODAL: KARŞILAMA -->
+<div class="modal-bg" id="karsModal"><div class="modal" id="karsModalIc"></div></div>
+<!-- MODAL: QR -->
+<div class="modal-bg" id="qrModal"><div class="modal" id="qrModalIc"></div></div>
+
+<script>
+/* ============================================================
+   DEĞİŞİM KOLEJİ · DERS ATLASI  —  Veri Katmanı
+   ============================================================ */
+
+const DERSLER = {
+  genel:    {ad:'Genel / Proje',       ik:'⭐', dr:'#64748b', dr2:'#94a3b8'},
+  kodlama:  {ad:'Kodlama',             ik:'💻', dr:'#7c3aed', dr2:'#a78bfa'},
+  robotik:  {ad:'Robotik',             ik:'🤖', dr:'#ea580c', dr2:'#fb923c'},
+  yapayzeka:{ad:'Yapay Zeka',          ik:'🧠', dr:'#0891b2', dr2:'#22d3ee'},
+  satranc:  {ad:'Satranç',             ik:'♟️', dr:'#059669', dr2:'#34d399'},
+  akil:     {ad:'Akıl-Zeka Oyunları',  ik:'🧩', dr:'#db2777', dr2:'#f472b6'},
+};
+
+const DUZEYLER = [
+  {id:'ana', ad:'Anaokulu',   yas:'5-6 yaş',   snf:['Ana']},
+  {id:'12',  ad:'1-2. Sınıf', yas:'6-8 yaş',   snf:['1','2']},
+  {id:'34',  ad:'3-4. Sınıf', yas:'8-10 yaş',  snf:['3','4']},
+  {id:'56',  ad:'5-6. Sınıf', yas:'10-12 yaş', snf:['5','6']},
+  {id:'78',  ad:'7-8. Sınıf', yas:'12-14 yaş', snf:['7','8']},
+];
+const SINIF_LISTE = [
+  {g:'Ana', d:'ana'},{g:'1',d:'12'},{g:'2',d:'12'},{g:'3',d:'34'},{g:'4',d:'34'},
+  {g:'5',d:'56'},{g:'6',d:'56'},{g:'7',d:'78'},{g:'8',d:'78'}
+];
+
+const DUZEY_YAKLASIM = {
+  ana:'Oyunlaştırarak ve çoğunlukla <b>ekransız (unplugged)</b> başla; ekran süresi kısa (15-20 dk). Somut nesneler, renk-şekil, hikâye. Değerlendirme gözlem yoluyla. Bee-Bot / kodlama kartları / tanışma oyunlarıyla temel sezgi.',
+  '12':'Basit yönergeler, bol tekrar, görselleştirme. Blok kodlamada sürükle-bırak. 20-25 dk odak. İkili (eşli) çalışma. Somuttan soyuta yumuşak geçiş.',
+  '34':'Kavramları örneklerle derinleştir; küçük projeler. Blok kodlamada döngü/koşul. Grup çalışması ve kısa sunumlar. 30-35 dk. Robotikte simülatör + basit donanım.',
+  '56':'Proje tabanlı öğrenme; <b>problem çöz → tasarla → test et</b> döngüsü. Metin tabanlı koda geçişe hazırlık. Robotikte sensör-mantık. Akran değerlendirmesi.',
+  '78':'Gerçek problemler ve disiplinlerarası projeler. <b>Metin tabanlı kodlamaya (Python)</b> geçiş. Yapay zekâda kendi modelini eğitme + etik tartışması. Portfolyo ve sunum.',
+};
+
+/* ---- ÇEVRİMİÇİ ARAÇ KÜTÜPHANESİ ---- */
+const ARACLAR = {
+  scratchjr:  {ad:'ScratchJr',           url:'https://www.scratchjr.org',                 ik:'🐱', ders:'kodlama',  yas:'5-7 yaş',  desc:'Okuma bilmeyen küçükler için blok kodlama (tablet uygulaması). Karakterleri resimli bloklarla hareket ettirir.'},
+  scratch:    {ad:'Scratch',             url:'https://scratch.mit.edu',                   ik:'🐈', ders:'kodlama',  yas:'7-14 yaş', desc:'MIT’nin dünyaca ünlü blok tabanlı kodlama ortamı. Oyun, animasyon ve hikâye üretimi.'},
+  codeorg:    {ad:'Code.org',            url:'https://code.org',                          ik:'🧩', ders:'kodlama',  yas:'4-14 yaş', desc:'Yaşa göre kurslar (Kurs A→F), Hour of Code etkinlikleri. Ücretsiz, Türkçe destekli.'},
+  hourofcode: {ad:'Hour of Code',        url:'https://hourofcode.com/tr',                 ik:'⏱️', ders:'kodlama',  yas:'6-14 yaş', desc:'Bir saatlik hazır kodlama etkinlikleri. Hızlı, eğlenceli, sonuç odaklı.'},
+  blockly:    {ad:'Blockly Games',       url:'https://blockly.games',                     ik:'🧱', ders:'kodlama',  yas:'8-14 yaş', desc:'Puzzle, Labirent, Kaplumbağa, Kuş… Bloktan metne köprü kuran mantık oyunları.'},
+  lightbot:   {ad:'Lightbot',            url:'https://lightbot.com',                      ik:'💡', ders:'akil',     yas:'6-14 yaş', desc:'Robotu yönergelerle yürütüp ışıkları yakma bulmacası. Algoritma + döngü sezgisi.'},
+  kodable:    {ad:'Kodable',             url:'https://www.kodable.com',                   ik:'🐸', ders:'kodlama',  yas:'4-8 yaş',  desc:'Küçük yaşlar için okuma gerektirmeyen kodlama oyunları ve sıralama mantığı.'},
+  tinkercad:  {ad:'Tinkercad Circuits',  url:'https://www.tinkercad.com/circuits',        ik:'🔌', ders:'robotik',  yas:'10-14 yaş',desc:'Tarayıcıda Arduino + devre simülasyonu. Donanım almadan robotik/elektronik denemesi.'},
+  microbit:   {ad:'micro:bit',           url:'https://microbit.org',                      ik:'📟', ders:'robotik',  yas:'8-14 yaş', desc:'Cep bilgisayarı kartı. Sensör, LED, düğme; blok veya Python ile kodlanır.'},
+  makecode:   {ad:'MakeCode (micro:bit)',url:'https://makecode.microbit.org',             ik:'🟨', ders:'robotik',  yas:'8-14 yaş', desc:'micro:bit için blok/JavaScript/Python editörü + <b>simülatör</b> (kart olmadan da çalışır).'},
+  mblock:     {ad:'mBlock',              url:'https://mblock.cc',                         ik:'🐼', ders:'robotik',  yas:'8-14 yaş', desc:'Scratch tabanlı; mBot robotları + yapay zekâ (ML) blokları. Blok ve Python.'},
+  lichess:    {ad:'Lichess',             url:'https://lichess.org',                       ik:'♞', ders:'satranc',  yas:'7-14 yaş', desc:'Tamamen ücretsiz satranç: oyun, taktik bulmacaları, dersler. Reklamsız.'},
+  chesskid:   {ad:'ChessKid',            url:'https://www.chesskid.com',                  ik:'🦁', ders:'satranc',  yas:'5-12 yaş', desc:'Çocuklara özel güvenli satranç platformu. Renkli dersler, bulmacalar, robot rakipler.'},
+  chesscom:   {ad:'Chess.com Puzzles',   url:'https://www.chess.com/puzzles',             ik:'🧠', ders:'satranc',  yas:'10-14 yaş',desc:'Taktik bulmacaları ve analiz. Büyük sınıflar için ileri antrenman.'},
+  quickdraw:  {ad:'Quick, Draw!',        url:'https://quickdraw.withgoogle.com',          ik:'✏️', ders:'yapayzeka',yas:'5-14 yaş', desc:'Google’ın YZ’si çizimini tahmin eder. "Makine nasıl tanıyor?" sohbetinin harika girişi.'},
+  teachable:  {ad:'Teachable Machine',   url:'https://teachablemachine.withgoogle.com',   ik:'🎓', ders:'yapayzeka',yas:'8-14 yaş', desc:'Kamera ile örnek toplayıp <b>kendi görüntü/ses modelini</b> eğitirsin. Kod gerektirmez.'},
+  autodraw:   {ad:'AutoDraw',            url:'https://www.autodraw.com',                  ik:'🖌️', ders:'yapayzeka',yas:'5-12 yaş', desc:'Karalamanı YZ tamamlar. Küçüklerde "yapay zekâ yardımcı olur" fikrini somutlaştırır.'},
+  semantris:  {ad:'Semantris',           url:'https://research.google.com/semantris/',    ik:'🔤', ders:'yapayzeka',yas:'9-14 yaş', desc:'Kelime çağrışım oyunu; YZ’nin dil ilişkilerini nasıl kurduğunu gösterir.'},
+  mlforkids:  {ad:'Machine Learning for Kids', url:'https://machinelearningforkids.co.uk',ik:'🤝', ders:'yapayzeka',yas:'8-14 yaş', desc:'Metin/görüntü modeli eğitip Scratch’e bağlama. Sınıf projeleri için ideal.'},
+  experiments:{ad:'Experiments with Google', url:'https://experiments.withgoogle.com',   ik:'🧪', ders:'yapayzeka',yas:'10-14 yaş',desc:'Onlarca YZ denemesi. Keşif ve ilham için büyük sınıflara açık kütüphane.'},
+  trinket:    {ad:'Trinket (Python)',    url:'https://trinket.io',                        ik:'🐍', ders:'kodlama',  yas:'12-14 yaş',desc:'Tarayıcıda Python. Blok kodlamadan metne geçişte kurulum derdi olmadan çalışır.'},
+  mathpg:     {ad:'Math Playground Logic',url:'https://www.mathplayground.com/logic_games.html', ik:'🧮', ders:'akil', yas:'6-14 yaş', desc:'Mantık, strateji ve bulmaca oyunları koleksiyonu. İstasyon çalışmalarına uygun.'},
+  setgame:    {ad:'SET (Günlük Bulmaca)',url:'https://www.setgame.com/set/puzzle',        ik:'🃏', ders:'akil',     yas:'8-14 yaş', desc:'Örüntü ve dikkat oyunu. Her gün yeni bulmaca; hızlı zihin ısınması.'},
+  p2048:      {ad:'2048',                url:'https://play2048.co',                       ik:'🔢', ders:'akil',     yas:'8-14 yaş', desc:'Sayı birleştirme; planlama ve ileriyi görme becerisi. Kısa ve bağımlılık yapan.'},
+  coolmath:   {ad:'Coolmath Logic',      url:'https://www.coolmathgames.com/0-logic',     ik:'🎯', ders:'akil',     yas:'8-14 yaş', desc:'Mantık ve strateji oyunları arşivi. Ödül/çeşitlilik için yedek kaynak.'},
+};
+
+/* Düzeye göre ders → araç seti */
+const DUZEY_ARAC = {
+  ana:{genel:['quickdraw','scratchjr'], akil:['mathpg','kodable'], kodlama:['scratchjr','codeorg','kodable'], robotik:['codeorg','scratchjr'], yapayzeka:['quickdraw','autodraw','teachable'], satranc:['chesskid']},
+  '12':{genel:['scratch','quickdraw'], akil:['lightbot','mathpg','kodable'], kodlama:['scratchjr','scratch','codeorg','blockly'], robotik:['codeorg','makecode','blockly'], yapayzeka:['quickdraw','autodraw','teachable','semantris'], satranc:['chesskid','lichess']},
+  '34':{genel:['scratch','quickdraw'], akil:['lightbot','mathpg','setgame','coolmath'], kodlama:['scratch','codeorg','blockly'], robotik:['makecode','microbit','mblock','tinkercad'], yapayzeka:['teachable','mlforkids','semantris','quickdraw'], satranc:['chesskid','lichess','chesscom']},
+  '56':{genel:['scratch'], akil:['lightbot','setgame','p2048','mathpg','coolmath'], kodlama:['scratch','codeorg','blockly'], robotik:['makecode','microbit','mblock','tinkercad'], yapayzeka:['mlforkids','teachable','semantris','experiments'], satranc:['lichess','chesscom']},
+  '78':{genel:['scratch','trinket'], akil:['setgame','p2048','coolmath','lichess'], kodlama:['scratch','codeorg','trinket','blockly'], robotik:['makecode','microbit','tinkercad','mblock'], yapayzeka:['mlforkids','teachable','experiments','semantris'], satranc:['lichess','chesscom']},
+};
+
+/* ---- 36 HAFTALIK PROGRAM OMURGASI ---- */
+const SPINE = [
+  {d:'genel',    k:'Tanışma, Atölye Kuralları ve Yıl Haritası', z:'Atölyenin işleyişini ve yıl boyunca öğrenilecekleri kavrar; güvenli ve saygılı çalışma kurallarını benimser.', e:'Tanışma oyunu; birlikte “atölye kuralları” panosu hazırlama; yıl haritasını (kodlama–robotik–YZ–satranç–akıl oyunları) gezme.', m:'Renkli kural kartları, yıl haritası posteri, isim etiketleri.'},
+  {d:'akil',     k:'Zihin Isınması: Örüntü, Eşleştirme, Dikkat', z:'Örüntüleri fark eder ve devam ettirir; dikkat ve hafıza becerilerini kullanır.', e:'Örüntü tamamlama, hafıza kartları, “farkı bul”; dijital mantık oyunlarıyla pekiştirme.', m:'Örüntü kartları, tangram, hafıza oyunu.'},
+  {d:'kodlama',  k:'Algoritma Nedir? Adım Adım Yönerge', z:'Bir işi mantıklı adımlara böler; sıralamanın önemini kavrar (algoritma).', e:'“Robot-öğretmen” oyunu (öğrenci yönerge verir, öğretmen birebir uygular); sandviç yapma algoritması; ekransız kodlama kartları.', m:'Yön oku kartları, algoritma çalışma kâğıdı.'},
+  {d:'kodlama',  k:'Blok Kodlamaya Giriş', z:'Blok tabanlı ortamda sürükle-bırak ile ilk komutları çalıştırır.', e:'Karakteri hareket ettir, ses ekle, sahne kur; serbest keşif.', m:'Tabletler/bilgisayarlar, projeksiyon.'},
+  {d:'kodlama',  k:'Olaylar ve Hareket', z:'Olay (tıklama/tuş) ile komut tetikler; hareket bloklarını amaçlı kullanır.', e:'“Tıkla–konuşsun”, “tuşa bas–hareket etsin” mini sahneler.', m:'Cihazlar.'},
+  {d:'kodlama',  k:'Döngüler: Tekrar Eden İşler', z:'Tekrarı döngü ile ifade eder; gereksiz kod tekrarını azaltır.', e:'Kare/çokgen çizdirme, dans adımlarını döngüyle tekrarlatma.', m:'Cihazlar, çizim çıktısı.'},
+  {d:'kodlama',  k:'Koşullar: Eğer … İse', z:'Duruma göre karar veren kod (koşul) yazar.', e:'“Engele değerse dur”, “puan 10 ise kutla” senaryoları.', m:'Cihazlar.'},
+  {d:'kodlama',  k:'İlk Projem: Küçük Oyun / Animasyon', z:'Öğrendiği blokları birleştirip küçük bir ürün oluşturur; hatasını bulup düzeltir (debug).', e:'Basit kovalama/tıklama oyunu ya da animasyon; eşli test.', m:'Cihazlar, proje kâğıdı.'},
+  {d:'genel',    k:'1. Dönem Ara Değerlendirme ve Mini Sergi', z:'Yaptıklarını sunar; kendini ve arkadaşını olumlu değerlendirir.', e:'Projeleri sergileme, “en çok neyi sevdim” paylaşımı; öz-değerlendirme kartı.', m:'Sergi alanı, rozet/sertifika.'},
+  {d:'satranc',  k:'Satrançla Tanışma: Tahta ve Taşlar', z:'Satranç tahtasını, kareleri ve taşları tanır.', e:'Tahtayı kurma, taşları eşleştirme; “kim nerede durur” oyunu.', m:'Satranç takımları / dijital tahta.'},
+  {d:'satranc',  k:'Taşların Hareketi ve Değeri', z:'Her taşın hareketini ve göreli değerini bilir.', e:'Tek taşla hedefe ulaşma bulmacaları; taş değeri kartları.', m:'Satranç takımı, bulmaca kâğıtları.'},
+  {d:'satranc',  k:'Şah, Rok, Mat ve Mini Oyunlar', z:'Şah çekme/mat kavramını anlar; kısa oyun oynar.', e:'Şah-mat bulmacaları; az taşla mini turnuva.', m:'Takımlar / çevrimiçi satranç.'},
+  {d:'akil',     k:'Strateji ve Mantık Oyunları', z:'Strateji kurar, birkaç adım sonrasını düşünür.', e:'Sıra-strateji oyunları (üç taş, nim); dijital mantık bulmacaları.', m:'Masaüstü oyunlar, cihazlar.'},
+  {d:'robotik',  k:'Robotik Nedir? Sensör – Motor – Kontrol', z:'Robotun parçalarını (sensör, motor, kontrol) ve günlük robotları tanır.', e:'Robot örnekleri/videoları; “robot ol” rol oyunu (girdi → işlem → çıktı).', m:'Görseller, örnek robot/oyuncak.'},
+  {d:'robotik',  k:'İlk Robotum: Yönerge Ver, Hareket Etsin', z:'Bir robotu (fiziksel/sanal) yönergelerle hareket ettirir.', e:'Bee-Bot/mBot ya da MakeCode simülatöründe ileri-dön-dur; hedefe git.', m:'Bee-Bot/mBot ya da simülatör.'},
+  {d:'robotik',  k:'Döngü ve Sensörle Robotik', z:'Tekrar ve sensör verisiyle robota karar verdirir.', e:'“Engel görürse dön”, çizgi izleme (fiziksel ya da sanal).', m:'Robot/simülatör, engel/çizgi parkuru.'},
+  {d:'robotik',  k:'Robotik Mini Görev: Labirent / Çizgi İzleme', z:'Bir görevi çözmek için kodu planlar ve dener.', e:'Labirentten çıkış veya çizgi izleme yarışı; deneme-yanılma.', m:'Parkur malzemesi, robot/simülatör.'},
+  {d:'genel',    k:'Robotik Proje Sunumu', z:'Takım çalışmasıyla ürettiği çözümü sunar.', e:'Grup sunumları, “nasıl çalışıyor” anlatımı; akran geri bildirimi.', m:'Sunum alanı.'},
+  {d:'yapayzeka',k:'Yapay Zeka Nedir? Günlük Hayatta YZ', z:'YZ’nin ne olduğunu ve nerede karşımıza çıktığını örneklerle açıklar.', e:'“Bu YZ mi?” tahmin oyunu; sesli asistan/öneri sistemleri örnekleri.', m:'Görseller, cihazlar.'},
+  {d:'yapayzeka',k:'Makine Öğrenir mi? Örnekle Eğitme', z:'Makinenin örneklerden “öğrendiğini” kavrar (veri → model).', e:'Quick, Draw! ile çizim tanıma; sınıfça makineyi “yanıltma” denemesi.', m:'Cihazlar (Quick, Draw!).'},
+  {d:'yapayzeka',k:'Görüntü Tanıma: Kendi Modelini Eğit', z:'Örnek toplayıp basit bir görüntü sınıflandırma modeli eğitir.', e:'Teachable Machine ile 2-3 sınıf (ör. gülümseme/şapka) eğitme ve test.', m:'Kameralı cihaz (Teachable Machine).'},
+  {d:'yapayzeka',k:'Üretici YZ ve Sorumlu Kullanım', z:'YZ’nin yardımcı olabileceğini ve hata yapabileceğini bilir; sorumlu kullanımı tartışır.', e:'YZ ile fikir üretme örneği; “YZ yanılırsa?” tartışması; doğrulama alışkanlığı.', m:'Cihazlar, tartışma kartları.'},
+  {d:'yapayzeka',k:'YZ Mini Proje', z:'Bir YZ aracıyla küçük bir ürün/gösteri hazırlar.', e:'Teachable Machine modelini bir sahneye bağlama ya da poster; sunum.', m:'Cihazlar.'},
+  {d:'akil',     k:'Akıl-Zeka Oyunları Turnuvası', z:'Öğrendiği stratejileri oyunlarda uygular; kazanmayı/kaybetmeyi yönetir.', e:'İstasyonlu turnuva (mantık, hafıza, strateji); puan tablosu.', m:'Oyun istasyonları, cihazlar.'},
+  {d:'kodlama',  k:'Proje Tabanlı Kodlama I: Planlama', z:'Yapmak istediği projeyi planlar (amaç, adımlar, gereken bloklar).', e:'Fikir seçme, storyboard/taslak; görev bölüşümü.', m:'Planlama kâğıdı, cihazlar.'},
+  {d:'kodlama',  k:'Proje Tabanlı Kodlama II: Yapım', z:'Planını koda döker; karşılaştığı sorunları çözer.', e:'Projeyi kodlama; öğretmen rehberliğinde ilerleme.', m:'Cihazlar.'},
+  {d:'kodlama',  k:'Proje Tabanlı Kodlama III: Test ve Hata Ayıklama', z:'Ürünü test eder, hataları bulup düzeltir, iyileştirir (debug).', e:'Eşli test, hata listesi, düzeltme; sürüm 2.', m:'Cihazlar.'},
+  {d:'satranc',  k:'Satranç: Açılış İlkeleri ve Basit Taktikler', z:'Merkez kontrolü, taş geliştirme, çatal/şiş gibi basit taktikleri tanır.', e:'Taktik bulmacaları (çevrimiçi); kısa oyunlar.', m:'Takımlar / çevrimiçi.'},
+  {d:'satranc',  k:'Satranç Turnuvası', z:'Kurallara uyarak oyun oynar; sporcu ahlakı gösterir.', e:'Sınıf içi turnuva; eşleşmeler, kısa süreli oyunlar.', m:'Takımlar / çevrimiçi, eşleşme tablosu.'},
+  {d:'robotik',  k:'İleri / Yaratıcı Robotik Tasarım', z:'Bir soruna yaratıcı robotik çözüm tasarlar.', e:'“Şunu yapan robot” beyin fırtınası + prototip (fiziksel/sanal).', m:'Robot kiti/simülatör, tasarım kâğıdı.'},
+  {d:'robotik',  k:'Robotik + Kodlama Birleşimi', z:'Kod ve donanımı birlikte kullanarak görev tamamlar.', e:'Sensör + motor + koşul + döngü içeren bütünleşik görev.', m:'Robot/simülatör.'},
+  {d:'yapayzeka',k:'Akıllı Sistemler: YZ + Robotik', z:'YZ’nin robotik/otomasyonla nasıl birleştiğini örnekle görür.', e:'Görüntü/ses tanımayı bir tepkiye bağlama (mBlock ML ya da Teachable → sahne).', m:'Cihazlar/simülatör.'},
+  {d:'genel',    k:'Yıl Sonu Projesi: Planlama', z:'Yıl boyu öğrendiklerini birleştiren bir proje planlar.', e:'Tema seçimi (oyun/robot/YZ/sunum), takım kurma, plan.', m:'Planlama kâğıdı.'},
+  {d:'genel',    k:'Yıl Sonu Projesi: Yapım', z:'Projesini üretir; zaman ve görev yönetimi yapar.', e:'Yapım atölyesi; ara kontroller.', m:'Cihazlar/malzeme.'},
+  {d:'genel',    k:'Yıl Sonu Projesi: Sunuma Hazırlık', z:'Ürününü sunmaya hazırlar; anlatımını kurar.', e:'Prova, poster/afiş, konuşma kartları.', m:'Sunum malzemeleri.'},
+  {d:'genel',    k:'Büyük Sergi ve Yıl Değerlendirmesi', z:'Ürününü paylaşır; yıl boyu gelişimini değerlendirir.', e:'Sergi/gösteri; sertifika töreni; “gelecek yıl ne öğrenmek isterim” paylaşımı.', m:'Sergi alanı, sertifikalar.'},
+];
+
+/* Düzeye özel konu başlığı override (yalnızca farklılaşan haftalar) */
+const KONU_OVR = {
+  11:{ana:'Satranç Masalları ve Taş Tanıma'},      // hafta 12 (index 11)
+  13:{ana:'Robot Arkadaşımız: Yönerge Ver, Hareket Etsin'}, // hafta 14
+  20:{ana:'Çiz, Bilsin! (Quick, Draw!)'},          // hafta 21
+  21:{ana:'AutoDraw ile Yapay Zekâ Yardımıyla Çizim'}, // hafta 22
+  24:{'78':'Proje Planlama + Python’a İlk Bakış'}, // hafta 25
+  27:{ana:'Satranç Oyun Günü (Taş Hareketi Pekiştirme)'}, // hafta 28
+};
+
+const HAFTA_SAYISI = SPINE.length;
+function donemNo(i){ return i < 18 ? 1 : 2; }
+/* ============================================================
+   ZİRVE ÇEKİRDEĞİ
+   ============================================================ */
+window.ZIRVE = window.ZIRVE || {};
+const LS = {
+  get:(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},
+  set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},
+  del:(k)=>{try{localStorage.removeItem(k)}catch(e){}}
+};
+
+/* --- Gömülü anahtarlar (katman yeni projeye kopyalanınca otomatik yüklenir) --- */
+const GOMULU_ANAHTARLAR = [
+  // "AIza...."  ← buraya gömülü anahtar eklenebilir
+];
+let RING = LS.get('dk_keys', null);
+if(!RING || !RING.length){ RING = GOMULU_ANAHTARLAR.slice(); if(RING.length) LS.set('dk_keys',RING); }
+let ringIdx = 0;
+function ringLoad(){ RING = LS.get('dk_keys', GOMULU_ANAHTARLAR.slice()); }
+function keyler(){ ringLoad(); return RING.filter(k=>k && k.trim().length>10); }
+function siradakiKey(){ const ks=keyler(); if(!ks.length) return null; const k=ks[ringIdx%ks.length]; ringIdx++; return k; }
+function maskele(k){ if(!k) return ''; return k.slice(0,6)+'…'+k.slice(-4); }
+
+/* --- Toast --- */
+function toast(msg,tip='info',sure=2600){
+  const y=document.getElementById('toastlar');
+  const el=document.createElement('div'); el.className='toast '+tip; el.textContent=msg;
+  y.appendChild(el); setTimeout(()=>{el.style.opacity='0';el.style.transition='.3s';setTimeout(()=>el.remove(),300)},sure);
+}
+
+/* --- Bağlantı bildirimleri --- */
+window.addEventListener('online', ()=>toast('🌐 İnternet bağlantısı geri geldi','ok'));
+window.addEventListener('offline',()=>toast('📴 İnternet bağlantısı kesildi','err'));
+
+/* --- Uyarı bandı (bir kez) --- */
+function uyariBandiGoster(){ if(!LS.get('dk_uyari_gorundu',false)){ document.getElementById('uyariBant').classList.add('acik'); LS.set('dk_uyari_gorundu',true);} }
+
+/* ============================================================
+   MODEL KEŞFİ + GEMINI (akışlı)
+   ============================================================ */
+let AKTIF_MODEL = LS.get('dk_model', null);
+const MODEL_TERCIH = ['gemini-2.5-flash','gemini-2.0-flash','gemini-2.5-flash-lite','gemini-flash-latest','gemini-2.5-pro'];
+function kanonik(ad){ return ad.replace('gemini-flash-latest','gemini-2.5-flash').replace('gemini-pro-latest','gemini-2.5-pro'); }
+
+async function modelKesfet(force){
+  if(AKTIF_MODEL && !force) return AKTIF_MODEL;
+  const ks=keyler(); if(!ks.length) throw new Error('NO_KEY');
+  const key=ks[0];
+  const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models?key='+encodeURIComponent(key));
+  if(!r.ok){ throw new Error('MODEL_LIST_'+r.status); }
+  const d=await r.json();
+  const uygun=(d.models||[])
+    .filter(m=>(m.supportedGenerationMethods||[]).includes('generateContent'))
+    .map(m=>m.name.replace('models/',''))
+    .filter(n=>/gemini/.test(n) && !/vision|embedding|aqa|imagen/.test(n));
+  let sec=null;
+  for(const t of MODEL_TERCIH){ const bul=uygun.find(n=>kanonik(n)===t||n===t); if(bul){sec=bul;break;} }
+  if(!sec) sec=uygun.find(n=>/flash/.test(n)) || uygun[0];
+  if(!sec) throw new Error('MODEL_YOK');
+  AKTIF_MODEL=sec; LS.set('dk_model',sec); return sec;
+}
+
+function hataTurkce(status, txt){
+  if(status===404) return 'Model bulunamadı (404). Ayarlar’dan modeli yenileyin.';
+  if(status===429) return 'Kota doldu (429). Başka anahtar deneniyor veya biraz sonra tekrar deneyin.';
+  if(status===503) return 'Sunucu meşgul (503). Birazdan tekrar denenecek.';
+  if(status===400 && /API key/i.test(txt||'')) return 'Anahtar geçersiz (400). Ayarlar’dan kontrol edin.';
+  if(status===403) return 'İzin hatası (403). Anahtarın Generative Language API izni olmalı.';
+  return 'Bir hata oluştu ('+status+'). Tekrar deneyin.';
+}
+
+/* Akışlı üretim: onChunk parça parça çağrılır */
+async function generateText(prompt, {onChunk, sistem}={}){
+  const ks=keyler(); if(!ks.length) throw new Error('Önce ⚙️ Ayarlar’dan ücretsiz Gemini API anahtarı girin.');
+  const model=await modelKesfet(false);
+  const body={
+    contents:[{role:'user',parts:[{text:prompt}]}],
+    generationConfig:{ temperature:0.9, topP:0.95, maxOutputTokens:2048, thinkingConfig:{thinkingBudget:0} }
+  };
+  if(sistem){ body.systemInstruction={parts:[{text:sistem}]}; }
+  let sonHata='';
+  for(let deneme=0; deneme<Math.min(ks.length,4)+1; deneme++){
+    const key=siradakiKey();
+    try{
+      const url='https://generativelanguage.googleapis.com/v1beta/models/'+model+':streamGenerateContent?alt=sse&key='+encodeURIComponent(key);
+      const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+      if(!r.ok){
+        const t=await r.text().catch(()=> '');
+        sonHata=hataTurkce(r.status,t);
+        if(r.status===400 && /thinkingConfig|responseModalities/i.test(t)){ delete body.generationConfig.thinkingConfig; continue; }
+        if(r.status===429||r.status===503) continue; // başka anahtar
+        // akış olmazsa non-stream'e düş
+        return await generateTextNonStream(prompt, sistem, key, model);
+      }
+      if(!r.body) return await generateTextNonStream(prompt, sistem, key, model);
+      const reader=r.body.getReader(); const dec=new TextDecoder(); let buf='',tam='';
+      while(true){
+        const {value,done}=await reader.read(); if(done) break;
+        buf+=dec.decode(value,{stream:true});
+        const parts=buf.split('\n'); buf=parts.pop();
+        for(const line of parts){
+          const l=line.trim(); if(!l.startsWith('data:')) continue;
+          const js=l.slice(5).trim(); if(js==='[DONE]'||!js) continue;
+          try{ const o=JSON.parse(js); const p=o?.candidates?.[0]?.content?.parts||[]; const par=p.map(x=>x.text||'').join('');
+            if(par){ tam+=par; onChunk&&onChunk(tam,par); } }catch(e){}
+        }
+      }
+      if(tam) return tam;
+      sonHata='Boş cevap döndü.';
+    }catch(e){ sonHata=e.message||'Ağ hatası'; }
+  }
+  throw new Error(sonHata||'Cevap alınamadı.');
+}
+async function generateTextNonStream(prompt, sistem, key, model){
+  const body={contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{temperature:0.9,maxOutputTokens:2048}};
+  if(sistem) body.systemInstruction={parts:[{text:sistem}]};
+  const url='https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent?key='+encodeURIComponent(key);
+  const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(!r.ok){ const t=await r.text().catch(()=> ''); throw new Error(hataTurkce(r.status,t)); }
+  const d=await r.json(); return (d?.candidates?.[0]?.content?.parts||[]).map(x=>x.text||'').join('');
+}
+
+/* Anahtar testi — RING'i atlar, orijinal fetch ile Google'a sorar */
+window.ZIRVE.anahtarTest = async function(key){
+  try{
+    const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models?key='+encodeURIComponent(key));
+    if(r.ok) return {ok:true,durum:'ok',mesaj:'🟢 Çalışıyor'};
+    const t=await r.text().catch(()=> '');
+    if(r.status===429) return {ok:false,durum:'kota',mesaj:'🟡 Geçerli ama kota dolu'};
+    if(r.status===400 && /API key not valid|invalid/i.test(t)) return {ok:false,durum:'gecersiz',mesaj:'🔴 Geçersiz anahtar'};
+    if(r.status===403) return {ok:false,durum:'izin',mesaj:'🔴 İzin yok (API etkin değil)'};
+    return {ok:false,durum:'hata',mesaj:'🔴 Hata ('+r.status+')'};
+  }catch(e){ return {ok:false,durum:'ag',mesaj:'🔴 Ağ hatası'}; }
+};
+
+/* ============================================================
+   METİN İŞLEME: duzMetin, temizleLatex, markdown
+   ============================================================ */
+window.ZIRVE.duzMetin = function(str){
+  if(!str) return '';
+  let s=String(str);
+  s=s.replace(/<br\s*\/?>/gi,'\n').replace(/<\/(p|div|li|h[1-6])>/gi,'\n').replace(/<li[^>]*>/gi,'• ');
+  s=s.replace(/<[^>]+>/g,'');
+  s=s.replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'");
+  s=s.replace(/^#{1,6}\s*/gm,'').replace(/\*\*(.+?)\*\*/g,'$1').replace(/\*(.+?)\*/g,'$1').replace(/`([^`]+)`/g,'$1').replace(/^>\s?/gm,'').replace(/^\s*[-*]\s+/gm,'• ').replace(/\[([^\]]+)\]\(([^)]+)\)/g,'$1 ($2)');
+  return s.replace(/\n{3,}/g,'\n\n').trim();
+};
+function temizleLatex(s){
+  if(!s) return '';
+  return s
+    .replace(/\$\\?rightarrow\$|\\rightarrow|\\to\b/g,'<span class="zk-ok">→</span>')
+    .replace(/\\times/g,'×').replace(/\\cdot/g,'·').replace(/\\div/g,'÷')
+    .replace(/\$([^$]+)\$/g,'$1').replace(/\\[()\[\]]/g,'');
+}
+function esc(s){ return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+/* Küçük ama sağlam markdown → HTML */
+function md(src){
+  if(!src) return '';
+  let s=temizleLatex(src);
+  // tablolar
+  s=s.replace(/(^\|.+\|\s*\n\|[\s:|-]+\|\s*\n(?:\|.*\|\s*\n?)*)/gm, blk=>{
+    const rows=blk.trim().split('\n').filter(r=>r.trim());
+    const head=rows[0].split('|').slice(1,-1).map(c=>c.trim());
+    const body=rows.slice(2).map(r=>r.split('|').slice(1,-1).map(c=>c.trim()));
+    let h='<table><thead><tr>'+head.map(c=>'<th>'+inl(c)+'</th>').join('')+'</tr></thead><tbody>';
+    body.forEach(r=>{h+='<tr>'+r.map(c=>'<td>'+inl(c)+'</td>').join('')+'</tr>'});
+    return h+'</tbody></table>\n';
+  });
+  const lines=s.split('\n'); let out='',liste=null;
+  const kapatListe=()=>{ if(liste){ out+='</'+liste+'>'; liste=null; } };
+  for(let ln of lines){
+    if(/^\s*$/.test(ln)){ kapatListe(); continue; }
+    if(/<table>/.test(ln)||/<\/table>/.test(ln)||/<t[hdr]/.test(ln)||/<\/t[hdr]?/.test(ln)||/<thead>|<tbody>|<tr>/.test(ln)){ kapatListe(); out+=ln; continue; }
+    let m;
+    if(m=ln.match(/^(#{1,6})\s+(.*)/)){ kapatListe(); const lv=Math.min(m[1].length+1,6); out+='<h'+lv+'>'+inl(m[2])+'</h'+lv+'>'; continue; }
+    if(m=ln.match(/^\s*[-*•]\s+(.*)/)){ if(liste!=='ul'){kapatListe();out+='<ul>';liste='ul';} out+='<li>'+inl(m[1])+'</li>'; continue; }
+    if(m=ln.match(/^\s*\d+[.)]\s+(.*)/)){ if(liste!=='ol'){kapatListe();out+='<ol>';liste='ol';} out+='<li>'+inl(m[1])+'</li>'; continue; }
+    if(m=ln.match(/^\s*>\s?(.*)/)){ kapatListe(); out+='<blockquote>'+inl(m[1])+'</blockquote>'; continue; }
+    kapatListe(); out+='<p>'+inl(ln)+'</p>';
+  }
+  kapatListe(); return out;
+}
+function inl(t){
+  // <span style> renk vurgularını KORU (AI çıktısı renklendirebilir)
+  const korunan=[]; t=t.replace(/<span style="[^"]*">.*?<\/span>/g,m=>{korunan.push(m);return '\u0000'+(korunan.length-1)+'\u0000';});
+  t=esc(t);
+  t=t.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/(^|[^*])\*([^*]+?)\*/g,'$1<em>$2</em>').replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
+  t=t.replace(/\u0000(\d+)\u0000/g,(_,i)=>korunan[+i]);
+  return t;
+}
+/* ============================================================
+   DURUM + YARDIMCILAR
+   ============================================================ */
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+let ST={ view:'veli', gradeIdx:5, filtre:'hepsi', ara:'' }; // varsayılan 5. sınıf
+ST=Object.assign(ST, LS.get('dk_state',{}));
+function stKaydet(){ LS.set('dk_state',{view:ST.view,gradeIdx:ST.gradeIdx,filtre:ST.filtre}); }
+function aktifSinif(){ return SINIF_LISTE[ST.gradeIdx]; }
+function aktifDuzey(){ return DUZEYLER.find(d=>d.id===aktifSinif().d); }
+function haftaKonu(i){ const o=KONU_OVR[i]; const lv=aktifSinif().d; return (o&&o[lv])||SPINE[i].k; }
+function modalAc(id){ $('#'+id).classList.add('acik'); document.body.style.overflow='hidden'; }
+function modalKapat(id){ $('#'+id).classList.remove('acik'); document.body.style.overflow=''; }
+$$('.modal-bg').forEach(m=>m.addEventListener('click',e=>{ if(e.target===m){ m.classList.remove('acik'); document.body.style.overflow=''; }}));
+
+/* ============================================================
+   GÖRÜNÜM: GENEL BAKIŞ / VELİ SUNUMU
+   ============================================================ */
+function renderVeli(){
+  const dersArr=Object.entries(DERSLER).filter(([k])=>k!=='genel');
+  const dersHTML=dersArr.map(([k,d])=>`
+    <div class="dk" style="--dr:${d.dr};--dr2:${d.dr2}">
+      <div class="ib">${d.ik}</div><h3>${d.ad}</h3>
+      <p>${DERS_TANIM[k]}</p>
+      <span class="tag">Anaokulu → 8. Sınıf</span>
+    </div>`).join('');
+  const ped=[
+    ['🎯','Kazanım Odaklı','Her hafta net bir kazanım; soyut kavramlar somut etkinlik ve oyunla veriliyor.'],
+    ['🧩','Yaşa Göre Sarmal','Aynı konu her sınıfta bir üst basamakta tekrar ediliyor; anaokulunda oyun, 8. sınıfta proje.'],
+    ['🛠️','Yaparak Yaşayarak','Ekransız etkinlikler, blok kodlama, robot ve gerçek çevrimiçi araçlarla uygulama.'],
+    ['🤝','21. Yüzyıl Becerileri','Problem çözme, işbirliği, yaratıcılık, eleştirel düşünme ve dijital okuryazarlık.'],
+  ].map(p=>`<div class="ped"><div class="ib">${p[0]}</div><h4>${p[1]}</h4><p>${p[2]}</p></div>`).join('');
+  $('#v-veli').innerHTML=`
+    <div class="veli-hero">
+      <h2>🏛️ Bir Yıllık Yolculuğumuz</h2>
+      <p class="big">Değişim Koleji öğrencileri bu yıl <b>düşünmeyi, üretmeyi ve teknolojiye yön vermeyi</b> öğreniyor. Kodlamadan robotiğe, yapay zekâdan satranca; her sınıf düzeyine uygun, oyunla harmanlanmış <b>36 haftalık</b> bir program hazırladık.</p>
+      <div class="istat">
+        <div class="it"><div class="num">36</div><div class="lbl">Haftalık Plan</div></div>
+        <div class="it"><div class="num">5</div><div class="lbl">Ders Alanı</div></div>
+        <div class="it"><div class="num">9</div><div class="lbl">Sınıf Düzeyi</div></div>
+        <div class="it"><div class="num">25+</div><div class="lbl">Çevrimiçi Araç</div></div>
+        <div class="it"><div class="num">100%</div><div class="lbl">Uygulamalı</div></div>
+      </div>
+      <div class="ders-kartlari" style="margin-top:22px">${dersHTML}</div>
+      <div class="pedagoji">${ped}</div>
+      <div class="sunum-not">💡 <b>Sayın velilerimiz:</b> Yukarıdaki “Yıllık Plan” sekmesinden çocuğunuzun sınıfını seçerek ilk haftadan son haftaya kadar tüm konuları; “Araç Kütüphanesi”nden ise evde de kullanabileceğiniz güvenli, ücretsiz eğitim araçlarını görebilirsiniz. Sağ alttaki ✨ asistan, her konuyu size ayrıntısıyla anlatabilir.</div>
+    </div>`;
+}
+const DERS_TANIM={
+  kodlama:'Blok tabanlı kodlama (ScratchJr, Scratch, Code.org) ile algoritma, döngü ve koşul; büyük sınıflarda Python’a geçiş.',
+  robotik:'Sensör-motor-kontrol mantığı; Bee-Bot’tan micro:bit ve mBot’a, simülatörlerle donanımsız da uygulanabilen robotik.',
+  yapayzeka:'“Makine nasıl öğrenir?” sorusundan kendi modelini eğitmeye; Teachable Machine ve sorumlu YZ kullanımı.',
+  satranc:'Tahta ve taşlardan açılış ilkeleri ve taktiklere; dikkat, planlama ve sabır geliştiren turnuvalar.',
+  akil:'Örüntü, mantık ve strateji oyunları; hafıza, dikkat ve hızlı düşünme için istasyon çalışmaları ve turnuvalar.',
+};
+
+/* ============================================================
+   GÖRÜNÜM: YILLIK PLAN
+   ============================================================ */
+function renderSiniflar(){
+  const y=$('#siniflar'); y.querySelectorAll('.snf').forEach(e=>e.remove());
+  SINIF_LISTE.forEach((s,i)=>{
+    const b=document.createElement('div'); b.className='snf'+(i===ST.gradeIdx?' aktif':''); b.textContent=s.g==='Ana'?'Ana':s.g;
+    b.title=s.g==='Ana'?'Anaokulu':s.g+'. Sınıf';
+    b.onclick=()=>{ ST.gradeIdx=i; stKaydet(); renderSiniflar(); renderPlan(); };
+    y.appendChild(b);
+  });
+}
+function renderDuzeyBilgi(){
+  const dz=aktifDuzey();
+  $('#duzeyBilgi').innerHTML=`<span class="ib">🧭</span><div><b>${dz.ad} · ${dz.yas}</b> — Düzey uyarlaması: ${DUZEY_YAKLASIM[dz.id]}</div>`;
+}
+function renderFiltre(){
+  const y=$('#filtre'); y.querySelectorAll('.fbtn').forEach(e=>e.remove());
+  const ekle=(key,ad,ik,dr,dr2)=>{
+    const b=document.createElement('div'); b.className='fbtn'+(ST.filtre===key?' aktif':'');
+    if(ST.filtre===key && key!=='hepsi'){ b.style.background=`linear-gradient(135deg,${dr},${dr2})`; }
+    else if(ST.filtre===key){ b.style.background='linear-gradient(135deg,var(--mor),var(--mavi))'; }
+    b.innerHTML=(ik?ik+' ':'')+ad;
+    b.onclick=()=>{ ST.filtre=key; stKaydet(); renderFiltre(); renderPlanGrid(); };
+    y.insertBefore(b, $('.ara',y));
+  };
+  ekle('hepsi','Tümü','🗂️');
+  Object.entries(DERSLER).forEach(([k,d])=>ekle(k,d.ad,d.ik,d.dr,d.dr2));
+}
+function renderPlan(){ renderDuzeyBilgi(); renderPlanGrid(); }
+function renderPlanGrid(){
+  const lv=aktifSinif().d, arac=DUZEY_ARAC[lv];
+  const ara=(ST.ara||'').toLocaleLowerCase('tr');
+  let html='';
+  for(let don=1;don<=2;don++){
+    const haftalar=[];
+    for(let i=0;i<HAFTA_SAYISI;i++){
+      if(donemNo(i)!==don) continue;
+      const w=SPINE[i]; const d=DERSLER[w.d];
+      if(ST.filtre!=='hepsi' && w.d!==ST.filtre) continue;
+      const konu=haftaKonu(i);
+      if(ara && !(konu.toLocaleLowerCase('tr').includes(ara) || (w.z||'').toLocaleLowerCase('tr').includes(ara) || d.ad.toLocaleLowerCase('tr').includes(ara))) continue;
+      const araclar=(arac[w.d]||[]).slice(0,5).map(k=>`<div class="mini-arac" title="${ARACLAR[k]?.ad||''}">${ARACLAR[k]?.ik||'🔗'}</div>`).join('');
+      haftalar.push(`
+        <div class="hkart" style="--dr:${d.dr};--dr2:${d.dr2}" onclick="haftaAc(${i})">
+          <div class="serit"></div>
+          <div class="ust"><span class="no">HAFTA ${i+1}</span>
+            <span class="dersrozet">${d.ik} ${d.ad}</span></div>
+          <h4>${konu}</h4>
+          <div class="oz">${w.z}</div>
+          <div class="mini-araclar">${araclar}</div>
+          <div class="git">detay →</div>
+        </div>`);
+    }
+    if(haftalar.length){
+      html+=`<div class="donem-baslik">📚 ${don}. Dönem <span style="font-size:12px;color:var(--soluk2);font-weight:600">(Hafta ${don===1?'1–18':'19–36'})</span><span class="cizgi"></span></div><div class="izgara">${haftalar.join('')}</div>`;
+    }
+  }
+  if(!html) html='<div style="padding:40px;text-align:center;color:var(--soluk)">Bu filtreyle sonuç yok.</div>';
+  $('#planIzgara').innerHTML=html;
+}
+
+/* --- HAFTA DETAY MODALI (AI aksiyonlu) --- */
+let sonHaftaIdx=null;
+function haftaAc(i){
+  sonHaftaIdx=i;
+  const w=SPINE[i], d=DERSLER[w.d], dz=aktifDuzey(), lv=dz.id;
+  const konu=haftaKonu(i);
+  const araclar=(DUZEY_ARAC[lv][w.d]||[]).map(k=>{const a=ARACLAR[k];return a?`<a class="arac-cip" href="${a.url}" target="_blank" rel="noopener"><span class="ik">${a.ik}</span>${a.ad}</a>`:''}).join('');
+  $('#haftaModalIc').innerHTML=`
+    <div class="mbas" style="--dr:${d.dr};--dr2:${d.dr2}">
+      <div class="ik">${d.ik}</div>
+      <div style="min-width:0"><h3>Hafta ${i+1} · ${konu}</h3>
+        <div class="alt">${d.ad} • ${dz.ad} (${dz.yas}) • ${donemNo(i)}. Dönem</div></div>
+      <div class="kapat" onclick="modalKapat('haftaModal')">✕</div>
+    </div>
+    <div class="mgov">
+      <div class="blok"><div class="bh">🎯 Kazanım</div><div class="bt">${w.z}</div></div>
+      <div class="blok"><div class="bh">🧩 Etkinlik</div><div class="bt">${w.e}</div></div>
+      <div class="blok"><div class="bh">🧰 Bu Düzey İçin Araçlar</div><div class="arac-satir">${araclar||'<span style="color:var(--soluk)">Bu hafta ekransız/materyal ağırlıklı.</span>'}</div></div>
+      <div class="blok"><div class="bh">📦 Materyal</div><div class="bt">${w.m}</div></div>
+      <div class="blok"><div class="uy-kutu">🧭 <b>${dz.ad} uyarlaması:</b> ${DUZEY_YAKLASIM[lv].replace(/<\/?b>/g,'')}</div></div>
+      <div class="blok">
+        <div class="bh">✨ Yapay Zeka ile Bu Haftayı Zenginleştir</div>
+        <div class="ai-hizli">
+          <button onclick="haftaAI('etkinlik')">🎨 3 ek etkinlik öner</button>
+          <button onclick="haftaAI('unplugged')">🔌 Ekransız alternatif</button>
+          <button onclick="haftaAI('veli')">👪 Veliye açıklama</button>
+          <button onclick="haftaAI('sorular')">❓ 5 değerlendirme sorusu</button>
+          <button onclick="haftaAI('materyal')">🛒 Materyal listesi</button>
+          <button onclick="haftaAI('ders')">📝 40 dk ders akışı</button>
+        </div>
+      </div>
+    </div>`;
+  modalAc('haftaModal');
+}
+function haftaAI(tip){
+  const i=sonHaftaIdx; const w=SPINE[i], dz=aktifDuzey(), konu=haftaKonu(i);
+  const baglam=`Ders alanı: ${DERSLER[w.d].ad}. Sınıf düzeyi: ${dz.ad} (${dz.yas}). Hafta ${i+1} konusu: "${konu}". Kazanım: ${w.z}. Planlı etkinlik: ${w.e}.`;
+  const istekler={
+    etkinlik:`Bu haftaya uygun, sınıfta hemen uygulanabilir 3 YENİ ve yaratıcı etkinlik öner. Her biri için kısa ad + 1-2 cümle uygulama + gerekli malzeme. Yaş düzeyine bire bir uygun olsun.`,
+    unplugged:`Bu konuyu bilgisayar/tablet KULLANMADAN (ekransız/unplugged) öğreten somut bir etkinlik tasarla. Adım adım anlat, malzemeleri yaz, süreyi belirt.`,
+    veli:`Bir veli toplantısında velilere bu haftanın konusunu ve çocuklarının ne kazanacağını sıcak, anlaşılır, teknik olmayan bir dille 1 paragrafta anlat. Sonuna evde destek için 1 küçük öneri ekle.`,
+    sorular:`Bu kazanımı ölçen, yaş düzeyine uygun 5 kısa değerlendirme sorusu üret (çoktan seçmeli veya kısa cevaplı karışık). Cevaplarını da ver.`,
+    materyal:`Bu haftayı işlemek için gereken tüm materyallerin (fiziksel + dijital) toplu bir kontrol listesini çıkar. Ucuz/ücretsiz alternatifleri de belirt.`,
+    ders:`Bu hafta için 40 dakikalık tek ders saatlik akış planla: giriş (ısınma) → geliştirme (ana etkinlik) → uygulama → kapanış/değerlendirme. Her aşamaya süre yaz.`
+  };
+  const sistem=`Sen "Değişim Koleji Ders Atlası" öğretmen asistanısın. Öğretmen Barış'a yardımcı ol. KISA, NET, TÜRKÇE ve doğrudan uygulanabilir yaz. Verilen bağlama sadık kal, uydurma. Somut örnek ve akılda kalıcı anlatım kullan. Renkli vurgu gerekiyorsa <span style="color:#RENK;font-weight:700"> kullan. Matematik/LaTeX yazma; ok için → kullan. Tablo gerekiyorsa en fazla 3 sütun.`;
+  modalKapat('haftaModal');
+  aiSor(istekler[tip], {sistem, on:`${baglam}\n\nGÖREV: ${istekler[tip]}`, baslik:`Hafta ${i+1} · ${konu}`});
+}
+
+/* ============================================================
+   GÖRÜNÜM: ARAÇ KÜTÜPHANESİ
+   ============================================================ */
+function renderAraclar(){
+  const grup={};
+  Object.entries(ARACLAR).forEach(([k,a])=>{ (grup[a.ders]=grup[a.ders]||[]).push([k,a]); });
+  let html='<div class="veli-hero" style="padding:20px"><h2 style="font-size:20px;margin:0 0 4px">🧰 Çevrimiçi Araç Kütüphanesi</h2><p class="big" style="font-size:14px">Derslerde kullandığım, tamamı <b>ücretsiz</b> ve okulda/evde açılabilen güvenli araçlar. Karta tıklayınca yeni sekmede açılır.</p></div>';
+  Object.keys(DERSLER).forEach(dk=>{
+    if(dk==='genel'||!grup[dk]) return; const d=DERSLER[dk];
+    html+=`<div class="arac-grup" style="--dr:${d.dr};--dr2:${d.dr2}">
+      <div class="gb"><span class="ik">${d.ik}</span>${d.ad}</div>
+      <div class="arac-izgara">`;
+    grup[dk].forEach(([k,a])=>{
+      html+=`<a class="akart" style="--dr:${d.dr};--dr2:${d.dr2}" href="${a.url}" target="_blank" rel="noopener">
+        <span class="dr-etiket">${a.yas}</span>
+        <div class="ust"><div class="ik">${a.ik}</div><div><h4>${a.ad}</h4></div></div>
+        <p>${a.desc}</p>
+        <div class="ac">Aracı Aç ↗</div>
+      </a>`;
+    });
+    html+='</div></div>';
+  });
+  $('#v-araclar').innerHTML=html;
+}
+
+/* ============================================================
+   AI ASİSTAN (bağlam-farkında)  + CEVAP MODALI
+   ============================================================ */
+let aiKonusma=[]; let sonAiHTML='';
+function durumOzeti(){
+  const s=aktifSinif(), dz=aktifDuzey();
+  let o=`Aktif görünüm: ${({veli:'Genel Bakış',plan:'Yıllık Plan',araclar:'Araç Kütüphanesi'})[ST.view]}. `;
+  o+=`Seçili sınıf: ${s.g==='Ana'?'Anaokulu':s.g+'. sınıf'} (${dz.ad}, ${dz.yas}). `;
+  o+=`Program: 36 haftalık; dersler: Kodlama, Robotik, Yapay Zeka, Satranç, Akıl-Zeka Oyunları. `;
+  if(ST.filtre!=='hepsi') o+=`Ders filtresi: ${DERSLER[ST.filtre].ad}. `;
+  return o;
+}
+function asistanAc(){
+  aiKonusma=[];
+  $('#aiModalIc').innerHTML=`
+    <div class="mbas" style="--dr:#7c3aed;--dr2:#22d3ee">
+      <div class="ik">✨</div>
+      <div style="min-width:0"><h3>Ders Asistanı</h3><div class="alt">${durumOzeti().slice(0,80)}…</div></div>
+      <div class="kapat" onclick="aiTemizle()">🗑</div>
+      <div class="kapat" onclick="modalKapat('aiModal')" style="margin-left:6px">✕</div>
+    </div>
+    <div class="mgov">
+      <div class="ai-hizli">
+        <button onclick="asistanHizli('Seçili sınıf düzeyi için bu yılın en önemli 3 kazanımını ve nedenini kısaca anlat.')">🎯 Yıl özeti</button>
+        <button onclick="asistanHizli('Seçili sınıf için bir sonraki hafta işleyeceğim konuya nasıl hazırlanmalıyım? Kısa bir hazırlık listesi ver.')">🧭 Haftaya hazırlık</button>
+        <button onclick="asistanHizli('Veli toplantısında bu programı 2 dakikada nasıl tanıtırım? Bana kısa, etkileyici bir konuşma metni yaz.')">👪 Veli konuşması</button>
+        <button onclick="asistanHizli('Seçili sınıf düzeyi için robotik veya kodlamada sık yapılan hataları ve çözümlerini listele.')">🐞 Sık hatalar</button>
+        <button onclick="asistanHizli('Bu programa uygun, sınıf düzeyine göre bir yıl sonu proje fikri öner.')">🏆 Proje fikri</button>
+      </div>
+      <div class="ai-konusma" id="aiKonusma"></div>
+      <div class="ai-giris">
+        <textarea id="aiInput" rows="1" placeholder="Bir şey sor… (ör. 3. sınıf için satranç dersini nasıl eğlenceli hale getiririm?)"></textarea>
+        <button class="gonder" onclick="asistanGonder()">➤</button>
+      </div>
+      <div class="gizlilik-not">🔒 Asistana yalnızca metin özet gider; kişisel/hassas veri paylaşılmaz.</div>
+    </div>`;
+  const inp=$('#aiInput');
+  inp.addEventListener('input',()=>{inp.style.height='auto';inp.style.height=Math.min(inp.scrollHeight,120)+'px'});
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();asistanGonder();}});
+  modalAc('aiModal');
+}
+function asistanHizli(q){ $('#aiInput').value=q; asistanGonder(); }
+function asistanGonder(){
+  const inp=$('#aiInput'); const q=inp.value.trim(); if(!q) return; inp.value=''; inp.style.height='auto';
+  const sistem=`Sen "Değişim Koleji Ders Atlası" asistanısın; öğretmen Barış'a yardımcı olursun. İşini HAFİFLET: KISA, NET, TÜRKÇE, uygulanabilir. YALNIZCA verilen duruma dayan, uydurma. Somut örnek + akılda kalıcı anlatım kullan. Renkli vurgu için <span style="color:#RENK;font-weight:700">. LaTeX yok, ok için →. Tablo en fazla 3 sütun.`;
+  const on=`[Uygulama durumu: ${durumOzeti()}]\n\nÖğretmenin sorusu: ${q}`;
+  aiSor(q, {sistem, on, ekle:true});
+}
+function aiTemizle(){ aiKonusma=[]; const k=$('#aiKonusma'); if(k)k.innerHTML=''; }
+
+/* Ortak: soru sor → aiModal'da akışlı cevap */
+async function aiSor(gorunenSoru, {sistem, on, baslik, ekle}={}){
+  if(!$('#aiModal').classList.contains('acik')){ asistanAc(); }
+  const kon=$('#aiKonusma');
+  // kullanıcı balonu
+  const ub=document.createElement('div'); ub.className='ai-balon user'; ub.textContent=baslik?('['+baslik+'] '+gorunenSoru):gorunenSoru; kon.appendChild(ub);
+  // ai balonu
+  const ab=document.createElement('div'); ab.className='ai-balon ai';
+  ab.innerHTML='<div class="spin"><span class="d"></span><span id="spinMsg">Hazırlanıyor…</span></div>'; kon.appendChild(ab);
+  kon.scrollTop=kon.scrollHeight;
+  const spinMsgs=['Düşünülüyor…','Örnekler seçiliyor…','Yaş düzeyine uyarlanıyor…','Neredeyse hazır…'];
+  let si=0; const spTimer=setInterval(()=>{ const el=$('#spinMsg'); if(el){el.textContent=spinMsgs[si%spinMsgs.length];si++;} },1500);
+  // bağlam kur
+  let ctx=on||gorunenSoru;
+  if(ekle && aiKonusma.length){ ctx='Önceki konuşma:\n'+aiKonusma.map(m=>(m.role==='user'?'Öğretmen: ':'Asistan: ')+ZIRVE.duzMetin(m.text).slice(0,600)).join('\n')+'\n\nYeni soru: '+gorunenSoru; }
+  aiKonusma.push({role:'user',text:gorunenSoru});
+  sonBaslik = baslik || 'Değişim Koleji · Ders Atlası';
+  try{
+    let ilk=true; let sonMetin='';
+    sonMetin=await generateText(ctx,{sistem, onChunk:(tam)=>{
+      if(ilk){ clearInterval(spTimer); ilk=false; }
+      ab.innerHTML='<div class="prose">'+md(tam)+'</div>'; kon.scrollTop=kon.scrollHeight;
+    }});
+    clearInterval(spTimer);
+    sonAiHTML='<div class="prose">'+md(sonMetin)+'</div>';
+    ab.innerHTML=sonAiHTML+aiAracCubugu();
+    aiKonusma.push({role:'ai',text:sonMetin, html:sonAiHTML});
+    kon.scrollTop=kon.scrollHeight;
+  }catch(e){
+    clearInterval(spTimer);
+    ab.innerHTML='<div style="color:#fca5a5">⚠️ '+esc(e.message||'Cevap alınamadı')+'</div>'+
+      (/(anahtar|API)/i.test(e.message||'')?'<div style="margin-top:8px"><button class="btn p" onclick="ayarAc(\'anahtarlar\')">⚙️ Ayarlar’dan anahtar gir</button></div>':'');
+  }
+}
+function aiAracCubugu(){
+  return `<div class="ai-arac">
+    <button onclick="aiKopyala()">📋 Kopyala</button>
+    <button onclick="aiPaylas()">📤 Paylaş</button>
+    <button onclick="aiGorsel()">📷 Görsel</button>
+    <button onclick="aiPDF()">📄 PDF</button>
+    <button onclick="aiSesli()">🔊 Sesli</button>
+  </div>`;
+}
+function sonAiDuz(){ return ZIRVE.duzMetin(sonAiHTML); }
+function aiKopyala(){ navigator.clipboard.writeText(sonAiDuz()).then(()=>toast('📋 Kopyalandı','ok')).catch(()=>toast('Kopyalanamadı','err')); }
+function aiPaylas(){ const t=sonAiDuz(); if(navigator.share){navigator.share({text:t}).catch(()=>{});}else{aiKopyala();} }
+function aiSesli(){ try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(sonAiDuz()); u.lang='tr-TR'; speechSynthesis.speak(u); toast('🔊 Okunuyor…','info'); }catch(e){toast('Sesli okuma desteklenmiyor','err');} }
+
+/* ============================================================
+   GÖRSEL / PDF PAYLAŞIM  (CDN ihtiyaç anında)
+   ============================================================ */
+function scriptYukle(src){ return new Promise((res,rej)=>{ if([...document.scripts].some(s=>s.src===src))return res(); const s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=()=>rej(new Error('CDN yüklenemedi')); document.head.appendChild(s); }); }
+function paylasimKarti(baslikMetin){
+  const kart=document.createElement('div');
+  kart.style.cssText='position:fixed;left:-9999px;top:0;width:640px;padding:26px;background:#0b1220;color:#eaf0ff;font-family:-apple-system,Segoe UI,Roboto,sans-serif;border-radius:0';
+  kart.innerHTML=`<div style="font-size:20px;font-weight:800;margin-bottom:14px;color:#a7f3d0">✨ ${esc(baslikMetin||'Değişim Koleji · Ders Atlası')}</div>
+    <div style="font-size:15px;line-height:1.65">${sonAiHTML}</div>
+    <div style="margin-top:18px;font-size:12px;color:#63739a">🎓 Değişim Koleji · Ders Atlası — Öğretmen Barış</div>`;
+  // renkleri paylaşımda koru
+  kart.querySelectorAll('strong').forEach(e=>e.style.color='#34d399');
+  kart.querySelectorAll('h1,h2,h3').forEach(e=>e.style.color='#a7f3d0');
+  kart.querySelectorAll('em').forEach(e=>e.style.color='#fcd34d');
+  document.body.appendChild(kart); return kart;
+}
+async function aiGorsel(){
+  try{ toast('📷 Görsel hazırlanıyor…','info'); await scriptYukle('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js');
+    const kart=paylasimKarti(sonBaslik); const cv=await html2canvas(kart,{backgroundColor:'#0b1220',scale:2}); kart.remove();
+    cv.toBlob(async b=>{ const f=new File([b],'ders-atlasi.png',{type:'image/png'});
+      if(navigator.canShare&&navigator.canShare({files:[f]})){ try{await navigator.share({files:[f],title:'Ders Atlası'});return;}catch(e){} }
+      const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='ders-atlasi.png'; a.click(); toast('📥 Görsel indirildi','ok');
+    });
+  }catch(e){ toast('Görsel oluşturulamadı (internet gerekli)','err'); }
+}
+async function aiPDF(){
+  try{ toast('📄 PDF hazırlanıyor…','info');
+    await scriptYukle('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js');
+    await scriptYukle('https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js');
+    const kart=paylasimKarti(sonBaslik); const cv=await html2canvas(kart,{backgroundColor:'#0b1220',scale:2}); kart.remove();
+    const {jsPDF}=window.jspdf; const pdf=new jsPDF('p','mm','a4'); const W=210,H=297;
+    const iw=W, ih=cv.height*W/cv.width; let y=0;
+    const img=cv.toDataURL('image/png');
+    if(ih<=H){ pdf.setFillColor(11,18,32); pdf.rect(0,0,W,H,'F'); pdf.addImage(img,'PNG',0,0,iw,ih); }
+    else{ let kalan=ih; while(kalan>0){ pdf.setFillColor(11,18,32); pdf.rect(0,0,W,H,'F'); pdf.addImage(img,'PNG',0,y,iw,ih); kalan-=H; y-=H; if(kalan>0)pdf.addPage(); } }
+    pdf.save('ders-atlasi.pdf'); toast('📥 PDF indirildi','ok');
+  }catch(e){ toast('PDF oluşturulamadı (internet gerekli)','err'); }
+}
+let sonBaslik='Değişim Koleji · Ders Atlası';
+
+/* ============================================================
+   AYARLAR (anahtarlar + sağlık + test + yüzen düğmeler)
+   ============================================================ */
+function ayarAc(sek){
+  ringLoad();
+  $('#ayarModalIc').innerHTML=`
+    <div class="mbas"><div class="ik">⚙️</div><div><h3>Ayarlar</h3><div class="alt">API anahtarları · Yapay zekâ · Yüzen düğmeler</div></div>
+      <div class="kapat" onclick="modalKapat('ayarModal')">✕</div></div>
+    <div class="mgov">
+      <div class="ay-sek">
+        <button data-s="anahtarlar" class="aktif">🔑 API Anahtarları</button>
+        <button data-s="dugmeler">🎛️ Yüzen Düğmeler</button>
+      </div>
+      <div class="ay-pan acik" id="pan-anahtarlar">
+        <label class="fl">Gemini API anahtar(lar)ın — her satıra bir anahtar:</label>
+        <textarea class="key" id="keyBox" placeholder="AIzaSy...">${keyler().join('\n')}</textarea>
+        <div class="btnsira">
+          <button class="btn p" onclick="keyKaydet()">💾 Kaydet</button>
+          <button class="btn g" onclick="keyKopyala()">📋 Tüm Anahtarları Kopyala</button>
+          <button class="btn g" onclick="keyYapistir()">📥 Panodan Yapıştır</button>
+          <button class="btn y" onclick="keyTest()">🧪 Anahtarları Test Et</button>
+        </div>
+        <div class="saglik" id="saglikPan"></div>
+        <div class="rehber">
+          <b>Ücretsiz anahtar nasıl alınır?</b>
+          <ol>
+            <li><a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> adresine gir (Google hesabı yeterli).</li>
+            <li><b>Create API key</b> de, oluşan <b>AIza…</b> anahtarını kopyala.</li>
+            <li>Yukarıdaki kutuya yapıştır → <b>Kaydet</b>. Birden fazla anahtar girersen kota bittiğinde otomatik diğerine geçer.</li>
+          </ol>
+          <div style="margin-top:8px"><a class="btn p" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" style="text-decoration:none">🔑 Ücretsiz Anahtar Al</a></div>
+        </div>
+      </div>
+      <div class="ay-pan" id="pan-dugmeler">
+        <div id="dugmeListe"></div>
+        <div class="btnsira" style="margin-top:6px">
+          <button class="btn g" onclick="tumDugme(true)">Hepsini Göster</button>
+          <button class="btn g" onclick="tumDugme(false)">Hepsini Gizle</button>
+        </div>
+      </div>
+    </div>`;
+  $$('#ayarModalIc .ay-sek button').forEach(b=>b.onclick=()=>{
+    $$('#ayarModalIc .ay-sek button').forEach(x=>x.classList.remove('aktif')); b.classList.add('aktif');
+    $$('#ayarModalIc .ay-pan').forEach(p=>p.classList.remove('acik')); $('#pan-'+b.dataset.s).classList.add('acik');
+    if(b.dataset.s==='dugmeler') renderDugmeListe();
+  });
+  modalAc('ayarModal');
+  if(sek==='dugmeler'){ $('#ayarModalIc .ay-sek button[data-s=dugmeler]').click(); }
+}
+function keyKaydet(){ const arr=$('#keyBox').value.split('\n').map(s=>s.trim()).filter(s=>s.length>10); const tekil=[...new Set(arr)]; LS.set('dk_keys',tekil); RING=tekil; AKTIF_MODEL=null; LS.del('dk_model'); toast('💾 '+tekil.length+' anahtar kaydedildi','ok'); }
+function keyKopyala(){ navigator.clipboard.writeText(keyler().join('\n')).then(()=>toast('📋 Anahtarlar kopyalandı','ok')); }
+async function keyYapistir(){ try{ const t=await navigator.clipboard.readText(); const yeni=t.split('\n').map(s=>s.trim()).filter(s=>s.length>10); const birlesik=[...new Set([...keyler(),...yeni])]; $('#keyBox').value=birlesik.join('\n'); LS.set('dk_keys',birlesik); RING=birlesik; toast('📥 Yapıştırıldı ('+yeni.length+' yeni)','ok'); }catch(e){ toast('Pano okunamadı','err'); } }
+async function keyTest(){
+  const ks=$('#keyBox').value.split('\n').map(s=>s.trim()).filter(s=>s.length>10);
+  const pan=$('#saglikPan'); if(!ks.length){ pan.innerHTML='<div class="sr">Önce anahtar girin.</div>'; return; }
+  pan.innerHTML=ks.map((k,i)=>`<div class="sr" id="sr${i}"><span class="dot" style="background:#64748b"></span><span class="msk">#${i+1} ${maskele(k)}</span><span class="dr">⏳ test…</span></div>`).join('');
+  for(let i=0;i<ks.length;i++){ const r=await ZIRVE.anahtarTest(ks[i]); const el=$('#sr'+i);
+    const renk=r.durum==='ok'?'#22c55e':(r.durum==='kota'?'#eab308':'#ef4444');
+    el.querySelector('.dot').style.background=renk; el.querySelector('.dr').textContent=r.mesaj;
+  }
+}
+function renderDugmeListe(){
+  const y=$('#dugmeListe'); if(!window.ZIRVE_kontroller){y.innerHTML='';return;}
+  y.innerHTML=window.ZIRVE_kontroller.map(k=>`
+    <div class="fl-satir"><span style="font-size:18px">${k.ikon}</span><span class="ad">${k.etiket}</span>
+      <label class="switch sw"><input type="checkbox" ${k.acikMi()?'checked':''} onchange="dugmeToggle('${k.id}',this.checked)"><span class="sl"></span></label></div>`).join('');
+}
+function dugmeToggle(id,on){ const k=window.ZIRVE_kontroller.find(x=>x.id===id); if(!k)return; on?k.goster():k.gizle(); }
+function tumDugme(on){ window.ZIRVE_kontroller.forEach(k=>on?k.goster():k.gizle()); renderDugmeListe(); }
+
+/* ============================================================
+   YÜZEN KONTROLLER (registry) : ekran pill, yardım, QR, AI
+   ============================================================ */
+window.ZIRVE_kontroller=[];
+function kontrolKayit(k){ window.ZIRVE_kontroller.push(k); }
+window.ZIRVE_kontrolleriGeriGetir=function(){ window.ZIRVE_kontroller.forEach(k=>k.goster()); ['dk_pill_gizli','dk_yardim_gizli','dk_qr_gizli','dk_ai_gizli'].forEach(f=>LS.del(f)); toast('🎛️ Tüm düğmeler geri geldi','ok'); };
+
+function fabYap({id,ikon,etiket,tik,ai,bayrak}){
+  const fab=document.createElement('div'); fab.className='fab'+(ai?' ai':''); fab.title=etiket; fab.innerHTML=ikon;
+  const x=document.createElement('div'); x.className='x'; x.innerHTML='×'; x.title='Gizle';
+  x.onclick=(e)=>{e.stopPropagation(); gizle();}; fab.appendChild(x);
+  fab.addEventListener('click',tik);
+  $('#fabgrup').appendChild(fab);
+  const goster=()=>{ fab.style.display='grid'; LS.set(bayrak,false); };
+  const gizle=()=>{ fab.style.display='none'; LS.set(bayrak,true); };
+  if(LS.get(bayrak,false)) gizle();
+  kontrolKayit({id,ikon,etiket,goster,gizle,acikMi:()=>fab.style.display!=='none'});
+}
+
+/* Ekran uyum modülü (📺 pill) */
+const EKRAN_MODLAR=[
+  {ad:'Oto',oto:true},{ad:'Tablet',z:1},{ad:'Akıllı Tahta',z:1.35},{ad:'Büyük Tahta',z:1.6}
+];
+let ekranMod=LS.get('dk_ekran_mod', 0);
+function otoOlcek(){
+  const w=innerWidth, dpr=devicePixelRatio||1, dokun=('ontouchstart'in window)||navigator.maxTouchPoints>0;
+  if(w>=2200) return 1.6; if(w>=1600 && dokun && dpr<=1.5) return 1.35; if(w>=1500) return 1.15; return 1;
+}
+function ekranUygula(){
+  const m=EKRAN_MODLAR[ekranMod]; const z=m.oto?otoOlcek():m.z;
+  document.documentElement.style.zoom=z; const p=$('#ekranPillTxt'); if(p)p.textContent='📺 '+m.ad+(m.oto?' ('+z.toFixed(2)+')':'');
+}
+window.ZIRVE_ekranReset=function(){ document.documentElement.style.zoom=1; };
+window.ZIRVE_ekranGeri=function(){ ekranUygula(); };
+function ekranPillYap(){
+  const pill=document.createElement('div'); pill.className='pill'; pill.id='ekranPill';
+  pill.innerHTML='<span id="ekranPillTxt">📺</span><span class="x" title="Gizle">×</span>';
+  pill.querySelector('#ekranPillTxt').onclick=()=>{ ekranMod=(ekranMod+1)%EKRAN_MODLAR.length; LS.set('dk_ekran_mod',ekranMod); LS.set('dk_ekran_elle',true); ekranUygula(); toast('📺 Mod: '+EKRAN_MODLAR[ekranMod].ad,'info',1500); };
+  pill.querySelector('.x').onclick=(e)=>{e.stopPropagation(); gizle();};
+  $('#pillYuva').appendChild(pill);
+  const goster=()=>{pill.style.display='flex';LS.set('dk_pill_gizli',false)};
+  const gizle=()=>{pill.style.display='none';LS.set('dk_pill_gizli',true)};
+  if(LS.get('dk_pill_gizli',false)) gizle();
+  kontrolKayit({id:'ekran',ikon:'📺',etiket:'Ekran / Akıllı Tahta modu',goster,gizle,acikMi:()=>pill.style.display!=='none'});
+  ekranUygula();
+  window.addEventListener('resize',()=>{ if(!LS.get('dk_ekran_elle',false) && EKRAN_MODLAR[ekranMod].oto) ekranUygula(); });
+}
+
+/* QR paylaş */
+window.ZIRVE_paylasAc=async function(){
+  $('#qrModalIc').innerHTML=`<div class="mbas"><div class="ik">📲</div><div><h3>QR ile Paylaş</h3><div class="alt">Akıllı tahtada göster, veliler telefonuyla açsın</div></div><div class="kapat" onclick="modalKapat('qrModal')">✕</div></div>
+   <div class="mgov qr-govde"><div id="qrKutu" class="qr-kutu"><div class="spin"><span class="d"></span>QR üretiliyor…</div></div>
+     <div class="qr-adres" id="qrAdres"></div>
+     <div class="btnsira" style="justify-content:center"><button class="btn g" onclick="qrKopyala()">🔗 Linki kopyala</button><button class="btn p" onclick="qrIndir()">📥 PNG indir</button></div></div>`;
+  modalAc('qrModal');
+  const url=location.href; $('#qrAdres').textContent=url;
+  if(location.protocol==='file:'||/localhost|127\.0\.0/.test(location.host)){ $('#qrKutu').innerHTML='<div style="color:#334;padding:20px">Önce siteyi GitHub Pages’e yükleyin; yerelde QR paylaşımı çalışmaz.</div>'; return; }
+  try{ await scriptYukle('https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js'); const qr=qrcode(0,'M'); qr.addData(url); qr.make();
+    $('#qrKutu').innerHTML=qr.createImgTag(6,8);
+  }catch(e){ $('#qrKutu').innerHTML='<div style="color:#334;padding:20px">QR üretilemedi (internet gerekli).</div>'; }
+};
+function qrKopyala(){ navigator.clipboard.writeText(location.href).then(()=>toast('🔗 Link kopyalandı','ok')); }
+function qrIndir(){ const img=$('#qrKutu img'); if(!img)return; const a=document.createElement('a'); a.href=img.src; a.download='ders-atlasi-qr.png'; a.click(); }
+
+/* ============================================================
+   KARŞILAMA
+   ============================================================ */
+const KARSILAMA={ baslik:'Değişim Koleji · Ders Atlası’na hoş geldiniz', ozet:'Robotik, kodlama, yapay zekâ, satranç ve akıl-zeka oyunları için hazırladığınız bir yıllık ders panosu. Akıllı tahtada veli toplantısında da rahatça açabilirsiniz.',
+  adimlar:[
+    '<b>Genel Bakış</b> sekmesi veli sunumu içindir: programın özetini, istatistikleri ve dersleri gösterir.',
+    '<b>Yıllık Plan</b>’da sınıfı seçin; ilk haftadan son haftaya tüm konular, kazanımlar, etkinlikler ve araçlar önünüzde.',
+    'Bir haftaya tıklayın → <b>✨ Yapay Zeka ile</b> ek etkinlik, veli açıklaması, ders akışı üretin.',
+    '<b>Araç Kütüphanesi</b>: Scratch, Code.org, micro:bit, Lichess, Teachable Machine ve daha fazlası — hepsi ücretsiz.',
+    'Yapay zekâ için: <b>⚙️ Ayarlar → ücretsiz Gemini API anahtarı</b> girin. Sağ altta 📺 akıllı tahta modu, 📲 QR paylaşımı, ✨ asistan.'
+  ]};
+function karsilamaGoster(zorla){
+  if(!zorla && LS.get('dk_kars_gorundu',false)) return;
+  $('#karsModalIc').innerHTML=`<div class="mbas"><div class="ik">👋</div><div><h3>Nasıl Kullanılır?</h3></div><div class="kapat" onclick="modalKapat('karsModal')">✕</div></div>
+    <div class="mgov"><div class="hg"><div class="ib">🎓</div><h2>${KARSILAMA.baslik}</h2>
+      <p style="color:var(--soluk);max-width:520px;margin:6px auto 0">${KARSILAMA.ozet}</p>
+      <ol>${KARSILAMA.adimlar.map(a=>'<li>'+a+'</li>').join('')}</ol>
+      <div style="margin-top:20px"><button class="btn p" onclick="modalKapat('karsModal')">Başlayalım 🚀</button></div></div></div>`;
+  modalAc('karsModal'); LS.set('dk_kars_gorundu',true);
+}
+function yardimFab(){
+  fabYap({id:'yardim',ikon:'?',etiket:'Nasıl kullanılır',bayrak:'dk_yardim_gizli',tik:()=>karsilamaGoster(true)});
+}
+
+/* ============================================================
+   GÖRÜNÜM DEĞİŞTİR + BAŞLAT
+   ============================================================ */
+function viewDegis(v){
+  ST.view=v; stKaydet();
+  $$('#seritler .seri').forEach(s=>s.classList.toggle('aktif',s.dataset.v===v));
+  $('#v-veli').style.display=v==='veli'?'block':'none';
+  $('#v-plan').style.display=v==='plan'?'block':'none';
+  $('#v-araclar').style.display=v==='araclar'?'block':'none';
+  if(v==='plan'){ renderSiniflar(); renderFiltre(); renderPlan(); }
+}
+$$('#seritler .seri').forEach(s=>s.onclick=()=>viewDegis(s.dataset.v));
+$('#araInput').addEventListener('input',e=>{ ST.ara=e.target.value; $('#araX').style.display=e.target.value?'block':'none'; renderPlanGrid(); });
+$('#araX').onclick=()=>{ ST.ara=''; $('#araInput').value=''; $('#araX').style.display='none'; renderPlanGrid(); };
+
+function basla(){
+  renderVeli(); renderAraclar(); renderFiltre(); renderSiniflar();
+  viewDegis(ST.view||'veli');
+  // yüzen kontroller
+  ekranPillYap();
+  yardimFab();
+  fabYap({id:'qr',ikon:'📲',etiket:'QR ile paylaş',bayrak:'dk_qr_gizli',tik:()=>ZIRVE_paylasAc()});
+  fabYap({id:'ayar',ikon:'⚙️',etiket:'Ayarlar',bayrak:'dk_ayar_gizli',tik:()=>ayarAc()});
+  fabYap({id:'ai',ikon:'✨',etiket:'Ders Asistanı',bayrak:'dk_ai_gizli',ai:true,tik:()=>asistanAc()});
+  uyariBandiGoster();
+  karsilamaGoster(false);
+}
+basla();
+</script>
+</body>
+</html>
