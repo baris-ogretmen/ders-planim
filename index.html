@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Değişim Koleji · Ders Atlası — Robotik · Kodlama · Yapay Zeka · Satranç · Akıl Oyunları</title>
+<title>Barış Öğretmen · Yıllık Ders Planı</title>
 <style>
 :root{
   --bg:#070b18; --bg2:#0b1327; --panel:#111c36; --panel2:#0e1830;
@@ -275,30 +275,45 @@ textarea.key{min-height:90px;resize:vertical}
   .izgara{grid-template-columns:1fr}
 }
 @media print{ html{zoom:1 !important} .fabgrup,.pill,.uyari-bant,.toastlar,.seritler,.filtre{display:none !important} }
+
+.ustlbl{font-size:11px;font-weight:800;letter-spacing:2px;color:#a7c4ff;opacity:.9;margin-bottom:3px}
+.istat .it{border:none;color:#fff;box-shadow:0 8px 22px rgba(0,0,0,.28)}
+.istat .it .ib{font-size:26px;margin-bottom:2px}
+.istat .it .num{-webkit-text-fill-color:#fff;background:none;color:#fff}
+.istat .it .lbl{color:rgba(255,255,255,.95)}
+.dk{cursor:pointer}
+.dk .oktik{position:absolute;top:14px;right:16px;font-size:12px;font-weight:800;color:#fff;opacity:.85}
+.kd-neler{display:grid;gap:8px}
+.kd-neler .li{display:flex;gap:9px;align-items:flex-start;background:var(--panel2);border:1px solid var(--cizgi);border-radius:11px;padding:10px 12px;font-size:13.5px}
+.kd-neler .li .ik{flex:0 0 auto;font-size:16px}
+.kd-hafta{display:flex;flex-wrap:wrap;gap:6px}
+.kd-hafta .h{font-size:11.5px;font-weight:700;padding:5px 9px;border-radius:8px;background:rgba(255,255,255,.05);border:1px solid var(--cizgi);color:var(--soluk)}
+.arac-mini{display:flex;flex-wrap:wrap;gap:8px}
+.fabgrup{inset:0;right:auto;bottom:auto;display:block;pointer-events:none}
+.fab{position:fixed;pointer-events:auto;touch-action:none;cursor:grab}
+.fab:active{cursor:grabbing}
+.pill{touch-action:none;cursor:grab}
 </style>
+
 </head>
 <body>
 <div class="wrap">
 
   <div class="hero">
     <div class="hero-top">
-      <div class="logo">🎓</div>
+      <div class="logo">📘</div>
       <div style="min-width:0">
-        <h1>Değişim Koleji · Ders Atlası</h1>
-        <div class="alt">Robotik &nbsp;•&nbsp; Kodlama &nbsp;•&nbsp; Yapay Zeka &nbsp;•&nbsp; Satranç &nbsp;•&nbsp; Akıl-Zeka Oyunları</div>
-      </div>
-      <div class="ogretmen">
-        <span>Ders Öğretmeni</span>
-        <b>Barış</b>
-        <span style="opacity:.8">2025–2026 Yıllık Program</span>
+        <div class="ustlbl">YILLIK DERS PLANI · 2025–2026</div>
+        <h1>Barış Öğretmen</h1>
+        <div class="alt">Robotik · Kodlama · Yapay Zeka · Satranç · Akıl-Zeka Oyunları</div>
       </div>
     </div>
     <div class="rozetler">
-      <span class="rozet">📅 36 Haftalık Plan</span>
+      <span class="rozet">📅 36 Hafta</span>
       <span class="rozet">👧 Anaokulu → 8. Sınıf</span>
-      <span class="rozet">🧰 25+ Çevrimiçi Araç</span>
-      <span class="rozet">✨ Yapay Zeka Destekli Asistan</span>
-      <span class="rozet">📺 Akıllı Tahta Uyumlu</span>
+      <span class="rozet">🧰 50+ Araç</span>
+      <span class="rozet">✨ Yapay Zeka Asistanı</span>
+      <span class="rozet">📺 Akıllı Tahta</span>
     </div>
   </div>
 
@@ -350,6 +365,8 @@ textarea.key{min-height:90px;resize:vertical}
 <div class="modal-bg" id="karsModal"><div class="modal" id="karsModalIc"></div></div>
 <!-- MODAL: QR -->
 <div class="modal-bg" id="qrModal"><div class="modal" id="qrModalIc"></div></div>
+<!-- MODAL: KONU DETAY -->
+<div class="modal-bg" id="konuModal"><div class="modal" id="konuModalIc"></div></div>
 
 <script>
 /* ============================================================
@@ -412,15 +429,46 @@ const ARACLAR = {
   setgame:    {ad:'SET (Günlük Bulmaca)',url:'https://www.setgame.com/set/puzzle',        ik:'🃏', ders:'akil',     yas:'8-14 yaş', desc:'Örüntü ve dikkat oyunu. Her gün yeni bulmaca; hızlı zihin ısınması.'},
   p2048:      {ad:'2048',                url:'https://play2048.co',                       ik:'🔢', ders:'akil',     yas:'8-14 yaş', desc:'Sayı birleştirme; planlama ve ileriyi görme becerisi. Kısa ve bağımlılık yapan.'},
   coolmath:   {ad:'Coolmath Logic',      url:'https://www.coolmathgames.com/0-logic',     ik:'🎯', ders:'akil',     yas:'8-14 yaş', desc:'Mantık ve strateji oyunları arşivi. Ödül/çeşitlilik için yedek kaynak.'},
+  tynker:     {ad:'Tynker',              url:'https://www.tynker.com',                    ik:'🧙', ders:'kodlama',  yas:'5-14 yaş', desc:'Oyunlaştırılmış blok kodlama kursları; hikâye tabanlı görevlerle ilerler.'},
+  codemonkey: {ad:'CodeMonkey',          url:'https://www.codemonkey.com',                ik:'🐵', ders:'kodlama',  yas:'6-14 yaş', desc:'Maymunu yönlendirerek gerçek kod yazma mantığı; birçok bölüm ücretsiz.'},
+  snap:       {ad:'Snap!',               url:'https://snap.berkeley.edu',                 ik:'🫰', ders:'kodlama',  yas:'10-14 yaş',desc:'Scratch’in gelişmiş kuzeni; ileri blok kodlama ve kendi bloklarını yapma.'},
+  p5js:       {ad:'p5.js Editör',        url:'https://editor.p5js.org',                   ik:'🎨', ders:'kodlama',  yas:'11-14 yaş',desc:'JavaScript ile yaratıcı kodlama (çizim/animasyon). Tarayıcıda çalışır.'},
+  turtle:     {ad:'Turtle Academy',      url:'https://turtleacademy.com',                 ik:'🐢', ders:'kodlama',  yas:'8-14 yaş', desc:'Logo/kaplumbağa ile komutla şekil çizme; geometri + kodlama bir arada.'},
+  replit:     {ad:'Replit',              url:'https://replit.com',                        ik:'🧵', ders:'kodlama',  yas:'12-14 yaş',desc:'Tarayıcıda gerçek Python/JavaScript editörü; kurulum gerekmez.'},
+  openroberta:{ad:'Open Roberta Lab',    url:'https://lab.open-roberta.org',              ik:'🧭', ders:'robotik',  yas:'8-14 yaş', desc:'Sanal robotları blokla programla ve simülatörde çalıştır; kart gerekmez.'},
+  wokwi:      {ad:'Wokwi Simülatör',     url:'https://wokwi.com',                         ik:'🔧', ders:'robotik',  yas:'11-14 yaş',desc:'Arduino/ESP/micro:bit online simülatörü; devreyi kur, kodla, çalıştır.'},
+  vexvr:      {ad:'VEXcode VR',          url:'https://vr.vex.com',                        ik:'🦾', ders:'robotik',  yas:'9-14 yaş', desc:'Sanal robotu blok veya Python ile görevlerde programla; donanımsız.'},
+  arduino:    {ad:'Arduino',             url:'https://www.arduino.cc',                    ik:'📗', ders:'robotik',  yas:'12-14 yaş',desc:'Fiziksel projeler için kart + editör. Wokwi ile simülasyon da mümkün.'},
+  mcarcade:   {ad:'MakeCode Arcade',     url:'https://arcade.makecode.com',               ik:'🕹️', ders:'robotik',  yas:'8-14 yaş', desc:'Blokla retro oyun ve robot mantığı; simülatörlü, kart gerektirmez.'},
+  mpython:    {ad:'micro:bit Python',    url:'https://python.microbit.org',               ik:'🐍', ders:'robotik',  yas:'10-14 yaş',desc:'micro:bit için Python editörü + simülatör; metin tabanlı koda geçiş.'},
+  akinator:   {ad:'Akinator',            url:'https://tr.akinator.com',                   ik:'🧞', ders:'yapayzeka',yas:'6-14 yaş', desc:'Aklından tuttuğun karakteri sorularla tahmin eden YZ; çıkarım sohbeti.'},
+  emojihunt:  {ad:'Emoji Avı',           url:'https://emojiscavengerhunt.withgoogle.com', ik:'📷', ders:'yapayzeka',yas:'6-12 yaş', desc:'Kamerayla nesne bulma yarışı; makine görüşünü eğlenceli gösterir.'},
+  elementsai: {ad:'Elements of AI',      url:'https://www.elementsofai.com',              ik:'🎓', ders:'yapayzeka',yas:'öğretmen',  desc:'Ücretsiz “Yapay Zekânın Temelleri” kursu; öğretmen alt yapısı için ideal.'},
+  lichesspuzzle:{ad:'Lichess Bulmaca',   url:'https://lichess.org/training',              ik:'🧩', ders:'satranc',  yas:'7-14 yaş', desc:'Binlerce ücretsiz satranç taktik bulmacası; seviyeye göre otomatik.'},
+  lichesslearn:{ad:'Lichess Öğren',      url:'https://lichess.org/learn',                 ik:'📘', ders:'satranc',  yas:'6-12 yaş', desc:'İnteraktif satranç dersleri: taş hareketlerinden matlara kadar.'},
+  chesstempo: {ad:'Chesstempo',          url:'https://chesstempo.com',                    ik:'⏱️', ders:'satranc',  yas:'10-14 yaş',desc:'Taktik antrenmanı ve bulmacalar; ilerleme takibi ile.'},
+  sudoku:     {ad:'Sudoku',              url:'https://sudoku.com',                        ik:'🔢', ders:'akil',     yas:'8-14 yaş', desc:'Klasik sudoku; seviyeli. Mantık ve sabır için birebir.'},
+  nrich:      {ad:'NRICH',               url:'https://nrich.maths.org',                   ik:'🧠', ders:'akil',     yas:'8-14 yaş', desc:'Cambridge’in zengin matematik/mantık bulmacaları; derin düşünme.'},
+  abcya:      {ad:'ABCya',               url:'https://www.abcya.com',                     ik:'🎈', ders:'akil',     yas:'5-10 yaş', desc:'Küçük yaşlar için mantık, hafıza ve beceri oyunları arşivi.'},
+  toytheater: {ad:'Toy Theater',         url:'https://toytheater.com/category/logic-puzzles', ik:'🎭', ders:'akil', yas:'5-9 yaş',  desc:'Anaokulu-ilkokul için basit mantık ve bulmaca oyunları.'},
+  kenken:     {ad:'KenKen',              url:'https://www.kenkenpuzzle.com',              ik:'➗', ders:'akil',     yas:'9-14 yaş', desc:'Aritmetik + mantık ızgara bulmacaları; hazır sınıf sayfaları.'},
+  brainbashers:{ad:'BrainBashers',       url:'https://www.brainbashers.com',              ik:'🧷', ders:'akil',     yas:'10-14 yaş',desc:'Mantık bulmacaları, optik yanılsamalar ve zekâ soruları.'},
+  wordwall:   {ad:'Wordwall',            url:'https://wordwall.net',                      ik:'🎡', ders:'sinif',    yas:'öğretmen',  desc:'Sürükle-bırak ile eşleştirme/çark/quiz oyunları oluştur; hazır şablonlar.'},
+  kahoot:     {ad:'Kahoot!',             url:'https://kahoot.com',                        ik:'🟪', ders:'sinif',    yas:'öğretmen',  desc:'Canlı sınıf yarışması quizleri; öğrenciler telefondan katılır.'},
+  quizizz:    {ad:'Quizizz',             url:'https://quizizz.com',                       ik:'🟩', ders:'sinif',    yas:'öğretmen',  desc:'Oyunlaştırılmış quiz ve dersler; öğrenci kendi hızında çalışır.'},
+  blooket:    {ad:'Blooket',             url:'https://www.blooket.com',                   ik:'🟨', ders:'sinif',    yas:'öğretmen',  desc:'Quiz sorularını eğlenceli oyun modlarıyla oynatma.'},
+  canva:      {ad:'Canva',               url:'https://www.canva.com',                     ik:'🖼️', ders:'sinif',    yas:'öğretmen',  desc:'Afiş, sertifika, sunum tasarımı; eğitimcilere ücretsiz sürüm.'},
+  padlet:     {ad:'Padlet',              url:'https://tr.padlet.com',                     ik:'📌', ders:'sinif',    yas:'öğretmen',  desc:'Dijital pano: öğrenci çalışmalarını toplama ve sergileme.'},
 };
+const SINIF_META={ad:'Sınıf & Sunum Araçları', ik:'🎬', dr:'#4f46e5', dr2:'#818cf8'};
 
 /* Düzeye göre ders → araç seti */
 const DUZEY_ARAC = {
-  ana:{genel:['quickdraw','scratchjr'], akil:['mathpg','kodable'], kodlama:['scratchjr','codeorg','kodable'], robotik:['codeorg','scratchjr'], yapayzeka:['quickdraw','autodraw','teachable'], satranc:['chesskid']},
-  '12':{genel:['scratch','quickdraw'], akil:['lightbot','mathpg','kodable'], kodlama:['scratchjr','scratch','codeorg','blockly'], robotik:['codeorg','makecode','blockly'], yapayzeka:['quickdraw','autodraw','teachable','semantris'], satranc:['chesskid','lichess']},
-  '34':{genel:['scratch','quickdraw'], akil:['lightbot','mathpg','setgame','coolmath'], kodlama:['scratch','codeorg','blockly'], robotik:['makecode','microbit','mblock','tinkercad'], yapayzeka:['teachable','mlforkids','semantris','quickdraw'], satranc:['chesskid','lichess','chesscom']},
-  '56':{genel:['scratch'], akil:['lightbot','setgame','p2048','mathpg','coolmath'], kodlama:['scratch','codeorg','blockly'], robotik:['makecode','microbit','mblock','tinkercad'], yapayzeka:['mlforkids','teachable','semantris','experiments'], satranc:['lichess','chesscom']},
-  '78':{genel:['scratch','trinket'], akil:['setgame','p2048','coolmath','lichess'], kodlama:['scratch','codeorg','trinket','blockly'], robotik:['makecode','microbit','tinkercad','mblock'], yapayzeka:['mlforkids','teachable','experiments','semantris'], satranc:['lichess','chesscom']},
+  ana:{genel:['quickdraw','scratchjr'], akil:['mathpg','kodable','toytheater','abcya'], kodlama:['scratchjr','codeorg','kodable','tynker'], robotik:['codeorg','scratchjr','mcarcade'], yapayzeka:['quickdraw','autodraw','emojihunt'], satranc:['chesskid','lichesslearn']},
+  '12':{genel:['scratch','quickdraw'], akil:['lightbot','mathpg','kodable','abcya'], kodlama:['scratchjr','scratch','codeorg','blockly','tynker'], robotik:['codeorg','makecode','openroberta','mcarcade'], yapayzeka:['quickdraw','autodraw','teachable','emojihunt'], satranc:['chesskid','lichesslearn','lichess']},
+  '34':{genel:['scratch','quickdraw'], akil:['lightbot','mathpg','setgame','sudoku'], kodlama:['scratch','codeorg','blockly','turtle','codemonkey'], robotik:['makecode','microbit','mblock','openroberta','tinkercad'], yapayzeka:['teachable','mlforkids','semantris','akinator'], satranc:['chesskid','lichesspuzzle','lichess']},
+  '56':{genel:['scratch','snap'], akil:['lightbot','setgame','p2048','nrich','kenken'], kodlama:['scratch','codeorg','snap','blockly'], robotik:['makecode','microbit','mblock','openroberta','wokwi','vexvr'], yapayzeka:['mlforkids','teachable','semantris','experiments'], satranc:['lichesspuzzle','lichess','chesscom']},
+  '78':{genel:['scratch','trinket','replit'], akil:['setgame','p2048','nrich','brainbashers','lichesspuzzle'], kodlama:['scratch','trinket','replit','p5js','codeorg'], robotik:['makecode','mpython','wokwi','tinkercad','vexvr','arduino'], yapayzeka:['mlforkids','teachable','experiments','elementsai'], satranc:['lichesspuzzle','chesscom','chesstempo']},
 };
 
 /* ---- 36 HAFTALIK PROGRAM OMURGASI ---- */
@@ -685,10 +733,11 @@ $$('.modal-bg').forEach(m=>m.addEventListener('click',e=>{ if(e.target===m){ m.c
 function renderVeli(){
   const dersArr=Object.entries(DERSLER).filter(([k])=>k!=='genel');
   const dersHTML=dersArr.map(([k,d])=>`
-    <div class="dk" style="--dr:${d.dr};--dr2:${d.dr2}">
+    <div class="dk" style="--dr:${d.dr};--dr2:${d.dr2}" onclick="subjectDetay('${k}')">
+      <span class="oktik">İncele →</span>
       <div class="ib">${d.ik}</div><h3>${d.ad}</h3>
       <p>${DERS_TANIM[k]}</p>
-      <span class="tag">Anaokulu → 8. Sınıf</span>
+      <span class="tag">Detay için tıkla</span>
     </div>`).join('');
   const ped=[
     ['🎯','Kazanım Odaklı','Her hafta net bir kazanım; soyut kavramlar somut etkinlik ve oyunla veriliyor.'],
@@ -699,13 +748,13 @@ function renderVeli(){
   $('#v-veli').innerHTML=`
     <div class="veli-hero">
       <h2>🏛️ Bir Yıllık Yolculuğumuz</h2>
-      <p class="big">Değişim Koleji öğrencileri bu yıl <b>düşünmeyi, üretmeyi ve teknolojiye yön vermeyi</b> öğreniyor. Kodlamadan robotiğe, yapay zekâdan satranca; her sınıf düzeyine uygun, oyunla harmanlanmış <b>36 haftalık</b> bir program hazırladık.</p>
+      <p class="big">Öğrencilerimiz bu yıl <b>düşünmeyi, üretmeyi ve teknolojiye yön vermeyi</b> öğreniyor. Kodlamadan robotiğe, yapay zekâdan satranca; her sınıf düzeyine uygun, oyunla harmanlanmış <b>36 haftalık</b> bir program hazırladık.</p>
       <div class="istat">
-        <div class="it"><div class="num">36</div><div class="lbl">Haftalık Plan</div></div>
-        <div class="it"><div class="num">5</div><div class="lbl">Ders Alanı</div></div>
-        <div class="it"><div class="num">9</div><div class="lbl">Sınıf Düzeyi</div></div>
-        <div class="it"><div class="num">25+</div><div class="lbl">Çevrimiçi Araç</div></div>
-        <div class="it"><div class="num">100%</div><div class="lbl">Uygulamalı</div></div>
+        <div class="it" style="background:linear-gradient(160deg,#7c3aed,#a78bfa)"><div class="ib">📅</div><div class="num">36</div><div class="lbl">Haftalık Plan</div></div>
+        <div class="it" style="background:linear-gradient(160deg,#0891b2,#22d3ee)"><div class="ib">🎓</div><div class="num">5</div><div class="lbl">Ders Alanı</div></div>
+        <div class="it" style="background:linear-gradient(160deg,#db2777,#f472b6)"><div class="ib">👧</div><div class="num">9</div><div class="lbl">Sınıf Düzeyi</div></div>
+        <div class="it" style="background:linear-gradient(160deg,#ea580c,#fb923c)"><div class="ib">🧰</div><div class="num">50+</div><div class="lbl">Çevrimiçi Araç</div></div>
+        <div class="it" style="background:linear-gradient(160deg,#059669,#34d399)"><div class="ib">⚡</div><div class="num">100%</div><div class="lbl">Uygulamalı</div></div>
       </div>
       <div class="ders-kartlari" style="margin-top:22px">${dersHTML}</div>
       <div class="pedagoji">${ped}</div>
@@ -719,6 +768,48 @@ const DERS_TANIM={
   satranc:'Tahta ve taşlardan açılış ilkeleri ve taktiklere; dikkat, planlama ve sabır geliştiren turnuvalar.',
   akil:'Örüntü, mantık ve strateji oyunları; hafıza, dikkat ve hızlı düşünme için istasyon çalışmaları ve turnuvalar.',
 };
+const KONU_DETAY={
+  kodlama:{ozet:'Blok tabanlıdan metin tabanlıya, algoritmik düşünme.', ipucu:'ScratchJr ile başla, Scratch ile derinleştir, 7-8’de Trinket/Replit ile Python’a köprü kur.', neler:[['🧭','<b>Algoritma:</b> bir işi mantıklı adımlara bölme'],['🔁','<b>Döngüler</b> ve tekrar eden işler'],['🔀','<b>Koşullar</b> (eğer/ise) ile karar verme'],['🎮','Oyun ve animasyon projeleri üretme'],['🐍','Büyük sınıflarda <b>Python</b>’a geçiş']]},
+  robotik:{ozet:'Sensör-motor-kontrol; donanımsız da simülatörle uygulanabilir.', ipucu:'Bütçe yoksa MakeCode simülatörü, Wokwi ve Open Roberta ile donanımsız tam robotik yapılır.', neler:[['⚙️','Robotun parçaları: <b>sensör, motor, kontrol</b>'],['🕹️','Yönergeyle hareket ettirme'],['🚦','Sensörle karar verdirme (engelden kaçma, çizgi izleme)'],['🧪','Simülatörde deneme (kart olmadan)'],['🔌','micro:bit / mBot / Arduino ile gerçek projeler']]},
+  yapayzeka:{ozet:'“Makine nasıl öğrenir?”den kendi modelini eğitmeye.', ipucu:'Quick Draw ile merak uyandır, Teachable Machine ile üret, büyük sınıfta etik tartış.', neler:[['🤔','YZ nedir, günlük hayatta nerede karşımıza çıkar?'],['📚','Makine örneklerden öğrenir (<b>veri → model</b>)'],['🎓','<b>Teachable Machine</b> ile kendi modelini eğitme'],['🛡️','Sorumlu ve etik kullanım — “YZ yanılırsa?”'],['🧩','YZ + robotik: akıllı sistemler']]},
+  satranc:{ozet:'Tahtadan turnuvaya; dikkat, sabır, planlama.', ipucu:'Küçüklerde ChessKid, büyüklerde Lichess taktik bulmacaları en verimlisi.', neler:[['♟️','Tahta, taşlar ve hareketleri'],['🏰','Şah, rok, <b>mat</b> kavramları'],['🎯','Açılış ilkeleri ve basit taktikler (çatal, şiş)'],['🧠','İleriyi görme ve strateji kurma'],['🏆','Sınıf turnuvaları ve sporcu ahlakı']]},
+  akil:{ozet:'Örüntü, mantık ve strateji; hafıza ve dikkat.', ipucu:'Haftalık kısa “zihin ısınması” rutini tüm derslere odak kazandırır.', neler:[['🧩','Örüntü, eşleştirme ve dikkat'],['🔎','Mantık ve bulmaca çözme'],['♟️','Strateji oyunları (birkaç adım sonrasını görme)'],['⏱️','Hızlı düşünme ve hafıza'],['🏅','İstasyonlu turnuvalar']]},
+};
+let sonKonu=null;
+function subjectDetay(k){
+  sonKonu=k; const d=DERSLER[k], kd=KONU_DETAY[k];
+  const haftalar=SPINE.map((w,i)=>({w,i})).filter(x=>x.w.d===k).map(x=>`<span class="h">H${x.i+1} · ${haftaKonu(x.i)}</span>`).join('');
+  const hsay=SPINE.filter(w=>w.d===k).length;
+  const araclar=Object.entries(ARACLAR).filter(([,a])=>a.ders===k).map(([kk,a])=>`<a class="arac-cip" href="${a.url}" target="_blank" rel="noopener"><span class="ik">${a.ik}</span>${a.ad} <span style="opacity:.55;font-size:11px">· ${a.yas}</span></a>`).join('');
+  const neler=kd.neler.map(n=>`<div class="li"><span class="ik">${n[0]}</span><span>${n[1]}</span></div>`).join('');
+  $('#konuModalIc').innerHTML=`
+    <div class="mbas" style="--dr:${d.dr};--dr2:${d.dr2}">
+      <div class="ik">${d.ik}</div>
+      <div style="min-width:0"><h3>${d.ad}</h3><div class="alt">${kd.ozet}</div></div>
+      <div class="kapat" onclick="modalKapat('konuModal')">✕</div>
+    </div>
+    <div class="mgov">
+      <div class="blok"><div class="bh" style="color:${d.dr2}">✨ Bu Derste Neler Var?</div><div class="kd-neler">${neler}</div></div>
+      <div class="blok"><div class="bh" style="color:${d.dr2}">🧰 Kullandığımız Araçlar</div><div class="arac-mini">${araclar||'—'}</div></div>
+      <div class="blok"><div class="bh" style="color:${d.dr2}">📅 Yıl İçindeki Haftalar (${hsay} hafta)</div><div class="kd-hafta">${haftalar}</div></div>
+      <div class="blok"><div class="uy-kutu">💡 <b>İpucu:</b> ${kd.ipucu}</div></div>
+      <div class="blok"><div class="ai-hizli">
+        <button onclick="konuAI('anlat')">📖 Bu dersi bana özetle</button>
+        <button onclick="konuAI('veli')">👪 Velilere nasıl anlatırım?</button>
+        <button onclick="konuAI('proje')">🏆 Proje fikri ver</button>
+      </div></div>
+    </div>`;
+  modalAc('konuModal');
+}
+function konuAI(t){
+  const k=sonKonu, d=DERSLER[k], kd=KONU_DETAY[k];
+  const on={anlat:`"${d.ad}" dersini bu yıllık planda hangi araçlarla ve hangi sırayla işlediğimi öğretmen gözünden kısa ve renkli anlat.`,
+    veli:`Bir veli toplantısında "${d.ad}" dersinin çocuklara ne kazandırdığını sıcak, teknik olmayan bir dille anlat. 1 paragraf + evde 1 öneri.`,
+    proje:`"${d.ad}" dersi için sınıf düzeyine göre (anaokulu–8) 3 farklı, uygulanabilir proje fikri öner.`}[t];
+  const sistem=`Sen "Barış Öğretmen Yıllık Ders Planı" asistanısın. KISA, NET, TÜRKÇE, uygulanabilir yaz. Somut örnek + akılda kalıcı anlatım. Renkli vurgu için <span style="color:#RENK;font-weight:700">. LaTeX yok, ok için →. Tablo en fazla 3 sütun.`;
+  modalKapat('konuModal');
+  aiSor(on,{sistem,on:`[Ders: ${d.ad}. Kapsam: ${kd.ozet}]\n\n${on}`,baslik:d.ad});
+}
 
 /* ============================================================
    GÖRÜNÜM: YILLIK PLAN
@@ -827,7 +918,7 @@ function haftaAI(tip){
     materyal:`Bu haftayı işlemek için gereken tüm materyallerin (fiziksel + dijital) toplu bir kontrol listesini çıkar. Ucuz/ücretsiz alternatifleri de belirt.`,
     ders:`Bu hafta için 40 dakikalık tek ders saatlik akış planla: giriş (ısınma) → geliştirme (ana etkinlik) → uygulama → kapanış/değerlendirme. Her aşamaya süre yaz.`
   };
-  const sistem=`Sen "Değişim Koleji Ders Atlası" öğretmen asistanısın. Öğretmen Barış'a yardımcı ol. KISA, NET, TÜRKÇE ve doğrudan uygulanabilir yaz. Verilen bağlama sadık kal, uydurma. Somut örnek ve akılda kalıcı anlatım kullan. Renkli vurgu gerekiyorsa <span style="color:#RENK;font-weight:700"> kullan. Matematik/LaTeX yazma; ok için → kullan. Tablo gerekiyorsa en fazla 3 sütun.`;
+  const sistem=`Sen "Barış Öğretmen Yıllık Ders Planı" öğretmen asistanısın. Öğretmen Barış'a yardımcı ol. KISA, NET, TÜRKÇE ve doğrudan uygulanabilir yaz. Verilen bağlama sadık kal, uydurma. Somut örnek ve akılda kalıcı anlatım kullan. Renkli vurgu gerekiyorsa <span style="color:#RENK;font-weight:700"> kullan. Matematik/LaTeX yazma; ok için → kullan. Tablo gerekiyorsa en fazla 3 sütun.`;
   modalKapat('haftaModal');
   aiSor(istekler[tip], {sistem, on:`${baglam}\n\nGÖREV: ${istekler[tip]}`, baslik:`Hafta ${i+1} · ${konu}`});
 }
@@ -838,11 +929,14 @@ function haftaAI(tip){
 function renderAraclar(){
   const grup={};
   Object.entries(ARACLAR).forEach(([k,a])=>{ (grup[a.ders]=grup[a.ders]||[]).push([k,a]); });
-  let html='<div class="veli-hero" style="padding:20px"><h2 style="font-size:20px;margin:0 0 4px">🧰 Çevrimiçi Araç Kütüphanesi</h2><p class="big" style="font-size:14px">Derslerde kullandığım, tamamı <b>ücretsiz</b> ve okulda/evde açılabilen güvenli araçlar. Karta tıklayınca yeni sekmede açılır.</p></div>';
-  Object.keys(DERSLER).forEach(dk=>{
-    if(dk==='genel'||!grup[dk]) return; const d=DERSLER[dk];
+  const toplam=Object.keys(ARACLAR).length;
+  let html='<div class="veli-hero" style="padding:22px"><h2 style="font-size:20px;margin:0 0 4px">🧰 Çevrimiçi Araç Kütüphanesi</h2><p class="big" style="font-size:14px">Derslerde kullandığım <b>'+toplam+' araç</b> — tamamı <b>ücretsiz veya ücretsiz sürümlü</b>, okulda/evde açılabilir. Karta dokun → yeni sekmede açılır.</p></div>';
+  const sirali=[...Object.keys(DERSLER).filter(k=>k!=='genel'),'sinif'];
+  sirali.forEach(dk=>{
+    const d = dk==='sinif'?SINIF_META:DERSLER[dk];
+    if(!grup[dk]||!grup[dk].length) return;
     html+=`<div class="arac-grup" style="--dr:${d.dr};--dr2:${d.dr2}">
-      <div class="gb"><span class="ik">${d.ik}</span>${d.ad}</div>
+      <div class="gb"><span class="ik">${d.ik}</span>${d.ad} <span style="font-size:12px;color:var(--soluk2);font-weight:600">(${grup[dk].length})</span></div>
       <div class="arac-izgara">`;
     grup[dk].forEach(([k,a])=>{
       html+=`<a class="akart" style="--dr:${d.dr};--dr2:${d.dr2}" href="${a.url}" target="_blank" rel="noopener">
@@ -901,7 +995,7 @@ function asistanAc(){
 function asistanHizli(q){ $('#aiInput').value=q; asistanGonder(); }
 function asistanGonder(){
   const inp=$('#aiInput'); const q=inp.value.trim(); if(!q) return; inp.value=''; inp.style.height='auto';
-  const sistem=`Sen "Değişim Koleji Ders Atlası" asistanısın; öğretmen Barış'a yardımcı olursun. İşini HAFİFLET: KISA, NET, TÜRKÇE, uygulanabilir. YALNIZCA verilen duruma dayan, uydurma. Somut örnek + akılda kalıcı anlatım kullan. Renkli vurgu için <span style="color:#RENK;font-weight:700">. LaTeX yok, ok için →. Tablo en fazla 3 sütun.`;
+  const sistem=`Sen "Barış Öğretmen Yıllık Ders Planı" asistanısın; öğretmen Barış'a yardımcı olursun. İşini HAFİFLET: KISA, NET, TÜRKÇE, uygulanabilir. YALNIZCA verilen duruma dayan, uydurma. Somut örnek + akılda kalıcı anlatım kullan. Renkli vurgu için <span style="color:#RENK;font-weight:700">. LaTeX yok, ok için →. Tablo en fazla 3 sütun.`;
   const on=`[Uygulama durumu: ${durumOzeti()}]\n\nÖğretmenin sorusu: ${q}`;
   aiSor(q, {sistem, on, ekle:true});
 }
@@ -923,7 +1017,7 @@ async function aiSor(gorunenSoru, {sistem, on, baslik, ekle}={}){
   let ctx=on||gorunenSoru;
   if(ekle && aiKonusma.length){ ctx='Önceki konuşma:\n'+aiKonusma.map(m=>(m.role==='user'?'Öğretmen: ':'Asistan: ')+ZIRVE.duzMetin(m.text).slice(0,600)).join('\n')+'\n\nYeni soru: '+gorunenSoru; }
   aiKonusma.push({role:'user',text:gorunenSoru});
-  sonBaslik = baslik || 'Değişim Koleji · Ders Atlası';
+  sonBaslik = baslik || 'Barış Öğretmen · Yıllık Ders Planı';
   try{
     let ilk=true; let sonMetin='';
     sonMetin=await generateText(ctx,{sistem, onChunk:(tam)=>{
@@ -964,7 +1058,7 @@ function paylasimKarti(baslikMetin){
   kart.style.cssText='position:fixed;left:-9999px;top:0;width:640px;padding:26px;background:#0b1220;color:#eaf0ff;font-family:-apple-system,Segoe UI,Roboto,sans-serif;border-radius:0';
   kart.innerHTML=`<div style="font-size:20px;font-weight:800;margin-bottom:14px;color:#a7f3d0">✨ ${esc(baslikMetin||'Değişim Koleji · Ders Atlası')}</div>
     <div style="font-size:15px;line-height:1.65">${sonAiHTML}</div>
-    <div style="margin-top:18px;font-size:12px;color:#63739a">🎓 Değişim Koleji · Ders Atlası — Öğretmen Barış</div>`;
+    <div style="margin-top:18px;font-size:12px;color:#63739a">📘 Barış Öğretmen · Yıllık Ders Planı</div>`;
   // renkleri paylaşımda koru
   kart.querySelectorAll('strong').forEach(e=>e.style.color='#34d399');
   kart.querySelectorAll('h1,h2,h3').forEach(e=>e.style.color='#a7f3d0');
@@ -993,7 +1087,7 @@ async function aiPDF(){
     pdf.save('ders-atlasi.pdf'); toast('📥 PDF indirildi','ok');
   }catch(e){ toast('PDF oluşturulamadı (internet gerekli)','err'); }
 }
-let sonBaslik='Değişim Koleji · Ders Atlası';
+let sonBaslik='Barış Öğretmen · Yıllık Ders Planı';
 
 /* ============================================================
    AYARLAR (anahtarlar + sağlık + test + yüzen düğmeler)
@@ -1029,10 +1123,12 @@ function ayarAc(sek){
         </div>
       </div>
       <div class="ay-pan" id="pan-dugmeler">
+        <div style="font-size:12.5px;color:var(--soluk);margin-bottom:12px;line-height:1.5">💡 Yüzen düğmeleri <b>parmakla/fareyle sürükleyerek</b> ekranda istediğin yere taşıyabilirsin. <b>✕</b> ile gizlediklerini aşağıdaki anahtarlardan geri açarsın. ⚙️ Ayarlar düğmesi güvenlik için her zaman ekranda kalır (yalnızca taşınır).</div>
         <div id="dugmeListe"></div>
-        <div class="btnsira" style="margin-top:6px">
+        <div class="btnsira" style="margin-top:10px">
           <button class="btn g" onclick="tumDugme(true)">Hepsini Göster</button>
           <button class="btn g" onclick="tumDugme(false)">Hepsini Gizle</button>
+          <button class="btn g" onclick="konumSifirla()">📍 Konumları Sıfırla</button>
         </div>
       </div>
     </div>`;
@@ -1070,18 +1166,42 @@ function tumDugme(on){ window.ZIRVE_kontroller.forEach(k=>on?k.goster():k.gizle(
    ============================================================ */
 window.ZIRVE_kontroller=[];
 function kontrolKayit(k){ window.ZIRVE_kontroller.push(k); }
-window.ZIRVE_kontrolleriGeriGetir=function(){ window.ZIRVE_kontroller.forEach(k=>k.goster()); ['dk_pill_gizli','dk_yardim_gizli','dk_qr_gizli','dk_ai_gizli'].forEach(f=>LS.del(f)); toast('🎛️ Tüm düğmeler geri geldi','ok'); };
+window.ZIRVE_kontrolleriGeriGetir=function(){ ['dk_pill_gizli','dk_yardim_gizli','dk_qr_gizli','dk_ai_gizli','dk_pill_pos','dk_yardim_gizli_pos','dk_qr_gizli_pos','dk_ayar_gizli_pos','dk_ai_gizli_pos'].forEach(f=>LS.del(f)); location.reload(); };
+function konumSifirla(){ ['dk_pill_pos','dk_yardim_gizli_pos','dk_qr_gizli_pos','dk_ayar_gizli_pos','dk_ai_gizli_pos'].forEach(k=>LS.del(k)); location.reload(); }
 
-function fabYap({id,ikon,etiket,tik,ai,bayrak}){
+function suruklenebilir(el, key, onClick){
+  let sx,sy,ox,oy,drag=false,moved=false;
+  const p=LS.get(key,null); if(p&&p.l){ el.style.left=p.l; el.style.top=p.t; el.style.right='auto'; el.style.bottom='auto'; }
+  el.addEventListener('pointerdown',e=>{
+    if(e.target.classList && e.target.classList.contains('x')) return;
+    drag=true; moved=false; sx=e.clientX; sy=e.clientY;
+    const r=el.getBoundingClientRect(); ox=r.left; oy=r.top;
+    try{el.setPointerCapture(e.pointerId);}catch(_){}
+    el.style.transition='none';
+  });
+  el.addEventListener('pointermove',e=>{
+    if(!drag) return; const dx=e.clientX-sx, dy=e.clientY-sy;
+    if(Math.abs(dx)+Math.abs(dy)>4) moved=true;
+    let nl=Math.max(4,Math.min(innerWidth-el.offsetWidth-4, ox+dx));
+    let nt=Math.max(4,Math.min(innerHeight-el.offsetHeight-4, oy+dy));
+    el.style.left=nl+'px'; el.style.top=nt+'px'; el.style.right='auto'; el.style.bottom='auto';
+  });
+  const bitir=()=>{ if(!drag) return; drag=false; el.style.transition=''; if(moved){ LS.set(key,{l:el.style.left,t:el.style.top}); } else { onClick&&onClick(); } };
+  el.addEventListener('pointerup',bitir);
+  el.addEventListener('pointercancel',()=>{drag=false;});
+}
+function fabYap({id,ikon,etiket,tik,ai,bayrak,kalici}){
+  const idx=$('#fabgrup').children.length;
   const fab=document.createElement('div'); fab.className='fab'+(ai?' ai':''); fab.title=etiket; fab.innerHTML=ikon;
-  const x=document.createElement('div'); x.className='x'; x.innerHTML='×'; x.title='Gizle';
-  x.onclick=(e)=>{e.stopPropagation(); gizle();}; fab.appendChild(x);
-  fab.addEventListener('click',tik);
-  $('#fabgrup').appendChild(fab);
-  const goster=()=>{ fab.style.display='grid'; LS.set(bayrak,false); };
+  fab.style.right='14px'; fab.style.bottom=(14+idx*62)+'px';
   const gizle=()=>{ fab.style.display='none'; LS.set(bayrak,true); };
-  if(LS.get(bayrak,false)) gizle();
-  kontrolKayit({id,ikon,etiket,goster,gizle,acikMi:()=>fab.style.display!=='none'});
+  const goster=()=>{ fab.style.display='grid'; LS.set(bayrak,false); };
+  if(!kalici){ const x=document.createElement('div'); x.className='x'; x.innerHTML='×'; x.title='Gizle';
+    x.onclick=(e)=>{e.stopPropagation(); gizle(); toast('Gizlendi — ⚙️ Ayarlar → Yüzen Düğmeler’den geri getirebilirsiniz','info',2800);}; fab.appendChild(x); }
+  $('#fabgrup').appendChild(fab);
+  suruklenebilir(fab, bayrak+'_pos', tik);
+  if(!kalici && LS.get(bayrak,false)) gizle();
+  if(!kalici) kontrolKayit({id,ikon,etiket,goster,gizle,acikMi:()=>fab.style.display!=='none'});
 }
 
 /* Ekran uyum modülü (📺 pill) */
@@ -1102,11 +1222,12 @@ window.ZIRVE_ekranGeri=function(){ ekranUygula(); };
 function ekranPillYap(){
   const pill=document.createElement('div'); pill.className='pill'; pill.id='ekranPill';
   pill.innerHTML='<span id="ekranPillTxt">📺</span><span class="x" title="Gizle">×</span>';
-  pill.querySelector('#ekranPillTxt').onclick=()=>{ ekranMod=(ekranMod+1)%EKRAN_MODLAR.length; LS.set('dk_ekran_mod',ekranMod); LS.set('dk_ekran_elle',true); ekranUygula(); toast('📺 Mod: '+EKRAN_MODLAR[ekranMod].ad,'info',1500); };
-  pill.querySelector('.x').onclick=(e)=>{e.stopPropagation(); gizle();};
-  $('#pillYuva').appendChild(pill);
-  const goster=()=>{pill.style.display='flex';LS.set('dk_pill_gizli',false)};
   const gizle=()=>{pill.style.display='none';LS.set('dk_pill_gizli',true)};
+  const goster=()=>{pill.style.display='flex';LS.set('dk_pill_gizli',false)};
+  pill.querySelector('.x').onclick=(e)=>{e.stopPropagation(); gizle(); toast('Gizlendi — ⚙️ Ayarlar’dan geri getirebilirsiniz','info',2800);};
+  $('#pillYuva').appendChild(pill);
+  pill.style.left='14px'; pill.style.top='auto'; pill.style.bottom='14px';
+  suruklenebilir(pill,'dk_pill_pos',()=>{ ekranMod=(ekranMod+1)%EKRAN_MODLAR.length; LS.set('dk_ekran_mod',ekranMod); LS.set('dk_ekran_elle',true); ekranUygula(); toast('📺 Mod: '+EKRAN_MODLAR[ekranMod].ad,'info',1500); });
   if(LS.get('dk_pill_gizli',false)) gizle();
   kontrolKayit({id:'ekran',ikon:'📺',etiket:'Ekran / Akıllı Tahta modu',goster,gizle,acikMi:()=>pill.style.display!=='none'});
   ekranUygula();
@@ -1132,7 +1253,7 @@ function qrIndir(){ const img=$('#qrKutu img'); if(!img)return; const a=document
 /* ============================================================
    KARŞILAMA
    ============================================================ */
-const KARSILAMA={ baslik:'Değişim Koleji · Ders Atlası’na hoş geldiniz', ozet:'Robotik, kodlama, yapay zekâ, satranç ve akıl-zeka oyunları için hazırladığınız bir yıllık ders panosu. Akıllı tahtada veli toplantısında da rahatça açabilirsiniz.',
+const KARSILAMA={ baslik:'Barış Öğretmen · Yıllık Ders Planı’na hoş geldiniz', ozet:'Robotik, kodlama, yapay zekâ, satranç ve akıl-zeka oyunları için hazırladığınız bir yıllık ders panosu. Akıllı tahtada veli toplantısında da rahatça açabilirsiniz.',
   adimlar:[
     '<b>Genel Bakış</b> sekmesi veli sunumu içindir: programın özetini, istatistikleri ve dersleri gösterir.',
     '<b>Yıllık Plan</b>’da sınıfı seçin; ilk haftadan son haftaya tüm konular, kazanımlar, etkinlikler ve araçlar önünüzde.',
@@ -1175,7 +1296,7 @@ function basla(){
   ekranPillYap();
   yardimFab();
   fabYap({id:'qr',ikon:'📲',etiket:'QR ile paylaş',bayrak:'dk_qr_gizli',tik:()=>ZIRVE_paylasAc()});
-  fabYap({id:'ayar',ikon:'⚙️',etiket:'Ayarlar',bayrak:'dk_ayar_gizli',tik:()=>ayarAc()});
+  fabYap({id:'ayar',ikon:'⚙️',etiket:'Ayarlar (her zaman erişilebilir)',bayrak:'dk_ayar_gizli',kalici:true,tik:()=>ayarAc()});
   fabYap({id:'ai',ikon:'✨',etiket:'Ders Asistanı',bayrak:'dk_ai_gizli',ai:true,tik:()=>asistanAc()});
   uyariBandiGoster();
   karsilamaGoster(false);
