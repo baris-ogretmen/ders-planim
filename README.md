@@ -1,0 +1,2 @@
+# ders-planim
+kendim için
