@@ -322,6 +322,31 @@ textarea.key{min-height:90px;resize:vertical}
 .sinif-arac-bl{margin-bottom:20px}
 .timer-d{font-size:56px;font-weight:900;text-align:center;font-variant-numeric:tabular-nums;letter-spacing:2px;background:linear-gradient(135deg,#a78bfa,#22d3ee);-webkit-background-clip:text;background-clip:text;color:transparent;margin:6px 0 12px}
 .picker-out{font-size:32px;font-weight:900;text-align:center;min-height:46px;color:#fff;margin:10px 0}
+
+.nerede-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(212px,1fr));gap:12px;margin-top:14px}
+.ncard{background:var(--kart);border:1px solid var(--cizgi);border-radius:14px;padding:13px;cursor:pointer;transition:.15s}
+.ncard:hover{transform:translateY(-2px);border-color:var(--mavi2);box-shadow:0 10px 24px rgba(0,0,0,.3)}
+.nc-bas{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.nc-bas b{font-size:15px;color:#fff}
+.nc-bas .pct{font-size:12px;font-weight:900;color:var(--yesil2)}
+.nc-tracks{display:grid;gap:5px}
+.nct{display:flex;gap:7px;align-items:center;font-size:11.5px;color:var(--soluk)}
+.nct .ik{font-size:14px;flex:0 0 auto}
+.nct .konu{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.harita-saha{background:radial-gradient(circle at 28% 40%,rgba(124,58,237,.12),transparent 60%),var(--panel2);border:1px solid var(--cizgi);border-radius:16px;padding:10px;overflow-x:auto}
+.hcenter{height:92px;border-radius:16px;background:linear-gradient(135deg,#7c3aed,#22d3ee);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(124,58,237,.4)}
+.hcenter .hc-ik{font-size:22px}
+.hcenter .hc-ad{font-size:15px;font-weight:800}
+.hcenter .hc-pct{font-size:11px;opacity:.92}
+.hnode{height:92px;border-radius:14px;background:var(--kart);border:1px solid var(--dr2);border-left:5px solid var(--dr);padding:8px 12px;cursor:pointer;display:flex;flex-direction:column;justify-content:center;gap:5px;box-sizing:border-box}
+.hnode:hover{background:var(--panel)}
+.hn-ust{display:flex;align-items:center;gap:8px}
+.hn-ik{font-size:18px}
+.hn-ad{font-size:13.5px;font-weight:800;color:#fff;flex:1}
+.hn-pct{font-size:11px;font-weight:900;color:var(--dr2)}
+.hn-konu{font-size:12px;color:var(--soluk);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hn-bar{height:6px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}
+.hn-bar span{display:block;height:100%;background:linear-gradient(90deg,var(--dr),var(--dr2))}
 </style>
 
 </head>
@@ -399,6 +424,8 @@ textarea.key{min-height:90px;resize:vertical}
 <div class="modal-bg" id="konuModal"><div class="modal" id="konuModalIc"></div></div>
 <!-- MODAL: SINIF ARAÇLARI -->
 <div class="modal-bg" id="sinifModal"><div class="modal" id="sinifModalIc"></div></div>
+<!-- MODAL: YIL HARİTASI -->
+<div class="modal-bg" id="haritaModal"><div class="modal" id="haritaModalIc" style="max-width:840px"></div></div>
 
 <script>
 /* ============================================================
@@ -772,10 +799,12 @@ function renderVeli(){
       <span class="tag">Detay için tıkla</span>
     </div>`).join('');
   const ped=[
-    ['🎯','Kazanım Odaklı','Her hafta net bir kazanım; soyut kavramlar somut etkinlik ve oyunla veriliyor.'],
-    ['🧩','Yaşa Göre Sarmal','Aynı konu her sınıfta bir üst basamakta tekrar ediliyor; anaokulunda oyun, 8. sınıfta proje.'],
-    ['🛠️','Yaparak Yaşayarak','Ekransız etkinlikler, blok kodlama, robot ve gerçek çevrimiçi araçlarla uygulama.'],
-    ['🤝','21. Yüzyıl Becerileri','Problem çözme, işbirliği, yaratıcılık, eleştirel düşünme ve dijital okuryazarlık.'],
+    ['🎯','Kazanım Odaklı','Her hafta tek ve net bir kazanım hedefler. Soyut kavramları önce somut nesne ve oyunla, sonra dijital araçla pekiştiririz.'],
+    ['🧩','Yaşa Göre Sarmal','Aynı konu her sınıfta bir üst basamakta tekrarlanır: anaokulunda oyun ve hikâye, ortaokulda proje ve kod. Bilgi üst üste birikir, kalıcı olur.'],
+    ['🛠️','Yaparak-Yaşayarak','Dinleyerek değil üreterek öğreniriz: ekransız etkinlikler, blok kodlama, robot ve gerçek araçlarla her çocuk kendi ürününü yapar.'],
+    ['🤝','21. Yüzyıl Becerileri','Problem çözme, işbirliği, yaratıcılık, eleştirel düşünme ve dijital okuryazarlık her etkinliğe gömülüdür; sadece “konu” değil “beceri” kazandırırız.'],
+    ['🔁','Sürekli Geri Bildirim','İlerleme haftalık işaretlenir, proje/deneme sonrası birlikte değerlendirilir. Çocuk nerede olduğunu görür, ben nerede destek vereceğimi bilirim.'],
+    ['❤️','Değer ve Güvenli Kullanım','Teknolojiyi sorumlu, etik ve güvenli kullanmayı; emek, sabır ve paylaşmayı da öğretiriz.'],
   ].map(p=>`<div class="ped"><div class="ib">${p[0]}</div><h4>${p[1]}</h4><p>${p[2]}</p></div>`).join('');
   $('#v-veli').innerHTML=`
     <div class="veli-hero">
@@ -986,7 +1015,7 @@ function renderAraclar(){
 /* ============================================================
    AI ASİSTAN (bağlam-farkında)  + CEVAP MODALI
    ============================================================ */
-let aiKonusma=[]; let sonAiHTML='';
+let aiKonusma=[]; let sonAiHTML=''; let sonAiMetin='';
 function durumOzeti(){
   const s=aktifSinif(), dz=aktifDuzey();
   let o=`Aktif görünüm: ${({veli:'Genel Bakış',plan:'Yıllık Plan',araclar:'Araç Kütüphanesi'})[ST.view]}. `;
@@ -1057,7 +1086,7 @@ async function aiSor(gorunenSoru, {sistem, on, baslik, ekle}={}){
       ab.innerHTML='<div class="prose">'+md(tam)+'</div>'; kon.scrollTop=kon.scrollHeight;
     }});
     clearInterval(spTimer);
-    sonAiHTML='<div class="prose">'+md(sonMetin)+'</div>';
+    sonAiHTML='<div class="prose">'+md(sonMetin)+'</div>'; sonAiMetin=sonMetin;
     ab.innerHTML=sonAiHTML+aiAracCubugu();
     aiKonusma.push({role:'ai',text:sonMetin, html:sonAiHTML});
     kon.scrollTop=kon.scrollHeight;
@@ -1500,7 +1529,7 @@ function seansAI(tip){
 function veliMesaj(){
   const t=aktifSeans, tr=TRACKS.find(x=>x.id===t.trackId), se=SEANS[t.trackId][t.idx], s=aktifSinif(), dz=aktifDuzey();
   const sinifAd=(s.g==='Ana'?'Anaokulu':s.g+'. sınıf');
-  const sistem='Sen öğretmen Barış’sın. Velilere gönderilecek KISA bir WhatsApp bilgilendirme mesajı yaz (birinci tekil şahıs, senin ağzından, sıcak ve profesyonel, 4-6 cümle, ölçülü emoji). Şunları içersin: bugün ne işledik + çocuklar ne kazandı + evde velinin yapabileceği 1 küçük destek önerisi. Başlık/madde kullanma, düz paragraf. Sonda kısa imza: “Sevgiler, Barış Öğretmen”. LaTeX yok.';
+  const sistem='Sen öğretmen Barış’sın. Velilere WhatsApp’tan gönderilecek KISA ve canlı bir bilgilendirme mesajı yaz. Kurallar: birinci tekil şahıs (senin ağzından), sıcak ve profesyonel; 5-7 KISA satır (uzun paragraf YOK); satır başlarına uygun emoji koy; önemli kelimeleri **çift yıldızla** vurgula (WhatsApp’ta kalın görünür); “📚 Sevgili velimiz,” ile başla; içerik: bugün ne işledik + çocuk ne kazandı + evde velinin yapabileceği 1 küçük destek/etkinlik önerisi; sonda imza “Sevgiler, Barış Öğretmen 👨‍🏫”. Markdown başlık (#) ve tablo kullanma. LaTeX yok.';
   const on='['+sinifAd+' · '+tr.ad+'] Bugün "'+se.k+'" konusunu işledim. Kazanım: '+se.z+'. Etkinlik: '+se.e+'. Buna göre velilere göndereceğim mesajı yaz.';
   modalKapat('haftaModal');
   aiSor('Veli bilgilendirme mesajı hazırla',{sistem,on,baslik:'Veli Mesajı · '+se.k});
@@ -1548,8 +1577,150 @@ function timerDur(){ if(timerInt){clearInterval(timerInt);timerInt=null;} const 
 function timerBip(){ try{const A=window.AudioContext||window.webkitAudioContext;const c=new A();const o=c.createOscillator();const g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;o.start();g.gain.setValueAtTime(.2,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+1.2);o.stop(c.currentTime+1.2);}catch(e){} }
 function isimSec(){ const list=(($('#isimBox')||{}).value||'').split(String.fromCharCode(10)).map(x=>x.trim()).filter(Boolean); const o=$('#pickerOut'); if(!list.length){o.textContent='Önce isim gir!';return;} let n=0; const iv=setInterval(()=>{ o.textContent=list[Math.floor(Math.random()*list.length)]; if(++n>12){ clearInterval(iv); o.textContent='🎉 '+list[Math.floor(Math.random()*list.length)]; } },70); }
 
+
+/* ============================================================
+   EK: Eğitim Koçluğu (8. sınıf) + Nerede Kaldım + Kavram Haritası
+   ============================================================ */
+TRACKS.push({id:'kocluk', ad:'Eğitim Koçluğu', ik:'🎯', dr:'#b45309', dr2:'#f59e0b', dk:'kocluk', grades:['8']});
+SEANS.kocluk=[
+  {k:'Tanışma & Koçluk Nedir? Yıl Hedefim',z:'Eğitim koçluğunun amacını anlar; yıl için kişisel hedef belirler.',e:'Tanışma; “bu yıl ne başarmak istiyorum?” kart çalışması; hedef panosu.'},
+  {k:'Kendimi Tanıyorum: Güçlü ve Gelişime Açık Yönlerim',z:'Öz farkındalık geliştirir; güçlü ve gelişime açık yönlerini fark eder.',e:'Beceri çemberi / SWOT; kısa öz-değerlendirme.'},
+  {k:'SMART Hedefler ve Yol Haritası',z:'Ölçülebilir ve gerçekçi hedefler yazar.',e:'SMART hedef şablonu; kısa ve uzun vade planı.'},
+  {k:'Zaman Yönetimi ve Haftalık Program',z:'Zamanını planlar; öncelik belirler.',e:'Haftalık program çıkarma; Eisenhower matrisi.'},
+  {k:'Etkili Ders Çalışma Teknikleri',z:'Aktif ve aralıklı tekrar gibi teknikleri uygular.',e:'Aktif hatırlama; Feynman tekniği denemesi.'},
+  {k:'Not Alma ve Özetleme',z:'Bilgiyi düzenleyerek not alır ve özetler.',e:'Cornell not sistemi; zihin haritası çıkarma.'},
+  {k:'Dikkat, Odak ve Pomodoro',z:'Odak süresini yönetir; dikkat dağıtıcıları azaltır.',e:'Pomodoro denemesi; dikkat günlüğü.'},
+  {k:'Hafıza Teknikleri ve Tekrar Programı',z:'Hafıza tekniklerini ve tekrar takvimini kullanır.',e:'Loci/zincirleme; aralıklı tekrar takvimi kurma.'},
+  {k:'Sınav Kaygısıyla Baş Etme',z:'Kaygıyı tanır ve baş etme yöntemleri kullanır.',e:'Nefes/gevşeme; olumlu iç konuşma kartları.'},
+  {k:'Motivasyon ve Ertelemeyle Baş Etme',z:'Motivasyonunu sürdürür; ertelemeyi azaltır.',e:'2 dakika kuralı; hedef görselleştirme.'},
+  {k:'Deneme Analizi ve Hata Defteri',z:'Deneme sonuçlarını analiz eder; hatalarından öğrenir.',e:'Hata defteri; konu bazlı analiz tablosu.'},
+  {k:'LGS Stratejisi: Soru Çözümü ve Süre Yönetimi',z:'Sınavda süre ve soru stratejisi geliştirir.',e:'Soru tiplerine yaklaşım; süreli deneme çalışması.'},
+  {k:'Büyüme Zihniyeti (Growth Mindset)',z:'Zorlukları gelişim fırsatı olarak görür.',e:'“Henüz” dili; başarı hikâyeleri tartışması.'},
+  {k:'Öz-Değerlendirme ve Geri Bildirim',z:'İlerlemesini değerlendirir; geri bildirimi kullanır.',e:'Haftalık gözden geçirme; hedef güncelleme.'},
+  {k:'Çalışma Ortamı ve Dijital Düzen',z:'Verimli çalışma ortamı ve dijital düzen kurar.',e:'Masa düzeni; bildirim/uygulama düzenleme.'},
+  {k:'İletişim, Akran ve Aile Desteği',z:'Destek ağını etkili kullanır; sağlıklı iletişim kurar.',e:'İhtiyaç isteme rol oyunu; birlikte çalışma planı.'},
+  {k:'Uyku, Beslenme ve Performans',z:'Yaşam düzeninin öğrenmeye etkisini kavrar.',e:'Uyku/ekran günlüğü; sağlıklı rutin planı.'},
+  {k:'Yıl Sonu: Hedeflerimi Gözden Geçiriyorum',z:'Yıl boyu gelişimini değerlendirir; gelecek planı yapar.',e:'Hedef karnesi; lise/gelecek vizyon panosu.'},
+];
+['ana','12','34','56','78'].forEach(lv=>{ if(DUZEY_ARAC[lv]) DUZEY_ARAC[lv].kocluk=[]; });
+
+function gorunenTracks(gi){ const g=SINIF_LISTE[gi].g; return TRACKS.filter(t=>!t.grades||t.grades.includes(g)); }
+
+gradeYuzde=function(gi){ let t=0,c=0; gorunenTracks(gi).forEach(tr=>{const n=SEANS[tr.id].length;t+=n;for(let i=0;i<n;i++)if(ilrDone(gi,tr.id,i))c++;}); return t?Math.round(c/t*100):0; };
+
+renderPlanGrid=function(){
+  const gi=ST.gradeIdx, ara=(ST.ara||'').toLocaleLowerCase('tr');
+  let strip='<div class="ilerseridi"><span class="et">📌 Nerede kaldım:</span>';
+  SINIF_LISTE.forEach((sn,i)=>{ strip+='<div class="gchip'+(i===gi?' akt':'')+'" onclick="gradeSec('+i+')">'+(sn.g==='Ana'?'Ana':sn.g)+' <span class="pct">%'+gradeYuzde(i)+'</span></div>'; });
+  strip+='</div>';
+  let html='';
+  gorunenTracks(gi).forEach(tr=>{
+    const list=SEANS[tr.id], n=list.length, yuzde=trackYuzde(gi,tr.id,n), sonraki=trackSonraki(gi,tr.id,n);
+    let seanslar='';
+    list.forEach((se,i)=>{
+      if(ara && !(se.k.toLocaleLowerCase('tr').includes(ara)||(se.z||'').toLocaleLowerCase('tr').includes(ara))) return;
+      const done=ilrDone(gi,tr.id,i), nx=(i===sonraki);
+      seanslar+='<div class="seans'+(done?' ok':'')+(nx?' next':'')+'" onclick="seansAc(\''+tr.id+'\','+i+')">'+
+        '<span class="chk" onclick="event.stopPropagation();ilrToggleUI(\''+tr.id+'\','+i+')">'+(done?'✅':'⬜')+'</span>'+
+        '<span class="sno">'+(i+1)+'</span><span class="sk">'+se.k+'</span>'+
+        (nx?'<span class="nx">buradasın</span>':'')+'</div>';
+    });
+    if(ara && !seanslar) return;
+    html+='<div class="track" style="--dr:'+tr.dr+';--dr2:'+tr.dr2+'">'+
+      '<div class="track-bas"><div class="ti">'+tr.ik+'</div><div class="tt" style="flex:1"><h3>'+tr.ad+'</h3>'+
+      '<div class="tp"><div class="tp-bar"><span style="width:'+yuzde+'%"></span></div><span class="tp-txt">%'+yuzde+' · '+n+' ders</span></div></div></div>'+
+      '<div class="seans-liste">'+(seanslar||'<div style="color:var(--soluk);font-size:13px;padding:6px">Aramaya uyan ders yok.</div>')+'</div></div>';
+  });
+  $('#planIzgara').innerHTML=strip+(html||'<div style="padding:30px;text-align:center;color:var(--soluk)">Sonuç yok.</div>');
+};
+
+planAracCubugu=function(){
+  $('#filtre').innerHTML='<span class="ara" style="margin-left:0"><input id="araInput" placeholder="Konu ara…"><span class="x" id="araX">✕</span></span>'+
+    '<button class="fbtn" onclick="haritaAc(ST.gradeIdx)">🗺️ Yıl Haritası</button>'+
+    '<button class="fbtn" onclick="window.print()">🖨️ Yazdır / PDF</button>'+
+    '<button class="fbtn" onclick="bugunNe()">🎲 Bugün ne işlesem?</button>'+
+    '<button class="fbtn" onclick="sinifAracAc()">⏱️ Sınıf Araçları</button>';
+  const inp=$('#araInput'); if(inp){ inp.value=ST.ara||''; inp.addEventListener('input',e=>{ST.ara=e.target.value;$('#araX').style.display=e.target.value?'block':'none';renderPlanGrid();}); }
+  const x=$('#araX'); if(x) x.onclick=()=>{ST.ara='';inp.value='';x.style.display='none';renderPlanGrid();};
+};
+
+function renderNeredeKaldim(){
+  const host=$('#v-veli'); if(!host) return;
+  let el=document.getElementById('neredePanel');
+  if(!el){ el=document.createElement('div'); el.id='neredePanel'; host.insertBefore(el, host.firstChild); }
+  let cards='';
+  SINIF_LISTE.forEach((sn,gi)=>{
+    const gname=(sn.g==='Ana'?'Anaokulu':sn.g+'. Sınıf');
+    let rows='';
+    gorunenTracks(gi).forEach(tr=>{ const n=SEANS[tr.id].length, nx=trackSonraki(gi,tr.id,n);
+      const txt = nx<0 ? '✓ tamamlandı' : ('Ders '+(nx+1)+' · '+SEANS[tr.id][nx].k);
+      rows+='<div class="nct"><span class="ik">'+tr.ik+'</span><span class="konu">'+txt+'</span></div>';
+    });
+    cards+='<div class="ncard" onclick="haritaAc('+gi+')"><div class="nc-bas"><b>'+gname+'</b><span class="pct">%'+gradeYuzde(gi)+'</span></div><div class="nc-tracks">'+rows+'</div></div>';
+  });
+  el.innerHTML='<div class="veli-hero" style="padding:22px">'+
+    '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><h2 style="margin:0;font-size:20px">📍 Yıl Boyu Nerede Kaldım?</h2>'+
+    '<button class="btn p" style="margin-left:auto" onclick="haritaAc(ST.gradeIdx)">🗺️ Kavram Haritası</button></div>'+
+    '<p class="big" style="font-size:13.5px;margin-top:6px">Her sınıfta hangi derste kaldığını tek bakışta gör; bir karta dokun → o sınıfın <b>yıl haritası (kavram haritası)</b> açılır.</p>'+
+    '<div class="nerede-grid">'+cards+'</div></div>';
+}
+
+function haritaAc(gi){
+  if(typeof gi!=='number') gi=ST.gradeIdx;
+  const sn=SINIF_LISTE[gi], gname=(sn.g==='Ana'?'Anaokulu':sn.g+'. Sınıf');
+  const trs=gorunenTracks(gi), cardH=92, gap=16, K=trs.length;
+  const H=Math.max(300, K*(cardH+gap)+30), cy=H/2;
+  let paths='', cards='';
+  trs.forEach((tr,i)=>{
+    const n=SEANS[tr.id].length, nx=trackSonraki(gi,tr.id,n), yuzde=trackYuzde(gi,tr.id,n);
+    const cardY=15+i*(cardH+gap), midY=cardY+cardH/2;
+    paths+='<path d="M188 '+cy+' C 280 '+cy+', 280 '+midY+', 360 '+midY+'" stroke="'+tr.dr2+'" stroke-width="3" fill="none" opacity="0.75"/>';
+    const durum = nx<0 ? '🎉 Tamamlandı' : ('📍 Ders '+(nx+1)+' · '+SEANS[tr.id][nx].k);
+    cards+='<foreignObject x="360" y="'+cardY+'" width="392" height="'+cardH+'">'+
+      '<div xmlns="http://www.w3.org/1999/xhtml" class="hnode" style="--dr:'+tr.dr+';--dr2:'+tr.dr2+'" onclick="haritaGit(\''+tr.id+'\','+nx+')">'+
+        '<div class="hn-ust"><span class="hn-ik">'+tr.ik+'</span><span class="hn-ad">'+tr.ad+'</span><span class="hn-pct">%'+yuzde+'</span></div>'+
+        '<div class="hn-konu">'+durum+'</div>'+
+        '<div class="hn-bar"><span style="width:'+yuzde+'%"></span></div>'+
+      '</div></foreignObject>';
+  });
+  const svg='<svg viewBox="0 0 768 '+H+'" width="100%" xmlns="http://www.w3.org/2000/svg" style="min-width:680px">'+
+    paths+
+    '<foreignObject x="20" y="'+(cy-46)+'" width="170" height="92">'+
+      '<div xmlns="http://www.w3.org/1999/xhtml" class="hcenter"><div class="hc-ik">🎓</div><div class="hc-ad">'+gname+'</div><div class="hc-pct">%'+gradeYuzde(gi)+' tamam</div></div>'+
+    '</foreignObject>'+cards+'</svg>';
+  const chips=SINIF_LISTE.map((s,i)=>'<div class="gchip'+(i===gi?' akt':'')+'" onclick="haritaAc('+i+')">'+(s.g==='Ana'?'Ana':s.g)+'</div>').join('');
+  $('#haritaModalIc').innerHTML='<div class="mbas" style="--dr:#7c3aed;--dr2:#22d3ee"><div class="ik">🗺️</div><div><h3>Yıl Haritası — Nerede Kaldım?</h3><div class="alt">'+gname+' · kaldığın dersler işaretli</div></div><div class="kapat" onclick="modalKapat(\'haritaModal\')">✕</div></div>'+
+    '<div class="mgov"><div class="ilerseridi" style="margin-bottom:12px"><span class="et">Sınıf:</span>'+chips+'</div><div class="harita-saha">'+svg+'</div>'+
+    '<div style="text-align:center;margin-top:12px"><button class="btn g" onclick="window.print()">🖨️ Haritayı Yazdır</button></div></div>';
+  modalAc('haritaModal');
+}
+function haritaGit(tid,idx){ idx=parseInt(idx,10); if(isNaN(idx)||idx<0) idx=SEANS[tid].length-1; modalKapat('haritaModal'); if(ST.view!=='plan'){ viewDegis('plan'); } seansAc(tid,idx); }
+
+/* WhatsApp'a WhatsApp-uyumlu (emoji + *kalın*) biçimli gönder */
+function waFormat(t){
+  if(!t) return '';
+  let s=String(t);
+  s=s.replace(/~~(.+?)~~/g,'~$1~');
+  s=s.replace(/\*\*(.+?)\*\*/g,'*$1*').replace(/__(.+?)__/g,'*$1*');
+  s=s.replace(/^\s*#{1,6}\s*(.+)$/gm,'*$1*');
+  s=s.replace(/^\s*[-•]\s+/gm,'• ');
+  s=s.replace(/\[([^\]]+)\]\(([^)]+)\)/g,'$1 ($2)');
+  s=s.replace(/`([^`]+)`/g,'$1');
+  s=s.replace(/\n{3,}/g,'\n\n');
+  return s.trim();
+}
+function aiWhatsapp(){ const t=encodeURIComponent(waFormat(sonAiMetin||sonAiDuz())); window.open('https://wa.me/?text='+t,'_blank'); }
+
+/* Nerede-kaldım panosunu güncel tut */
+(function(){
+  const a=ilrToggleUI; ilrToggleUI=function(t,i){ a(t,i); renderNeredeKaldim(); };
+  const b=ilrToggleUI2; ilrToggleUI2=function(t,i){ b(t,i); renderNeredeKaldim(); };
+  const c=gradeSec; gradeSec=function(i){ c(i); renderNeredeKaldim(); };
+})();
+
 basla();
 fabYap({id:'sinif',ikon:'⏱️',etiket:'Sınıf Araçları',bayrak:'dk_sinif_gizli',tik:()=>sinifAracAc()});
+renderNeredeKaldim();
 </script>
 </body>
 </html>
