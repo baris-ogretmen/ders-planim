@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Barış Öğretmen · Yıllık Ders Planı</title>
+<title>Robotik ve Kodlama · Barış Öğretmen</title>
 <style>
 :root{
   --bg:#070b18; --bg2:#0b1327; --panel:#111c36; --panel2:#0e1830;
@@ -293,6 +293,35 @@ textarea.key{min-height:90px;resize:vertical}
 .fab{position:fixed;pointer-events:auto;touch-action:none;cursor:grab}
 .fab:active{cursor:grabbing}
 .pill{touch-action:none;cursor:grab}
+
+.seri-gear{cursor:pointer;border:1px solid var(--cizgi);background:var(--panel);color:var(--soluk);padding:10px 14px;border-radius:13px;font-weight:700;font-size:14px}
+.seri-gear:hover{color:#fff;border-color:var(--mavi2)}
+.ilerseridi{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin:2px 0 16px}
+.ilerseridi .et{font-size:12px;color:var(--soluk2);font-weight:700;margin-right:2px}
+.gchip{cursor:pointer;border:1px solid var(--cizgi);background:var(--panel2);border-radius:11px;padding:7px 11px;font-size:12px;font-weight:800;color:var(--soluk);display:flex;gap:8px;align-items:center}
+.gchip:hover{color:#fff}
+.gchip.akt{border-color:var(--altin);color:#fff;background:rgba(251,191,36,.12)}
+.gchip .pct{font-size:11px;color:var(--yesil2);font-weight:900}
+.track{background:var(--kart);border:1px solid var(--cizgi);border-left:5px solid var(--dr);border-radius:16px;padding:14px 14px 10px;margin-bottom:14px;box-shadow:0 4px 14px rgba(0,0,0,.22)}
+.track-bas{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.track-bas .ti{font-size:24px;width:46px;height:46px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,var(--dr),var(--dr2));color:#fff;flex:0 0 auto}
+.track-bas h3{margin:0;font-size:16px;color:#fff}
+.tp{display:flex;align-items:center;gap:9px;margin-top:5px}
+.tp-bar{flex:1;max-width:240px;height:8px;border-radius:999px;background:rgba(255,255,255,.09);overflow:hidden}
+.tp-bar span{display:block;height:100%;background:linear-gradient(90deg,var(--dr),var(--dr2));transition:width .3s}
+.tp-txt{font-size:11.5px;color:var(--soluk);font-weight:700}
+.seans-liste{display:grid;gap:6px}
+.seans{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:11px;background:var(--panel2);border:1px solid var(--cizgi);cursor:pointer;transition:.13s}
+.seans:hover{border-color:var(--dr2);transform:translateX(3px)}
+.seans .chk{font-size:17px;cursor:pointer;flex:0 0 auto}
+.seans .sno{font-size:11px;font-weight:800;color:var(--soluk2);width:20px;text-align:center;flex:0 0 auto}
+.seans .sk{font-size:13.5px;color:var(--metin);flex:1}
+.seans.ok .sk{color:var(--soluk);text-decoration:line-through;opacity:.7}
+.seans.next{border-color:var(--dr2);box-shadow:0 0 0 1px var(--dr2) inset}
+.seans .nx{font-size:10px;font-weight:800;color:#052012;background:linear-gradient(135deg,#fbbf24,#f59e0b);padding:3px 8px;border-radius:999px;flex:0 0 auto}
+.sinif-arac-bl{margin-bottom:20px}
+.timer-d{font-size:56px;font-weight:900;text-align:center;font-variant-numeric:tabular-nums;letter-spacing:2px;background:linear-gradient(135deg,#a78bfa,#22d3ee);-webkit-background-clip:text;background-clip:text;color:transparent;margin:6px 0 12px}
+.picker-out{font-size:32px;font-weight:900;text-align:center;min-height:46px;color:#fff;margin:10px 0}
 </style>
 
 </head>
@@ -303,8 +332,8 @@ textarea.key{min-height:90px;resize:vertical}
     <div class="hero-top">
       <div class="logo">📘</div>
       <div style="min-width:0">
-        <div class="ustlbl">YILLIK DERS PLANI · 2025–2026</div>
-        <h1>Barış Öğretmen</h1>
+        <div class="ustlbl">BARIŞ ÖĞRETMEN · YILLIK DERS PLANI · 2025–2026</div>
+        <h1>Robotik ve Kodlama</h1>
         <div class="alt">Robotik · Kodlama · Yapay Zeka · Satranç · Akıl-Zeka Oyunları</div>
       </div>
     </div>
@@ -321,6 +350,7 @@ textarea.key{min-height:90px;resize:vertical}
     <div class="seri aktif" data-v="veli">🏛️ Genel Bakış / Veli Sunumu</div>
     <div class="seri" data-v="plan">📅 Yıllık Plan</div>
     <div class="seri" data-v="araclar">🧰 Araç Kütüphanesi</div>
+    <div class="seri-gear" onclick="ayarAc()" title="Ayarlar — her zaman burada">⚙️ Ayarlar</div>
   </div>
 
   <!-- GENEL BAKIŞ -->
@@ -367,6 +397,8 @@ textarea.key{min-height:90px;resize:vertical}
 <div class="modal-bg" id="qrModal"><div class="modal" id="qrModalIc"></div></div>
 <!-- MODAL: KONU DETAY -->
 <div class="modal-bg" id="konuModal"><div class="modal" id="konuModalIc"></div></div>
+<!-- MODAL: SINIF ARAÇLARI -->
+<div class="modal-bg" id="sinifModal"><div class="modal" id="sinifModalIc"></div></div>
 
 <script>
 /* ============================================================
@@ -1037,6 +1069,7 @@ async function aiSor(gorunenSoru, {sistem, on, baslik, ekle}={}){
 }
 function aiAracCubugu(){
   return `<div class="ai-arac">
+    <button onclick="aiWhatsapp()">🟢 WhatsApp</button>
     <button onclick="aiKopyala()">📋 Kopyala</button>
     <button onclick="aiPaylas()">📤 Paylaş</button>
     <button onclick="aiGorsel()">📷 Görsel</button>
@@ -1296,12 +1329,227 @@ function basla(){
   ekranPillYap();
   yardimFab();
   fabYap({id:'qr',ikon:'📲',etiket:'QR ile paylaş',bayrak:'dk_qr_gizli',tik:()=>ZIRVE_paylasAc()});
-  fabYap({id:'ayar',ikon:'⚙️',etiket:'Ayarlar (her zaman erişilebilir)',bayrak:'dk_ayar_gizli',kalici:true,tik:()=>ayarAc()});
+  fabYap({id:'ayar',ikon:'⚙️',etiket:'Ayarlar',bayrak:'dk_ayar_gizli',tik:()=>ayarAc()});
   fabYap({id:'ai',ikon:'✨',etiket:'Ders Asistanı',bayrak:'dk_ai_gizli',ai:true,tik:()=>asistanAc()});
   uyariBandiGoster();
   karsilamaGoster(false);
 }
+
+/* ============================================================
+   4 PARALEL DERS (TRACK) + İLERLEME TAKİBİ
+   ============================================================ */
+const TRACKS=[
+  {id:'robokod', ad:'Robotik ve Kodlama', ik:'🤖', dr:'#7c3aed', dr2:'#22d3ee', dk:'robotik'},
+  {id:'satranc', ad:'Satranç',            ik:'♟️', dr:'#059669', dr2:'#34d399', dk:'satranc'},
+  {id:'yz',      ad:'Yapay Zeka',          ik:'🧠', dr:'#0891b2', dr2:'#22d3ee', dk:'yapayzeka'},
+  {id:'akil',    ad:'Akıl-Zeka Oyunları',  ik:'🧩', dr:'#db2777', dr2:'#f472b6', dk:'akil'},
+];
+const SEANS={
+  robokod:[
+    {k:'Tanışma, Atölye Kuralları ve Yıl Haritası',z:'Atölye işleyişini ve yıl hedeflerini kavrar; güvenli çalışma kurallarını benimser.',e:'Tanışma oyunu; “atölye kuralları” panosu; yıl haritasını birlikte gezme.',d:'genel',m:'Kural kartları, yıl haritası posteri.'},
+    {k:'Algoritma: Adım Adım Yönerge',z:'Bir işi mantıklı adımlara böler; sıralamanın önemini kavrar.',e:'“Robot-öğretmen” oyunu; ekransız kodlama kartları; sandviç yapma algoritması.',d:'kodlama'},
+    {k:'Blok Kodlamaya Giriş',z:'Sürükle-bırak ile ilk komutları çalıştırır.',e:'Karakteri hareket ettir, ses ekle, sahne kur; serbest keşif.',d:'kodlama'},
+    {k:'Olaylar ve Hareket',z:'Olay ile komut tetikler; hareket bloklarını amaçlı kullanır.',e:'“Tıkla-konuşsun”, “tuşa bas-hareket etsin” mini sahneler.',d:'kodlama'},
+    {k:'Döngüler: Tekrar Eden İşler',z:'Tekrarı döngüyle ifade eder; gereksiz tekrarı azaltır.',e:'Çokgen çizdirme; dans adımlarını döngüyle tekrarlatma.',d:'kodlama'},
+    {k:'Koşullar: Eğer … İse',z:'Duruma göre karar veren kod (koşul) yazar.',e:'“Engele değerse dur”, “puan 10 ise kutla” senaryoları.',d:'kodlama'},
+    {k:'İlk Oyun / Animasyon Projesi',z:'Blokları birleştirip ürün oluşturur; hatasını bulup düzeltir (debug).',e:'Basit kovalama/tıklama oyunu ya da animasyon; eşli test.',d:'kodlama'},
+    {k:'Robotik Nedir? Sensör–Motor–Kontrol',z:'Robotun parçalarını ve günlük robotları tanır.',e:'Robot örnekleri; “robot ol” rol oyunu (girdi → işlem → çıktı).',d:'robotik'},
+    {k:'İlk Robotum: Yönerge Ver, Hareket Etsin',z:'Robotu (fiziksel/sanal) yönergelerle hareket ettirir.',e:'Bee-Bot/mBot ya da MakeCode simülatöründe hedefe ulaşma.',d:'robotik'},
+    {k:'Döngü ve Sensörle Robotik',z:'Tekrar ve sensör verisiyle robota karar verdirir.',e:'“Engel görürse dön”, çizgi izleme (fiziksel/sanal).',d:'robotik'},
+    {k:'Robotik Mini Görev: Labirent / Çizgi',z:'Bir görevi çözmek için kodu planlar ve dener.',e:'Labirentten çıkış veya çizgi izleme yarışı; deneme-yanılma.',d:'robotik'},
+    {k:'Robotik Proje Sunumu',z:'Takımla ürettiği çözümü sunar.',e:'Grup sunumları; akran geri bildirimi.',d:'genel'},
+    {k:'Proje Tabanlı Kodlama I: Planlama',z:'Projesini planlar (amaç, adım, gereken bloklar).',e:'Fikir seçme, storyboard, görev bölüşümü.',d:'kodlama'},
+    {k:'Proje Tabanlı Kodlama II: Yapım',z:'Planını koda döker; sorunları çözer.',e:'Projeyi kodlama; öğretmen rehberliğinde ilerleme.',d:'kodlama'},
+    {k:'Proje Tabanlı Kodlama III: Test & Hata Ayıklama',z:'Test eder, hataları bulup iyileştirir (debug).',e:'Eşli test, hata listesi, düzeltme; sürüm 2.',d:'kodlama'},
+    {k:'İleri / Yaratıcı Robotik Tasarım',z:'Bir soruna yaratıcı robotik çözüm tasarlar.',e:'“Şunu yapan robot” beyin fırtınası + prototip.',d:'robotik'},
+    {k:'Robotik + Kodlama Birleşimi',z:'Kod ve donanımı birlikte kullanarak görev tamamlar.',e:'Sensör + motor + koşul + döngü içeren bütünleşik görev.',d:'robotik'},
+    {k:'Yıl Sonu Proje ve Sergi',z:'Yıl boyu öğrendiğini birleştiren bir ürün sunar.',e:'Proje yapımı, prova, büyük sergi ve sertifika.',d:'genel'},
+  ],
+  satranc:[
+    {k:'Tanışma: Tahta ve Taşlar',z:'Tahtayı, kareleri ve taşları tanır.',e:'Tahtayı kur, taşları eşleştir; “kim nerede durur” oyunu.'},
+    {k:'Taşların Hareketi ve Değeri',z:'Her taşın hareketini ve değerini bilir.',e:'Tek taşla hedefe ulaşma bulmacaları; taş değeri kartları.'},
+    {k:'Şah Çekme ve Savunma',z:'Şah çekmeyi ve şahı korumayı anlar.',e:'Şah tehdidi bulmacaları; savunma yolları.'},
+    {k:'Rok, Piyon Terfisi ve Özel Kurallar',z:'Rok, terfi, geçerken alma kurallarını uygular.',e:'Kural kartları; uygulamalı mini oyunlar.'},
+    {k:'Temel Mat Kalıpları',z:'Basit mat kalıplarını tanır.',e:'Tek/iki hamlede mat bulmacaları.'},
+    {k:'Açılış İlkeleri',z:'Merkez kontrolü ve taş geliştirmeyi kavrar.',e:'İyi/kötü açılış karşılaştırması; kısa oyunlar.'},
+    {k:'Taktik: Çatal',z:'Çatal taktiğini fark eder ve kurar.',e:'Çatal bulmacaları (çevrimiçi).'},
+    {k:'Taktik: Şiş ve Keşif',z:'Şiş ve keşif hamlelerini tanır.',e:'Taktik bulmaca istasyonları.'},
+    {k:'Basit Oyun Sonu',z:'Şah+vezir matı gibi temel oyun sonlarını bilir.',e:'Oyun sonu alıştırmaları; eşli çalışma.'},
+    {k:'Sınıf Turnuvası',z:'Kurallara uyar; sporcu ahlakı gösterir.',e:'Eşleşmeli turnuva; puan tablosu.'},
+  ],
+  yz:[
+    {k:'Yapay Zeka Nedir? Günlük Hayatta YZ',z:'YZ’yi ve nerede karşımıza çıktığını açıklar.',e:'“Bu YZ mi?” tahmin oyunu; sesli asistan/öneri örnekleri.'},
+    {k:'İnsan mı Makine mi? Örüntü Tanıma',z:'Makinenin örüntü tanıdığını fark eder.',e:'Quick, Draw! ile çizim tanıma denemeleri.'},
+    {k:'Makine Örneklerden Öğrenir',z:'Veri → model ilişkisini kavrar.',e:'Sınıfça örnek toplama; makineyi “yanıltma” denemesi.'},
+    {k:'Kendi Modelini Eğit I',z:'Örnek toplayıp basit bir model eğitir.',e:'Teachable Machine ile 2-3 sınıf eğitme ve test.'},
+    {k:'Kendi Modelini Eğit II: Test & İyileştir',z:'Modeli test eder, veriyle iyileştirir.',e:'Yanlış tahminleri düzeltmek için veri ekleme.'},
+    {k:'Sesle / Görüntüyle Etkileşim',z:'Ses/görüntü tanımanın kullanımını görür.',e:'Sesli asistan örnekleri; kamera denemeleri.'},
+    {k:'Üretici YZ ve Sorumlu Kullanım',z:'YZ’nin hata yapabileceğini ve etiği tartışır.',e:'“YZ yanılırsa?” tartışması; doğrulama alışkanlığı.'},
+    {k:'YZ + Robotik: Akıllı Sistemler',z:'YZ’nin otomasyonla birleşimini örnekler.',e:'Görüntü/ses tanımayı bir tepkiye bağlama.'},
+    {k:'YZ Mini Proje: Planlama & Yapım',z:'Bir YZ ürünü planlar ve üretir.',e:'Model + sahne/poster hazırlama.'},
+    {k:'YZ Proje Sunumu',z:'Ürününü sunar; nasıl çalıştığını anlatır.',e:'Sunum; akran geri bildirimi.'},
+  ],
+  akil:[
+    {k:'Örüntü, Eşleştirme, Dikkat',z:'Örüntüyü fark eder ve sürdürür.',e:'Örüntü tamamlama; “farkı bul”; dikkat oyunları.'},
+    {k:'Hafıza Oyunları',z:'Kısa süreli hafızayı güçlendirir.',e:'Hafıza kartları; dijital hafıza oyunları.'},
+    {k:'Mantık Bulmacaları',z:'Mantık yürüterek problem çözer.',e:'Lightbot / mantık bulmaca istasyonları.'},
+    {k:'Strateji Oyunları I',z:'Basit strateji kurar; ileriyi düşünür.',e:'Sıra oyunları (üç taş, nim).'},
+    {k:'Görsel-Uzamsal Beceriler',z:'Şekil-uzay ilişkisini kurar.',e:'Tangram, blok/desen oyunları.'},
+    {k:'Sayı-Mantık',z:'Sayısal mantık bulmacalarını çözer.',e:'Sudoku / KenKen (yaşa göre).'},
+    {k:'Strateji Oyunları II',z:'Daha derin strateji ve plan yapar.',e:'Strateji istasyonları; turnuva provası.'},
+    {k:'Hız ve Dikkat',z:'Hızlı ve doğru karar verir.',e:'SET, eşleştirme, hız oyunları.'},
+    {k:'Bulmaca Maratonu',z:'Farklı türde bulmacaları çözer.',e:'İstasyonlu bulmaca turu.'},
+    {k:'Akıl Oyunları Turnuvası',z:'Öğrendiklerini oyunda uygular; kazanmayı/kaybetmeyi yönetir.',e:'Sınıf turnuvası; puan tablosu.'},
+  ],
+};
+
+function ilrGet(){ return LS.get('dk_ilr',{}); }
+function ilrDone(gi,tid,idx){ const o=ilrGet(); return !!(o[gi]&&o[gi][tid]&&o[gi][tid][idx]); }
+function ilrToggle(gi,tid,idx){ const o=ilrGet(); o[gi]=o[gi]||{}; o[gi][tid]=o[gi][tid]||{}; if(o[gi][tid][idx]) delete o[gi][tid][idx]; else o[gi][tid][idx]=1; LS.set('dk_ilr',o); }
+function trackSonraki(gi,tid,n){ for(let i=0;i<n;i++) if(!ilrDone(gi,tid,i)) return i; return -1; }
+function trackYuzde(gi,tid,n){ let c=0; for(let i=0;i<n;i++) if(ilrDone(gi,tid,i)) c++; return n?Math.round(c/n*100):0; }
+function gradeYuzde(gi){ let t=0,c=0; TRACKS.forEach(tr=>{const n=SEANS[tr.id].length;t+=n;for(let i=0;i<n;i++)if(ilrDone(gi,tr.id,i))c++;}); return t?Math.round(c/t*100):0; }
+
+renderFiltre=function(){};
+
+renderPlan=function(){ renderDuzeyBilgi(); planAracCubugu(); renderPlanGrid(); };
+function planAracCubugu(){
+  $('#filtre').innerHTML='<span class="ara" style="margin-left:0"><input id="araInput" placeholder="Konu ara…"><span class="x" id="araX">✕</span></span>'+
+    '<button class="fbtn" onclick="window.print()">🖨️ Yazdır / PDF</button>'+
+    '<button class="fbtn" onclick="bugunNe()">🎲 Bugün ne işlesem?</button>'+
+    '<button class="fbtn" onclick="sinifAracAc()">⏱️ Sınıf Araçları</button>';
+  const inp=$('#araInput'); if(inp){ inp.value=ST.ara||''; inp.addEventListener('input',e=>{ST.ara=e.target.value;$('#araX').style.display=e.target.value?'block':'none';renderPlanGrid();}); }
+  const x=$('#araX'); if(x) x.onclick=()=>{ST.ara='';inp.value='';x.style.display='none';renderPlanGrid();};
+}
+renderPlanGrid=function(){
+  const gi=ST.gradeIdx, lv=aktifSinif().d, ara=(ST.ara||'').toLocaleLowerCase('tr');
+  let strip='<div class="ilerseridi"><span class="et">📌 Nerede kaldım:</span>';
+  SINIF_LISTE.forEach((sn,i)=>{ strip+=`<div class="gchip${i===gi?' akt':''}" onclick="gradeSec(${i})">${sn.g==='Ana'?'Ana':sn.g} <span class="pct">%${gradeYuzde(i)}</span></div>`; });
+  strip+='</div>';
+  let html='';
+  TRACKS.forEach(tr=>{
+    const list=SEANS[tr.id], n=list.length, yuzde=trackYuzde(gi,tr.id,n), sonraki=trackSonraki(gi,tr.id,n);
+    let seanslar='';
+    list.forEach((se,i)=>{
+      if(ara && !(se.k.toLocaleLowerCase('tr').includes(ara)||(se.z||'').toLocaleLowerCase('tr').includes(ara))) return;
+      const done=ilrDone(gi,tr.id,i), nx=(i===sonraki);
+      seanslar+=`<div class="seans${done?' ok':''}${nx?' next':''}" onclick="seansAc('${tr.id}',${i})">
+        <span class="chk" onclick="event.stopPropagation();ilrToggleUI('${tr.id}',${i})">${done?'✅':'⬜'}</span>
+        <span class="sno">${i+1}</span><span class="sk">${se.k}</span>
+        ${nx?'<span class="nx">buradasın</span>':''}</div>`;
+    });
+    if(ara && !seanslar) return;
+    html+=`<div class="track" style="--dr:${tr.dr};--dr2:${tr.dr2}">
+      <div class="track-bas"><div class="ti">${tr.ik}</div><div class="tt" style="flex:1"><h3>${tr.ad}</h3>
+        <div class="tp"><div class="tp-bar"><span style="width:${yuzde}%"></span></div><span class="tp-txt">%${yuzde} · ${n} ders</span></div></div></div>
+      <div class="seans-liste">${seanslar||'<div style="color:var(--soluk);font-size:13px;padding:6px">Aramaya uyan ders yok.</div>'}</div></div>`;
+  });
+  $('#planIzgara').innerHTML=strip+(html||'<div style="padding:30px;text-align:center;color:var(--soluk)">Sonuç yok.</div>');
+};
+function gradeSec(i){ ST.gradeIdx=i; stKaydet(); renderSiniflar(); renderPlan(); window.scrollTo({top:0,behavior:'smooth'}); }
+function ilrToggleUI(tid,i){ const gi=ST.gradeIdx; ilrToggle(gi,tid,i); const n=SEANS[tid].length; if(ilrDone(gi,tid,i)&&trackYuzde(gi,tid,n)===100){ toast('🎉 '+TRACKS.find(t=>t.id===tid).ad+' tamamlandı!','ok',3200);} renderPlanGrid(); }
+
+let aktifSeans=null;
+function seansAc(tid,i){
+  aktifSeans={trackId:tid,idx:i};
+  const tr=TRACKS.find(x=>x.id===tid), se=SEANS[tid][i], dz=aktifDuzey(), lv=dz.id, gi=ST.gradeIdx;
+  const dk=se.d||tr.dk;
+  const araclar=(DUZEY_ARAC[lv][dk]||[]).map(k=>{const a=ARACLAR[k];return a?`<a class="arac-cip" href="${a.url}" target="_blank" rel="noopener"><span class="ik">${a.ik}</span>${a.ad}</a>`:'';}).join('');
+  const done=ilrDone(gi,tid,i);
+  $('#haftaModalIc').innerHTML=`
+    <div class="mbas" style="--dr:${tr.dr};--dr2:${tr.dr2}"><div class="ik">${tr.ik}</div>
+      <div style="min-width:0"><h3>${tr.ad} · Ders ${i+1}</h3><div class="alt">${se.k} • ${dz.ad} (${dz.yas})</div></div>
+      <div class="kapat" onclick="modalKapat('haftaModal')">✕</div></div>
+    <div class="mgov">
+      <div class="blok"><button class="btn ${done?'g':'y'}" style="width:100%;justify-content:center" onclick="ilrToggleUI2('${tid}',${i})">${done?'↩︎ “İşlendi” işaretini kaldır':'✅ Bu dersi işlendi olarak işaretle'}</button></div>
+      <div class="blok"><div class="bh">🎯 Kazanım</div><div class="bt">${se.z}</div></div>
+      <div class="blok"><div class="bh">🧩 Etkinlik</div><div class="bt">${se.e}</div></div>
+      ${se.m?`<div class="blok"><div class="bh">📦 Materyal</div><div class="bt">${se.m}</div></div>`:''}
+      <div class="blok"><div class="bh">🧰 Bu Düzey İçin Araçlar</div><div class="arac-satir">${araclar||'<span style="color:var(--soluk)">Ekransız/materyal ağırlıklı.</span>'}</div></div>
+      <div class="blok"><div class="uy-kutu">🧭 <b>${dz.ad} uyarlaması:</b> ${DUZEY_YAKLASIM[lv].replace(/<[^>]+>/g,'')}</div></div>
+      <div class="blok"><div class="bh">✨ Yapay Zeka ile</div><div class="ai-hizli">
+        <button onclick="veliMesaj()">👪 Veli bilgilendirme mesajı</button>
+        <button onclick="seansAI('etkinlik')">🎨 3 ek etkinlik</button>
+        <button onclick="seansAI('unplugged')">🔌 Ekransız alternatif</button>
+        <button onclick="seansAI('sorular')">❓ 5 değerlendirme sorusu</button>
+        <button onclick="seansAI('ders')">📝 40 dk ders akışı</button>
+      </div></div>
+    </div>`;
+  modalAc('haftaModal');
+}
+function ilrToggleUI2(tid,i){ ilrToggle(ST.gradeIdx,tid,i); seansAc(tid,i); }
+function bugunNe(){
+  const gi=ST.gradeIdx, aday=[];
+  TRACKS.forEach(tr=>{const nx=trackSonraki(gi,tr.id,SEANS[tr.id].length); if(nx>=0) aday.push([tr.id,nx]);});
+  if(!aday.length){ toast('Bu sınıfta tüm dersler işlendi! 🎉','ok',3000); return; }
+  const p=aday[Math.floor(Math.random()*aday.length)]; seansAc(p[0],p[1]);
+}
+function seansAI(tip){
+  const t=aktifSeans, tr=TRACKS.find(x=>x.id===t.trackId), se=SEANS[t.trackId][t.idx], dz=aktifDuzey();
+  const baglam='Ders alanı: '+tr.ad+'. Sınıf: '+dz.ad+' ('+dz.yas+'). Konu: "'+se.k+'". Kazanım: '+se.z+'. Etkinlik: '+se.e+'.';
+  const istek={
+    etkinlik:'Bu derse uygun, sınıfta hemen uygulanabilir 3 YENİ ve yaratıcı etkinlik öner. Her biri: kısa ad + 1-2 cümle uygulama + malzeme. Yaşa bire bir uygun olsun.',
+    unplugged:'Bu konuyu bilgisayar/tablet KULLANMADAN (ekransız) öğreten bir etkinlik tasarla. Adım adım anlat, malzeme ve süre belirt.',
+    sorular:'Bu kazanımı ölçen, yaşa uygun 5 kısa değerlendirme sorusu üret (karışık) ve cevaplarını ver.',
+    ders:'Bu ders için 40 dakikalık akış planla: giriş (ısınma) → geliştirme → uygulama → kapanış. Her aşamaya süre yaz.'
+  }[tip];
+  const sistem='Sen "Robotik ve Kodlama" dersinin asistanısın; öğretmen Barış’a yardımcı ol. KISA, NET, TÜRKÇE, uygulanabilir yaz. Somut örnek + akılda kalıcı anlatım. Renkli vurgu için <span style="color:#RENK;font-weight:700">. LaTeX yok, ok için →. Tablo en fazla 3 sütun.';
+  modalKapat('haftaModal');
+  aiSor(istek,{sistem,on:baglam+' GÖREV: '+istek,baslik:'Ders '+(t.idx+1)+' · '+se.k});
+}
+function veliMesaj(){
+  const t=aktifSeans, tr=TRACKS.find(x=>x.id===t.trackId), se=SEANS[t.trackId][t.idx], s=aktifSinif(), dz=aktifDuzey();
+  const sinifAd=(s.g==='Ana'?'Anaokulu':s.g+'. sınıf');
+  const sistem='Sen öğretmen Barış’sın. Velilere gönderilecek KISA bir WhatsApp bilgilendirme mesajı yaz (birinci tekil şahıs, senin ağzından, sıcak ve profesyonel, 4-6 cümle, ölçülü emoji). Şunları içersin: bugün ne işledik + çocuklar ne kazandı + evde velinin yapabileceği 1 küçük destek önerisi. Başlık/madde kullanma, düz paragraf. Sonda kısa imza: “Sevgiler, Barış Öğretmen”. LaTeX yok.';
+  const on='['+sinifAd+' · '+tr.ad+'] Bugün "'+se.k+'" konusunu işledim. Kazanım: '+se.z+'. Etkinlik: '+se.e+'. Buna göre velilere göndereceğim mesajı yaz.';
+  modalKapat('haftaModal');
+  aiSor('Veli bilgilendirme mesajı hazırla',{sistem,on,baslik:'Veli Mesajı · '+se.k});
+}
+function aiWhatsapp(){ const t=encodeURIComponent(sonAiDuz()); window.open('https://wa.me/?text='+t,'_blank'); }
+
+/* ---- SINIF ARAÇLARI: Sayaç + Öğrenci Seçici ---- */
+let timerKalan=300, timerInt=null;
+function sinifAracAc(){
+  $('#sinifModalIc').innerHTML=`
+   <div class="mbas" style="--dr:#4f46e5;--dr2:#818cf8"><div class="ik">⏱️</div>
+     <div><h3>Sınıf Araçları</h3><div class="alt">Etkinlik sayacı · Rastgele öğrenci seçici</div></div>
+     <div class="kapat" onclick="timerDur();modalKapat('sinifModal')">✕</div></div>
+   <div class="mgov">
+     <div class="sinif-arac-bl"><div class="bh">⏱️ Etkinlik Sayacı</div>
+       <div class="timer-d" id="timerD">05:00</div>
+       <div class="btnsira" style="justify-content:center">
+         <button class="btn g" onclick="timerAyar(-60)">−1 dk</button>
+         <button class="btn g" onclick="timerAyar(60)">+1 dk</button>
+         <button class="btn p" id="timerBtn" onclick="timerBaslatDur()">▶ Başlat</button>
+         <button class="btn g" onclick="timerSifirla()">↺ Sıfırla</button>
+       </div>
+       <div class="btnsira" style="justify-content:center;margin-top:8px">
+         <button class="btn g" onclick="timerKur(60)">1</button><button class="btn g" onclick="timerKur(180)">3</button>
+         <button class="btn g" onclick="timerKur(300)">5</button><button class="btn g" onclick="timerKur(600)">10</button>
+         <button class="btn g" onclick="timerKur(900)">15 dk</button>
+       </div>
+     </div>
+     <div class="sinif-arac-bl"><div class="bh">🎯 Rastgele Öğrenci Seçici</div>
+       <textarea class="key" id="isimBox" placeholder="Her satıra bir öğrenci adı yaz…" style="min-height:96px;font-family:inherit"></textarea>
+       <div class="picker-out" id="pickerOut">—</div>
+       <div class="btnsira" style="justify-content:center"><button class="btn p" onclick="isimSec()">🎲 Rastgele Seç</button></div>
+     </div>
+   </div>`;
+  modalAc('sinifModal'); timerGoster();
+  const ib=$('#isimBox'); ib.value=LS.get('dk_isimler',''); ib.addEventListener('input',()=>LS.set('dk_isimler',ib.value));
+}
+function timerKur(sn){ timerDur(); timerKalan=sn; timerGoster(); }
+function timerAyar(d){ timerKalan=Math.max(0,timerKalan+d); timerGoster(); }
+function timerSifirla(){ timerDur(); timerKalan=300; timerGoster(); }
+function timerGoster(){ const m=String(Math.floor(timerKalan/60)).padStart(2,'0'),s=String(timerKalan%60).padStart(2,'0'); const el=$('#timerD'); if(el)el.textContent=m+':'+s; }
+function timerBaslatDur(){ if(timerInt) timerDur(); else timerBaslat(); }
+function timerBaslat(){ if(timerKalan<=0)timerKalan=300; const b=$('#timerBtn'); if(b)b.textContent='⏸ Duraklat'; timerInt=setInterval(()=>{ timerKalan--; timerGoster(); if(timerKalan<=0){ timerDur(); timerBip(); toast('⏰ Süre doldu!','info',3000);} },1000); }
+function timerDur(){ if(timerInt){clearInterval(timerInt);timerInt=null;} const b=$('#timerBtn'); if(b)b.textContent='▶ Başlat'; }
+function timerBip(){ try{const A=window.AudioContext||window.webkitAudioContext;const c=new A();const o=c.createOscillator();const g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;o.start();g.gain.setValueAtTime(.2,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+1.2);o.stop(c.currentTime+1.2);}catch(e){} }
+function isimSec(){ const list=(($('#isimBox')||{}).value||'').split(String.fromCharCode(10)).map(x=>x.trim()).filter(Boolean); const o=$('#pickerOut'); if(!list.length){o.textContent='Önce isim gir!';return;} let n=0; const iv=setInterval(()=>{ o.textContent=list[Math.floor(Math.random()*list.length)]; if(++n>12){ clearInterval(iv); o.textContent='🎉 '+list[Math.floor(Math.random()*list.length)]; } },70); }
+
 basla();
+fabYap({id:'sinif',ikon:'⏱️',etiket:'Sınıf Araçları',bayrak:'dk_sinif_gizli',tik:()=>sinifAracAc()});
 </script>
 </body>
 </html>
