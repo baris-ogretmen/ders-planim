@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Robotik ve Kodlama · Barış Öğretmen</title>
+<meta name="theme-color" content="#0b1220">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Ders Planı">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.svg">
 <style>
 :root{
   --bg:#070b18; --bg2:#0b1327; --panel:#111c36; --panel2:#0e1830;
@@ -380,6 +387,13 @@ body.odak .seritler,body.odak .hero,body.odak .fabgrup,body.odak .pill,body.odak
 #yilPrint h3{font-size:15px;margin:14px 0 5px}
 #yilPrint ol{margin:0 0 8px 18px}
 #yilPrint li{margin:5px 0;font-size:12px;color:#222;line-height:1.4}
+
+.vkart{position:relative;display:block;background:var(--kart);border:1px solid var(--cizgi);border-radius:16px;padding:15px 15px 14px;cursor:pointer;transition:.15s;border-left:5px solid var(--dr)}
+.vkart:hover{transform:translateY(-2px);border-color:var(--dr2);box-shadow:0 10px 26px rgba(0,0,0,.35)}
+.vkart .pb{position:absolute;top:12px;right:12px;font-size:10.5px;font-weight:800;color:#fff;background:linear-gradient(135deg,#dc2626,#ef4444);padding:3px 9px;border-radius:999px}
+.vkart h4{margin:0 0 4px;font-size:14.5px;color:#fff;padding-right:56px}
+.vkart p{margin:0;font-size:12.5px;color:var(--soluk)}
+.vkart .ac{margin-top:10px;font-size:12px;font-weight:800;color:#f87171}
 </style>
 
 </head>
@@ -409,6 +423,7 @@ body.odak .seritler,body.odak .hero,body.odak .fabgrup,body.odak .pill,body.odak
     <div class="seri" data-v="plan">📅 Yıllık Plan</div>
     <div class="seri" data-v="araclar">🧰 Araç Kütüphanesi</div>
     <div class="seri" data-v="oyun">🎮 Eğitim Oyunları</div>
+    <div class="seri" data-v="video">🎬 Videolar</div>
     <div class="seri-gear" onclick="ayarAc()" title="Ayarlar — her zaman burada">⚙️ Ayarlar</div>
   </div>
 
@@ -430,6 +445,8 @@ body.odak .seritler,body.odak .hero,body.odak .fabgrup,body.odak .pill,body.odak
   <div id="v-araclar" style="display:none"></div>
 
   <div id="v-oyun" style="display:none"></div>
+
+  <div id="v-video" style="display:none"></div>
 
 </div>
 
@@ -1430,9 +1447,11 @@ function viewDegis(v){
   $('#v-plan').style.display=v==='plan'?'block':'none';
   $('#v-araclar').style.display=v==='araclar'?'block':'none';
   var vo=$('#v-oyun'); if(vo) vo.style.display=v==='oyun'?'block':'none';
+  var vv=$('#v-video'); if(vv) vv.style.display=v==='video'?'block':'none';
   if(v==='plan'){ renderSiniflar(); renderFiltre(); renderPlan(); }
   if(v==='araclar') renderAraclar();
   if(v==='oyun') renderOyun();
+  if(v==='video') renderVideo();
 }
 $$('#seritler .seri').forEach(s=>s.onclick=()=>viewDegis(s.dataset.v));
 $('#araInput').addEventListener('input',e=>{ ST.ara=e.target.value; $('#araX').style.display=e.target.value?'block':'none'; renderPlanGrid(); });
@@ -2000,6 +2019,117 @@ planAracCubugu=function(){
   var inp=$('#araInput'); if(inp){ inp.value=ST.ara||''; inp.addEventListener('input',function(e){ST.ara=e.target.value;$('#araX').style.display=e.target.value?'block':'none';renderPlanGrid();}); }
   var x=$('#araX'); if(x) x.onclick=function(){ST.ara='';inp.value='';x.style.display='none';renderPlanGrid();};
 };
+
+
+/* ============================================================
+   EK: 🎬 Video Kütüphanesi (YouTube) — konuya özel, canlı aramalar
+   ============================================================ */
+function openYT(q){ window.open('https://www.youtube.com/results?search_query='+encodeURIComponent(q),'_blank','noopener'); }
+var VIDEO_GRUP=[
+  {ad:'Robotik ve Kodlama', ik:'🤖', dr:'#7c3aed', dr2:'#22d3ee', items:[
+    {ad:'Algoritma nedir? (çocuklar için)', q:'algoritma nedir çocuklar için eğitici animasyon', d:'Kodlamanın temel mantığını anlatan eğitici videolar.'},
+    {ad:'Scratch ile kodlama (başlangıç)', q:'scratch ile kodlama dersi türkçe başlangıç', d:'Adım adım Scratch proje anlatımları.'},
+    {ad:'Code.org / Hour of Code', q:'code.org hour of code türkçe anlatım', d:'Ücretsiz kodlama etkinliklerinin tanıtımı.'},
+    {ad:'Robotik nedir? (animasyon)', q:'robotik nedir çocuklar için animasyon', d:'Sensör-motor-kontrol kavramını görselleştiren videolar.'},
+    {ad:'micro:bit projeleri', q:'microbit türkçe proje ders anlatım', d:'Kartsız da izlenip fikir alınabilecek projeler.'},
+    {ad:'Kodlama çizgi filmleri', q:'kodlama öğreten çizgi film çocuk', d:'Küçük yaşlara uygun eğlenceli anlatımlar.'},
+  ]},
+  {ad:'Yapay Zeka', ik:'🧠', dr:'#0891b2', dr2:'#22d3ee', items:[
+    {ad:'Yapay zeka nedir? (çocuklar için)', q:'yapay zeka nedir çocuklar için eğitici', d:'YZ’yi günlük hayattan örneklerle anlatan videolar.'},
+    {ad:'Makine nasıl öğrenir?', q:'makine öğrenmesi nedir basit anlatım türkçe', d:'Veri → model fikrini sade anlatan içerikler.'},
+    {ad:'Teachable Machine kullanımı', q:'teachable machine türkçe anlatım', d:'Kendi modelini eğitmeyi gösteren rehberler.'},
+    {ad:'Yapay zeka ve etik', q:'yapay zeka etik sorumlu kullanım eğitim', d:'Sorumlu kullanım tartışmaları için.'},
+  ]},
+  {ad:'Satranç', ik:'♟️', dr:'#059669', dr2:'#34d399', items:[
+    {ad:'Satranç kuralları (yeni başlayan)', q:'satranç kuralları yeni başlayanlar çocuk', d:'Tahta, taşlar ve temel kurallar.'},
+    {ad:'Taşların hareketi', q:'satranç taş hareketleri anlatım çocuk', d:'Her taşın nasıl gittiğini gösteren videolar.'},
+    {ad:'Açılış ilkeleri', q:'satranç açılış ilkeleri temel türkçe', d:'Merkez kontrolü ve gelişim.'},
+    {ad:'Taktikler: çatal & şiş', q:'satranç taktik çatal şiş anlatım türkçe', d:'Temel taktik desenleri.'},
+    {ad:'Satranç hikâye/belgesel', q:'satranç tarihi belgesel çocuk eğitici', d:'İlham verici satranç içerikleri.'},
+  ]},
+  {ad:'Akıl-Zeka Oyunları', ik:'🧩', dr:'#db2777', dr2:'#f472b6', items:[
+    {ad:'Akıl ve zeka oyunları', q:'akıl ve zeka oyunları anlatım eğitici çocuk', d:'Farklı oyun türlerinin tanıtımı.'},
+    {ad:'Tangram nasıl oynanır?', q:'tangram nasıl oynanır çocuk anlatım', d:'Görsel-uzamsal beceri etkinlikleri.'},
+    {ad:'Sudoku çözme', q:'sudoku nasıl çözülür başlangıç türkçe', d:'Adım adım sudoku stratejileri.'},
+    {ad:'Mantık bulmacaları', q:'mantık bulmacaları çocuklar için eğitici', d:'Sınıfta çözülebilecek bulmacalar.'},
+  ]},
+  {ad:'Eğitim Koçluğu (8. Sınıf)', ik:'🎯', dr:'#b45309', dr2:'#f59e0b', items:[
+    {ad:'Etkili ders çalışma teknikleri', q:'etkili ders çalışma teknikleri öğrenci', d:'Aktif tekrar, planlı çalışma.'},
+    {ad:'Sınav kaygısıyla baş etme', q:'sınav kaygısı ile başa çıkma öğrenci', d:'Kaygıyı yönetme yöntemleri.'},
+    {ad:'Zaman yönetimi (öğrenci)', q:'öğrenciler için zaman yönetimi', d:'Program yapma ve öncelik.'},
+    {ad:'Motivasyon & hedef', q:'öğrenci motivasyon hedef belirleme', d:'Hedef koyma ve sürdürme.'},
+  ]},
+  {ad:'Öğretmene İlham & Genel', ik:'⭐', dr:'#4f46e5', dr2:'#818cf8', items:[
+    {ad:'TED-Ed eğitici animasyonlar', q:'TED-Ed türkçe eğitici animasyon', d:'Her derse serpiştirilecek kısa, çarpıcı animasyonlar.'},
+    {ad:'Öğretmene ilham/motivasyon', q:'öğretmen motivasyon ilham konuşma', d:'Ders motivasyonunu artıran içerikler.'},
+    {ad:'Sınıf yönetimi ipuçları', q:'sınıf yönetimi teknikleri öğretmen', d:'Verimli sınıf için pratik öneriler.'},
+  ]},
+];
+function videoAra(){
+  var sel=$('#videoKonu'); var v=sel?sel.value:''; var list=oyunSeansListesi(ST.videoGrade); var fn=list.filter(function(x){return x.v===v;})[0]||list[0];
+  var tid=(v||'').split('|')[0]; var tr=TRACKS.filter(function(x){return x.id===tid;})[0]; var dersAd=tr?tr.ad:'';
+  var dz=DUZEYLER.find(function(d){return d.id===SINIF_LISTE[ST.videoGrade].d;});
+  var yasKel = dz.id==='ana'||dz.id==='12' ? 'çocuklar için' : (dz.id==='78'?'ortaokul':'çocuk');
+  var q=(fn?fn.konu:'')+' '+dersAd+' '+yasKel+' eğitici anlatım';
+  openYT(q);
+}
+function videoGrade(i){ ST.videoGrade=i; renderVideo(); }
+function renderVideo(){
+  if(ST.videoGrade==null) ST.videoGrade=ST.gradeIdx;
+  var chips=SINIF_LISTE.map(function(sn,i){return '<div class="gchip'+(i===ST.videoGrade?' akt':'')+'" onclick="videoGrade('+i+')">'+(sn.g==='Ana'?'Ana':sn.g)+'</div>';}).join('');
+  var opts=oyunSeansListesi(ST.videoGrade).map(function(x){return '<option value="'+x.v+'">'+x.t+'</option>';}).join('');
+  var html='<div class="veli-hero" style="padding:20px"><h2 style="margin:0 0 4px;font-size:20px">🎬 Video Kütüphanesi</h2>'+
+    '<p class="big" style="font-size:13px">Derse uygun eğitici video, film ve animasyonlar. Her karta dokun → YouTube’da o konunun <b>güncel ve ilgili</b> videoları açılır (linkler eskimez).</p></div>'+
+    '<div class="oyun-panel"><div class="ilerseridi"><span class="et">Sınıf:</span>'+chips+'</div>'+
+    '<label class="fl">Ders planındaki konuyu YouTube’da bul:</label><select id="videoKonu" class="key" style="font-family:inherit">'+opts+'</select>'+
+    '<div class="btnsira" style="margin-top:12px"><button class="btn p" onclick="videoAra()">🔎 Bu Konuyu YouTube’da Bul</button></div></div>';
+  VIDEO_GRUP.forEach(function(g){
+    html+='<div class="arac-grup" style="--dr:'+g.dr+';--dr2:'+g.dr2+'"><div class="gb"><span class="ik">'+g.ik+'</span>'+g.ad+'</div><div class="arac-izgara">';
+    g.items.forEach(function(it){
+      html+='<div class="vkart" style="--dr:'+g.dr+';--dr2:'+g.dr2+'" onclick="openYT(\''+it.q+'\')"><span class="pb">▶ YouTube</span><h4>'+it.ad+'</h4><p>'+it.d+'</p><div class="ac">İzle / Keşfet ↗</div></div>';
+    });
+    html+='</div></div>';
+  });
+  $('#v-video').innerHTML=html;
+}
+
+
+/* ============================================================
+   EK: Güvenli YouTube kanalları + PWA
+   ============================================================ */
+function openUrl(u){ window.open(u,'_blank','noopener'); }
+VIDEO_GRUP.push({ad:'Güvenli Kanallar (doğrudan)', ik:'📺', dr:'#4f46e5', dr2:'#818cf8', items:[
+  {ad:'TED-Ed', url:'https://www.youtube.com/@TEDEd', d:'Kısa, çarpıcı eğitici animasyonlar — her derse serpiştir.'},
+  {ad:'Code.org', url:'https://www.youtube.com/@codeorg', d:'Kodlama tanıtımları ve ders videoları.'},
+  {ad:'Scratch Team', url:'https://www.youtube.com/@ScratchTeam', d:'Scratch resmi eğitim videoları.'},
+  {ad:'micro:bit', url:'https://www.youtube.com/@microbit', d:'micro:bit proje ve ders videoları.'},
+  {ad:'ChessKid', url:'https://www.youtube.com/@ChessKid', d:'Çocuklar için satranç dersleri.'},
+  {ad:'Saint Louis Chess Club', url:'https://www.youtube.com/@STLChessClub', d:'Temelden ileriye satranç anlatımı.'},
+  {ad:'Khan Academy', url:'https://www.youtube.com/@khanacademy', d:'Ücretsiz ders videoları arşivi.'},
+  {ad:'NatGeo Kids', url:'https://www.youtube.com/@NatGeoKids', d:'Merak uyandıran bilim/doğa içerikleri.'},
+  {ad:'TRT Çocuk', url:'https://www.youtube.com/@trtcocuk', d:'Türkçe, çocuklara uygun içerikler.'},
+]});
+renderVideo=function(){
+  if(ST.videoGrade==null) ST.videoGrade=ST.gradeIdx;
+  var chips=SINIF_LISTE.map(function(sn,i){return '<div class="gchip'+(i===ST.videoGrade?' akt':'')+'" onclick="videoGrade('+i+')">'+(sn.g==='Ana'?'Ana':sn.g)+'</div>';}).join('');
+  var opts=oyunSeansListesi(ST.videoGrade).map(function(x){return '<option value="'+x.v+'">'+x.t+'</option>';}).join('');
+  var html='<div class="veli-hero" style="padding:20px"><h2 style="margin:0 0 4px;font-size:20px">🎬 Video Kütüphanesi</h2>'+
+    '<p class="big" style="font-size:13px">Derse uygun eğitici video, film ve animasyonlar. Kartlar YouTube’da o konunun güncel videolarını açar; “Güvenli Kanallar” doğrudan kanala gider.</p></div>'+
+    '<div class="oyun-panel"><div class="ilerseridi"><span class="et">Sınıf:</span>'+chips+'</div>'+
+    '<label class="fl">Ders planındaki konuyu YouTube’da bul:</label><select id="videoKonu" class="key" style="font-family:inherit">'+opts+'</select>'+
+    '<div class="btnsira" style="margin-top:12px"><button class="btn p" onclick="videoAra()">🔎 Bu Konuyu YouTube’da Bul</button></div></div>';
+  VIDEO_GRUP.forEach(function(g){
+    html+='<div class="arac-grup" style="--dr:'+g.dr+';--dr2:'+g.dr2+'"><div class="gb"><span class="ik">'+g.ik+'</span>'+g.ad+'</div><div class="arac-izgara">';
+    g.items.forEach(function(it){
+      var act = it.url ? "openUrl('"+it.url+"')" : "openYT('"+it.q+"')";
+      var badge = it.url ? '📺 Kanal' : '▶ YouTube';
+      html+='<div class="vkart" style="--dr:'+g.dr+';--dr2:'+g.dr2+'" onclick="'+act+'"><span class="pb">'+badge+'</span><h4>'+it.ad+'</h4><p>'+it.d+'</p><div class="ac">'+(it.url?'Kanala Git ↗':'İzle / Keşfet ↗')+'</div></div>';
+    });
+    html+='</div></div>';
+  });
+  $('#v-video').innerHTML=html;
+};
+if('serviceWorker' in navigator){ window.addEventListener('load',function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); }); }
 
 basla();
 fabYap({id:'sinif',ikon:'⏱️',etiket:'Sınıf Araçları',bayrak:'dk_sinif_gizli',tik:()=>sinifAracAc()});
