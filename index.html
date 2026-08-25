@@ -347,6 +347,39 @@ textarea.key{min-height:90px;resize:vertical}
 .hn-konu{font-size:12px;color:var(--soluk);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .hn-bar{height:6px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}
 .hn-bar span{display:block;height:100%;background:linear-gradient(90deg,var(--dr),var(--dr2))}
+
+.arac-toolbar .satir{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
+.arac-toolbar .et{font-size:11.5px;color:var(--soluk2);font-weight:800;margin-right:2px}
+.aramaBox{flex:1;min-width:200px}
+.aramaBox input{width:100%;background:var(--panel2);border:1px solid var(--cizgi);border-radius:12px;color:#fff;padding:10px 12px;font-size:14px;outline:none}
+.aramaBox input:focus{border-color:var(--mavi2)}
+.akart{position:relative}
+.akart .fav{position:absolute;top:9px;right:12px;font-size:19px;color:#5b6b8c;cursor:pointer;z-index:3;line-height:1}
+.akart .fav.on{color:#fbbf24;text-shadow:0 0 10px rgba(251,191,36,.5)}
+.akart .yas-min{font-size:11px;color:var(--soluk2);font-weight:700;margin-top:2px}
+.tur-pill{display:inline-block;margin:9px 0 2px;font-size:10.5px;font-weight:800;color:#fff;background:linear-gradient(135deg,var(--dr),var(--dr2));padding:3px 9px;border-radius:999px;cursor:pointer}
+.turaktif{display:inline-flex;gap:6px;align-items:center;font-size:12px;font-weight:800;color:#fff;background:linear-gradient(135deg,var(--mor),var(--mavi));padding:6px 11px;border-radius:999px}
+.turaktif .x{cursor:pointer}
+.oyun-panel{background:var(--kart);border:1px solid var(--cizgi);border-radius:16px;padding:16px;margin-bottom:14px}
+.oyun-turler{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.oyun-tur{cursor:pointer;font-size:13px;font-weight:800;border:1px solid var(--cizgi);background:var(--panel2);color:#dbe6ff;padding:10px 14px;border-radius:12px;transition:.14s}
+.oyun-tur:hover{border-color:var(--mor2);color:#fff;transform:translateY(-1px)}
+.oyun-alan{background:var(--panel2);border:1px solid var(--cizgi);border-radius:16px;min-height:200px;overflow:hidden}
+.oyun-bos{padding:44px;text-align:center;color:var(--soluk)}
+.oyun-arac{display:flex;gap:8px;flex-wrap:wrap;padding:12px;border-bottom:1px solid var(--cizgi)}
+#oyunFrame{width:100%;height:72vh;border:none;background:#0b1220;display:block}
+
+.oyun-tur.sec{border-color:var(--mor2);color:#fff;background:linear-gradient(135deg,var(--mor),var(--mavi))}
+body.odak .seritler,body.odak .hero,body.odak .fabgrup,body.odak .pill,body.odak #neredePanel,body.odak .duzey-bilgi{display:none!important}
+#odakCik{position:fixed;top:12px;right:12px;z-index:130;background:linear-gradient(135deg,#dc2626,#f87171);color:#fff;font-weight:800;font-size:13px;padding:9px 14px;border-radius:12px;cursor:pointer;box-shadow:0 8px 22px rgba(0,0,0,.45)}
+#yilPrint{display:none}
+@media print{ body.yazdir-yil>*:not(#yilPrint){display:none!important} body.yazdir-yil #yilPrint{display:block!important} }
+#yilPrint{color:#111;background:#fff;padding:22px}
+#yilPrint .yilbas h1{font-size:20px;margin:0;color:#111}
+#yilPrint .yilbas h2{font-size:14px;margin:2px 0 14px;color:#444}
+#yilPrint h3{font-size:15px;margin:14px 0 5px}
+#yilPrint ol{margin:0 0 8px 18px}
+#yilPrint li{margin:5px 0;font-size:12px;color:#222;line-height:1.4}
 </style>
 
 </head>
@@ -375,6 +408,7 @@ textarea.key{min-height:90px;resize:vertical}
     <div class="seri aktif" data-v="veli">🏛️ Genel Bakış / Veli Sunumu</div>
     <div class="seri" data-v="plan">📅 Yıllık Plan</div>
     <div class="seri" data-v="araclar">🧰 Araç Kütüphanesi</div>
+    <div class="seri" data-v="oyun">🎮 Eğitim Oyunları</div>
     <div class="seri-gear" onclick="ayarAc()" title="Ayarlar — her zaman burada">⚙️ Ayarlar</div>
   </div>
 
@@ -394,6 +428,8 @@ textarea.key{min-height:90px;resize:vertical}
 
   <!-- ARAÇLAR -->
   <div id="v-araclar" style="display:none"></div>
+
+  <div id="v-oyun" style="display:none"></div>
 
 </div>
 
@@ -518,6 +554,52 @@ const ARACLAR = {
   blooket:    {ad:'Blooket',             url:'https://www.blooket.com',                   ik:'🟨', ders:'sinif',    yas:'öğretmen',  desc:'Quiz sorularını eğlenceli oyun modlarıyla oynatma.'},
   canva:      {ad:'Canva',               url:'https://www.canva.com',                     ik:'🖼️', ders:'sinif',    yas:'öğretmen',  desc:'Afiş, sertifika, sunum tasarımı; eğitimcilere ücretsiz sürüm.'},
   padlet:     {ad:'Padlet',              url:'https://tr.padlet.com',                     ik:'📌', ders:'sinif',    yas:'öğretmen',  desc:'Dijital pano: öğrenci çalışmalarını toplama ve sergileme.'},
+  codecombat: {ad:'CodeCombat',         url:'https://codecombat.com',                    ik:'⚔️', ders:'kodlama',  yas:'10-14 yaş', tur:'Kodlama Oyunu',      desc:'Karakterini gerçek kod yazarak yönettiğin macera oyunu.'},
+  appinventor:{ad:'MIT App Inventor',    url:'https://appinventor.mit.edu',               ik:'📱', ders:'kodlama',  yas:'12-14 yaş', tur:'Mobil Uygulama',     desc:'Blokla Android uygulaması yapma; gerçek telefonda çalışır.'},
+  thunkable: {ad:'Thunkable',            url:'https://thunkable.com',                     ik:'🧩', ders:'kodlama',  yas:'12-14 yaş', tur:'Mobil Uygulama',     desc:'Sürükle-bırak ile mobil uygulama geliştirme.'},
+  khancs:    {ad:'Khan Academy Kod',     url:'https://www.khanacademy.org/computing',     ik:'🎓', ders:'kodlama',  yas:'11-14 yaş', tur:'Kodlama',            desc:'JS, SQL, HTML/CSS için adım adım ücretsiz dersler.'},
+  construct3:{ad:'Construct 3',          url:'https://www.construct.net',                 ik:'🎮', ders:'kodlama',  yas:'10-14 yaş', tur:'Oyun Yapımı',        desc:'Kod yazmadan tarayıcıda 2B oyun geliştirme editörü.'},
+  gdevelop:  {ad:'GDevelop',             url:'https://gdevelop.io',                       ik:'🕹️', ders:'kodlama',  yas:'11-14 yaş', tur:'Oyun Yapımı',        desc:'Açık kaynak, kodsuz/az kodlu oyun motoru.'},
+  flexfroggy:{ad:'Flexbox Froggy',       url:'https://flexboxfroggy.com',                 ik:'🐸', ders:'kodlama',  yas:'12-14 yaş', tur:'Web / CSS',          desc:'Oyunla CSS Flexbox öğreten sevimli kurbağa.'},
+  w3schools: {ad:'W3Schools',            url:'https://www.w3schools.com',                 ik:'🌐', ders:'kodlama',  yas:'12-14 yaş', tur:'Web',                desc:'HTML/CSS/JS için “dene-gör” referans ve alıştırma.'},
+  makecodehub:{ad:'Microsoft MakeCode',  url:'https://makecode.com',                      ik:'🟦', ders:'kodlama',  yas:'8-14 yaş',  tur:'Blok Kodlama',       desc:'micro:bit, Arcade ve robot editörlerinin ana merkezi.'},
+  hopscotch: {ad:'Hopscotch',            url:'https://www.gethopscotch.com',              ik:'🦗', ders:'kodlama',  yas:'8-12 yaş',  tur:'Blok Kodlama',       desc:'Küçükler için tabletle oyun/kodlama yapımı.'},
+  circuitverse:{ad:'CircuitVerse',       url:'https://circuitverse.org',                  ik:'🔋', ders:'robotik',  yas:'12-14 yaş', tur:'Devre Simülasyonu',  desc:'Tarayıcıda dijital devre tasarımı ve simülasyonu.'},
+  phet:      {ad:'PhET Simülasyonlar',   url:'https://phet.colorado.edu',                 ik:'⚗️', ders:'robotik',  yas:'8-14 yaş',  tur:'Simülasyon',         desc:'Elektrik, kuvvet, ışık… ücretsiz etkileşimli fen simülasyonları.'},
+  roboblockly:{ad:'RoboBlockly',         url:'https://roboblockly.com',                   ik:'🤖', ders:'robotik',  yas:'8-14 yaş',  tur:'Robotik/Simülatör',  desc:'Blokla robot ve matematik görevleri; simülatörlü.'},
+  legospike: {ad:'LEGO SPIKE',           url:'https://spike.legoeducation.com',           ik:'🧱', ders:'robotik',  yas:'8-14 yaş',  tur:'Robotik',            desc:'LEGO Education SPIKE blok programlama ortamı.'},
+  ozobot:    {ad:'Ozobot',               url:'https://ozobot.com',                        ik:'⚫', ders:'robotik',  yas:'5-12 yaş',  tur:'Robotik',            desc:'Renk kodlarıyla çalışan mini robot etkinlikleri.'},
+  microbitcls:{ad:'micro:bit Classroom', url:'https://classroom.microbit.org',            ik:'🧑‍🏫', ders:'robotik', yas:'öğretmen',  tur:'Sınıf Yönetimi',     desc:'Tüm sınıfın micro:bit kodunu tek ekrandan yönet.'},
+  codeorgai: {ad:'Code.org AI',          url:'https://code.org/ai',                       ik:'🧠', ders:'yapayzeka',yas:'10-14 yaş', tur:'Müfredat',           desc:'Code.org yapay zeka üniteleri ve etkinlikleri.'},
+  dayofai:   {ad:'Day of AI',            url:'https://www.dayofai.org',                   ik:'📘', ders:'yapayzeka',yas:'öğretmen',  tur:'Müfredat',           desc:'Öğretmenler için ücretsiz, hazır YZ ders planları.'},
+  cognimates:{ad:'Cognimates',           url:'https://cognimates.me',                     ik:'🤝', ders:'yapayzeka',yas:'8-14 yaş',  tur:'Model Eğitimi',      desc:'Scratch tabanlı; kendi YZ modelini eğitip oyununa bağla.'},
+  tfplay:    {ad:'TensorFlow Playground',url:'https://playground.tensorflow.org',         ik:'🕸️', ders:'yapayzeka',yas:'13-14 yaş', tur:'İleri YZ',           desc:'Sinir ağının nasıl öğrendiğini görsel gösteren oyun alanı.'},
+  listudy:   {ad:'Listudy',              url:'https://listudy.org',                       ik:'♟️', ders:'satranc',  yas:'8-14 yaş',  tur:'Satranç',            desc:'Ücretsiz açılış ezberi ve taktik antrenmanı.'},
+  geogebra:  {ad:'GeoGebra',             url:'https://www.geogebra.org',                  ik:'📐', ders:'akil',     yas:'8-14 yaş',  tur:'Matematik',          desc:'Geometri, cebir ve grafik için etkileşimli matematik aracı.'},
+  desmos:    {ad:'Desmos',               url:'https://www.desmos.com/calculator',         ik:'📈', ders:'akil',     yas:'10-14 yaş', tur:'Matematik',          desc:'Ücretsiz grafik hesap makinesi ve sınıf etkinlikleri.'},
+  mathigon:  {ad:'Mathigon',             url:'https://mathigon.org',                      ik:'🔷', ders:'akil',     yas:'10-14 yaş', tur:'Matematik',          desc:'Etkileşimli, keşfederek öğreten matematik ders kitabı.'},
+  transum:   {ad:'Transum',              url:'https://www.transum.org',                   ik:'🧮', ders:'akil',     yas:'8-14 yaş',  tur:'Bulmaca',            desc:'Yüzlerce matematik ve mantık bulmacası/etkinliği.'},
+  solveme:   {ad:'SolveMe Puzzles',      url:'https://solveme.edc.org',                   ik:'⚖️', ders:'akil',     yas:'8-14 yaş',  tur:'Mantık',             desc:'Denge/mobil bulmacalarıyla denklem sezgisi.'},
+  classcreen:{ad:'Classroomscreen',      url:'https://classroomscreen.com',               ik:'🖥️', ders:'sinif',    yas:'öğretmen',  tur:'Etkileşimli Tahta',  desc:'Tahtaya sayaç, gürültü ölçer, çizim, QR — hepsi tek ekran.'},
+  liveworksheets:{ad:'Liveworksheets',   url:'https://www.liveworksheets.com',            ik:'📝', ders:'sinif',    yas:'öğretmen',  tur:'Çalışma Kağıdı',     desc:'Klasik çalışma kağıtlarını etkileşimli/otomatik puanlı yap.'},
+  learningapps:{ad:'LearningApps',       url:'https://learningapps.org',                  ik:'🧷', ders:'sinif',    yas:'öğretmen',  tur:'Etkileşimli Alıştırma',desc:'Eşleştirme, boşluk, bulmaca gibi hazır/özel alıştırmalar.'},
+  mentimeter:{ad:'Mentimeter',           url:'https://www.mentimeter.com',                ik:'📊', ders:'sinif',    yas:'öğretmen',  tur:'Anket / Quiz',       desc:'Canlı oylama, kelime bulutu ve quiz sunumları.'},
+  nearpod:   {ad:'Nearpod',              url:'https://nearpod.com',                       ik:'📎', ders:'sinif',    yas:'öğretmen',  tur:'Etkileşimli Ders',   desc:'İçine soru/oylama gömülü etkileşimli sunumlar.'},
+  peardeck:  {ad:'Pear Deck',            url:'https://www.peardeck.com',                  ik:'🍐', ders:'sinif',    yas:'öğretmen',  tur:'Etkileşimli Sunum',  desc:'Slaytlara etkileşim ekleyen sunum aracı.'},
+  edpuzzle:  {ad:'Edpuzzle',             url:'https://edpuzzle.com',                      ik:'🎬', ders:'sinif',    yas:'öğretmen',  tur:'Video + Soru',       desc:'Videonun içine soru göm; izlerken ölçme yap.'},
+  genially:  {ad:'Genially',             url:'https://genially.com',                      ik:'✨', ders:'sinif',    yas:'öğretmen',  tur:'Etkileşimli Sunum',  desc:'Etkileşimli sunum, oyun ve infografik tasarımı.'},
+  plickers:  {ad:'Plickers',             url:'https://get.plickers.com',                  ik:'🃏', ders:'sinif',    yas:'öğretmen',  tur:'Cihazsız Quiz',      desc:'Öğrenciler kağıt kartla cevaplar; sen telefonla tararsın.'},
+  baamboozle:{ad:'Baamboozle',           url:'https://www.baamboozle.com',                ik:'🎯', ders:'sinif',    yas:'öğretmen',  tur:'Sınıf Oyunu',        desc:'Hazır takım quiz oyunları; tahtada oyna.'},
+  classdojo: {ad:'ClassDojo',            url:'https://www.classdojo.com',                 ik:'🦕', ders:'sinif',    yas:'öğretmen',  tur:'Sınıf Yönetimi',     desc:'Davranış puanı ve veli iletişimi.'},
+  bookcreator:{ad:'Book Creator',        url:'https://bookcreator.com',                   ik:'📚', ders:'sinif',    yas:'öğretmen',  tur:'Dijital Kitap',      desc:'Öğrencilerle dijital kitap / e-portfolyo oluşturma.'},
+  googleslides:{ad:'Google Slides',      url:'https://slides.google.com',                 ik:'📽️', ders:'sinif',    yas:'öğretmen',  tur:'Sunum',              desc:'Ücretsiz çevrimiçi sunum; birlikte düzenleme.'},
+  prezi:     {ad:'Prezi',                url:'https://prezi.com',                         ik:'🎥', ders:'sinif',    yas:'öğretmen',  tur:'Sunum',              desc:'Yakınlaşan, dinamik ve akıcı sunumlar.'},
+  googleclass:{ad:'Google Classroom',    url:'https://classroom.google.com',              ik:'🏫', ders:'sinif',    yas:'öğretmen',  tur:'Sınıf Yönetimi',     desc:'Ödev, duyuru ve materyal paylaşımı tek yerde.'},
+  flip:      {ad:'Flip (Flipgrid)',      url:'https://info.flip.com',                     ik:'🎙️', ders:'sinif',    yas:'öğretmen',  tur:'Video Yanıt',        desc:'Öğrenciler kısa video ile yanıt verir; güvenli ortam.'},
+  storyjumper:{ad:'StoryJumper',         url:'https://www.storyjumper.com',               ik:'📖', ders:'sinif',    yas:'öğretmen',  tur:'Dijital Kitap',      desc:'Birlikte resimli hikâye kitabı oluşturma.'},
+  quizlet:   {ad:'Quizlet',              url:'https://quizlet.com',                       ik:'🗂️', ders:'sinif',    yas:'öğretmen',  tur:'Kart / Çalışma',     desc:'Bilgi kartları, eşleştirme ve tekrar oyunları.'},
+  wheelofnames:{ad:'Wheel of Names',     url:'https://wheelofnames.com',                  ik:'🎡', ders:'sinif',    yas:'öğretmen',  tur:'Seçici / Çark',      desc:'İsim/görev çarkı; adil ve eğlenceli seçim (öğretmen çevirir).'},
+  classtools:{ad:'ClassTools',           url:'https://www.classtools.net',                ik:'🧰', ders:'sinif',    yas:'öğretmen',  tur:'Sınıf Araçları',     desc:'Sayaç, rastgele seçici, oyun şablonları ve daha fazlası.'},
 };
 const SINIF_META={ad:'Sınıf & Sunum Araçları', ik:'🎬', dr:'#4f46e5', dr2:'#818cf8'};
 
@@ -1187,7 +1269,9 @@ function ayarAc(sek){
       <div class="ay-pan" id="pan-dugmeler">
         <div style="font-size:12.5px;color:var(--soluk);margin-bottom:12px;line-height:1.5">💡 Yüzen düğmeleri <b>parmakla/fareyle sürükleyerek</b> ekranda istediğin yere taşıyabilirsin. <b>✕</b> ile gizlediklerini aşağıdaki anahtarlardan geri açarsın. ⚙️ Ayarlar düğmesi güvenlik için her zaman ekranda kalır (yalnızca taşınır).</div>
         <div id="dugmeListe"></div>
-        <div class="btnsira" style="margin-top:10px">
+        <div style="font-size:12.5px;color:var(--soluk);margin:16px 0 6px;line-height:1.5"><b>💾 Yedekle / Geri Yükle</b> — tüm ilerlemen (“nerede kaldım”), favoriler ve ayarların. Tarayıcı temizlenir ya da cihaz değişirse kaybolmasın.</div>
+        <div class="btnsira"><button class="btn y" onclick="yedekAl()">💾 Yedekle (indir)</button><label class="btn g" style="cursor:pointer">📂 Geri Yükle<input type="file" accept="application/json" style="display:none" onchange="yedekYukle(this)"></label></div>
+        <div class="btnsira" style="margin-top:12px">
           <button class="btn g" onclick="tumDugme(true)">Hepsini Göster</button>
           <button class="btn g" onclick="tumDugme(false)">Hepsini Gizle</button>
           <button class="btn g" onclick="konumSifirla()">📍 Konumları Sıfırla</button>
@@ -1345,7 +1429,10 @@ function viewDegis(v){
   $('#v-veli').style.display=v==='veli'?'block':'none';
   $('#v-plan').style.display=v==='plan'?'block':'none';
   $('#v-araclar').style.display=v==='araclar'?'block':'none';
+  var vo=$('#v-oyun'); if(vo) vo.style.display=v==='oyun'?'block':'none';
   if(v==='plan'){ renderSiniflar(); renderFiltre(); renderPlan(); }
+  if(v==='araclar') renderAraclar();
+  if(v==='oyun') renderOyun();
 }
 $$('#seritler .seri').forEach(s=>s.onclick=()=>viewDegis(s.dataset.v));
 $('#araInput').addEventListener('input',e=>{ ST.ara=e.target.value; $('#araX').style.display=e.target.value?'block':'none'; renderPlanGrid(); });
@@ -1718,8 +1805,205 @@ function aiWhatsapp(){ const t=encodeURIComponent(waFormat(sonAiMetin||sonAiDuz(
   const c=gradeSec; gradeSec=function(i){ c(i); renderNeredeKaldim(); };
 })();
 
+
+/* ============================================================
+   EK: Akıllı Araç Kütüphanesi (arama/filtre/favori/AI önerici)
+   ============================================================ */
+function turOf(a){ return a.tur || ({kodlama:'Kodlama',robotik:'Robotik',yapayzeka:'Yapay Zeka',satranc:'Satranç',akil:'Akıl/Mantık',sinif:'Sınıf & Sunum'}[a.ders]||'Genel'); }
+function yasAralik(y){ if(/öğretmen/i.test(y)) return null; var m=y.match(/(\d+)\s*[-–]\s*(\d+)/); if(m) return [parseInt(m[1]),parseInt(m[2])]; var n=y.match(/(\d+)/); return n?[parseInt(n[1]),parseInt(n[1])]:[4,14]; }
+function yasUyar(y,band){ if(band==='hepsi') return true; if(band==='ogretmen') return /öğretmen/i.test(y); var r=yasAralik(y); if(!r) return false; var B={kucuk:[4,7],orta:[8,11],buyuk:[12,14]}[band]; return r[0]<=B[1] && r[1]>=B[0]; }
+function favGet(){ return LS.get('dk_fav',{}); }
+function favToggle(k){ var o=favGet(); if(o[k]) delete o[k]; else o[k]=1; LS.set('dk_fav',o); renderAracGrid(); }
+function dersSec(k){ ST.aracDers=k; renderAraclar(); }
+function yasSec(k){ ST.aracYas=k; renderAraclar(); }
+function turSec(t){ ST.aracTur=(ST.aracTur===t?null:t); renderAraclar(); }
+function aracKart(k){ var a=ARACLAR[k], d=DERSLER[a.ders]||SINIF_META, fav=!!favGet()[k], tur=turOf(a);
+  return '<a class="akart" style="--dr:'+d.dr+';--dr2:'+d.dr2+'" href="'+a.url+'" target="_blank" rel="noopener">'+
+    '<span class="fav'+(fav?' on':'')+'" title="Favori" onclick="event.preventDefault();event.stopPropagation();favToggle(\''+k+'\')">'+(fav?'★':'☆')+'</span>'+
+    '<div class="ust"><div class="ik">'+a.ik+'</div><div style="min-width:0"><h4>'+a.ad+'</h4><div class="yas-min">'+a.yas+'</div></div></div>'+
+    '<span class="tur-pill" onclick="event.preventDefault();event.stopPropagation();turSec(\''+tur+'\')">'+tur+'</span>'+
+    '<p>'+a.desc+'</p><div class="ac">Aracı Aç ↗</div></a>';
+}
+function aracUyar(k){ var a=ARACLAR[k]; if(ST.aracDers==='fav'){ if(!favGet()[k]) return false; } else if(ST.aracDers && ST.aracDers!=='hepsi'){ if(a.ders!==ST.aracDers) return false; } if(!yasUyar(a.yas,ST.aracYas||'hepsi')) return false; if(ST.aracTur && turOf(a)!==ST.aracTur) return false; var q=(ST.aracArama||'').toLocaleLowerCase('tr'); if(q){ var hay=(a.ad+' '+a.desc+' '+turOf(a)).toLocaleLowerCase('tr'); if(hay.indexOf(q)<0) return false; } return true; }
+function renderAracGrid(){
+  var keys=Object.keys(ARACLAR).filter(aracUyar);
+  var flat = (ST.aracArama||'')!=='' || (ST.aracYas&&ST.aracYas!=='hepsi') || ST.aracTur || (ST.aracDers&&ST.aracDers!=='hepsi');
+  var html='';
+  if(!flat){
+    var sirali=Object.keys(DERSLER).filter(function(k){return k!=='genel';}); sirali.push('sinif');
+    sirali.forEach(function(dk){ var d=dk==='sinif'?SINIF_META:DERSLER[dk]; var grp=keys.filter(function(k){return ARACLAR[k].ders===dk;}); if(!grp.length) return;
+      html+='<div class="arac-grup" style="--dr:'+d.dr+';--dr2:'+d.dr2+'"><div class="gb"><span class="ik">'+d.ik+'</span>'+d.ad+' <span style="font-size:12px;color:var(--soluk2);font-weight:600">('+grp.length+')</span></div><div class="arac-izgara">'+grp.map(aracKart).join('')+'</div></div>';
+    });
+  } else if(!keys.length){ html='<div style="padding:36px;text-align:center;color:var(--soluk)">Eşleşen araç yok. Filtreyi değiştir.</div>'; }
+  else html='<div style="font-size:12.5px;color:var(--soluk);margin:2px 0 10px">'+keys.length+' araç bulundu</div><div class="arac-izgara">'+keys.map(aracKart).join('')+'</div>';
+  $('#aracGrid').innerHTML=html;
+}
+renderAraclar=function(){
+  if(ST.aracDers==null)ST.aracDers='hepsi'; if(ST.aracYas==null)ST.aracYas='hepsi'; if(ST.aracArama==null)ST.aracArama='';
+  var dersChips='<div class="fbtn'+(ST.aracDers==='hepsi'?' aktif':'')+'" onclick="dersSec(\'hepsi\')">🗂️ Tümü</div>';
+  Object.keys(DERSLER).filter(function(k){return k!=='genel';}).forEach(function(k){ var d=DERSLER[k]; dersChips+='<div class="fbtn'+(ST.aracDers===k?' aktif':'')+'" onclick="dersSec(\''+k+'\')">'+d.ik+' '+d.ad+'</div>'; });
+  dersChips+='<div class="fbtn'+(ST.aracDers==='sinif'?' aktif':'')+'" onclick="dersSec(\'sinif\')">🎬 Sınıf & Sunum</div>';
+  dersChips+='<div class="fbtn'+(ST.aracDers==='fav'?' aktif':'')+'" onclick="dersSec(\'fav\')">⭐ Favoriler</div>';
+  var yasChips=''; [['hepsi','Tüm yaşlar'],['kucuk','Küçük 4-7'],['orta','Orta 8-11'],['buyuk','Büyük 12-14'],['ogretmen','Öğretmen']].forEach(function(p){ yasChips+='<div class="fbtn'+(ST.aracYas===p[0]?' aktif':'')+'" onclick="yasSec(\''+p[0]+'\')">'+p[1]+'</div>'; });
+  var turInd = ST.aracTur? '<span class="turaktif">Tür: '+ST.aracTur+' <span class="x" onclick="turSec(\''+ST.aracTur+'\')">✕</span></span>':'';
+  $('#v-araclar').innerHTML=
+    '<div class="veli-hero" style="padding:20px"><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><h2 style="margin:0;font-size:20px">🧰 Araç Kütüphanesi</h2>'+
+    '<span style="font-size:12px;color:var(--soluk)">'+Object.keys(ARACLAR).length+' araç</span>'+
+    '<button class="btn p" style="margin-left:auto" onclick="aiAracOner()">🤖 Bugün ne kullanayım?</button></div>'+
+    '<p class="big" style="font-size:13px;margin-top:6px">Tümü ücretsiz/ücretsiz sürümlü. ⭐ ile favorine ekle; tür etiketine dokunup süz.</p></div>'+
+    '<div class="arac-toolbar">'+
+      '<div class="satir"><span class="aramaBox"><input id="aracAramaInput" placeholder="🔎 Araç ara (ad, açıklama, tür)…" oninput="ST.aracArama=this.value;renderAracGrid()" value="'+(ST.aracArama||'').replace(/"/g,'&quot;')+'"></span>'+turInd+'</div>'+
+      '<div class="satir"><span class="et">Alan:</span>'+dersChips+'</div>'+
+      '<div class="satir"><span class="et">Yaş:</span>'+yasChips+'</div>'+
+    '</div><div id="aracGrid"></div>';
+  renderAracGrid();
+  var ai=$('#aracAramaInput'); if(ai && ST.aracArama){ ai.focus(); try{ai.setSelectionRange(ai.value.length,ai.value.length);}catch(e){} }
+};
+function aiAracOner(){
+  var s=aktifSinif(), sinifAd=(s.g==='Ana'?'Anaokulu':s.g+'. sınıf');
+  var kat=Object.keys(ARACLAR).map(function(k){var a=ARACLAR[k];return a.ad+' ('+turOf(a)+', '+a.yas+')';}).join('; ');
+  var sistem='Sen bir öğretmenin araç danışmanısın. SADECE verilen listedeki araçlardan öner, liste dışına ÇIKMA. '+sinifAd+' düzeyi için Kodlama, Robotik, Yapay Zeka, Satranç ve Akıl Oyunları alanlarının HER biri için en uygun 1 aracı seç. Çıktı: her satır "🔹 **Araç Adı** — neden/nasıl (1 kısa cümle)". Türkçe, kısa, renkli.';
+  aiSor('Bu sınıf için hangi araçları kullanayım?',{sistem,on:'Sınıf: '+sinifAd+'. Liste: '+kat, baslik:'Araç Önerisi · '+sinifAd});
+}
+
+/* ============================================================
+   EK: 🎮 Eğitim Oyunları — AI ile tek dosya interaktif HTML oyun
+   ============================================================ */
+var OYUN_TURLERI=[['Bilgi Yarışması','❓'],['Eşleştirme','🔗'],['Doğru / Yanlış','✅'],['Hafıza Kartları','🧠'],['Boşluk Doldur','✏️'],['Kelime Avı','🔤'],['Sıralama','↕️']];
+var sonOyunHtml='', sonOyunPrompt='';
+function oyunSeansListesi(gi){ var out=[]; gorunenTracks(gi).forEach(function(tr){ SEANS[tr.id].forEach(function(se,i){ out.push({v:tr.id+'|'+i, t:tr.ad+' · Ders '+(i+1)+' — '+se.k, konu:se.k}); }); }); return out; }
+function oyunSeciliKonu(){ var yas=DUZEYLER.find(function(d){return d.id===SINIF_LISTE[ST.oyunGrade].d;}).yas; var serbest=(($('#oyunSerbest')||{}).value||'').trim(); if(serbest) return {baslik:serbest, yas:yas}; var sel=$('#oyunKonu'); var v=sel?sel.value:''; var list=oyunSeansListesi(ST.oyunGrade); var fn=list.filter(function(x){return x.v===v;})[0]||list[0]; return {baslik:fn?fn.konu:'', yas:yas}; }
+function renderOyun(){
+  if(ST.oyunGrade==null) ST.oyunGrade=ST.gradeIdx;
+  var chips=SINIF_LISTE.map(function(sn,i){return '<div class="gchip'+(i===ST.oyunGrade?' akt':'')+'" onclick="oyunGrade('+i+')">'+(sn.g==='Ana'?'Ana':sn.g)+'</div>';}).join('');
+  var opts=oyunSeansListesi(ST.oyunGrade).map(function(x){return '<option value="'+x.v+'">'+x.t+'</option>';}).join('');
+  var turBtn=OYUN_TURLERI.map(function(p){return '<button class="oyun-tur" onclick="oyunUret(\''+p[0]+'\')">'+p[1]+' '+p[0]+'</button>';}).join('');
+  $('#v-oyun').innerHTML=
+    '<div class="veli-hero" style="padding:20px"><h2 style="margin:0 0 4px;font-size:20px">🎮 Eğitim Oyunları</h2>'+
+    '<p class="big" style="font-size:13px">Ders planındaki konuyu seç, bir oyun türüne dokun; yapay zeka o konuya özel <b>oynanabilir, tek dosya HTML oyunu</b> üretsin. Tam ekran aç, akıllı tahtada oynat, indir.</p></div>'+
+    '<div class="oyun-panel">'+
+      '<div class="ilerseridi"><span class="et">Sınıf:</span>'+chips+'</div>'+
+      '<label class="fl">Konu (ders planından):</label><select id="oyunKonu" class="key" style="font-family:inherit">'+opts+'</select>'+
+      '<label class="fl">…veya serbest konu yaz:</label><input id="oyunSerbest" class="key" placeholder="Örn: Döngüler · Piyonun hareketi · Örüntüler" style="font-family:inherit">'+
+      '<label class="fl" style="margin-top:12px">Oyun türü seç → üret:</label><div class="oyun-turler">'+turBtn+'</div>'+
+    '</div>'+
+    '<div id="oyunAlan" class="oyun-alan"><div class="oyun-bos">👆 Bir konu seçip oyun türüne dokun. Oyun burada belirecek.</div></div>';
+}
+function oyunGrade(i){ ST.oyunGrade=i; renderOyun(); }
+function oyunHtmlAyikla(t){ if(!t) return ''; var s=t.replace(/```html?/gi,'').replace(/```/g,'').trim(); var i=s.search(/<!DOCTYPE|<html/i); if(i>=0){ s=s.slice(i); var j=s.toLowerCase().lastIndexOf('</html>'); if(j>=0) s=s.slice(0,j+7);} return s; }
+async function oyunUret(tip){
+  var konu=oyunSeciliKonu(); var alan=$('#oyunAlan');
+  alan.innerHTML='<div class="spin" style="justify-content:center;padding:44px"><span class="d"></span><span id="oyunSpin">🎮 “'+konu.baslik+'” için '+tip+' oyunu hazırlanıyor…</span></div>';
+  var msgs=['Oyun tahtası kuruluyor…','Sorular yazılıyor…','Renkler ve puanlar ekleniyor…','Neredeyse hazır…']; var mi=0; var tmr=setInterval(function(){var e=$('#oyunSpin'); if(e)e.textContent=msgs[mi++%msgs.length];},1600);
+  var sistem='Sen çocuklar için interaktif eğitim oyunu üreten uzman bir web geliştiricisin. SADECE tek dosyalık, kendi kendine çalışan bir HTML belgesi döndür: <!DOCTYPE html> ile başla, kapanış html etiketiyle bitir. Markdown ``` KULLANMA, açıklama yazma. HARİCİ kütüphane/CDN/font/görsel KULLANMA; tüm CSS ve JS gömülü olsun (emoji serbest). Oyun renkli, koyu arka planlı, büyük dokunmatik butonlu, mobil + akıllı tahta uyumlu olsun; puan ve anında geri bildirim içersin; bittiğinde skoru ve tekrar-oyna düğmesini göstersin. Türkçe ve yaşa uygun, güvenli içerik.';
+  sonOyunPrompt='Oyun türü: '+tip+' | Konu: '+konu.baslik+' | Yaş: '+konu.yas;
+  var on='Oyun türü: '+tip+'. Konu: "'+konu.baslik+'". Hedef yaş: '+konu.yas+'. Bu konuyu öğreten, '+tip+' mekaniğiyle çalışan eğlenceli bir oyun yap; en az 5 soru/öğe olsun.';
+  try{
+    var html=await generateText(on,{sistem}); clearInterval(tmr); html=oyunHtmlAyikla(html);
+    if(!html){ alan.innerHTML='<div style="color:#fca5a5;padding:20px">Oyun üretilemedi, tekrar dene.</div>'; return; }
+    sonOyunHtml=html;
+    alan.innerHTML='<div class="oyun-arac"><button class="btn p" onclick="oyunUret(\''+tip+'\')">🔄 Yeniden Üret</button><button class="btn g" onclick="oyunTamEkran()">⛶ Tam Ekran</button><button class="btn g" onclick="oyunIndir()">📥 HTML indir</button><button class="btn g" onclick="oyunKopyalaPrompt()">📋 Prompt</button></div><iframe id="oyunFrame" sandbox="allow-scripts allow-pointer-lock allow-modals" title="Egitim Oyunu"></iframe>';
+    $('#oyunFrame').srcdoc=html;
+  }catch(e){ clearInterval(tmr); alan.innerHTML='<div style="color:#fca5a5;padding:20px">⚠️ '+esc(e.message||'Hata')+(/(anahtar|API)/i.test(e.message||'')?' — ⚙️ Ayarlar’dan Gemini anahtarı gir.':'')+'</div>'; }
+}
+function oyunTamEkran(){ var fr=$('#oyunFrame'); if(fr && fr.requestFullscreen) fr.requestFullscreen(); else toast('Tam ekran desteklenmiyor','err'); }
+function oyunIndir(){ var b=new Blob([sonOyunHtml],{type:'text/html'}); var a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='egitim-oyunu.html'; a.click(); toast('📥 Oyun indirildi','ok'); }
+function oyunKopyalaPrompt(){ navigator.clipboard.writeText(sonOyunPrompt).then(function(){toast('📋 Prompt kopyalandı','ok');}); }
+
+
+/* ============================================================
+   EK: HTML Prompt Atölyesi + Yedek + Odak Modu + Yıl PDF + Sunum İskeleti
+   ============================================================ */
+renderOyun=function(){
+  if(ST.oyunGrade==null) ST.oyunGrade=ST.gradeIdx;
+  if(ST.oyunTur==null) ST.oyunTur='Bilgi Yarışması';
+  var chips=SINIF_LISTE.map(function(sn,i){return '<div class="gchip'+(i===ST.oyunGrade?' akt':'')+'" onclick="oyunGrade('+i+')">'+(sn.g==='Ana'?'Ana':sn.g)+'</div>';}).join('');
+  var opts=oyunSeansListesi(ST.oyunGrade).map(function(x){return '<option value="'+x.v+'">'+x.t+'</option>';}).join('');
+  var turBtn=OYUN_TURLERI.map(function(p){return '<button class="oyun-tur'+(ST.oyunTur===p[0]?' sec':'')+'" onclick="oyunTur(\''+p[0]+'\')">'+p[1]+' '+p[0]+'</button>';}).join('');
+  $('#v-oyun').innerHTML=
+    '<div class="veli-hero" style="padding:20px"><h2 style="margin:0 0 4px;font-size:20px">🎮 Eğitim Oyunları & Prompt Atölyesi</h2>'+
+    '<p class="big" style="font-size:13px">Ders planından konuyu ve oyun türünü seç → istersen <b>📋 hazır HTML prompt</b> al (kopyala, dilediğin araçta oyunu yaptır); istersen <b>🎮 hemen ürettir &amp; oyna</b>.</p></div>'+
+    '<div class="oyun-panel">'+
+      '<div class="ilerseridi"><span class="et">Sınıf:</span>'+chips+'</div>'+
+      '<label class="fl">Konu (ders planından):</label><select id="oyunKonu" class="key" style="font-family:inherit">'+opts+'</select>'+
+      '<label class="fl">…veya serbest konu yaz:</label><input id="oyunSerbest" class="key" placeholder="Örn: Döngüler · Piyonun hareketi · Örüntüler" style="font-family:inherit">'+
+      '<label class="fl" style="margin-top:12px">Oyun türü:</label><div class="oyun-turler">'+turBtn+'</div>'+
+      '<div class="btnsira" style="margin-top:14px"><button class="btn p" onclick="promptVer()">📋 HTML Prompt Ver</button><button class="btn y" onclick="oyunUret(ST.oyunTur)">🎮 Hemen Üret &amp; Oyna</button></div>'+
+    '</div>'+
+    '<div id="oyunAlan" class="oyun-alan"><div class="oyun-bos">👆 Konu + tür seç; sonra “Prompt Ver” ya da “Üret &amp; Oyna”.</div></div>';
+};
+function oyunTur(t){ ST.oyunTur=t; renderOyun(); }
+function oyunSeciliDers(){ var sel=$('#oyunKonu'); var v=sel?sel.value:''; var tid=(v||'').split('|')[0]; var tr=TRACKS.filter(function(x){return x.id===tid;})[0]; return tr?tr.ad:'Robotik ve Kodlama'; }
+function promptMetni(konu,tip,yas,dersAd){
+  var mek={
+    'Bilgi Yarışması':'Her ekranda 1 soru + 4 şık; doğru şık yeşil, yanlış kırmızı yanıp geri bildirim versin; ilerleme çubuğu olsun.',
+    'Eşleştirme':'Solda kavramlar, sağda karşılıkları; doğru eşleşince kilitlensin, yanlışta uyarsın; süre/skor tutulsun.',
+    'Doğru / Yanlış':'Her ekranda bir ifade + Doğru/Yanlış butonları; anında geri bildirim ve kısa açıklama göstersin.',
+    'Hafıza Kartları':'Kapalı kartlardan kavram–tanım çiftlerini eşleştir; açılan kartlar kısa süre görünsün; hamle ve skor tutulsun.',
+    'Boşluk Doldur':'Cümlelerde boşluk; seçenekten ya da yazarak doldurma; doğru cevap yeşil vurgulansın.',
+    'Kelime Avı':'Harf ızgarasında gizli kelimeleri bulma; bulunan kelime işaretlensin ve listeden düşsün.',
+    'Sıralama':'Öğeleri (adımlar/olaylar) doğru sıraya sürükle-bırak ile diz; doğru sıra kontrol edilip puanlansın.'
+  }[tip]||'Konuya uygun etkileşimli bir mekanik kur.';
+  var flavor={'Robotik ve Kodlama':'Robot/blok/algoritma temalı, emoji görselli.','Satranç':'Satranç tahtası ve taş temalı.','Yapay Zeka':'Tahmin/öğrenme temalı, sevimli robot karakterli.','Akıl-Zeka Oyunları':'Renkli bulmaca/örüntü temalı.','Eğitim Koçluğu':'Hedef/çalışma temalı, motive edici.'}[dersAd]||'Konuya uygun renkli tema.';
+  return 'Aşağıdaki isteğe göre TEK DOSYALIK, kendi kendine çalışan, RENKLİ ve interaktif bir HTML5 eğitim oyunu kodla.\n\n'+
+    '🎯 Ders: '+dersAd+'\n📚 Konu: '+konu+'\n👧 Hedef yaş: '+yas+'\n🎮 Oyun türü: '+tip+'\n\n'+
+    'İSTENENLER:\n'+
+    '• Sadece tek bir .html dosyası; tüm CSS ve JavaScript gömülü olsun. Harici kütüphane/CDN/görsel KULLANMA (emoji serbest).\n'+
+    '• Mekanik: '+mek+'\n'+
+    '• Tema: '+flavor+'\n'+
+    '• En az 5 soru/öğe; içerik "'+konu+'" konusuna uygun ve doğru olsun.\n'+
+    '• Puan sayacı; doğru/yanlış anında renkli geri bildirim; sonda skor ekranı ve "Tekrar Oyna" düğmesi.\n'+
+    '• Koyu, canlı renkli arayüz; büyük dokunmatik butonlar; mobil ve akıllı tahta uyumlu; tüm metinler Türkçe.\n'+
+    '• Güvenli, yaşa uygun, teşvik edici dil.\n\n'+
+    'Çıktı: yalnızca HTML kodu (açıklama ve markdown olmadan).';
+}
+function promptVer(){
+  var konu=oyunSeciliKonu(), dersAd=oyunSeciliDers();
+  var p=promptMetni(konu.baslik,ST.oyunTur,konu.yas,dersAd);
+  $('#oyunAlan').innerHTML='<div style="padding:14px"><div style="font-size:13px;color:var(--soluk);margin-bottom:8px">📋 <b>'+dersAd+' · '+konu.baslik+' · '+ST.oyunTur+'</b> için hazır HTML prompt — kopyala, istediğin yapay zekâ/araçta oyunu yaptır:</div>'+
+    '<textarea id="promptBox" class="key" style="min-height:280px;font-family:ui-monospace,monospace;font-size:12.5px" readonly>'+p+'</textarea>'+
+    '<div class="btnsira" style="margin-top:10px"><button class="btn p" onclick="promptKopyala()">📋 Prompt’u Kopyala</button><button class="btn y" onclick="oyunUret(ST.oyunTur)">🎮 Bu konuyla hemen üret</button></div></div>';
+}
+function promptKopyala(){ var t=$('#promptBox'); if(!t)return; navigator.clipboard.writeText(t.value).then(function(){toast('📋 Prompt kopyalandı','ok');}); }
+
+/* Yedekle / Geri Yükle */
+function yedekAl(){ var o={}; for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i); if(k&&k.indexOf('dk_')===0) o[k]=localStorage.getItem(k);} var b=new Blob([JSON.stringify(o)],{type:'application/json'}); var a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='robotik-kodlama-yedek-'+new Date().toISOString().slice(0,10)+'.json'; a.click(); toast('💾 Yedek indirildi','ok'); }
+function yedekYukle(inp){ var fl=inp.files&&inp.files[0]; if(!fl)return; var r=new FileReader(); r.onload=function(){ try{ var o=JSON.parse(r.result); Object.keys(o).forEach(function(k){ if(k.indexOf('dk_')===0) localStorage.setItem(k,o[k]); }); toast('📂 Geri yüklendi, yenileniyor…','ok'); setTimeout(function(){location.reload();},900); }catch(e){ toast('Dosya okunamadı','err'); } }; r.readAsText(fl); }
+
+/* Sunum / Odak Modu */
+function odakAc(){ document.body.classList.add('odak'); try{ if(document.documentElement.requestFullscreen) document.documentElement.requestFullscreen(); }catch(e){} if(!document.getElementById('odakCik')){ var b=document.createElement('div'); b.id='odakCik'; b.textContent='✕ Odak Modundan Çık'; b.onclick=odakKapat; document.body.appendChild(b);} toast('🖥️ Odak modu açık','info',1600); }
+function odakKapat(){ document.body.classList.remove('odak'); try{ if(document.fullscreenElement&&document.exitFullscreen) document.exitFullscreen(); }catch(e){} var b=document.getElementById('odakCik'); if(b)b.remove(); }
+
+/* Sunum İskeleti (AI) */
+function sunumIskele(){ var gi=ST.gradeIdx, tid='robokod', n=SEANS[tid].length, nx=trackSonraki(gi,tid,n); if(nx<0)nx=n-1; var se=SEANS[tid][nx], dz=aktifDuzey();
+  var sistem='Sen bir öğretmen sunum asistanısın. Verilen konu için tahtaya yansıtılacak MADDE MADDE bir slayt iskeleti üret: 6-8 slayt; her slayt "Slayt N: Başlık" + altında 2-4 kısa madde. Büyük puntoya uygun kısa ifadeler, renkli emoji. Türkçe. LaTeX yok.';
+  aiSor('Sunum iskeleti hazırla',{sistem,on:'Ders: Robotik ve Kodlama. Sınıf: '+dz.ad+'. Konu: "'+se.k+'". Kazanım: '+se.z, baslik:'Sunum İskeleti · '+se.k});
+}
+
+/* Tüm Yıl Planı → PDF */
+function yilPdf(){
+  var gi=ST.gradeIdx, sn=SINIF_LISTE[gi], gname=(sn.g==='Ana'?'Anaokulu':sn.g+'. Sınıf');
+  var h='<div class="yilbas"><h1>Robotik ve Kodlama · Yıllık Ders Planı</h1><h2>'+gname+' — Barış Öğretmen · 2025-2026</h2></div>';
+  gorunenTracks(gi).forEach(function(tr){ h+='<h3 style="color:'+tr.dr+'">'+tr.ik+' '+tr.ad+'</h3><ol>'; SEANS[tr.id].forEach(function(se){ h+='<li><b>'+se.k+'</b> — <i>Kazanım:</i> '+se.z+' &nbsp; <i>Etkinlik:</i> '+se.e+'</li>'; }); h+='</ol>'; });
+  var ov=document.getElementById('yilPrint'); if(!ov){ ov=document.createElement('div'); ov.id='yilPrint'; document.body.appendChild(ov);} ov.innerHTML=h;
+  document.body.classList.add('yazdir-yil'); window.print(); setTimeout(function(){document.body.classList.remove('yazdir-yil');},600);
+}
+
+/* plan araç çubuğuna Yıl PDF + Sunum İskeleti */
+planAracCubugu=function(){
+  $('#filtre').innerHTML='<span class="ara" style="margin-left:0"><input id="araInput" placeholder="Konu ara…"><span class="x" id="araX">✕</span></span>'+
+    '<button class="fbtn" onclick="haritaAc(ST.gradeIdx)">🗺️ Yıl Haritası</button>'+
+    '<button class="fbtn" onclick="yilPdf()">🗂️ Tüm Yıl → PDF</button>'+
+    '<button class="fbtn" onclick="sunumIskele()">📊 Sunum İskeleti</button>'+
+    '<button class="fbtn" onclick="bugunNe()">🎲 Bugün ne işlesem?</button>'+
+    '<button class="fbtn" onclick="sinifAracAc()">⏱️ Sınıf Araçları</button>';
+  var inp=$('#araInput'); if(inp){ inp.value=ST.ara||''; inp.addEventListener('input',function(e){ST.ara=e.target.value;$('#araX').style.display=e.target.value?'block':'none';renderPlanGrid();}); }
+  var x=$('#araX'); if(x) x.onclick=function(){ST.ara='';inp.value='';x.style.display='none';renderPlanGrid();};
+};
+
 basla();
 fabYap({id:'sinif',ikon:'⏱️',etiket:'Sınıf Araçları',bayrak:'dk_sinif_gizli',tik:()=>sinifAracAc()});
+fabYap({id:'odak',ikon:'🖥️',etiket:'Sunum / Odak Modu',bayrak:'dk_odak_gizli',tik:()=>odakAc()});
 renderNeredeKaldim();
 </script>
 </body>
