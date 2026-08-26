@@ -412,6 +412,19 @@ input[type=date].key{color-scheme:dark}
 .mac-yol{max-height:62vh;overflow-y:auto;background:radial-gradient(circle at 50% 0,#14243e,#0b1220);border:1px solid var(--cizgi);border-radius:16px;padding:6px;margin-top:8px}
 .mnode.cur circle{animation:macpulse 1.4s ease-in-out infinite}
 @keyframes macpulse{0%,100%{opacity:1}50%{opacity:.55}}
+
+.mac-yol svg .mnode.cur circle{filter:drop-shadow(0 0 10px rgba(244,114,182,.9))}
+.mac-yol svg .mnode.done circle{filter:drop-shadow(0 0 6px rgba(52,211,153,.6))}
+.mac-akim{stroke-dasharray:6 16;animation:macdash 1.1s linear infinite}
+@keyframes macdash{to{stroke-dashoffset:-44}}
+.mac-hafta{display:inline-flex;gap:6px;align-items:center;font-size:12px;font-weight:800;color:#fff;background:linear-gradient(135deg,#f59e0b,#f97316);padding:6px 11px;border-radius:999px;cursor:pointer}
+
+.bugun-satir{display:flex;align-items:center;gap:10px;justify-content:space-between;background:var(--kart);border:1px solid var(--cizgi);border-left:5px solid var(--dr);border-radius:14px;padding:12px;margin-bottom:10px}
+.bugun-satir .bs-saat{font-size:11px;color:var(--soluk2);font-weight:800}
+.bugun-satir .bs-konu{font-size:12.5px;color:var(--soluk);margin-top:2px}
+.bugun-satir .bs-ic b{font-size:14px}
+.ds-chk{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;background:var(--panel2);border:1px solid var(--cizgi);border-radius:12px;padding:11px}
+.ds-chk .chk{font-size:20px}
 </style>
 
 </head>
@@ -501,6 +514,9 @@ input[type=date].key{color-scheme:dark}
 <!-- MODAL: YIL HARİTASI -->
 <div class="modal-bg" id="haritaModal"><div class="modal" id="haritaModalIc" style="max-width:840px"></div></div>
 <div class="modal-bg" id="maceraModal"><div class="modal" id="maceraModalIc" style="max-width:640px"></div></div>
+<div class="modal-bg" id="bugunModal"><div class="modal" id="bugunModalIc" style="max-width:560px"></div></div>
+<div class="modal-bg" id="dersSonuModal"><div class="modal" id="dersSonuModalIc" style="max-width:520px"></div></div>
+<div class="modal-bg" id="promptModal"><div class="modal" id="promptModalIc" style="max-width:560px"></div></div>
 
 <script>
 /* ============================================================
@@ -1623,7 +1639,11 @@ function seansAc(tid,i){
       <div style="min-width:0"><h3>${tr.ad} · Ders ${i+1}</h3><div class="alt">${se.k} • ${dz.ad} (${dz.yas})</div></div>
       <div class="kapat" onclick="modalKapat('haftaModal')">✕</div></div>
     <div class="mgov">
-      <div class="blok"><button class="btn ${done?'g':'y'}" style="width:100%;justify-content:center" onclick="ilrToggleUI2('${tid}',${i})">${done?'↩︎ “İşlendi” işaretini kaldır':'✅ Bu dersi işlendi olarak işaretle'}</button></div>
+      <div class="blok" style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn p" style="flex:1 1 30%;justify-content:center" onclick="odakAc()">🚀 Derse Başla</button>
+        <button class="btn ${done?'g':'y'}" style="flex:1 1 30%;justify-content:center" onclick="ilrToggleUI2('${tid}',${i})">${done?'↩︎ İşareti kaldır':'✅ İşlendi'}</button>
+        <button class="btn g" style="flex:1 1 30%;justify-content:center" onclick="dersSonuAc('${tid}',${i})">🏁 Ders Sonu</button>
+      </div>
       <div class="blok"><div class="bh">🎯 Kazanım</div><div class="bt">${se.z}</div></div>
       <div class="blok"><div class="bh">🧩 Etkinlik</div><div class="bt">${se.e}</div></div>
       ${se.m?`<div class="blok"><div class="bh">📦 Materyal</div><div class="bt">${se.m}</div></div>`:''}
@@ -1636,6 +1656,10 @@ function seansAc(tid,i){
         <button onclick="seansAI('sorular')">❓ 5 değerlendirme sorusu</button>
         <button onclick="seansAI('ders')">📝 40 dk ders akışı</button>
         <button onclick="seansFark()">🧑‍🏫 Farklılaştır (zorlanan/ileri)</button>
+      </div></div>
+      <div class="blok"><div class="bh">🎬 Bu derse özel içerik üret</div><div class="ai-hizli">
+        <button onclick="seansVideoPrompt()">🎬 Video Promptu</button>
+        <button onclick="seansOyunPrompt()">🎮 Oyun Promptu</button>
       </div></div>
     </div>`;
   modalAc('haftaModal');
@@ -2638,9 +2662,235 @@ planAracCubugu=function(){
   var x=$('#araX'); if(x) x.onclick=function(){ST.ara='';inp.value='';x.style.display='none';renderPlanGrid();};
 };
 
+
+/* ============================================================
+   GÜNC: Zihin Haritası dalları → Maceralı Yol (36 hafta) + belirgin yol + Bu Hafta
+   ============================================================ */
+haritaAc=function(gi){
+  if(typeof gi!=='number') gi=ST.gradeIdx;
+  var sn=SINIF_LISTE[gi], gname=(sn.g==='Ana'?'Anaokulu':sn.g+'. Sınıf');
+  var trs=gorunenTracks(gi), K=trs.length;
+  var W=760,H=560,cx=380,cy=280,R=(K>4?208:186),cw=180,ch=90;
+  var paths='',cards='';
+  for(var i=0;i<K;i++){
+    var tr=trs[i], n=SEANS[tr.id].length, nx=trackSonraki(gi,tr.id,n), yuzde=trackYuzde(gi,tr.id,n);
+    var ang=(-90 + i*360/K)*Math.PI/180, nxx=cx+R*Math.cos(ang), nyy=cy+R*Math.sin(ang);
+    var ctrlx=cx+(R*0.55)*Math.cos(ang)+(nyy-cy)*0.16, ctrly=cy+(R*0.55)*Math.sin(ang)-(nxx-cx)*0.16;
+    paths+='<path d="M '+cx+' '+cy+' Q '+ctrlx.toFixed(1)+' '+ctrly.toFixed(1)+' '+nxx.toFixed(1)+' '+nyy.toFixed(1)+'" stroke="'+tr.dr2+'" stroke-width="3.5" fill="none" opacity="0.72"/>';
+    var durum = nx<0 ? ('🎉 36/36 tamamlandı') : ('Ders '+(nx+1)+'/'+n+' · '+SEANS[tr.id][nx].k);
+    cards+='<foreignObject x="'+(nxx-cw/2).toFixed(1)+'" y="'+(nyy-ch/2).toFixed(1)+'" width="'+cw+'" height="'+ch+'"><div xmlns="http://www.w3.org/1999/xhtml" class="hnode" style="--dr:'+tr.dr+';--dr2:'+tr.dr2+';height:'+ch+'px" onclick="maceraAc('+gi+',\''+tr.id+'\')"><div class="hn-ust"><span class="hn-ik">'+tr.ik+'</span><span class="hn-ad">'+tr.ad+'</span><span class="hn-pct">%'+yuzde+'</span></div><div class="hn-konu">'+durum+'</div><div class="hn-bar"><span style="width:'+yuzde+'%"></span></div><div style="font-size:10px;color:#93c5fd;font-weight:800;margin-top:3px">🛤️ 36 haftanın tümü →</div></div></foreignObject>';
+  }
+  var svg='<svg viewBox="0 0 '+W+' '+H+'" width="100%" xmlns="http://www.w3.org/2000/svg" style="min-width:700px"><circle cx="'+cx+'" cy="'+cy+'" r="'+(R+2)+'" fill="none" stroke="rgba(255,255,255,.05)"/>'+paths+'<foreignObject x="'+(cx-64)+'" y="'+(cy-64)+'" width="128" height="128"><div xmlns="http://www.w3.org/1999/xhtml" class="hcenter" style="width:128px;height:128px;border-radius:50%"><div class="hc-ik">🎓</div><div class="hc-ad">'+gname+'</div><div class="hc-pct">%'+gradeYuzde(gi)+' tamam</div></div></foreignObject>'+cards+'</svg>';
+  var chips=SINIF_LISTE.map(function(sx,i){return '<div class="gchip'+(i===gi?' akt':'')+'" onclick="haritaAc('+i+')">'+(sx.g==='Ana'?'Ana':sx.g)+'</div>';}).join('');
+  $('#haritaModalIc').innerHTML='<div class="mbas" style="--dr:#7c3aed;--dr2:#22d3ee"><div class="ik">🧠</div><div><h3>Zihin Haritası — Nerede Kaldım?</h3><div class="alt">'+gname+' · bir derse dokun → 36 haftanın yolu açılır</div></div><div class="kapat" onclick="modalKapat(\'haritaModal\')">✕</div></div>'+
+    '<div class="mgov"><div class="ilerseridi" style="margin-bottom:12px"><span class="et">Sınıf:</span>'+chips+'</div><div class="harita-saha" id="haritaSaha">'+svg+'</div>'+
+    '<div class="btnsira" style="justify-content:center;margin-top:12px"><button class="btn p" onclick="maceraAc('+gi+')">🛤️ Maceralı Yol (36 hafta)</button><button class="btn g" onclick="haritaPng()">🖼️ PNG</button><button class="btn g" onclick="haritaPdf()">📄 PDF</button></div></div>';
+  modalAc('haritaModal');
+};
+
+maceraAc=function(gi, tid){
+  if(typeof gi!=='number') gi=ST.gradeIdx;
+  ST.macGrade=gi;
+  var trs=gorunenTracks(gi);
+  if(!tid || !trs.some(function(t){return t.id===tid;})) tid=(ST.macTrack && trs.some(function(t){return t.id===ST.macTrack;}))?ST.macTrack:trs[0].id;
+  ST.macTrack=tid;
+  var tr=TRACKS.filter(function(x){return x.id===tid;})[0];
+  var arr=SEANS[tid], n=arr.length, next=trackSonraki(gi,tid,n);
+  var done=0; for(var i=0;i<n;i++) if(ilrDone(gi,tid,i)) done++;
+  var yuzde=trackYuzde(gi,tid,n);
+  var W=560, step=82, top=80, amp=155, cx=W/2, H=top + (n-1)*step + 120;
+  var pts=[]; for(var i=0;i<n;i++){ pts.push([cx + amp*Math.sin(i*0.7), top + i*step]); }
+  var d='M '+pts[0][0].toFixed(1)+' '+pts[0][1].toFixed(1);
+  for(var i=1;i<n;i++){ var px=pts[i-1], c=pts[i], my=((px[1]+c[1])/2).toFixed(1); d+=' C '+px[0].toFixed(1)+' '+my+' '+c[0].toFixed(1)+' '+my+' '+c[0].toFixed(1)+' '+c[1].toFixed(1); }
+  var nodes='';
+  for(var i=0;i<n;i++){
+    var x=pts[i][0], y=pts[i][1], st=ilrDone(gi,tid,i)?'done':(i===next?'cur':'future');
+    var r=st==='cur'?34:(st==='done'?27:24), fill=st==='done'?'url(#gd)':(st==='cur'?'url(#gc)':'#4b5670');
+    var ic=st==='done'?'⭐':(st==='cur'?'📍':(i+1));
+    nodes+='<g class="mnode '+st+'" onclick="maceraGit(\''+tid+'\','+i+')">'+
+      '<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="'+r+'" fill="'+fill+'" stroke="#fff" stroke-width="'+(st==='cur'?4:3)+'"/>'+
+      '<text x="'+x.toFixed(1)+'" y="'+(y+7).toFixed(1)+'" text-anchor="middle" font-size="'+(st==='cur'?22:18)+'" font-weight="800" fill="#fff">'+ic+'</text>'+
+      '<text x="'+x.toFixed(1)+'" y="'+(y-r-8).toFixed(1)+'" text-anchor="middle" font-size="12.5" font-weight="800" fill="#e2e8f0">'+(i+1)+'. '+macKisalt(arr[i].k,20)+'</text></g>';
+  }
+  var extra='<text x="'+cx+'" y="'+(top-46)+'" text-anchor="middle" font-size="30">🏠</text>'+
+            '<text x="'+cx+'" y="'+(top+(n-1)*step+70)+'" text-anchor="middle" font-size="34">🎓</text>';
+  var svg='<svg viewBox="0 0 '+W+' '+H+'" width="100%" xmlns="http://www.w3.org/2000/svg">'+
+    '<defs><linearGradient id="gd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#34d399"/><stop offset="1" stop-color="#059669"/></linearGradient>'+
+    '<linearGradient id="gc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f472b6"/><stop offset="1" stop-color="#db2777"/></linearGradient></defs>'+
+    '<path d="'+d+'" stroke="'+tr.dr2+'" stroke-width="18" fill="none" stroke-linecap="round" opacity="0.4"/>'+
+    '<path class="mac-akim" d="'+d+'" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.7"/>'+
+    extra+nodes+'</svg>';
+  var gchips=SINIF_LISTE.map(function(sx,i){return '<div class="gchip'+(i===gi?' akt':'')+'" onclick="maceraAc('+i+')">'+(sx.g==='Ana'?'Ana':sx.g)+'</div>';}).join('');
+  var tchips=trs.map(function(t){return '<div class="gchip'+(t.id===tid?' akt':'')+'" onclick="maceraAc('+gi+',\''+t.id+'\')">'+t.ik+' '+t.ad+'</div>';}).join('');
+  var durum = next<0? '🎉 Tüm yıl tamam!' : ('📍 Sıradaki: '+(next+1)+'. hafta');
+  var hn = (typeof haftaNo==='function')?haftaNo():null;
+  var haftaBtn = hn? '<span class="mac-hafta" onclick="maceraGit(\''+tid+'\','+Math.min(hn-1,n-1)+')">📅 Takvim: '+hn+'. hafta → aç</span>' : '<span style="font-size:11.5px;color:var(--soluk)">📅 “Bu hafta”yı göstermek için 🗓️ Program’dan dönem başlangıcını gir</span>';
+  $('#maceraModalIc').innerHTML=
+    '<div class="mbas" style="--dr:'+tr.dr+';--dr2:'+tr.dr2+'"><div class="ik">🛤️</div><div><h3>Maceralı Yol — '+tr.ad+'</h3><div class="alt">'+(SINIF_LISTE[gi].g==='Ana'?'Anaokulu':SINIF_LISTE[gi].g+'. Sınıf')+' · '+n+' haftalık yolculuk</div></div><div class="kapat" onclick="modalKapat(\'maceraModal\')">✕</div></div>'+
+    '<div class="mgov">'+
+      '<div class="ilerseridi"><span class="et">Sınıf:</span>'+gchips+'</div>'+
+      '<div class="ilerseridi" style="margin-top:6px"><span class="et">Ders:</span>'+tchips+'</div>'+
+      '<div class="mac-ozet"><span class="oz-done">✅ Arkanda: '+done+'</span><span class="oz-cur">'+durum+'</span><span class="oz-kal">🎯 Önünde: '+(next<0?0:(n-next))+'</span><b>%'+yuzde+'</b></div>'+
+      '<div style="text-align:center;margin:2px 0 8px">'+haftaBtn+'</div>'+
+      '<div class="mac-yol" id="macYol">'+svg+'</div>'+
+    '</div>';
+  modalAc('maceraModal');
+  setTimeout(function(){ var box=document.getElementById('macYol'); if(box){ var t=(next>=0?next:n-1); box.scrollTop=Math.max(0,((top+t*step)/H)*box.scrollHeight - box.clientHeight*0.42); } },70);
+};
+
+
+/* ============================================================
+   EK: 📌 Bugünkü Ders + 🚀 Derse Başla + 🏁 Ders Sonu (10 sn)
+   ============================================================ */
+function bugunGun(){ var d=new Date().getDay(); return (d>=1&&d<=5)?d-1:-1; }
+function bugunkuDersAc(){
+  var g=bugunGun();
+  var prog=(typeof progGet==='function')?progGet():LS.get('dk_prog',{});
+  var hn=(typeof haftaNo==='function')?haftaNo():null;
+  var gunAd=['Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi','Pazar'][(new Date().getDay()+6)%7];
+  var list=[];
+  if(g>=0){ for(var p=1;p<=8;p++){ var c=prog[g+'-'+p]; if(!c) continue; var tr=TRACKS.filter(function(x){return x.id===c.track;})[0]; if(!tr) continue; var n=SEANS[c.track].length; var idx = hn? Math.min(hn-1,n-1) : trackSonraki(c.grade,c.track,n); if(idx<0) idx=n-1; list.push({p:p,grade:c.grade,track:c.track,tr:tr,idx:idx}); } }
+  var body;
+  if(g<0){ body='<div style="padding:18px;color:var(--soluk);text-align:center">Bugün hafta sonu 🎉<br>Program Pzt–Cum içindir.</div>'; }
+  else if(!list.length){ body='<div style="padding:18px;color:var(--soluk);text-align:center">Bugün için programda ders yok.<br>🗓️ <b>Program</b> sekmesinden bugüne ders ekleyebilirsin.</div>'; }
+  else { body=list.map(function(x){ var gname=(SINIF_LISTE[x.grade].g==='Ana'?'Anaokulu':SINIF_LISTE[x.grade].g+'. Sınıf'); var se=SEANS[x.track][x.idx]; return '<div class="bugun-satir" style="--dr:'+x.tr.dr+'"><div class="bs-ic"><div class="bs-saat">'+x.p+'. DERS · '+gname+'</div><b>'+x.tr.ik+' '+x.tr.ad+'</b><div class="bs-konu">Hafta '+(x.idx+1)+': '+se.k+'</div></div><button class="btn y" onclick="bugunBasla(\''+x.track+'\','+x.grade+','+x.idx+')">🚀 Başla</button></div>'; }).join(''); }
+  $('#bugunModalIc').innerHTML='<div class="mbas" style="--dr:#f59e0b;--dr2:#f97316"><div class="ik">📌</div><div><h3>Bugünkü Dersler</h3><div class="alt">'+gunAd+(hn?' · Takvim: '+hn+'. hafta':'')+'</div></div><div class="kapat" onclick="modalKapat(\'bugunModal\')">✕</div></div><div class="mgov">'+body+'</div>';
+  modalAc('bugunModal');
+}
+function bugunBasla(tid,gi,idx){ ST.gradeIdx=gi; if(typeof stKaydet==='function')stKaydet(); modalKapat('bugunModal'); if(ST.view!=='plan') viewDegis('plan'); seansAc(tid,idx); }
+
+function dersSonuAc(tid,i){
+  var gi=ST.gradeIdx, tr=TRACKS.filter(function(x){return x.id===tid;})[0], se=SEANS[tid][i];
+  var notlar=LS.get('dk_ders_not',{}), key=gi+'|'+tid+'|'+i, mevcut=notlar[key]||'', done=ilrDone(gi,tid,i);
+  $('#dersSonuModalIc').innerHTML='<div class="mbas" style="--dr:'+tr.dr+';--dr2:'+tr.dr2+'"><div class="ik">🏁</div><div><h3>Ders Sonu · 10 saniye</h3><div class="alt">'+tr.ad+' · Hafta '+(i+1)+': '+se.k+'</div></div><div class="kapat" onclick="modalKapat(\'dersSonuModal\')">✕</div></div><div class="mgov">'+
+    '<label class="ds-chk" onclick="dsIsle(\''+tid+'\','+i+')"><span class="chk">'+(done?'✅':'⬜')+'</span> Bu dersi <b>işlendi</b> olarak işaretle</label>'+
+    '<label class="fl" style="margin-top:10px">📝 Kısa not (opsiyonel):</label><textarea id="dsNot" class="key" style="min-height:90px" placeholder="Ne işledik, ne kaldı, kim öne çıktı…">'+mevcut.replace(/</g,'&lt;')+'</textarea>'+
+    '<div class="btnsira" style="margin-top:12px"><button class="btn y" onclick="dsKaydet(\''+tid+'\','+i+',false)">💾 Kaydet & Kapat</button><button class="btn p" onclick="dsKaydet(\''+tid+'\','+i+',true)">🟢 Kaydet + Veli Mesajı</button></div>'+
+    '<div style="font-size:11.5px;color:var(--soluk);margin-top:8px">Notlar cihazında saklanır; 💾 Yedekle ile taşınır.</div></div>';
+  modalAc('dersSonuModal');
+}
+function dsIsle(tid,i){ var gi=ST.gradeIdx; if(!ilrDone(gi,tid,i)) ilrToggle(gi,tid,i); if(typeof renderNeredeKaldim==='function') renderNeredeKaldim(); dersSonuAc(tid,i); }
+function dsKaydet(tid,i,veli){ var gi=ST.gradeIdx; var notlar=LS.get('dk_ders_not',{}), key=gi+'|'+tid+'|'+i; var el=document.getElementById('dsNot'); var v=el?el.value:''; if(v && v.trim()) notlar[key]=v.trim(); else delete notlar[key]; LS.set('dk_ders_not',notlar); if(!ilrDone(gi,tid,i)) ilrToggle(gi,tid,i); if(typeof renderNeredeKaldim==='function') renderNeredeKaldim(); if(ST.view==='plan'&&typeof renderPlanGrid==='function') renderPlanGrid(); toast('✅ Ders kapatıldı ve kaydedildi','ok'); modalKapat('dersSonuModal'); if(veli){ aktifSeans={trackId:tid,idx:i}; if(typeof veliMesaj==='function') veliMesaj(); } }
+
+
+/* ============================================================
+   EK: 🎬 Video Prompt Atölyesi + güçlendirilmiş Oyun Promptu
+   ============================================================ */
+function atolyeMod(m){ ST.atolyeMod=m; renderOyun(); }
+function kademeAd(gi){ var g=SINIF_LISTE[gi].g; if(g==='Ana') return 'Anaokulu'; var n=+g; return n<=4?'İlkokul':'Ortaokul'; }
+var VIDEO_ONERI=[
+ {a:'Yağmurun oluşumu',k:'Yağmurun oluşumu'},{a:'Su döngüsü',k:'Suyun doğadaki döngüsü'},{a:'Mevsimler',k:'Mevsimlerin oluşumu'},
+ {a:'Gece ve gündüz',k:'Gece ve gündüzün oluşumu'},{a:'Geri dönüşüm',k:'Geri dönüşüm ve çevre'},{a:'Besin grupları',k:'Sağlıklı beslenme ve besin grupları'},
+ {a:'Fotosentez',k:'Bitkilerde fotosentez'},{a:'Maddenin halleri',k:'Maddenin katı-sıvı-gaz halleri'},{a:'Güneş sistemi',k:'Güneş sistemi ve gezegenler'},
+ {a:'Elektrik devresi',k:'Basit elektrik devresi'},{a:'Kuvvet ve hareket',k:'Kuvvet ve hareket'},{a:'Mıknatıslar',k:'Mıknatısların çekim özelliği'},
+ {a:'Hücre',k:'Canlının yapı taşı: hücre'},{a:'Kesirler',k:'Kesirler ve parça-bütün ilişkisi'},{a:'Çarpım tablosu',k:'Çarpma işleminin mantığı'},
+ {a:'Geometrik şekiller',k:'Geometrik şekiller ve özellikleri'},{a:'Ölçü birimleri',k:'Uzunluk ölçü birimleri'},{a:'Örüntüler',k:'Sayı ve şekil örüntüleri'},
+ {a:'Noktalama işaretleri',k:'Noktalama işaretleri'},{a:'Sözcük türleri',k:'Sözcük türleri (isim, fiil, sıfat)'},{a:'Haritayı okuma',k:'Harita ve yön bulma'},
+ {a:'Trafik kuralları',k:'Çocuklar için trafik kuralları'},{a:'Değerler',k:'Saygı ve sorumluluk değerleri'},
+ {a:'Algoritma nedir?',k:'Algoritma ve adım adım düşünme'},{a:'Döngü mantığı',k:'Kodlamada döngü mantığı'},{a:'YZ nasıl öğrenir?',k:'Yapay zeka nasıl öğrenir'},
+ {a:'İnternet nasıl çalışır?',k:'İnternet nasıl çalışır'},{a:'Satrançta taşlar',k:'Satranç taşları ve hareketleri'}
+];
+function videoKonuSec(konu){ var el=document.getElementById('oyunSerbest'); if(el) el.value=konu; videoPromptVer(); }
+function videoPromptMetni(konu,kademe){
+  return '"'+konu+'" konusunu Türkçe yazılar ve hızlı, dinamik infografiklerle anlatan, After Effects motion graphic videolarına benzer bir anlatım videosu hazırla. Konuşma olmasın. Tek plan içinde sürekli kamera takibiyle (kesintisiz one-shot) ilerleyen yaratıcı bir video olsun.\n\n'+
+  'STİL: Modern, temiz, renkli motion graphic; kinetik tipografi (büyük, okunaklı Türkçe başlıklar); ikon ve şekil animasyonları; yumuşak “ease” geçişler; '+kademe+' seviyesine uygun sadelik.\n'+
+  'KAMERA: Tek plan, kesintisiz; bir öğeden diğerine akarak ilerleyen sürekli kamera hareketi (seamless camera follow).\n'+
+  'SES: Konuşma YOK; yalnızca ritmik arka plan müziği ve ince ses efektleri.\n'+
+  'AKIŞ: (1) Dikkat çeken bir başlık sahnesi → (2) "'+konu+'" adımlarının sırayla, infografik ve animasyonlarla gösterimi → (3) kısa bir özet/çıkarım sahnesi.\n'+
+  'SÜRE & ORAN: ~30–45 saniye; 16:9 (dilersen 9:16 dikey).\n'+
+  'İÇERİK: Tüm ekran yazıları Türkçe ve bilimsel olarak doğru; '+kademe+' öğrencisinin anlayacağı sadelikte.\n'+
+  'RENK: Canlı ama göz yormayan, konuya uygun bir palet.\n\n'+
+  'Notlar: Metinleri okunaklı tut, sahne geçişlerini akıcı yap, tek yaratıcı akışta ilerle.';
+}
+function videoPromptVer(){
+  var k=oyunSeciliKonu(), kademe=kademeAd(ST.oyunGrade), p=videoPromptMetni(k.baslik,kademe);
+  $('#oyunAlan').innerHTML='<div style="padding:14px"><div style="font-size:13px;color:var(--soluk);margin-bottom:8px">🎬 <b>'+k.baslik+' · '+kademe+'</b> için hazır video promptu — Sora / Veo / Runway / Kling gibi bir video yapay zekâsına yapıştır:</div>'+
+    '<textarea id="promptBox" class="key" style="min-height:300px;font-family:ui-monospace,monospace;font-size:12.5px" readonly>'+p+'</textarea>'+
+    '<div class="btnsira" style="margin-top:10px"><button class="btn p" onclick="promptKopyala()">📋 Kopyala</button><button class="btn y" onclick="videoPromptAI()">🤖 AI ile sahne sahne genişlet</button></div></div>';
+}
+function videoPromptAI(){
+  var k=oyunSeciliKonu(), kademe=kademeAd(ST.oyunGrade);
+  var sistem='Sen deneyimli bir motion-graphic yönetmenisin. Verilen konu için TÜRKÇE, KONUŞMASIZ, tek plan (kesintisiz sürekli kamera takibi) After Effects tarzı bir eğitim animasyonunun SAHNE SAHNE briefini üret. Biçim: "🎬 Sahne N (saniye aralığı): görsel/animasyon betimi + EKRANDAKİ Türkçe yazı + geçiş". 5-7 sahne, toplam ~35 sn. Başta 1 satır stil/palet/oran (16:9) özeti; sonda kısa özet sahnesi. Hızlı, dinamik infografik; büyük okunaklı kinetik tipografi; '+kademe+' seviyesine uygun sadelik; bilimsel olarak doğru. Renkli emoji serbest, LaTeX yok.';
+  aiSor('Video sahne planı',{sistem, on:'Konu: "'+k.baslik+'". Kademe: '+kademe+'.', baslik:'🎬 Video Planı · '+k.baslik});
+}
+
+/* güçlendirilmiş oyun promptu */
+promptMetni=function(konu,tip,yas,dersAd){
+  var mek={
+    'Bilgi Yarışması':'Her ekranda 1 soru + 4 şık; doğru şık yeşil, yanlış kırmızı; süre/ilerleme çubuğu.',
+    'Eşleştirme':'Kavram–karşılık eşleştirme; doğru eşleşme kilitlenir, yanlış uyarır; süre/skor.',
+    'Doğru / Yanlış':'İfade + Doğru/Yanlış; anında geri bildirim ve 1 cümle açıklama.',
+    'Hafıza Kartları':'Kapalı kartlardan kavram–tanım çifti bul; hamle ve süre sayılır.',
+    'Boşluk Doldur':'Cümlede boşluğu seçenekten/yazarak doldur; doğru cevap vurgulanır.',
+    'Kelime Avı':'Harf ızgarasında gizli kelimeleri bul; bulunan liste düşer.',
+    'Sıralama':'Adımları/olayları sürükle-bırak ile doğru sıraya diz; kontrol edilip puanlanır.'
+  }[tip]||'Konuya uygun etkileşimli bir mekanik kur.';
+  var flavor={'Robotik ve Kodlama':'Robot/blok/algoritma temalı, emoji görselli.','Satranç':'Satranç tahtası ve taş temalı.','Yapay Zeka':'Sevimli robot karakterli, tahmin/öğrenme temalı.','Akıl-Zeka Oyunları':'Renkli bulmaca/örüntü temalı.','Eğitim Koçluğu':'Hedef/çalışma temalı, motive edici.'}[dersAd]||'Konuya uygun renkli tema.';
+  return 'Profesyonel bir eğitim oyunu geliştiricisi gibi davran. Aşağıdaki brief’e göre TEK DOSYALIK, kendi kendine çalışan, RENKLİ ve interaktif bir HTML5 eğitim oyunu kodla.\n\n'+
+    '🎯 Ders: '+dersAd+'\n📚 Konu: '+konu+'\n👧 Hedef yaş: '+yas+'\n🎮 Tür: '+tip+'\n\n'+
+    'PEDAGOJİ:\n• Net öğrenme hedefi ("'+konu+'"); içerik doğru ve yaşa uygun.\n• Kolaydan zora 2-3 kademe; yanlışta ipucu/kısa açıklama ile öğret.\n\n'+
+    'OYNANIŞ:\n• Mekanik: '+mek+'\n• En az 8 soru/öğe; her adımda anında renkli geri bildirim (doğru=yeşil, yanlış=kırmızı) + kısa açıklama.\n• Puan, ilerleme göstergesi, can/süre; sonda skor ekranı, yıldız değerlendirmesi ve “Tekrar Oyna”.\n\n'+
+    'ARAYÜZ & TEMA:\n• '+flavor+'\n• Koyu, canlı renkli; büyük dokunmatik butonlar; net tipografi; hafif animasyon ve gölge.\n• Mobil + akıllı tahta uyumlu (responsive); tam ekran şık dursun.\n\n'+
+    'SES & HİS:\n• WebAudio ile kısa doğru/yanlış/tık sesleri (harici dosya yok) + sessize alma düğmesi.\n\n'+
+    'TEKNİK:\n• Tek .html; tüm CSS ve JS gömülü; harici kütüphane/CDN/görsel YOK (emoji serbest).\n• Türkçe; okunaklı kontrast; hem dokunmatik hem klavye çalışsın.\n\n'+
+    'ÇIKTI: yalnızca eksiksiz HTML kodu (açıklama ve markdown olmadan).';
+};
+
+/* Atölye: mod anahtarı (Oyun / Video) — renderOyun yeniden tanımlı */
+renderOyun=function(){
+  if(ST.oyunGrade==null) ST.oyunGrade=ST.gradeIdx;
+  if(ST.oyunTur==null) ST.oyunTur='Bilgi Yarışması';
+  if(ST.atolyeMod==null) ST.atolyeMod='oyun';
+  var chips=SINIF_LISTE.map(function(sn,i){return '<div class="gchip'+(i===ST.oyunGrade?' akt':'')+'" onclick="oyunGrade('+i+')">'+(sn.g==='Ana'?'Ana':sn.g)+'</div>';}).join('');
+  var opts=oyunSeansListesi(ST.oyunGrade).map(function(x){return '<option value="'+x.v+'">'+x.t+'</option>';}).join('');
+  var mod='<div class="oyun-turler" style="margin:0 0 14px"><button class="oyun-tur'+(ST.atolyeMod==='oyun'?' sec':'')+'" onclick="atolyeMod(\'oyun\')">🎮 Oyun</button><button class="oyun-tur'+(ST.atolyeMod==='video'?' sec':'')+'" onclick="atolyeMod(\'video\')">🎬 Video Promptu</button></div>';
+  var head='<div class="veli-hero" style="padding:20px"><h2 style="margin:0 0 4px;font-size:20px">🎮 Eğitim Oyunları & 🎬 Prompt Atölyesi</h2><p class="big" style="font-size:13px">Ders planından konu seç → oyun için <b>HTML prompt/üret</b>; video için <b>After Effects tarzı motion-graphic promptu</b> al. Kademeye göre hazır konu önerileri de var.</p></div>';
+  var panel;
+  if(ST.atolyeMod==='oyun'){
+    var turBtn=OYUN_TURLERI.map(function(p){return '<button class="oyun-tur'+(ST.oyunTur===p[0]?' sec':'')+'" onclick="oyunTur(\''+p[0]+'\')">'+p[1]+' '+p[0]+'</button>';}).join('');
+    panel='<div class="oyun-panel"><div class="ilerseridi"><span class="et">Sınıf:</span>'+chips+'</div>'+
+      '<label class="fl">Konu (ders planından):</label><select id="oyunKonu" class="key" style="font-family:inherit">'+opts+'</select>'+
+      '<label class="fl">…veya serbest konu:</label><input id="oyunSerbest" class="key" placeholder="Örn: Döngüler · Piyonun hareketi" style="font-family:inherit">'+
+      '<label class="fl" style="margin-top:12px">Oyun türü:</label><div class="oyun-turler">'+turBtn+'</div>'+
+      '<div class="btnsira" style="margin-top:14px"><button class="btn p" onclick="promptVer()">📋 HTML Prompt Ver</button><button class="btn y" onclick="oyunUret(ST.oyunTur)">🎮 Hemen Üret &amp; Oyna</button></div></div>'+
+      '<div id="oyunAlan" class="oyun-alan"><div class="oyun-bos">👆 Konu + tür seç; “Prompt Ver” ya da “Üret &amp; Oyna”.</div></div>';
+  } else {
+    var oner=VIDEO_ONERI.map(function(o){return '<button class="oyun-tur" onclick="videoKonuSec(\''+o.k.replace(/'/g,"\\'")+'\')">'+o.a+'</button>';}).join('');
+    panel='<div class="oyun-panel"><div class="ilerseridi"><span class="et">Sınıf:</span>'+chips+'</div>'+
+      '<label class="fl">Konu (ders planından):</label><select id="oyunKonu" class="key" style="font-family:inherit">'+opts+'</select>'+
+      '<label class="fl">…veya serbest konu:</label><input id="oyunSerbest" class="key" placeholder="Örn: Yağmurun oluşumu · Kesirler · Gezegenler" style="font-family:inherit">'+
+      '<div class="btnsira" style="margin-top:14px"><button class="btn p" onclick="videoPromptVer()">📋 Video Promptu Ver</button><button class="btn y" onclick="videoPromptAI()">🤖 AI ile Sahne Sahne Genişlet</button></div>'+
+      '<label class="fl" style="margin-top:14px">💡 Hazır konu önerileri (dokun → prompt):</label><div class="oyun-turler">'+oner+'</div></div>'+
+      '<div id="oyunAlan" class="oyun-alan"><div class="oyun-bos">🎬 Konu seç → “Video Promptu Ver”. Çıkan promptu Sora / Veo / Runway / Kling gibi bir video AI’sına yapıştır. (Konuşmasız, tek plan, After Effects tarzı.)</div></div>';
+  }
+  $('#v-oyun').innerHTML=head+mod+panel;
+};
+
+
+/* ============================================================
+   EK: Her dersin sonunda o konuya özel Video/Oyun promptu
+   ============================================================ */
+function seansPromptKonu(){ var t=aktifSeans; if(!t) return null; var se=SEANS[t.trackId][t.idx]; var tr=TRACKS.filter(function(x){return x.id===t.trackId;})[0]||{}; return {konu:se.k, kademe:kademeAd(ST.gradeIdx), tid:t.trackId, idx:t.idx, dersAd:tr.ad||'Ders'}; }
+function promptModalYaz(title,text,topHTML,bottomHTML){
+  $('#promptModalIc').innerHTML='<div class="mbas" style="--dr:#7c3aed;--dr2:#22d3ee"><div class="ik">📋</div><div style="min-width:0"><h3>'+title+'</h3><div class="alt">Kopyala → istediğin AI aracında kullan</div></div><div class="kapat" onclick="modalKapat(\'promptModal\')">✕</div></div><div class="mgov">'+(topHTML||'')+
+    '<textarea id="promptBox" class="key" style="min-height:280px;font-family:ui-monospace,monospace;font-size:12.5px" readonly>'+String(text).replace(/</g,'&lt;')+'</textarea>'+
+    '<div class="btnsira" style="margin-top:10px"><button class="btn p" onclick="promptKopyala()">📋 Kopyala</button>'+(bottomHTML||'')+'</div></div>';
+  modalAc('promptModal');
+}
+function seansVideoPrompt(){ var c=seansPromptKonu(); if(!c) return; var p=videoPromptMetni(c.konu,c.kademe);
+  promptModalYaz('🎬 Video Promptu · '+c.konu, p, '', '<button class="btn y" onclick="seansVideoPromptAI()">🤖 AI ile sahne sahne genişlet</button>'); }
+function seansVideoPromptAI(){ var c=seansPromptKonu(); if(!c) return; modalKapat('promptModal');
+  var sistem='Sen deneyimli bir motion-graphic yönetmenisin. Verilen konu için TÜRKÇE, KONUŞMASIZ, tek plan (kesintisiz sürekli kamera takibi) After Effects tarzı bir eğitim animasyonunun SAHNE SAHNE briefini üret. Biçim: "🎬 Sahne N (saniye): görsel/animasyon + EKRANDAKİ Türkçe yazı + geçiş". 5-7 sahne, ~35 sn. Başta 1 satır stil/palet/oran (16:9) özeti; sonda kısa özet sahnesi. Hızlı dinamik infografik; büyük kinetik tipografi; '+c.kademe+' seviyesine uygun; bilimsel doğru. Emoji serbest, LaTeX yok.';
+  aiSor('Video sahne planı',{sistem, on:'Konu: "'+c.konu+'". Kademe: '+c.kademe+'.', baslik:'🎬 Video Planı · '+c.konu}); }
+function seansOyunPrompt(){ if(ST.spTur==null) ST.spTur='Bilgi Yarışması'; var c=seansPromptKonu(); if(!c) return; var yas=aktifDuzey().yas; var p=promptMetni(c.konu,ST.spTur,yas,c.dersAd);
+  var turChips=OYUN_TURLERI.map(function(pp){return '<button class="oyun-tur'+(ST.spTur===pp[0]?' sec':'')+'" onclick="ST.spTur=\''+pp[0]+'\';seansOyunPrompt()">'+pp[1]+' '+pp[0]+'</button>';}).join('');
+  promptModalYaz('🎮 Oyun Promptu · '+c.konu, p, '<div style="font-size:12px;color:var(--soluk);font-weight:800;margin-bottom:6px">Oyun türü:</div><div class="oyun-turler" style="margin-bottom:10px">'+turChips+'</div>', '<button class="btn y" onclick="seansOyunUret()">🎮 Bu konuyla Üret &amp; Oyna</button>'); }
+function seansOyunUret(){ var c=seansPromptKonu(); if(!c) return; modalKapat('promptModal'); modalKapat('haftaModal'); ST.atolyeMod='oyun'; ST.oyunGrade=ST.gradeIdx; viewDegis('oyun'); setTimeout(function(){ var el=document.getElementById('oyunSerbest'); if(el) el.value=c.konu; oyunUret(ST.spTur||'Bilgi Yarışması'); },80); }
+
 basla();
 fabYap({id:'sinif',ikon:'⏱️',etiket:'Sınıf Araçları',bayrak:'dk_sinif_gizli',tik:()=>sinifAracAc()});
 fabYap({id:'odak',ikon:'🖥️',etiket:'Sunum / Odak Modu',bayrak:'dk_odak_gizli',tik:()=>odakAc()});
+fabYap({id:'bugun',ikon:'📌',etiket:'Bugünkü Ders',bayrak:'dk_bugun_gizli',tik:()=>bugunkuDersAc()});
 renderNeredeKaldim();
 </script>
 </body>
