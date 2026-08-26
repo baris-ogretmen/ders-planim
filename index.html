@@ -9,8 +9,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Ders Planı">
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon.svg">
+<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjogIlJvYm90aWsgdmUgS29kbGFtYSDCtyBZxLFsbMSxayBEZXJzIFBsYW7EsSIsICJzaG9ydF9uYW1lIjogIkRlcnMgUGxhbsSxIiwgInN0YXJ0X3VybCI6ICIuIiwgInNjb3BlIjogIi4iLCAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwgIm9yaWVudGF0aW9uIjogImFueSIsICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMwNzBiMTgiLCAidGhlbWVfY29sb3IiOiAiIzBiMTIyMCIsICJpY29ucyI6IFt7InNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MG5hSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY25JSGRwWkhSb1BTYzFNVEluSUdobGFXZG9kRDBuTlRFeUp5QjJhV1YzUW05NFBTY3dJREFnTlRFeUlEVXhNaWMrUEdSbFpuTStQR3hwYm1WaGNrZHlZV1JwWlc1MElHbGtQU2RuSnlCNE1UMG5NQ2NnZVRFOUp6QW5JSGd5UFNjeEp5QjVNajBuTVNjK1BITjBiM0FnYjJabWMyVjBQU2N3SnlCemRHOXdMV052Ykc5eVBTY2pOMk16WVdWa0p5OCtQSE4wYjNBZ2IyWm1jMlYwUFNjeEp5QnpkRzl3TFdOdmJHOXlQU2NqTWpKa00yVmxKeTgrUEM5c2FXNWxZWEpIY21Ga2FXVnVkRDQ4TDJSbFpuTStQSEpsWTNRZ2QybGtkR2c5SnpVeE1pY2dhR1ZwWjJoMFBTYzFNVEluSUhKNFBTY3hNVEluSUdacGJHdzlKM1Z5YkNnalp5a25MejQ4ZEdWNGRDQjRQU2N5TlRZbklIazlKek0yTUNjZ1ptOXVkQzF6YVhwbFBTY3pNREFuSUhSbGVIUXRZVzVqYUc5eVBTZHRhV1JrYkdVblB2Q2ZrNWc4TDNSbGVIUStQQzl6ZG1jKyIsICJzaXplcyI6ICI1MTJ4NTEyIiwgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIsICJwdXJwb3NlIjogImFueSBtYXNrYWJsZSJ9XX0=">
+<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc1MTInIGhlaWdodD0nNTEyJyB2aWV3Qm94PScwIDAgNTEyIDUxMic+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSdnJyB4MT0nMCcgeTE9JzAnIHgyPScxJyB5Mj0nMSc+PHN0b3Agb2Zmc2V0PScwJyBzdG9wLWNvbG9yPScjN2MzYWVkJy8+PHN0b3Agb2Zmc2V0PScxJyBzdG9wLWNvbG9yPScjMjJkM2VlJy8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3Qgd2lkdGg9JzUxMicgaGVpZ2h0PSc1MTInIHJ4PScxMTInIGZpbGw9J3VybCgjZyknLz48dGV4dCB4PScyNTYnIHk9JzM2MCcgZm9udC1zaXplPSczMDAnIHRleHQtYW5jaG9yPSdtaWRkbGUnPvCfk5g8L3RleHQ+PC9zdmc+">
 <style>
 :root{
   --bg:#070b18; --bg2:#0b1327; --panel:#111c36; --panel2:#0e1830;
@@ -394,6 +394,17 @@ body.odak .seritler,body.odak .hero,body.odak .fabgrup,body.odak .pill,body.odak
 .vkart h4{margin:0 0 4px;font-size:14.5px;color:#fff;padding-right:56px}
 .vkart p{margin:0;font-size:12.5px;color:var(--soluk)}
 .vkart .ac{margin-top:10px;font-size:12px;font-weight:800;color:#f87171}
+
+.progtab{border-collapse:collapse;width:100%;min-width:540px}
+.progtab th,.progtab td{border:1px solid var(--cizgi);padding:8px;text-align:center;font-size:12.5px}
+.progtab th{background:var(--panel2);color:var(--soluk);font-weight:800}
+.progtab th.bugun{color:#fbbf24}
+.progtab td.pcell{cursor:pointer;min-width:72px;height:46px;color:#fff}
+.progtab td.pcell:hover{outline:2px solid var(--mavi2)}
+.progtab td.bcol{background-image:linear-gradient(rgba(251,191,36,.05),rgba(251,191,36,.05))}
+input[type=date].key{color-scheme:dark}
+.ai-cevir{display:inline-flex;gap:5px;align-items:center}
+.ai-dil{background:var(--panel2);border:1px solid var(--cizgi);color:#fff;border-radius:9px;padding:7px;font-size:12px;font-family:inherit;outline:none}
 </style>
 
 </head>
@@ -421,6 +432,7 @@ body.odak .seritler,body.odak .hero,body.odak .fabgrup,body.odak .pill,body.odak
   <div class="seritler" id="seritler">
     <div class="seri aktif" data-v="veli">🏛️ Genel Bakış / Veli Sunumu</div>
     <div class="seri" data-v="plan">📅 Yıllık Plan</div>
+    <div class="seri" data-v="program">🗓️ Program</div>
     <div class="seri" data-v="araclar">🧰 Araç Kütüphanesi</div>
     <div class="seri" data-v="oyun">🎮 Eğitim Oyunları</div>
     <div class="seri" data-v="video">🎬 Videolar</div>
@@ -447,6 +459,8 @@ body.odak .seritler,body.odak .hero,body.odak .fabgrup,body.odak .pill,body.odak
   <div id="v-oyun" style="display:none"></div>
 
   <div id="v-video" style="display:none"></div>
+
+  <div id="v-program" style="display:none"></div>
 
 </div>
 
@@ -1196,14 +1210,17 @@ async function aiSor(gorunenSoru, {sistem, on, baslik, ekle}={}){
   }
 }
 function aiAracCubugu(){
-  return `<div class="ai-arac">
-    <button onclick="aiWhatsapp()">🟢 WhatsApp</button>
-    <button onclick="aiKopyala()">📋 Kopyala</button>
-    <button onclick="aiPaylas()">📤 Paylaş</button>
-    <button onclick="aiGorsel()">📷 Görsel</button>
-    <button onclick="aiPDF()">📄 PDF</button>
-    <button onclick="aiSesli()">🔊 Sesli</button>
-  </div>`;
+  var diller=['İngilizce','Almanca','Fransızca','Arapça','Rusça','Ukraynaca','Farsça','İspanyolca'];
+  var opts=diller.map(function(d){return '<option>'+d+'</option>';}).join('');
+  return '<div class="ai-arac">'+
+    '<button onclick="aiWhatsapp()">🟢 WhatsApp</button>'+
+    '<button onclick="aiKopyala()">📋 Kopyala</button>'+
+    '<button onclick="aiPaylas()">📤 Paylaş</button>'+
+    '<button onclick="aiGorsel()">📷 Görsel</button>'+
+    '<button onclick="aiPDF()">📄 PDF</button>'+
+    '<button onclick="aiSesli()">🔊 Sesli</button>'+
+    '<span class="ai-cevir"><select class="ai-dil">'+opts+'</select><button onclick="aiCevir(this)">🌍 Çevir</button></span>'+
+  '</div>';
 }
 function sonAiDuz(){ return ZIRVE.duzMetin(sonAiHTML); }
 function aiKopyala(){ navigator.clipboard.writeText(sonAiDuz()).then(()=>toast('📋 Kopyalandı','ok')).catch(()=>toast('Kopyalanamadı','err')); }
@@ -1448,10 +1465,12 @@ function viewDegis(v){
   $('#v-araclar').style.display=v==='araclar'?'block':'none';
   var vo=$('#v-oyun'); if(vo) vo.style.display=v==='oyun'?'block':'none';
   var vv=$('#v-video'); if(vv) vv.style.display=v==='video'?'block':'none';
+  var vp=$('#v-program'); if(vp) vp.style.display=v==='program'?'block':'none';
   if(v==='plan'){ renderSiniflar(); renderFiltre(); renderPlan(); }
   if(v==='araclar') renderAraclar();
   if(v==='oyun') renderOyun();
   if(v==='video') renderVideo();
+  if(v==='program') renderProgram();
 }
 $$('#seritler .seri').forEach(s=>s.onclick=()=>viewDegis(s.dataset.v));
 $('#araInput').addEventListener('input',e=>{ ST.ara=e.target.value; $('#araX').style.display=e.target.value?'block':'none'; renderPlanGrid(); });
@@ -1608,6 +1627,7 @@ function seansAc(tid,i){
         <button onclick="seansAI('unplugged')">🔌 Ekransız alternatif</button>
         <button onclick="seansAI('sorular')">❓ 5 değerlendirme sorusu</button>
         <button onclick="seansAI('ders')">📝 40 dk ders akışı</button>
+        <button onclick="seansFark()">🧑‍🏫 Farklılaştır (zorlanan/ileri)</button>
       </div></div>
     </div>`;
   modalAc('haftaModal');
@@ -2129,7 +2149,223 @@ renderVideo=function(){
   });
   $('#v-video').innerHTML=html;
 };
-if('serviceWorker' in navigator){ window.addEventListener('load',function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); }); }
+/* PWA: manifest gömülü (tek dosya). Tam çevrimdışı için opsiyonel sw.js gerekir; tek-dosya modunda atlandı. */
+
+
+/* ============================================================
+   EK: Film & Animasyon (aile) + Zihin Haritası (radyal)
+   ============================================================ */
+function openWeb(q){ window.open('https://www.google.com/search?q='+encodeURIComponent(q),'_blank','noopener'); }
+VIDEO_GRUP.push({ad:'Filmler & Animasyonlar (aile ile izlenebilir)', ik:'🎞️', dr:'#e11d48', dr2:'#fb7185', items:[
+  {ad:'Queen of Katwe (Satranç)', film:true, q:'Queen of Katwe filmi izle', d:'Gerçek hikâye: Ugandalı bir kızın satranç yükselişi. (Disney, aile)'},
+  {ad:'Brooklyn Castle (Satranç · belgesel)', film:true, q:'Brooklyn Castle belgesel izle', d:'Bir okul satranç takımının başarısı. (aile)'},
+  {ad:'Searching for Bobby Fischer (Satranç)', film:true, q:'Searching for Bobby Fischer izle', d:'Satranç yeteneği bir çocuğun hikâyesi.'},
+  {ad:'Magnus (Satranç · belgesel)', film:true, q:'Magnus Carlsen belgesel izle', d:'Dünya şampiyonu Magnus Carlsen’in yolculuğu.'},
+  {ad:'WALL-E (Robot)', film:true, q:'WALL-E filmi izle', d:'Sevimli bir robotun dünyası. (Pixar, aile)'},
+  {ad:'Big Hero 6 (Robotik)', film:true, q:'Big Hero 6 filmi izle', d:'Genç bir mucit ve şişme robotu Baymax. (aile)'},
+  {ad:'The Iron Giant (Robot)', film:true, q:'The Iron Giant filmi izle', d:'Bir çocuk ve dev robotun dostluğu.'},
+  {ad:'Ron’un Hatası (YZ / robot arkadaş)', film:true, q:'Ronun Hatası filmi izle', d:'Yapay zekâlı robot arkadaş ve dostluk. (aile)'},
+  {ad:'Oyunbozan Ralph (Oyun/Kodlama)', film:true, q:'Oyunbozan Ralph filmi izle', d:'Video oyunu dünyasında geçen macera. (Disney)'},
+  {ad:'Gizli Sayılar / Hidden Figures (Matematik)', film:true, q:'Gizli Sayılar Hidden Figures izle', d:'NASA’da matematikçi kadınların gerçek hikâyesi. (aile-PG)'},
+  {ad:'Mitchell Ailesi ve Makineler (YZ)', film:true, q:'Mitchell Ailesi ve Makineler izle', d:'Robot isyanına karşı sıcak bir aile. (komedi, aile)'},
+  {ad:'Cyberchase (Mantık/Matematik · çizgi)', film:true, q:'Cyberchase çizgi film izle', d:'Bulmaca ve matematikle problem çözen çocuklar.'},
+  {ad:'Odd Squad (Problem çözme · çizgi)', film:true, q:'Odd Squad izle', d:'Mantık ve problem çözme ajanları. (PBS Kids)'},
+  {ad:'Numberblocks (Sayılar · küçükler)', film:true, q:'Numberblocks izle', d:'Sayıları sevdiren minik animasyon. (okul öncesi-1. sınıf)'},
+  {ad:'Donald Matematik Diyarında', film:true, q:'Donald Matematik Diyarında izle', d:'Klasik Disney kısa filmi: matematiğin büyüsü.'},
+]});
+renderVideo=function(){
+  if(ST.videoGrade==null) ST.videoGrade=ST.gradeIdx;
+  var chips=SINIF_LISTE.map(function(sn,i){return '<div class="gchip'+(i===ST.videoGrade?' akt':'')+'" onclick="videoGrade('+i+')">'+(sn.g==='Ana'?'Ana':sn.g)+'</div>';}).join('');
+  var opts=oyunSeansListesi(ST.videoGrade).map(function(x){return '<option value="'+x.v+'">'+x.t+'</option>';}).join('');
+  var html='<div class="veli-hero" style="padding:20px"><h2 style="margin:0 0 4px;font-size:20px">🎬 Video, Film & Animasyon Kütüphanesi</h2>'+
+    '<p class="big" style="font-size:13px">Derse uygun eğitici videolar, güvenli kanallar ve <b>aile ile izlenebilir film/animasyonlar</b>. Kartlar konunun güncel içeriklerini açar; “Nerede izlenir” yasal platform aramasına gider (bozuk link olmaz). 👨‍👩‍👧 Filmleri yaşa uygun seçip aile eşliğinde izletin.</p></div>'+
+    '<div class="oyun-panel"><div class="ilerseridi"><span class="et">Sınıf:</span>'+chips+'</div>'+
+    '<label class="fl">Ders planındaki konuyu YouTube’da bul:</label><select id="videoKonu" class="key" style="font-family:inherit">'+opts+'</select>'+
+    '<div class="btnsira" style="margin-top:12px"><button class="btn p" onclick="videoAra()">🔎 Bu Konuyu YouTube’da Bul</button></div></div>';
+  VIDEO_GRUP.forEach(function(g){
+    html+='<div class="arac-grup" style="--dr:'+g.dr+';--dr2:'+g.dr2+'"><div class="gb"><span class="ik">'+g.ik+'</span>'+g.ad+'</div><div class="arac-izgara">';
+    g.items.forEach(function(it){
+      var act = it.film ? "openWeb('"+it.q+"')" : (it.url ? "openUrl('"+it.url+"')" : "openYT('"+it.q+"')");
+      var badge = it.film ? '🎞️ Film' : (it.url ? '📺 Kanal' : '▶ YouTube');
+      var acx = it.film ? 'Nerede izlenir ↗' : (it.url ? 'Kanala Git ↗' : 'İzle / Keşfet ↗');
+      html+='<div class="vkart" style="--dr:'+g.dr+';--dr2:'+g.dr2+'" onclick="'+act+'"><span class="pb">'+badge+'</span><h4>'+it.ad+'</h4><p>'+it.d+'</p><div class="ac">'+acx+'</div></div>';
+    });
+    html+='</div></div>';
+  });
+  $('#v-video').innerHTML=html;
+};
+
+/* Zihin Haritası — radyal, dallanan görünüm */
+haritaAc=function(gi){
+  if(typeof gi!=='number') gi=ST.gradeIdx;
+  var sn=SINIF_LISTE[gi], gname=(sn.g==='Ana'?'Anaokulu':sn.g+'. Sınıf');
+  var trs=gorunenTracks(gi), K=trs.length;
+  var W=760,H=560,cx=380,cy=280,R=(K>4?208:186),cw=176,ch=84;
+  var paths='',cards='';
+  for(var i=0;i<K;i++){
+    var tr=trs[i], n=SEANS[tr.id].length, nx=trackSonraki(gi,tr.id,n), yuzde=trackYuzde(gi,tr.id,n);
+    var ang=(-90 + i*360/K)*Math.PI/180;
+    var nxx=cx+R*Math.cos(ang), nyy=cy+R*Math.sin(ang);
+    var ctrlx=cx+(R*0.55)*Math.cos(ang)+(nyy-cy)*0.16, ctrly=cy+(R*0.55)*Math.sin(ang)-(nxx-cx)*0.16;
+    paths+='<path d="M '+cx+' '+cy+' Q '+ctrlx.toFixed(1)+' '+ctrly.toFixed(1)+' '+nxx.toFixed(1)+' '+nyy.toFixed(1)+'" stroke="'+tr.dr2+'" stroke-width="3.5" fill="none" opacity="0.72"/>';
+    var durum = nx<0 ? '🎉 Tamamlandı' : ('Ders '+(nx+1)+' · '+SEANS[tr.id][nx].k);
+    cards+='<foreignObject x="'+(nxx-cw/2).toFixed(1)+'" y="'+(nyy-ch/2).toFixed(1)+'" width="'+cw+'" height="'+ch+'">'+
+      '<div xmlns="http://www.w3.org/1999/xhtml" class="hnode" style="--dr:'+tr.dr+';--dr2:'+tr.dr2+';height:'+ch+'px" onclick="haritaGit(\''+tr.id+'\','+nx+')">'+
+        '<div class="hn-ust"><span class="hn-ik">'+tr.ik+'</span><span class="hn-ad">'+tr.ad+'</span><span class="hn-pct">%'+yuzde+'</span></div>'+
+        '<div class="hn-konu">'+durum+'</div>'+
+        '<div class="hn-bar"><span style="width:'+yuzde+'%"></span></div>'+
+      '</div></foreignObject>';
+  }
+  var svg='<svg viewBox="0 0 '+W+' '+H+'" width="100%" xmlns="http://www.w3.org/2000/svg" style="min-width:700px">'+
+    '<circle cx="'+cx+'" cy="'+cy+'" r="'+(R+2)+'" fill="none" stroke="rgba(255,255,255,.05)"/>'+
+    paths+
+    '<foreignObject x="'+(cx-64)+'" y="'+(cy-64)+'" width="128" height="128">'+
+      '<div xmlns="http://www.w3.org/1999/xhtml" class="hcenter" style="width:128px;height:128px;border-radius:50%"><div class="hc-ik">🎓</div><div class="hc-ad">'+gname+'</div><div class="hc-pct">%'+gradeYuzde(gi)+' tamam</div></div>'+
+    '</foreignObject>'+cards+'</svg>';
+  var chips=SINIF_LISTE.map(function(sx,i){return '<div class="gchip'+(i===gi?' akt':'')+'" onclick="haritaAc('+i+')">'+(sx.g==='Ana'?'Ana':sx.g)+'</div>';}).join('');
+  $('#haritaModalIc').innerHTML='<div class="mbas" style="--dr:#7c3aed;--dr2:#22d3ee"><div class="ik">🧠</div><div><h3>Zihin Haritası — Nerede Kaldım?</h3><div class="alt">'+gname+' · dalların ucundaki konu = kaldığın yer</div></div><div class="kapat" onclick="modalKapat(\'haritaModal\')">✕</div></div>'+
+    '<div class="mgov"><div class="ilerseridi" style="margin-bottom:12px"><span class="et">Sınıf:</span>'+chips+'</div><div class="harita-saha">'+svg+'</div>'+
+    '<div style="text-align:center;margin-top:12px"><button class="btn g" onclick="window.print()">🖨️ Haritayı Yazdır</button></div></div>';
+  modalAc('haritaModal');
+};
+
+
+/* ============================================================
+   EK: Haftalık Program + Harita PNG/PDF + Yıl Sonu Özeti
+   ============================================================ */
+var PROG_GUN=['Pzt','Sal','Çar','Per','Cum'], PROG_SAAT=8;
+function progGet(){ return LS.get('dk_prog',{}); }
+function progSet(o){ LS.set('dk_prog',o); }
+function haftaNo(){ var b=LS.get('dk_donem_bas',''); if(!b) return null; var d0=new Date(b); if(isNaN(d0.getTime())) return null; var n=Math.floor((Date.now()-d0.getTime())/(7*864e5))+1; return n>0?n:null; }
+function progBugun(){ var d=new Date().getDay(); return (d>=1&&d<=5)? d-1 : -1; }
+function renderProgram(){
+  if(ST.progGrade==null)ST.progGrade=0; if(ST.progTrack==null)ST.progTrack='robokod';
+  var bas=LS.get('dk_donem_bas',''), hn=haftaNo(), prog=progGet(), bug=progBugun();
+  var sinifSel=SINIF_LISTE.map(function(sn,i){return '<option value="'+i+'"'+(i==ST.progGrade?' selected':'')+'>'+(sn.g==='Ana'?'Ana':sn.g)+'</option>';}).join('');
+  var trackSel=TRACKS.map(function(tr){return '<option value="'+tr.id+'"'+(tr.id==ST.progTrack?' selected':'')+'>'+tr.ik+' '+tr.ad+'</option>';}).join('');
+  var thead='<tr><th></th>'+PROG_GUN.map(function(g,i){return '<th'+(i===bug?' class="bugun"':'')+'>'+g+(i===bug?' •':'')+'</th>';}).join('')+'</tr>';
+  var rows='';
+  for(var p=1;p<=PROG_SAAT;p++){ rows+='<tr><th>'+p+'.</th>';
+    for(var g=0;g<5;g++){ var key=g+'-'+p, c=prog[key], inner='', st='';
+      if(c){ var tr=TRACKS.filter(function(x){return x.id===c.track;})[0]; if(tr){ inner='<b>'+tr.ik+' '+(SINIF_LISTE[c.grade].g==='Ana'?'Ana':SINIF_LISTE[c.grade].g)+'</b>'; st='style="background:linear-gradient(135deg,'+tr.dr+','+tr.dr2+');color:#fff"'; } }
+      rows+='<td '+st+' class="pcell'+(g===bug?' bcol':'')+'" onclick="progTikla('+g+','+p+')">'+inner+'</td>'; }
+    rows+='</tr>'; }
+  $('#v-program').innerHTML=
+    '<div class="veli-hero" style="padding:20px"><h2 style="margin:0 0 4px;font-size:20px">🗓️ Haftalık Ders Programı</h2>'+
+    '<p class="big" style="font-size:13px">Üstten sınıf + ders seç, sonra hücrelere dokun (boyar gibi doldur). 🧽 Sil ile temizle. “Bugün” sütunu işaretli; dönem başlangıcını girince kaçıncı haftada olduğun otomatik görünür.</p></div>'+
+    '<div class="oyun-panel">'+
+    '<div class="satir" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px"><span class="et">Dönem başlangıcı:</span><input type="date" id="donemBas" class="key" style="width:auto" value="'+bas+'" onchange="donemBasKaydet(this.value)">'+(hn?'<span class="turaktif">📅 Bu hafta: '+hn+'. hafta</span>':'')+'</div>'+
+    '<div class="satir" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><span class="et">Sınıf:</span><select class="key" style="width:auto" onchange="ST.progGrade=+this.value">'+sinifSel+'</select>'+
+    '<span class="et">Ders:</span><select class="key" style="width:auto" onchange="ST.progTrack=this.value">'+trackSel+'</select>'+
+    '<button class="fbtn'+(ST.progSil?' aktif':'')+'" onclick="ST.progSil=!ST.progSil;renderProgram()">🧽 Sil'+(ST.progSil?' (açık)':'')+'</button>'+
+    '<button class="fbtn" onclick="window.print()">🖨️ Yazdır</button>'+
+    '<button class="fbtn" onclick="progTemizle()">🗑️ Temizle</button></div>'+
+    '<div style="overflow-x:auto;margin-top:12px"><table class="progtab">'+thead+rows+'</table></div></div>';
+}
+function progTikla(g,p){ var o=progGet(), key=g+'-'+p; if(ST.progSil){ delete o[key]; } else { o[key]={grade:ST.progGrade,track:ST.progTrack}; } progSet(o); renderProgram(); }
+function donemBasKaydet(v){ LS.set('dk_donem_bas',v); renderProgram(); }
+function progTemizle(){ if(confirm('Tüm program silinsin mi?')){ progSet({}); renderProgram(); } }
+
+/* Zihin haritası PNG/PDF + Yıl sonu özeti */
+async function haritaPng(){ try{ toast('🖼️ Görsel hazırlanıyor…','info'); await scriptYukle('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js'); var el=document.getElementById('haritaSaha'); var cv=await html2canvas(el,{backgroundColor:'#0b1220',scale:2}); cv.toBlob(function(b){ var a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='zihin-haritasi.png'; a.click(); toast('📥 İndirildi','ok'); }); }catch(e){ toast('Görsel oluşturulamadı (internet gerekli)','err'); } }
+async function haritaPdf(){ try{ toast('📄 PDF hazırlanıyor…','info'); await scriptYukle('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js'); await scriptYukle('https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js'); var el=document.getElementById('haritaSaha'); var cv=await html2canvas(el,{backgroundColor:'#0b1220',scale:2}); var J=window.jspdf.jsPDF; var pdf=new J('l','mm','a4'); var W=297,H=210,iw=W,ih=cv.height*W/cv.width; if(ih>H){ ih=H; iw=cv.width*H/cv.height; } pdf.setFillColor(11,18,32); pdf.rect(0,0,W,H,'F'); pdf.addImage(cv.toDataURL('image/png'),'PNG',(W-iw)/2,(H-ih)/2,iw,ih); pdf.save('zihin-haritasi.pdf'); toast('📥 İndirildi','ok'); }catch(e){ toast('PDF oluşturulamadı (internet gerekli)','err'); } }
+function ozetPdf(){
+  var h='<div class="yilbas"><h1>Yıl Sonu Özeti — Robotik ve Kodlama</h1><h2>Barış Öğretmen · 2025-2026</h2></div>';
+  SINIF_LISTE.forEach(function(sn,gi){ var gname=(sn.g==='Ana'?'Anaokulu':sn.g+'. Sınıf'); h+='<h3>'+gname+' — Genel: %'+gradeYuzde(gi)+'</h3><ol>';
+    gorunenTracks(gi).forEach(function(tr){ var n=SEANS[tr.id].length, c=0; for(var i=0;i<n;i++) if(ilrDone(gi,tr.id,i)) c++; h+='<li>'+tr.ik+' '+tr.ad+': %'+trackYuzde(gi,tr.id,n)+' ('+c+'/'+n+' ders)</li>'; });
+    h+='</ol>'; });
+  var ov=document.getElementById('yilPrint'); if(!ov){ ov=document.createElement('div'); ov.id='yilPrint'; document.body.appendChild(ov);} ov.innerHTML=h;
+  document.body.classList.add('yazdir-yil'); window.print(); setTimeout(function(){document.body.classList.remove('yazdir-yil');},600);
+}
+
+/* haritaAc: export düğmeli + saha id'li (yeniden tanım) */
+haritaAc=function(gi){
+  if(typeof gi!=='number') gi=ST.gradeIdx;
+  var sn=SINIF_LISTE[gi], gname=(sn.g==='Ana'?'Anaokulu':sn.g+'. Sınıf');
+  var trs=gorunenTracks(gi), K=trs.length;
+  var W=760,H=560,cx=380,cy=280,R=(K>4?208:186),cw=176,ch=84;
+  var paths='',cards='';
+  for(var i=0;i<K;i++){
+    var tr=trs[i], n=SEANS[tr.id].length, nx=trackSonraki(gi,tr.id,n), yuzde=trackYuzde(gi,tr.id,n);
+    var ang=(-90 + i*360/K)*Math.PI/180, nxx=cx+R*Math.cos(ang), nyy=cy+R*Math.sin(ang);
+    var ctrlx=cx+(R*0.55)*Math.cos(ang)+(nyy-cy)*0.16, ctrly=cy+(R*0.55)*Math.sin(ang)-(nxx-cx)*0.16;
+    paths+='<path d="M '+cx+' '+cy+' Q '+ctrlx.toFixed(1)+' '+ctrly.toFixed(1)+' '+nxx.toFixed(1)+' '+nyy.toFixed(1)+'" stroke="'+tr.dr2+'" stroke-width="3.5" fill="none" opacity="0.72"/>';
+    var durum = nx<0 ? '🎉 Tamamlandı' : ('Ders '+(nx+1)+' · '+SEANS[tr.id][nx].k);
+    cards+='<foreignObject x="'+(nxx-cw/2).toFixed(1)+'" y="'+(nyy-ch/2).toFixed(1)+'" width="'+cw+'" height="'+ch+'"><div xmlns="http://www.w3.org/1999/xhtml" class="hnode" style="--dr:'+tr.dr+';--dr2:'+tr.dr2+';height:'+ch+'px" onclick="haritaGit(\''+tr.id+'\','+nx+')"><div class="hn-ust"><span class="hn-ik">'+tr.ik+'</span><span class="hn-ad">'+tr.ad+'</span><span class="hn-pct">%'+yuzde+'</span></div><div class="hn-konu">'+durum+'</div><div class="hn-bar"><span style="width:'+yuzde+'%"></span></div></div></foreignObject>';
+  }
+  var svg='<svg viewBox="0 0 '+W+' '+H+'" width="100%" xmlns="http://www.w3.org/2000/svg" style="min-width:700px"><circle cx="'+cx+'" cy="'+cy+'" r="'+(R+2)+'" fill="none" stroke="rgba(255,255,255,.05)"/>'+paths+'<foreignObject x="'+(cx-64)+'" y="'+(cy-64)+'" width="128" height="128"><div xmlns="http://www.w3.org/1999/xhtml" class="hcenter" style="width:128px;height:128px;border-radius:50%"><div class="hc-ik">🎓</div><div class="hc-ad">'+gname+'</div><div class="hc-pct">%'+gradeYuzde(gi)+' tamam</div></div></foreignObject>'+cards+'</svg>';
+  var chips=SINIF_LISTE.map(function(sx,i){return '<div class="gchip'+(i===gi?' akt':'')+'" onclick="haritaAc('+i+')">'+(sx.g==='Ana'?'Ana':sx.g)+'</div>';}).join('');
+  $('#haritaModalIc').innerHTML='<div class="mbas" style="--dr:#7c3aed;--dr2:#22d3ee"><div class="ik">🧠</div><div><h3>Zihin Haritası — Nerede Kaldım?</h3><div class="alt">'+gname+' · dalların ucundaki konu = kaldığın yer</div></div><div class="kapat" onclick="modalKapat(\'haritaModal\')">✕</div></div>'+
+    '<div class="mgov"><div class="ilerseridi" style="margin-bottom:12px"><span class="et">Sınıf:</span>'+chips+'</div><div class="harita-saha" id="haritaSaha">'+svg+'</div>'+
+    '<div class="btnsira" style="justify-content:center;margin-top:12px"><button class="btn g" onclick="haritaPng()">🖼️ PNG indir</button><button class="btn g" onclick="haritaPdf()">📄 PDF indir</button><button class="btn g" onclick="window.print()">🖨️ Yazdır</button></div></div>';
+  modalAc('haritaModal');
+};
+
+/* plan araç çubuğuna Yıl Sonu Özeti */
+planAracCubugu=function(){
+  $('#filtre').innerHTML='<span class="ara" style="margin-left:0"><input id="araInput" placeholder="Konu ara…"><span class="x" id="araX">✕</span></span>'+
+    '<button class="fbtn" onclick="haritaAc(ST.gradeIdx)">🧠 Zihin Haritası</button>'+
+    '<button class="fbtn" onclick="yilPdf()">🗂️ Tüm Yıl → PDF</button>'+
+    '<button class="fbtn" onclick="ozetPdf()">📈 Yıl Sonu Özeti</button>'+
+    '<button class="fbtn" onclick="sunumIskele()">📊 Sunum İskeleti</button>'+
+    '<button class="fbtn" onclick="bugunNe()">🎲 Bugün ne işlesem?</button>'+
+    '<button class="fbtn" onclick="sinifAracAc()">⏱️ Sınıf Araçları</button>';
+  var inp=$('#araInput'); if(inp){ inp.value=ST.ara||''; inp.addEventListener('input',function(e){ST.ara=e.target.value;$('#araX').style.display=e.target.value?'block':'none';renderPlanGrid();}); }
+  var x=$('#araX'); if(x) x.onclick=function(){ST.ara='';inp.value='';x.style.display='none';renderPlanGrid();};
+};
+
+
+/* ============================================================
+   EK: Çok dilli veli mesajı (çeviri) + Farklılaştırma
+   ============================================================ */
+function aiCevir(btn){
+  var sel = btn && btn.parentNode ? btn.parentNode.querySelector('select') : null;
+  var dil = sel ? sel.value : 'İngilizce';
+  var metin = sonAiMetin || sonAiDuz();
+  if(!metin){ toast('Önce bir mesaj/çıktı oluştur','err'); return; }
+  var sistem='Sen profesyonel bir çevirmensin. Verilen metni '+dil+' diline DOĞAL ve akıcı çevir. Anlamı ve sıcak tonu koru; emojileri ve **kalın** vurguları aynen bırak. Sadece çeviriyi döndür, açıklama/önsöz ekleme.';
+  aiSor('🌍 '+dil+' çeviri',{sistem, on:'Şu metni '+dil+' diline çevir:\n\n'+metin, baslik:dil});
+}
+function seansFark(){
+  var t=aktifSeans; if(!t) return;
+  var tr=TRACKS.filter(function(x){return x.id===t.trackId;})[0], se=SEANS[t.trackId][t.idx], dz=aktifDuzey();
+  var sistem='Sen bir öğretmen asistanısın. Aynı konuyu İKİ düzeyde farklılaştır. Çıktı biçimi: önce "🟢 Zorlanan öğrenci için" başlığı altında SADELEŞTİRİLMİŞ kısa anlatım + kolaylaştırılmış 2 etkinlik; sonra "🔵 İleri düzey öğrenci için" başlığı altında DERİNLEŞTİRİLMİŞ anlatım + zorlayıcı 2 etkinlik. KISA, NET, TÜRKÇE, uygulanabilir; renkli emoji. LaTeX yok.';
+  modalKapat('haftaModal');
+  aiSor('Bu dersi farklılaştır',{sistem, on:'Ders: '+tr.ad+'. Sınıf: '+dz.ad+' ('+dz.yas+'). Konu: "'+se.k+'". Kazanım: '+se.z+'. Etkinlik: '+se.e, baslik:'Farklılaştırma · '+se.k});
+}
+
+
+/* ============================================================
+   EK: Yapay Zeka Destekli Öğretmen Araçları + Beyaz Tahta/Canvas
+   (Jamboard kapandı → alternatifleri) — kütüphaneye eklenir
+   ============================================================ */
+Object.assign(ARACLAR, {
+  notebooklm: {ad:'NotebookLM',          url:'https://notebooklm.google.com',             ik:'📓', ders:'yapayzeka', yas:'öğretmen', tur:'AI Not / Kaynak',   desc:'Kendi belgelerini yükle; AI özetlesin, sorularını yanıtlasın, sesli özet (podcast) üretsin. Öğretmenin olmazsa olmazı.'},
+  gemini:     {ad:'Google Gemini (Canvas)',url:'https://gemini.google.com',                ik:'✨', ders:'yapayzeka', yas:'öğretmen', tur:'AI Sohbet / Canvas',desc:'Metin/kod üret; “Canvas” ile belge veya sunumu canlı önizleyip yan yana düzenle.'},
+  chatgpt:    {ad:'ChatGPT',             url:'https://chatgpt.com',                       ik:'💬', ders:'yapayzeka', yas:'öğretmen', tur:'AI Sohbet',        desc:'Ders planı, soru, açıklama; genel amaçlı yapay zeka yardımcısı.'},
+  claude:     {ad:'Claude',              url:'https://claude.ai',                         ik:'🟣', ders:'yapayzeka', yas:'öğretmen', tur:'AI Sohbet',        desc:'Uzun metin/analiz ve “Artifacts” ile canlı içerik/uygulama üretimi.'},
+  perplexity: {ad:'Perplexity',          url:'https://www.perplexity.ai',                 ik:'🔎', ders:'yapayzeka', yas:'öğretmen', tur:'AI Arama',         desc:'Kaynaklı, güncel cevaplar veren yapay zeka arama motoru.'},
+  copilot:    {ad:'Microsoft Copilot',   url:'https://copilot.microsoft.com',             ik:'🟦', ders:'yapayzeka', yas:'öğretmen', tur:'AI Sohbet',        desc:'Metin ve görsel üreten Microsoft yapay zekâsı.'},
+  magicschool:{ad:'MagicSchool AI',      url:'https://www.magicschool.ai',                ik:'🪄', ders:'yapayzeka', yas:'öğretmen', tur:'Öğretmen AI Seti', desc:'60+ öğretmen aracı: plan, rubrik, mektup, farklılaştırma, geri bildirim.'},
+  diffit:     {ad:'Diffit',              url:'https://diffit.me',                         ik:'📑', ders:'yapayzeka', yas:'öğretmen', tur:'Metin Uyarlama',   desc:'Herhangi bir metni seviyeye göre uyarlar; soru ve sözlük üretir.'},
+  curipod:    {ad:'Curipod',             url:'https://curipod.com',                       ik:'🫧', ders:'yapayzeka', yas:'öğretmen', tur:'Etkileşimli Ders', desc:'Konu yaz, AI etkileşimli slayt/oylama dersi üretsin.'},
+  brisk:      {ad:'Brisk Teaching',      url:'https://www.briskteaching.com',             ik:'🌬️', ders:'yapayzeka', yas:'öğretmen', tur:'AI Chrome Eklentisi',desc:'Tarayıcıda plan, geri bildirim, seviyelendirme; hızlı öğretmen yardımcısı.'},
+  eduaide:    {ad:'Eduaide.ai',          url:'https://www.eduaide.ai',                    ik:'🧑‍🏫', ders:'yapayzeka', yas:'öğretmen', tur:'Öğretmen AI Seti', desc:'150+ kaynak türü: plan, etkinlik, değerlendirme üretir.'},
+  twee:       {ad:'Twee',               url:'https://twee.com',                          ik:'🗣️', ders:'yapayzeka', yas:'öğretmen', tur:'Dil Öğretimi AI', desc:'Metin, diyalog, soru ve etkinlik üreten dil öğretmeni asistanı.'},
+  conker:     {ad:'Conker',             url:'https://www.conker.ai',                     ik:'❓', ders:'yapayzeka', yas:'öğretmen', tur:'AI Quiz',          desc:'Konudan otomatik çoktan seçmeli / okuma quizleri.'},
+  schoolai:   {ad:'SchoolAI',           url:'https://schoolai.com',                      ik:'🏫', ders:'yapayzeka', yas:'öğretmen', tur:'Öğretmen AI',      desc:'Sınıfa güvenli AI sohbet alanları ve öğretmen araçları.'},
+  khanmigo:   {ad:'Khanmigo',           url:'https://www.khanmigo.ai',                   ik:'🧭', ders:'yapayzeka', yas:'öğretmen', tur:'AI Öğretmen Yard.', desc:'Khan Academy’nin AI öğretmen/öğrenci asistanı.'},
+  gamma:      {ad:'Gamma',              url:'https://gamma.app',                         ik:'🎞️', ders:'yapayzeka', yas:'öğretmen', tur:'AI Sunum',         desc:'Bir cümleden şık sunum/doküman üretir.'},
+  napkin:     {ad:'Napkin AI',          url:'https://www.napkin.ai',                     ik:'🖊️', ders:'yapayzeka', yas:'öğretmen', tur:'Metin → Görsel',   desc:'Yazdığın metni otomatik diyagram/infografiğe dönüştürür.'},
+  ideogram:   {ad:'Ideogram',           url:'https://ideogram.ai',                       ik:'🖼️', ders:'yapayzeka', yas:'öğretmen', tur:'AI Görsel',        desc:'Metin içeren afiş/görsel üretir (poster, kapak).'},
+  excalidraw: {ad:'Excalidraw',         url:'https://excalidraw.com',                    ik:'✏️', ders:'sinif',     yas:'öğretmen', tur:'Beyaz Tahta',      desc:'El çizimi hissi veren ücretsiz ortak beyaz tahta. (Jamboard alternatifi)'},
+  figjam:     {ad:'FigJam',             url:'https://www.figma.com/figjam/',             ik:'🧩', ders:'sinif',     yas:'öğretmen', tur:'Beyaz Tahta',      desc:'Figma’nın işbirlikçi beyaz tahtası; bol şablon. (Jamboard alternatifi)'},
+  miro:       {ad:'Miro',               url:'https://miro.com',                          ik:'🟨', ders:'sinif',     yas:'öğretmen', tur:'Beyaz Tahta',      desc:'Büyük işbirliği tahtası: zihin haritası, pano, akış.'},
+  whiteboardfi:{ad:'Whiteboard.fi',     url:'https://whiteboard.fi',                     ik:'🧑‍🏫', ders:'sinif',     yas:'öğretmen', tur:'Sınıf Tahtası',    desc:'Her öğrenciye ayrı tahta; öğretmen hepsini canlı görür.'},
+  canvaboard: {ad:'Canva Beyaz Tahta',  url:'https://www.canva.com/online-whiteboard/',  ik:'🎨', ders:'sinif',     yas:'öğretmen', tur:'Beyaz Tahta',      desc:'Canva içinde sonsuz tuval, şablonlu işbirlikçi tahta.'},
+  ziteboard:  {ad:'Ziteboard',          url:'https://ziteboard.com',                     ik:'⬜', ders:'sinif',     yas:'öğretmen', tur:'Beyaz Tahta',      desc:'Basit, hızlı çevrimiçi beyaz tahta.'},
+  notion:     {ad:'Notion',             url:'https://www.notion.so',                     ik:'📝', ders:'sinif',     yas:'öğretmen', tur:'Not / Organizasyon',desc:'Ders notları, planlar ve kaynakları tek yerde düzenle (AI destekli).'}
+});
 
 basla();
 fabYap({id:'sinif',ikon:'⏱️',etiket:'Sınıf Araçları',bayrak:'dk_sinif_gizli',tik:()=>sinifAracAc()});
