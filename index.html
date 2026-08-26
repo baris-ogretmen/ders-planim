@@ -405,6 +405,13 @@ body.odak .seritler,body.odak .hero,body.odak .fabgrup,body.odak .pill,body.odak
 input[type=date].key{color-scheme:dark}
 .ai-cevir{display:inline-flex;gap:5px;align-items:center}
 .ai-dil{background:var(--panel2);border:1px solid var(--cizgi);color:#fff;border-radius:9px;padding:7px;font-size:12px;font-family:inherit;outline:none}
+
+.mac-ozet{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center;margin:10px 0;font-size:12.5px;font-weight:800}
+.mac-ozet .oz-done{color:#34d399}.mac-ozet .oz-cur{color:#f9a8d4}.mac-ozet .oz-kal{color:#93c5fd}
+.mac-ozet b{background:var(--panel2);border:1px solid var(--cizgi);padding:3px 10px;border-radius:999px;color:#fff}
+.mac-yol{max-height:62vh;overflow-y:auto;background:radial-gradient(circle at 50% 0,#14243e,#0b1220);border:1px solid var(--cizgi);border-radius:16px;padding:6px;margin-top:8px}
+.mnode.cur circle{animation:macpulse 1.4s ease-in-out infinite}
+@keyframes macpulse{0%,100%{opacity:1}50%{opacity:.55}}
 </style>
 
 </head>
@@ -493,6 +500,7 @@ input[type=date].key{color-scheme:dark}
 <div class="modal-bg" id="sinifModal"><div class="modal" id="sinifModalIc"></div></div>
 <!-- MODAL: YIL HARİTASI -->
 <div class="modal-bg" id="haritaModal"><div class="modal" id="haritaModalIc" style="max-width:840px"></div></div>
+<div class="modal-bg" id="maceraModal"><div class="modal" id="maceraModalIc" style="max-width:640px"></div></div>
 
 <script>
 /* ============================================================
@@ -2562,6 +2570,73 @@ SEANS.kocluk=[
  {k:'Son Düzlük: Sınav Haftası',z:'Sınav haftasını planlar.',e:'Kontrol listesi.'},
  {k:'Değerlendirme ve Gelecek Vizyonu',z:'Gelişimini değerlendirir.',e:'Lise/hedef panosu.'}
 ];
+
+
+/* ============================================================
+   EK: 🛤️ Maceralı Yol — tüm yılı kapsayan patika (sınıf+ders bazlı)
+   ============================================================ */
+function macKisalt(x,n){ x=x||''; return x.length>n? x.slice(0,n-1)+'…' : x; }
+function maceraGit(tid,idx){ modalKapat('maceraModal'); if(ST.view!=='plan') viewDegis('plan'); seansAc(tid, parseInt(idx,10)); }
+function maceraAc(gi, tid){
+  if(typeof gi!=='number') gi=ST.gradeIdx;
+  ST.macGrade=gi;
+  var trs=gorunenTracks(gi);
+  if(!tid || !trs.some(function(t){return t.id===tid;})) tid=(ST.macTrack && trs.some(function(t){return t.id===ST.macTrack;}))?ST.macTrack:trs[0].id;
+  ST.macTrack=tid;
+  var tr=TRACKS.filter(function(x){return x.id===tid;})[0];
+  var arr=SEANS[tid], n=arr.length, next=trackSonraki(gi,tid,n);
+  var done=0; for(var i=0;i<n;i++) if(ilrDone(gi,tid,i)) done++;
+  var yuzde=trackYuzde(gi,tid,n);
+  var W=560, step=74, top=72, amp=150, cx=W/2, H=top + (n-1)*step + 110;
+  var pts=[]; for(var i=0;i<n;i++){ pts.push([cx + amp*Math.sin(i*0.7), top + i*step]); }
+  var d='M '+pts[0][0].toFixed(1)+' '+pts[0][1].toFixed(1);
+  for(var i=1;i<n;i++){ var px=pts[i-1], c=pts[i], my=((px[1]+c[1])/2).toFixed(1); d+=' C '+px[0].toFixed(1)+' '+my+' '+c[0].toFixed(1)+' '+my+' '+c[0].toFixed(1)+' '+c[1].toFixed(1); }
+  var nodes='';
+  for(var i=0;i<n;i++){
+    var x=pts[i][0], y=pts[i][1], st=ilrDone(gi,tid,i)?'done':(i===next?'cur':'future');
+    var r=st==='cur'?30:23, fill=st==='done'?'url(#gd)':(st==='cur'?'url(#gc)':'#556');
+    var ic=st==='done'?'⭐':(st==='cur'?'📍':(i+1));
+    nodes+='<g class="mnode '+st+'" onclick="maceraGit(\''+tid+'\','+i+')">'+
+      '<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="'+r+'" fill="'+fill+'" stroke="#fff" stroke-width="3"/>'+
+      '<text x="'+x.toFixed(1)+'" y="'+(y+6).toFixed(1)+'" text-anchor="middle" font-size="'+(st==='cur'?20:16)+'" font-weight="800" fill="#fff">'+ic+'</text>'+
+      '<text x="'+x.toFixed(1)+'" y="'+(y-r-7).toFixed(1)+'" text-anchor="middle" font-size="11" font-weight="700" fill="#cbd5e1">'+(i+1)+'. '+macKisalt(arr[i].k,22)+'</text></g>';
+  }
+  var extra='<text x="'+cx+'" y="'+(top-40)+'" text-anchor="middle" font-size="24">🏠</text>'+
+            '<text x="'+cx+'" y="'+(top+(n-1)*step+64)+'" text-anchor="middle" font-size="28">🎓</text>';
+  var svg='<svg viewBox="0 0 '+W+' '+H+'" width="100%" xmlns="http://www.w3.org/2000/svg">'+
+    '<defs><linearGradient id="gd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#34d399"/><stop offset="1" stop-color="#059669"/></linearGradient>'+
+    '<linearGradient id="gc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f472b6"/><stop offset="1" stop-color="#db2777"/></linearGradient></defs>'+
+    '<path d="'+d+'" stroke="'+tr.dr2+'" stroke-width="14" fill="none" stroke-linecap="round" opacity="0.35"/>'+
+    '<path d="'+d+'" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="2 12" opacity="0.5"/>'+
+    extra+nodes+'</svg>';
+  var gchips=SINIF_LISTE.map(function(sx,i){return '<div class="gchip'+(i===gi?' akt':'')+'" onclick="maceraAc('+i+')">'+(sx.g==='Ana'?'Ana':sx.g)+'</div>';}).join('');
+  var tchips=trs.map(function(t){return '<div class="gchip'+(t.id===tid?' akt':'')+'" onclick="maceraAc('+gi+',\''+t.id+'\')">'+t.ik+' '+t.ad+'</div>';}).join('');
+  var durum = next<0? '🎉 Tüm yıl tamamlandı!' : ('📍 Şu an: '+(next+1)+'. hafta');
+  $('#maceraModalIc').innerHTML=
+    '<div class="mbas" style="--dr:'+tr.dr+';--dr2:'+tr.dr2+'"><div class="ik">🛤️</div><div><h3>Maceralı Yol — '+tr.ad+'</h3><div class="alt">'+(SINIF_LISTE[gi].g==='Ana'?'Anaokulu':SINIF_LISTE[gi].g+'. Sınıf')+' · '+n+' haftalık yolculuk</div></div><div class="kapat" onclick="modalKapat(\'maceraModal\')">✕</div></div>'+
+    '<div class="mgov">'+
+      '<div class="ilerseridi"><span class="et">Sınıf:</span>'+gchips+'</div>'+
+      '<div class="ilerseridi" style="margin-top:6px"><span class="et">Ders:</span>'+tchips+'</div>'+
+      '<div class="mac-ozet"><span class="oz-done">✅ Arkanda: '+done+'</span><span class="oz-cur">'+durum+'</span><span class="oz-kal">🎯 Önünde: '+(next<0?0:(n-next))+'</span><b>%'+yuzde+'</b></div>'+
+      '<div class="mac-yol" id="macYol">'+svg+'</div>'+
+    '</div>';
+  modalAc('maceraModal');
+  setTimeout(function(){ var box=document.getElementById('macYol'); if(box && next>=0){ box.scrollTop=Math.max(0,((top+next*step)/H)*box.scrollHeight - box.clientHeight*0.42); } },70);
+}
+
+/* plan araç çubuğuna Maceralı Yol butonu (diğerleri korunur) */
+planAracCubugu=function(){
+  $('#filtre').innerHTML='<span class="ara" style="margin-left:0"><input id="araInput" placeholder="Konu ara…"><span class="x" id="araX">✕</span></span>'+
+    '<button class="fbtn" onclick="maceraAc(ST.gradeIdx)">🛤️ Maceralı Yol</button>'+
+    '<button class="fbtn" onclick="haritaAc(ST.gradeIdx)">🧠 Zihin Haritası</button>'+
+    '<button class="fbtn" onclick="yilPdf()">🗂️ Tüm Yıl → PDF</button>'+
+    '<button class="fbtn" onclick="ozetPdf()">📈 Yıl Sonu Özeti</button>'+
+    '<button class="fbtn" onclick="sunumIskele()">📊 Sunum İskeleti</button>'+
+    '<button class="fbtn" onclick="bugunNe()">🎲 Bugün ne işlesem?</button>'+
+    '<button class="fbtn" onclick="sinifAracAc()">⏱️ Sınıf Araçları</button>';
+  var inp=$('#araInput'); if(inp){ inp.value=ST.ara||''; inp.addEventListener('input',function(e){ST.ara=e.target.value;$('#araX').style.display=e.target.value?'block':'none';renderPlanGrid();}); }
+  var x=$('#araX'); if(x) x.onclick=function(){ST.ara='';inp.value='';x.style.display='none';renderPlanGrid();};
+};
 
 basla();
 fabYap({id:'sinif',ikon:'⏱️',etiket:'Sınıf Araçları',bayrak:'dk_sinif_gizli',tik:()=>sinifAracAc()});
