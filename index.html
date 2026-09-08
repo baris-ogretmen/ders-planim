@@ -425,6 +425,16 @@ input[type=date].key{color-scheme:dark}
 .bugun-satir .bs-ic b{font-size:14px}
 .ds-chk{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;background:var(--panel2);border:1px solid var(--cizgi);border-radius:12px;padding:11px}
 .ds-chk .chk{font-size:20px}
+
+.neden-kart{background:var(--kart);border:1px solid var(--cizgi);border-left:5px solid var(--dr);border-radius:16px;padding:16px;margin-bottom:14px}
+.nk-bas{display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap}
+.nk-bas .nk-ik{font-size:26px}.nk-bas h3{margin:0;font-size:17px;color:#fff}
+.neden-kart b{color:#e2e8f0}
+.nk-nicin,.nk-alt,.nk-mak,.nk-guncel{font-size:13px;color:var(--soluk);line-height:1.55;margin-top:10px}
+.neden-lst{margin:6px 0 0 18px}.neden-lst li{margin:3px 0}
+.mak-satir{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;background:var(--panel2);border:1px solid var(--cizgi);border-radius:12px;padding:9px 11px;margin-top:6px}
+.mak-satir .ms-ad{font-size:12.5px;color:#dbe6ff;font-weight:600;flex:1;min-width:180px}
+.mak-satir .ms-btn{display:flex;gap:6px;flex-wrap:wrap}
 </style>
 
 </head>
@@ -453,6 +463,7 @@ input[type=date].key{color-scheme:dark}
     <div class="seri aktif" data-v="veli">🏛️ Genel Bakış / Veli Sunumu</div>
     <div class="seri" data-v="plan">📅 Yıllık Plan</div>
     <div class="seri" data-v="program">🗓️ Program</div>
+    <div class="seri" data-v="neden">🎓 Neden?</div>
     <div class="seri" data-v="araclar">🧰 Araç Kütüphanesi</div>
     <div class="seri" data-v="oyun">🎮 Eğitim Oyunları</div>
     <div class="seri" data-v="video">🎬 Videolar</div>
@@ -481,6 +492,8 @@ input[type=date].key{color-scheme:dark}
   <div id="v-video" style="display:none"></div>
 
   <div id="v-program" style="display:none"></div>
+
+  <div id="v-neden" style="display:none"></div>
 
 </div>
 
@@ -1490,11 +1503,13 @@ function viewDegis(v){
   var vo=$('#v-oyun'); if(vo) vo.style.display=v==='oyun'?'block':'none';
   var vv=$('#v-video'); if(vv) vv.style.display=v==='video'?'block':'none';
   var vp=$('#v-program'); if(vp) vp.style.display=v==='program'?'block':'none';
+  var vn=$('#v-neden'); if(vn) vn.style.display=v==='neden'?'block':'none';
   if(v==='plan'){ renderSiniflar(); renderFiltre(); renderPlan(); }
   if(v==='araclar') renderAraclar();
   if(v==='oyun') renderOyun();
   if(v==='video') renderVideo();
   if(v==='program') renderProgram();
+  if(v==='neden') renderNeden();
 }
 $$('#seritler .seri').forEach(s=>s.onclick=()=>viewDegis(s.dataset.v));
 $('#araInput').addEventListener('input',e=>{ ST.ara=e.target.value; $('#araX').style.display=e.target.value?'block':'none'; renderPlanGrid(); });
@@ -2886,6 +2901,103 @@ function seansOyunPrompt(){ if(ST.spTur==null) ST.spTur='Bilgi Yarışması'; va
   var turChips=OYUN_TURLERI.map(function(pp){return '<button class="oyun-tur'+(ST.spTur===pp[0]?' sec':'')+'" onclick="ST.spTur=\''+pp[0]+'\';seansOyunPrompt()">'+pp[1]+' '+pp[0]+'</button>';}).join('');
   promptModalYaz('🎮 Oyun Promptu · '+c.konu, p, '<div style="font-size:12px;color:var(--soluk);font-weight:800;margin-bottom:6px">Oyun türü:</div><div class="oyun-turler" style="margin-bottom:10px">'+turChips+'</div>', '<button class="btn y" onclick="seansOyunUret()">🎮 Bu konuyla Üret &amp; Oyna</button>'); }
 function seansOyunUret(){ var c=seansPromptKonu(); if(!c) return; modalKapat('promptModal'); modalKapat('haftaModal'); ST.atolyeMod='oyun'; ST.oyunGrade=ST.gradeIdx; viewDegis('oyun'); setTimeout(function(){ var el=document.getElementById('oyunSerbest'); if(el) el.value=c.konu; oyunUret(ST.spTur||'Bilgi Yarışması'); },80); }
+
+
+/* ============================================================
+   EK: 🎓 Neden Öğretiyoruz? — bilimsel temel + otonom güncel makaleler
+   ============================================================ */
+var NEDEN=[
+ {id:'robokod',ad:'Robotik ve Kodlama',ik:'🤖',dr:'#7c3aed',dr2:'#22d3ee',
+  nicin:'Çocuğa 21. yüzyılın dilini ve problem çözme biçimini kazandırmak için. Kodlama ve robotik; bir problemi parçalara ayırıp adım adım çözmeyi (algoritmik düşünme), deneyip yanılarak öğrenmeyi ve üretme cesaretini geliştirir.',
+  degisim:['Problem çözme ve mantıksal/algoritmik düşünme güçlenir.','Hata yapmaktan korkmaz; dener, düzeltir (deneme-yanılma dayanıklılığı).','Yaratıcılık ve üretkenlik artar — tüketen değil üreten çocuk.','Dikkat, planlama ve adım adım ilerleme gelişir.','STEM ve geleceğin mesleklerine güçlü temel oluşur.'],
+  makaleler:[{ad:'Computational Thinking in K–12: A Review',kaynak:'Grover & Pea, 2013'},{ad:'Coding as a Playground (early childhood coding)',kaynak:'Bers, 2018'},{ad:'Robotics in the early childhood classroom & STEM',kaynak:'Sullivan & Bers, 2016'}],
+  aramalar:{scholar:'computational thinking children coding education',news:'kodlama eğitimi çocuk faydası',dergipark:'kodlama eğitimi bilişsel'}},
+ {id:'yz',ad:'Yapay Zeka',ik:'🧠',dr:'#0891b2',dr2:'#22d3ee',
+  nicin:'Yapay zekânın hayatın her alanına girdiği bir çağda, çocuğun YZ’yi bilinçli, etik ve üretken kullanan biri olması için. Hedef “YZ okuryazarlığı”: nasıl çalıştığını anlamak, sorgulamak ve doğru kullanmak.',
+  degisim:['YZ’nin ne olup olmadığını anlar; teknolojiyi bilinçli kullanır.','Veri, örüntü ve model kavramlarıyla eleştirel düşünür.','Etik ve gizlilik farkındalığı kazanır.','Üretici YZ araçlarını öğrenmede doğru kullanır.','Geleceğin becerilerine ve mesleklerine hazırlanır.'],
+  makaleler:[{ad:'What is AI Literacy? Competencies and Design Considerations',kaynak:'Long & Magerko, 2020'},{ad:'Envisioning AI for K-12',kaynak:'Touretzky et al., 2019'},{ad:'AI and Education: Guidance for Policy-makers',kaynak:'UNESCO, 2021'}],
+  aramalar:{scholar:'AI literacy K-12 children education',news:'yapay zeka eğitimi çocuk',dergipark:'yapay zeka okuryazarlığı'}},
+ {id:'satranc',ad:'Satranç',ik:'♟️',dr:'#059669',dr2:'#34d399',
+  nicin:'Satranç bir oyunun ötesinde bir zihin sporudur; çocuğa hamle yapmadan önce plan yapmayı, sonuçları öngörmeyi ve sabırla karar vermeyi öğretmek için.',
+  degisim:['Planlama, öngörü ve strateji becerisi gelişir.','Dikkat, konsantrasyon ve sabır artar.','Sonuçları düşünerek karar verme (dürtü kontrolü) güçlenir.','Problem çözme ve matematiksel akıl yürütmeye katkı sağlar.','Kazanç/kaybı yönetme ve sporcu ahlakı gelişir.'],
+  makaleler:[{ad:'Do the benefits of chess instruction transfer? (meta-analiz)',kaynak:'Sala & Gobet, 2016'},{ad:'Chess training and mathematical problem-solving',kaynak:'Trinchero & Sala, 2016'},{ad:'Benefits of chess for intellectual and socio-affective enrichment',kaynak:'Aciego et al., 2012'}],
+  aramalar:{scholar:'chess instruction cognitive academic skills children',news:'satranç eğitimi çocuk fayda',dergipark:'satranç eğitimi'}},
+ {id:'akil',ad:'Akıl-Zeka Oyunları',ik:'🧩',dr:'#db2777',dr2:'#f472b6',
+  nicin:'Akıl ve zeka oyunları çocuğun “düşünme kaslarını” çalıştırır; dikkat, hafıza, mantık ve stratejiyi oyunla, keyifle geliştirmek için.',
+  degisim:['Dikkat, odak ve çalışma belleği güçlenir.','Mantıksal akıl yürütme ve problem çözme gelişir.','Görsel-uzamsal düşünme ve strateji artar.','Sabır, deneme-yanılma ve öz düzenleme gelişir.','Yürütücü işlevler (planlama, esneklik) desteklenir.'],
+  makaleler:[{ad:'Interventions to aid executive function development in children',kaynak:'Diamond & Lee, 2011 (Science)'},{ad:'Cognitive control training and transfer',kaynak:'Titz & Karbach, 2014'},{ad:'Working memory training in children',kaynak:'Jaeggi et al., 2011'}],
+  aramalar:{scholar:'executive function training children logic games',news:'akıl zeka oyunları çocuk fayda',dergipark:'zeka oyunları bilişsel beceri'}},
+ {id:'kocluk',ad:'Eğitim Koçluğu (8. Sınıf)',ik:'🎯',dr:'#b45309',dr2:'#f59e0b',
+  nicin:'Kritik bir sınav döneminde çocuğun sadece “çalışmak” değil “doğru ve verimli çalışmak”, hedef koymak ve kaygı yönetmek gibi hayat boyu sürecek becerileri kazanması için.',
+  degisim:['Hedef belirleme ve öz düzenleme (planlı çalışma) gelişir.','Etkili çalışma teknikleri (aktif/aralıklı tekrar) yerleşir.','Sınav kaygısını yönetmeyi öğrenir.','Büyüme zihniyeti ve motivasyon güçlenir.','Zaman yönetimi ve önceliklendirme becerisi artar.'],
+  makaleler:[{ad:'Becoming a Self-Regulated Learner',kaynak:'Zimmerman, 2002'},{ad:'Mindset: growth mindset ve başarı',kaynak:'Dweck, 2006'},{ad:'Improving Students’ Learning With Effective Techniques',kaynak:'Dunlosky et al., 2013'}],
+  aramalar:{scholar:'self-regulated learning study strategies students',news:'öğrenci çalışma teknikleri sınav kaygısı',dergipark:'öz düzenleyici öğrenme sınav kaygısı'}}
+];
+function scholarUrl(q){ return 'https://scholar.google.com/scholar?q='+encodeURIComponent(q); }
+function nedenTR(url){ window.open('https://translate.google.com/translate?sl=auto&tl=tr&u='+encodeURIComponent(url),'_blank','noopener'); }
+function nedenVeliAI(id){ var d=NEDEN.filter(function(x){return x.id===id;})[0]; if(!d) return;
+  var sistem='Sen bir öğretmenin veli iletişim asistanısın. Veliye, çocuğunun bu dersi NİÇİN aldığını sıcak, ikna edici ve akılda kalıcı biçimde anlat. Önce 2-3 cümlelik bir paragraf; sonra "Çocuğunuzda göreceğiniz gelişimler:" başlığıyla 4-5 kısa madde. Bilimsel ama sade ve abartısız. Türkçe, ölçülü emoji. LaTeX yok.';
+  aiSor('Veliye anlat: '+d.ad,{sistem, on:'Ders: '+d.ad+'. Niçin öğretiyoruz: '+d.nicin+' | Öğrencide değişim: '+d.degisim.join('; '), baslik:'Veliye: Neden '+d.ad+'?'}); }
+function renderNeden(){
+  var html='<div class="veli-hero" style="padding:20px"><h2 style="margin:0 0 4px;font-size:20px">🎓 Neden Öğretiyoruz? — Bilimsel Temel</h2><p class="big" style="font-size:13px">Her dersin “niçin”i, öğrencide oluşan değişim ve bilimsel makaleler. Makaleye dokun → 🇹🇷 <b>anında Türkçe açılır</b>. “Güncel makaleler” otonom olarak Dünya ve Türkiye’den <b>en yeni</b> yayınları getirir. Veliye anlatmak için 🤖 tek tuş.</p></div>';
+  NEDEN.forEach(function(d){
+    var sq=d.aramalar.scholar, recent='https://scholar.google.com/scholar?scisbd=1&q='+encodeURIComponent(sq);
+    var news='https://news.google.com/search?q='+encodeURIComponent(d.aramalar.news)+'&hl=tr&gl=TR&ceid=TR:tr';
+    var derg='https://dergipark.org.tr/tr/search?q='+encodeURIComponent(d.aramalar.dergipark)+'&section=articles';
+    html+='<div class="neden-kart" style="--dr:'+d.dr+';--dr2:'+d.dr2+'">'+
+      '<div class="nk-bas"><span class="nk-ik">'+d.ik+'</span><h3>'+d.ad+'</h3><button class="btn p" style="margin-left:auto" onclick="nedenVeliAI(\''+d.id+'\')">🤖 Veliye anlat</button></div>'+
+      '<div class="nk-nicin"><b>Niçin öğretiyoruz?</b> '+d.nicin+'</div>'+
+      '<div class="nk-alt"><b>Öğrencide ne değişir?</b><ul class="neden-lst">'+d.degisim.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul></div>'+
+      '<div class="nk-mak"><b>📚 Bilimsel makaleler</b>'+d.makaleler.map(function(m){var u=scholarUrl(m.ad+' '+(m.kaynak||''));return '<div class="mak-satir"><div class="ms-ad">'+m.ad+(m.kaynak?' <span style="color:var(--soluk2)">· '+m.kaynak+'</span>':'')+'</div><div class="ms-btn"><button class="fbtn" onclick="nedenTR(\''+u+'\')">🇹🇷 Türkçe aç</button><button class="fbtn" onclick="openUrl(\''+u+'\')">🔗 Bul</button></div></div>';}).join('')+'</div>'+
+      '<div class="nk-guncel"><b>📡 Güncel makaleler (otonom · hep en yeni)</b><div class="btnsira" style="margin-top:6px">'+
+        '<button class="fbtn" onclick="openUrl(\''+recent+'\')">🌍 Dünya · en yeni</button>'+
+        '<button class="fbtn" onclick="nedenTR(\''+recent+'\')">🇹🇷 Türkçe çeviriyle</button>'+
+        '<button class="fbtn" onclick="openUrl(\''+news+'\')">📰 Haberler (TR)</button>'+
+        '<button class="fbtn" onclick="openUrl(\''+derg+'\')">🇹🇷 DergiPark</button>'+
+      '</div></div></div>';
+  });
+  $('#v-neden').innerHTML=html;
+}
+
+
+/* ============================================================
+   EK: Makale AI özeti + Veliye "Neden" raporu (PDF) & AI metni
+   ============================================================ */
+function nedenBul(id){ return NEDEN.filter(function(x){return x.id===id;})[0]; }
+function makaleOzetAI(id,mi){ var d=nedenBul(id); if(!d) return; var m=d.makaleler[mi];
+  var sistem='Bir eğitim araştırmacısı gibi davran. Verilen bilimsel çalışmayı/olguyu 3 cümlede, Türkçe ve sade anlat: neyi inceliyor/ne buluyor ve öğretmen–veli için önemi ne. Emin değilsen o alanın genel bilimsel bulgularından konuş; bilgi UYDURMA, sonucu abartma. Renkli ama ölçülü.';
+  aiSor('Makale özeti',{sistem, on:'Çalışma: '+m.ad+(m.kaynak?' ('+m.kaynak+')':'')+'. Ders bağlamı: '+d.ad+'.', baslik:'🧾 Özet · '+m.ad}); }
+function nedenHepsiVeliAI(){
+  var sistem='Veliye yönelik, tüm bu derslerin NİÇİN verildiğini anlatan sıcak, akılda kalıcı ve kısa bir bilgilendirme metni yaz. Her ders için 2-3 cümle, sonra genel bir kapanış cümlesi. Türkçe, ölçülü emoji, abartısız; bilimsel ama sade.';
+  var on=NEDEN.map(function(d){return d.ad+': '+d.nicin;}).join('\n');
+  aiSor('Veliye tüm dersler',{sistem, on:on, baslik:'Veliye: Neden Bu Dersler?'}); }
+function nedenPdf(){
+  var h='<div class="yilbas"><h1>Neden Bu Dersleri Öğretiyoruz?</h1><h2>Barış Öğretmen · Bilimsel Temel ve Veli Bilgilendirmesi</h2></div>';
+  NEDEN.forEach(function(d){ h+='<h3>'+d.ik+' '+d.ad+'</h3><p><b>Niçin?</b> '+d.nicin+'</p><p><b>Öğrencide ne değişir?</b></p><ol>'+d.degisim.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ol><p style="font-size:11px;color:#555"><i>Kaynaklar: '+d.makaleler.map(function(m){return m.kaynak||m.ad;}).join(' · ')+'</i></p>'; });
+  var ov=document.getElementById('yilPrint'); if(!ov){ ov=document.createElement('div'); ov.id='yilPrint'; document.body.appendChild(ov);} ov.innerHTML=h;
+  document.body.classList.add('yazdir-yil'); window.print(); setTimeout(function(){document.body.classList.remove('yazdir-yil');},600); }
+
+renderNeden=function(){
+  var html='<div class="veli-hero" style="padding:20px"><h2 style="margin:0 0 4px;font-size:20px">🎓 Neden Öğretiyoruz? — Bilimsel Temel</h2><p class="big" style="font-size:13px">Her dersin “niçin”i, öğrencide oluşan değişim ve bilimsel makaleler. Makaleye dokun → 🇹🇷 <b>anında Türkçe açılır</b>; 🧾 <b>AI özet</b> ile 3 cümlede anlar. “Güncel makaleler” Dünya ve Türkiye’den <b>en yeni</b> yayınları getirir.</p>'+
+    '<div class="btnsira" style="margin-top:10px"><button class="btn y" onclick="nedenPdf()">🖨️ Veli Raporu (PDF)</button><button class="btn p" onclick="nedenHepsiVeliAI()">🤖 Veliye: Tüm Dersler</button></div></div>';
+  NEDEN.forEach(function(d){
+    var sq=d.aramalar.scholar, recent='https://scholar.google.com/scholar?scisbd=1&q='+encodeURIComponent(sq);
+    var news='https://news.google.com/search?q='+encodeURIComponent(d.aramalar.news)+'&hl=tr&gl=TR&ceid=TR:tr';
+    var derg='https://dergipark.org.tr/tr/search?q='+encodeURIComponent(d.aramalar.dergipark)+'&section=articles';
+    html+='<div class="neden-kart" style="--dr:'+d.dr+';--dr2:'+d.dr2+'">'+
+      '<div class="nk-bas"><span class="nk-ik">'+d.ik+'</span><h3>'+d.ad+'</h3><button class="btn p" style="margin-left:auto" onclick="nedenVeliAI(\''+d.id+'\')">🤖 Veliye anlat</button></div>'+
+      '<div class="nk-nicin"><b>Niçin öğretiyoruz?</b> '+d.nicin+'</div>'+
+      '<div class="nk-alt"><b>Öğrencide ne değişir?</b><ul class="neden-lst">'+d.degisim.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul></div>'+
+      '<div class="nk-mak"><b>📚 Bilimsel makaleler</b>'+d.makaleler.map(function(m,mi){var u=scholarUrl(m.ad+' '+(m.kaynak||''));return '<div class="mak-satir"><div class="ms-ad">'+m.ad+(m.kaynak?' <span style="color:var(--soluk2)">· '+m.kaynak+'</span>':'')+'</div><div class="ms-btn"><button class="fbtn" onclick="makaleOzetAI(\''+d.id+'\','+mi+')">🧾 AI özet</button><button class="fbtn" onclick="nedenTR(\''+u+'\')">🇹🇷 Türkçe aç</button><button class="fbtn" onclick="openUrl(\''+u+'\')">🔗 Bul</button></div></div>';}).join('')+'</div>'+
+      '<div class="nk-guncel"><b>📡 Güncel makaleler (otonom · hep en yeni)</b><div class="btnsira" style="margin-top:6px">'+
+        '<button class="fbtn" onclick="openUrl(\''+recent+'\')">🌍 Dünya · en yeni</button>'+
+        '<button class="fbtn" onclick="nedenTR(\''+recent+'\')">🇹🇷 Türkçe çeviriyle</button>'+
+        '<button class="fbtn" onclick="openUrl(\''+news+'\')">📰 Haberler (TR)</button>'+
+        '<button class="fbtn" onclick="openUrl(\''+derg+'\')">🇹🇷 DergiPark</button>'+
+      '</div></div></div>';
+  });
+  $('#v-neden').innerHTML=html;
+};
 
 basla();
 fabYap({id:'sinif',ikon:'⏱️',etiket:'Sınıf Araçları',bayrak:'dk_sinif_gizli',tik:()=>sinifAracAc()});
