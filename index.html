@@ -2999,6 +2999,50 @@ renderNeden=function(){
   $('#v-neden').innerHTML=html;
 };
 
+
+/* ============================================================
+   EK: 🏆 Genç Başarılar & Buluşlar (dünya + Türkiye, canlı & gerçek)
+   ============================================================ */
+var BASARI={
+ robokod:{ytTR:'TEKNOFEST öğrenci robot takımı ödül',ytW:'kids robotics competition FIRST Lego League winners',news:'öğrenci robot yarışması ödül Türkiye',org:[{ad:'🇹🇷 TEKNOFEST',url:'https://www.teknofest.org'},{ad:'FIRST (FLL)',url:'https://www.firstinspires.org',tr:1},{ad:'VEX Robotics',url:'https://www.roboticseducation.org',tr:1}]},
+ yz:{ytTR:'genç mucit yapay zeka projesi öğrenci ödül',ytW:'teen invents AI to detect disease science fair',news:'genç yapay zeka projesi öğrenci ödül',org:[{ad:'🌍 ISEF (Society for Science)',url:'https://www.societyforscience.org/isef/',tr:1},{ad:'🇹🇷 TÜBİTAK',url:'https://www.tubitak.gov.tr'},{ad:'🇹🇷 TEKNOFEST',url:'https://www.teknofest.org'}]},
+ satranc:{ytTR:'çocuk satranç şampiyonu Türkiye',ytW:'youngest chess prodigy grandmaster kid',news:'genç satranç şampiyonu Türkiye',org:[{ad:'🇹🇷 Türkiye Satranç Federasyonu',url:'https://www.tsf.org.tr'},{ad:'FIDE',url:'https://www.fide.com',tr:1}]},
+ akil:{ytTR:'zeka oyunları şampiyonası çocuk Türkiye',ytW:'mental math prodigy child memory championship kids',news:'akıl ve zeka oyunları şampiyonası öğrenci',org:[{ad:'🇹🇷 TÜBİTAK',url:'https://www.tubitak.gov.tr'}]},
+ kocluk:{ytTR:'LGS derece yapan öğrenci başarı hikayesi',ytW:'student success study motivation story',news:'LGS Türkiye derecesi öğrenci',org:[]}
+};
+renderNeden=function(){
+  var html='<div class="veli-hero" style="padding:20px"><h2 style="margin:0 0 4px;font-size:20px">🎓 Neden Öğretiyoruz? — Bilimsel Temel & İlham</h2><p class="big" style="font-size:13px">Her dersin “niçin”i, öğrencide oluşan değişim, bilimsel makaleler ve 🏆 <b>genç başarılar</b>. Makaleye dokun → 🇹🇷 anında Türkçe; 🧾 AI özet. Başarılar ve makaleler <b>canlı</b> gelir, hep günceldir.</p>'+
+    '<div class="btnsira" style="margin-top:10px"><button class="btn y" onclick="nedenPdf()">🖨️ Veli Raporu (PDF)</button><button class="btn p" onclick="nedenHepsiVeliAI()">🤖 Veliye: Tüm Dersler</button></div></div>';
+  NEDEN.forEach(function(d){
+    var sq=d.aramalar.scholar, recent='https://scholar.google.com/scholar?scisbd=1&q='+encodeURIComponent(sq);
+    var news='https://news.google.com/search?q='+encodeURIComponent(d.aramalar.news)+'&hl=tr&gl=TR&ceid=TR:tr';
+    var derg='https://dergipark.org.tr/tr/search?q='+encodeURIComponent(d.aramalar.dergipark)+'&section=articles';
+    var b=BASARI[d.id];
+    html+='<div class="neden-kart" style="--dr:'+d.dr+';--dr2:'+d.dr2+'">'+
+      '<div class="nk-bas"><span class="nk-ik">'+d.ik+'</span><h3>'+d.ad+'</h3><button class="btn p" style="margin-left:auto" onclick="nedenVeliAI(\''+d.id+'\')">🤖 Veliye anlat</button></div>'+
+      '<div class="nk-nicin"><b>Niçin öğretiyoruz?</b> '+d.nicin+'</div>'+
+      '<div class="nk-alt"><b>Öğrencide ne değişir?</b><ul class="neden-lst">'+d.degisim.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul></div>';
+    if(b){
+      var bnews='https://news.google.com/search?q='+encodeURIComponent(b.news)+'&hl=tr&gl=TR&ceid=TR:tr';
+      html+='<div class="nk-guncel"><b>🏆 Genç başarılar, buluşlar & şampiyonlar</b>'+
+        '<div style="font-size:12px;color:var(--soluk);margin:4px 0 6px">Öğrenciler ilham alsın, veliler görsün — dünyadan ve Türkiye’den gerçek örnekler:</div><div class="btnsira">'+
+        '<button class="fbtn" onclick="openYT(\''+b.ytTR+'\')">🎬 İlham videoları (TR)</button>'+
+        '<button class="fbtn" onclick="openYT(\''+b.ytW+'\')">🌍 Dünya (video)</button>'+
+        '<button class="fbtn" onclick="openUrl(\''+bnews+'\')">📰 Haberler (TR)</button>'+
+        b.org.map(function(o){return '<button class="fbtn" onclick="'+(o.tr?'nedenTR':'openUrl')+'(\''+o.url+'\')">'+o.ad+'</button>';}).join('')+
+      '</div></div>';
+    }
+    html+='<div class="nk-mak"><b>📚 Bilimsel makaleler</b>'+d.makaleler.map(function(m,mi){var u=scholarUrl(m.ad+' '+(m.kaynak||''));return '<div class="mak-satir"><div class="ms-ad">'+m.ad+(m.kaynak?' <span style="color:var(--soluk2)">· '+m.kaynak+'</span>':'')+'</div><div class="ms-btn"><button class="fbtn" onclick="makaleOzetAI(\''+d.id+'\','+mi+')">🧾 AI özet</button><button class="fbtn" onclick="nedenTR(\''+u+'\')">🇹🇷 Türkçe aç</button><button class="fbtn" onclick="openUrl(\''+u+'\')">🔗 Bul</button></div></div>';}).join('')+'</div>'+
+      '<div class="nk-guncel"><b>📡 Güncel makaleler (otonom · hep en yeni)</b><div class="btnsira" style="margin-top:6px">'+
+        '<button class="fbtn" onclick="openUrl(\''+recent+'\')">🌍 Dünya · en yeni</button>'+
+        '<button class="fbtn" onclick="nedenTR(\''+recent+'\')">🇹🇷 Türkçe çeviriyle</button>'+
+        '<button class="fbtn" onclick="openUrl(\''+news+'\')">📰 Haberler (TR)</button>'+
+        '<button class="fbtn" onclick="openUrl(\''+derg+'\')">🇹🇷 DergiPark</button>'+
+      '</div></div></div>';
+  });
+  $('#v-neden').innerHTML=html;
+};
+
 basla();
 fabYap({id:'sinif',ikon:'⏱️',etiket:'Sınıf Araçları',bayrak:'dk_sinif_gizli',tik:()=>sinifAracAc()});
 fabYap({id:'odak',ikon:'🖥️',etiket:'Sunum / Odak Modu',bayrak:'dk_odak_gizli',tik:()=>odakAc()});
