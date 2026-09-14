@@ -3043,6 +3043,37 @@ renderNeden=function(){
   $('#v-neden').innerHTML=html;
 };
 
+
+/* ============================================================
+   EK: 🎬 Videolar → "Genç Mucitler & İlham" grubu (dünya + Türkiye)
+   ============================================================ */
+(function(){ if(typeof VIDEO_GRUP==='undefined') return;
+ VIDEO_GRUP.push({ad:'🏆 Genç Mucitler — İlkokul', ik:'🧒', dr:'#22c55e', dr2:'#86efac', items:[
+  {ad:'İlkokul öğrencisi icat/buluş', q:'ilkokul öğrencisi icat buluş proje', d:'Küçük yaşta buluş yapan öğrenciler.'},
+  {ad:'İlkokulda kodlama & robot', q:'ilkokul öğrenci robot kodlama yarışma', d:'Minik yaşta kodlama/robot başarıları.'},
+  {ad:'Küçük satranç şampiyonları', q:'ilkokul çocuk satranç şampiyonu Türkiye', d:'İlkokul yaşında satranç dereceleri.'},
+  {ad:'Zeka oyunları (küçükler)', q:'ilkokul zeka oyunları şampiyonası çocuk', d:'Akıl-zeka oyunlarında küçük şampiyonlar.'}
+ ]});
+ VIDEO_GRUP.push({ad:'🏆 Genç Mucitler — Ortaokul', ik:'🧑‍🎓', dr:'#3b82f6', dr2:'#93c5fd', items:[
+  {ad:'Ortaokul TÜBİTAK projesi', q:'ortaokul öğrencisi TÜBİTAK proje ödül', d:'TÜBİTAK yarışmalarında ödüllü projeler.'},
+  {ad:'Ortaokul yapay zeka projesi', q:'ortaokul öğrenci yapay zeka projesi buluş', d:'Ortaokulda yapay zeka projeleri.'},
+  {ad:'YZ ile hastalık teşhisi (genç mucit)', q:'genç mucit yapay zeka hastalık teşhisi buluş', d:'Sağlık için YZ geliştiren genç mucitler.'},
+  {ad:'TEKNOFEST ortaokul robot', q:'TEKNOFEST ortaokul öğrenci robot takımı', d:'TEKNOFEST ortaokul kategorisi başarıları.'},
+  {ad:'Ortaokul satranç şampiyonu', q:'ortaokul satranç şampiyonu Türkiye', d:'Ortaokul satranç başarıları.'}
+ ]});
+ VIDEO_GRUP.push({ad:'🏆 Genç Mucitler — Lise', ik:'🎓', dr:'#a855f7', dr2:'#d8b4fe', items:[
+  {ad:'Lise öğrencisi buluş (ISEF)', q:'lise öğrencisi buluş ISEF ödül', d:'Uluslararası bilim fuarında öğrenci buluşları.'},
+  {ad:'Teen invents AI for disease detection', q:'teenager invents AI to detect disease science fair', d:'Hastalık teşhisi için YZ geliştiren gençler (dünya).'},
+  {ad:'Lise TEKNOFEST / TÜBİTAK', q:'lise öğrenci TEKNOFEST proje ödül', d:'Lise düzeyi proje başarıları.'},
+  {ad:'En genç satranç büyükustaları', q:'youngest chess grandmaster teenager', d:'Rekor kıran genç büyükustalar.'}
+ ]});
+ VIDEO_GRUP.push({ad:'🌍 Dünyadan İlham (genel)', ik:'✨', dr:'#f59e0b', dr2:'#fbbf24', items:[
+  {ad:'Dünyayı değiştiren genç dâhiler', q:'kid genius invention changed the world', d:'İlham verici genç mucit hikâyeleri.'},
+  {ad:'Young inventors changing the world', q:'young inventors teenagers changing the world', d:'Dünyayı etkileyen genç mucitler.'},
+  {ad:'FIRST LEGO League kazananları', q:'FIRST Lego League kids winners robotics', d:'Çocuk robotik dünya şampiyonları.'}
+ ]});
+})();
+
 basla();
 fabYap({id:'sinif',ikon:'⏱️',etiket:'Sınıf Araçları',bayrak:'dk_sinif_gizli',tik:()=>sinifAracAc()});
 fabYap({id:'odak',ikon:'🖥️',etiket:'Sunum / Odak Modu',bayrak:'dk_odak_gizli',tik:()=>odakAc()});
