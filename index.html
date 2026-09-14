@@ -435,6 +435,13 @@ input[type=date].key{color-scheme:dark}
 .mak-satir{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;background:var(--panel2);border:1px solid var(--cizgi);border-radius:12px;padding:9px 11px;margin-top:6px}
 .mak-satir .ms-ad{font-size:12.5px;color:#dbe6ff;font-weight:600;flex:1;min-width:180px}
 .mak-satir .ms-btn{display:flex;gap:6px;flex-wrap:wrap}
+
+.rpalet{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:8px 0}
+.rbtn{cursor:pointer;font-size:13px;font-weight:800;border:1px solid var(--cizgi);background:var(--panel2);color:#dbe6ff;padding:9px 12px;border-radius:12px}
+.rbtn:hover{border-color:var(--mor2);color:#fff}
+.rprog-wrap{display:flex;gap:6px;align-items:center;margin-top:6px}
+.rprog{flex:1;min-height:44px;display:flex;gap:5px;flex-wrap:wrap;align-items:center;background:var(--panel2);border:1px solid var(--cizgi);border-radius:12px;padding:8px}
+.rtok{font-size:18px;background:var(--kart);border:1px solid var(--cizgi);border-radius:8px;padding:2px 7px}
 </style>
 
 </head>
@@ -530,6 +537,7 @@ input[type=date].key{color-scheme:dark}
 <div class="modal-bg" id="bugunModal"><div class="modal" id="bugunModalIc" style="max-width:560px"></div></div>
 <div class="modal-bg" id="dersSonuModal"><div class="modal" id="dersSonuModalIc" style="max-width:520px"></div></div>
 <div class="modal-bg" id="promptModal"><div class="modal" id="promptModalIc" style="max-width:560px"></div></div>
+<div class="modal-bg" id="robotModal"><div class="modal" id="robotModalIc" style="max-width:560px"></div></div>
 
 <script>
 /* ============================================================
@@ -1675,6 +1683,8 @@ function seansAc(tid,i){
       <div class="blok"><div class="bh">🎬 Bu derse özel içerik üret</div><div class="ai-hizli">
         <button onclick="seansVideoPrompt()">🎬 Video Promptu</button>
         <button onclick="seansOyunPrompt()">🎮 Oyun Promptu</button>
+        <button onclick="seansRobotPrompt()">🤖 Robot Etkinliği</button>
+        <button onclick="robotAc()">🤖 Robot Lab</button>
       </div></div>
     </div>`;
   modalAc('haftaModal');
@@ -3074,10 +3084,82 @@ renderNeden=function(){
  ]});
 })();
 
+
+/* ============================================================
+   EK: 🤖 Sanal Robot Laboratuvarı (donanımsız, tahtada + tablet)
+   ============================================================ */
+var ROBOT_GOREV=[
+ {ad:'Hedefe Git',   mod:'hedef', n:8, robot:{x:3,y:6,dir:0}, hedef:{x:3,y:1}, duvar:[]},
+ {ad:'Köşeye Ulaş',  mod:'hedef', n:8, robot:{x:0,y:7,dir:1}, hedef:{x:7,y:0}, duvar:['3,7','3,6','3,5','5,2','5,1','5,0']},
+ {ad:'Engelleri Aş', mod:'hedef', n:8, robot:{x:0,y:0,dir:2}, hedef:{x:7,y:7}, duvar:['1,1','2,1','3,1','3,2','3,3','5,5','5,6','6,3','2,5','1,5']},
+ {ad:'Kare Çiz ✏️',  mod:'ciz',   n:8, robot:{x:2,y:5,dir:0}, hedef:null,      duvar:[]}
+];
+var RB=null;
+function robotSifirla(){ var g=ROBOT_GOREV[RB.gi]; RB.x=g.robot.x; RB.y=g.robot.y; RB.dir=g.robot.dir; RB.pen=false; RB.trail=[]; RB.calisiyor=false; sahneCiz(); }
+function robotGorev(i){ RB.gi=i; RB.prog=[]; robotSifirla(); progCiz(); robotGorevCiz(); }
+function robotEkle(t){ if(RB.calisiyor) return; RB.prog.push(t); progCiz(); }
+function robotGeri(){ if(RB.calisiyor) return; RB.prog.pop(); progCiz(); }
+function robotTemizle(){ if(RB.calisiyor) return; RB.prog=[]; progCiz(); }
+function robotLoop(v){ RB.loop=parseInt(v,10)||1; }
+function progCiz(){ var el=document.getElementById('robotProg'); if(!el) return; var ad={F:'⬆️',L:'↩️',R:'↪️',P:'✏️',W:'⏳'}; el.innerHTML = RB.prog.length? RB.prog.map(function(t){return '<span class="rtok">'+ad[t]+'</span>';}).join('') : '<span style="color:var(--soluk);font-size:12px">Komut ekle → ⬆️ İleri, ↩️ Sol, ↪️ Sağ, ✏️ Kalem</span>'; }
+function robotGorevCiz(){ var el=document.getElementById('robotGorevMetin'); if(el){ var g=ROBOT_GOREV[RB.gi]; el.textContent = g.mod==='ciz'? '✏️ Kalemi aç, döngü kullanarak bir kare çizdir.' : '🎯 Robotu hedefe (🎯) ulaştır. Duvarlara çarpma!'; } }
+function sahneCiz(){
+  var g=ROBOT_GOREV[RB.gi], n=g.n, cs=Math.floor(360/n), W=cs*n;
+  var svg='<svg viewBox="0 0 '+W+' '+W+'" width="100%" style="max-width:420px;background:#0b1220;border-radius:14px;border:1px solid var(--cizgi)">';
+  for(var y=0;y<n;y++) for(var x=0;x<n;x++){ var w=g.duvar.indexOf(x+','+y)>=0; svg+='<rect x="'+(x*cs)+'" y="'+(y*cs)+'" width="'+cs+'" height="'+cs+'" fill="'+(w?'#334155':((x+y)%2?'#0f1728':'#111c30'))+'" stroke="#1e293b"/>'; }
+  RB.trail.forEach(function(sg){ svg+='<line x1="'+(sg[0]*cs+cs/2)+'" y1="'+(sg[1]*cs+cs/2)+'" x2="'+(sg[2]*cs+cs/2)+'" y2="'+(sg[3]*cs+cs/2)+'" stroke="#fbbf24" stroke-width="4" stroke-linecap="round"/>'; });
+  if(g.hedef) svg+='<text x="'+(g.hedef.x*cs+cs/2)+'" y="'+(g.hedef.y*cs+cs*0.72)+'" text-anchor="middle" font-size="'+(cs*0.62)+'">🎯</text>';
+  var rcx=RB.x*cs+cs/2, rcy=RB.y*cs+cs/2;
+  svg+='<text x="'+rcx+'" y="'+(rcy+cs*0.3)+'" text-anchor="middle" font-size="'+(cs*0.72)+'">🤖</text>';
+  var fd=[[0,-1],[1,0],[0,1],[-1,0]][RB.dir]; svg+='<circle cx="'+(rcx+fd[0]*cs*0.34)+'" cy="'+(rcy+fd[1]*cs*0.34)+'" r="'+(cs*0.1)+'" fill="#22d3ee" stroke="#083344" stroke-width="2"/>';
+  svg+='</svg>';
+  var el=document.getElementById('robotSahne'); if(el) el.innerHTML=svg;
+}
+function robotCalistir(){
+  if(RB.calisiyor) return; var g=ROBOT_GOREV[RB.gi];
+  RB.x=g.robot.x; RB.y=g.robot.y; RB.dir=g.robot.dir; RB.pen=false; RB.trail=[];
+  var seq=[]; for(var r=0;r<RB.loop;r++) seq=seq.concat(RB.prog);
+  if(!seq.length){ toast('Önce komut ekle','err'); return; }
+  RB.calisiyor=true; var i=0; sahneCiz();
+  var t=setInterval(function(){
+    if(i>=seq.length){ clearInterval(t); RB.calisiyor=false; bitir(); return; }
+    var tok=seq[i++];
+    if(tok==='L') RB.dir=(RB.dir+3)%4;
+    else if(tok==='R') RB.dir=(RB.dir+1)%4;
+    else if(tok==='P') RB.pen=!RB.pen;
+    else if(tok==='F'){ var d=[[0,-1],[1,0],[0,1],[-1,0]][RB.dir], nx=RB.x+d[0], ny=RB.y+d[1];
+      if(nx<0||ny<0||nx>=g.n||ny>=g.n||g.duvar.indexOf(nx+','+ny)>=0){ clearInterval(t); RB.calisiyor=false; toast('💥 Robot engele/duvara çarptı! Tekrar dene.','err'); sahneCiz(); return; }
+      if(RB.pen) RB.trail.push([RB.x,RB.y,nx,ny]); RB.x=nx; RB.y=ny; }
+    sahneCiz();
+  },430);
+  function bitir(){ var g=ROBOT_GOREV[RB.gi]; if(g.mod==='hedef'){ if(RB.x===g.hedef.x&&RB.y===g.hedef.y) toast('🎉 Hedefe ulaştın! Harikasın!','ok',2600); else toast('🤖 Hedefe ulaşamadı — komutları düzenle, tekrar dene','err',2600); } else toast('✏️ Çizimin hazır, güzel iş!','ok',2200); }
+}
+function robotTahta(){ var box=document.querySelector('#robotModal .modal'); if(box && box.requestFullscreen) box.requestFullscreen(); else toast('Tam ekran desteklenmiyor','err'); }
+function robotOgrenci(){ try{ navigator.clipboard.writeText(location.href); }catch(e){} toast('📲 Bağlantı kopyalandı! Öğrenciler tabletinde açsın; herkes aynı görevi robotla çözsün.','ok',3800); }
+function robotAc(gi){ if(gi==null) gi=(RB&&RB.gi)||0; RB={gi:gi, prog:[], loop:1, x:0,y:0,dir:0, pen:false, trail:[], calisiyor:false};
+  $('#robotModalIc').innerHTML='<div class="mbas" style="--dr:#7c3aed;--dr2:#22d3ee"><div class="ik">🤖</div><div style="min-width:0"><h3>Sanal Robot Laboratuvarı</h3><div class="alt">Kod yaz → robotu çalıştır · Arduino/donanım gerekmez</div></div><div class="kapat" onclick="modalKapat(\'robotModal\')">✕</div></div>'+
+    '<div class="mgov">'+
+    '<div class="ilerseridi"><span class="et">Görev:</span>'+ROBOT_GOREV.map(function(g,i){return '<div class="gchip'+(i===gi?' akt':'')+'" onclick="robotGorev('+i+')">'+g.ad+'</div>';}).join('')+'</div>'+
+    '<div id="robotGorevMetin" style="font-size:12.5px;color:var(--soluk);text-align:center;margin:6px 0"></div>'+
+    '<div id="robotSahne" style="display:flex;justify-content:center"></div>'+
+    '<div class="rpalet"><button class="rbtn" onclick="robotEkle(\'F\')">⬆️ İleri</button><button class="rbtn" onclick="robotEkle(\'L\')">↩️ Sol Dön</button><button class="rbtn" onclick="robotEkle(\'R\')">↪️ Sağ Dön</button><button class="rbtn" onclick="robotEkle(\'P\')">✏️ Kalem</button><button class="rbtn" onclick="robotEkle(\'W\')">⏳ Bekle</button></div>'+
+    '<div class="rprog-wrap"><div id="robotProg" class="rprog"></div><button class="fbtn" onclick="robotGeri()">⌫</button><button class="fbtn" onclick="robotTemizle()">🗑️</button></div>'+
+    '<div class="ilerseridi" style="margin-top:10px;align-items:center"><span class="et">🔁 Döngü:</span><select class="key" style="width:auto" onchange="robotLoop(this.value)"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>'+
+      '<button class="btn y" onclick="robotCalistir()">▶️ Çalıştır</button><button class="btn g" onclick="robotSifirla()">⏹️ Sıfırla</button>'+
+      '<button class="fbtn" onclick="robotTahta()">⛶ Tahta Modu</button><button class="fbtn" onclick="robotOgrenci()">📲 Öğrenci Modu</button></div>'+
+    '<div style="font-size:11.5px;color:var(--soluk);margin-top:8px">💡 Döngü, tüm komut dizini seçtiğin sayı kadar tekrarlar. “✏️ Kalem” açıkken robot geçtiği yolu boyar.</div>'+
+    '</div>';
+  modalAc('robotModal'); robotSifirla(); progCiz(); robotGorevCiz();
+}
+function seansRobotPrompt(){ var c=seansPromptKonu(); if(!c) return;
+  var sistem='Sen bir robotik-kodlama öğretmeni asistanısın. Verilen konu için FİZİKSEL ROBOT GEREKTİRMEYEN, akıllı tahtadaki sanal robot ve öğrenci tabletleriyle yapılabilecek bir sınıf etkinliği tasarla. Bölümler: 🎯 Kazanım · 🧩 Etkinlik akışı (adım adım) · 🤖 Robot görevi (ileri/sağ-sol dön/döngü/kalem komutlarıyla somut bir görev) · 🧑‍🏫 Öğretmen ipucu · ⭐ Farklılaştırma (kolay/zor). Kısa, uygulanabilir, Türkçe, renkli emoji. LaTeX yok.';
+  aiSor('Robot etkinliği',{sistem, on:'Ders: '+c.dersAd+'. Konu: "'+c.konu+'". Kademe: '+c.kademe+'.', baslik:'🤖 Robot Etkinliği · '+c.konu}); }
+
 basla();
 fabYap({id:'sinif',ikon:'⏱️',etiket:'Sınıf Araçları',bayrak:'dk_sinif_gizli',tik:()=>sinifAracAc()});
 fabYap({id:'odak',ikon:'🖥️',etiket:'Sunum / Odak Modu',bayrak:'dk_odak_gizli',tik:()=>odakAc()});
 fabYap({id:'bugun',ikon:'📌',etiket:'Bugünkü Ders',bayrak:'dk_bugun_gizli',tik:()=>bugunkuDersAc()});
+fabYap({id:'robot',ikon:'🤖',etiket:'Sanal Robot Lab',bayrak:'dk_robot_gizli',tik:()=>robotAc()});
 renderNeredeKaldim();
 </script>
 </body>
