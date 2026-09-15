@@ -448,6 +448,20 @@ input[type=date].key{color-scheme:dark}
 .gecen .gcz-ic b{color:#fff;font-size:14px}
 .gecen .gcz-z{font-size:12.5px;color:var(--soluk);margin-top:3px;line-height:1.45}
 .gecen .gcz-btn{margin-top:9px;cursor:pointer;font-size:12px;font-weight:800;color:#fff;background:linear-gradient(135deg,var(--dr),var(--dr2));border:none;border-radius:10px;padding:7px 13px}
+
+.dsaat{position:fixed;top:76px;right:12px;z-index:140;width:212px;background:var(--kart);border:1px solid var(--cizgi);border-radius:16px;box-shadow:0 12px 30px rgba(0,0,0,.5);overflow:hidden}
+.dsaat.bitti{animation:dsflash .5s ease-in-out 6}
+@keyframes dsflash{50%{background:#7f1d1d}}
+.dsaat-bar{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,#7c3aed,#22d3ee);color:#fff;font-weight:800;font-size:12.5px;padding:7px 10px;cursor:grab;touch-action:none}
+.dsaat-x{cursor:pointer;font-size:16px}
+.dsaat-clock{font-size:30px;font-weight:900;text-align:center;color:#fff;font-variant-numeric:tabular-nums;margin-top:8px;letter-spacing:1px}
+.dsaat-date{font-size:11.5px;color:var(--soluk);text-align:center;margin-bottom:6px}
+.dsaat-sayac{font-size:27px;font-weight:900;text-align:center;color:#34d399;font-variant-numeric:tabular-nums}
+.dsaat-bar2{height:7px;background:var(--panel2);border-radius:6px;margin:6px 12px}
+.dsaat-bar2 span{display:block;height:100%;width:0;background:linear-gradient(90deg,#34d399,#22d3ee);border-radius:6px;transition:width .4s}
+.dsaat-ctrl{display:flex;gap:5px;align-items:center;justify-content:center;padding:8px;color:var(--soluk);font-size:12px;flex-wrap:wrap}
+.dsaat-ctrl button{cursor:pointer;font-size:15px;border:1px solid var(--cizgi);background:var(--panel2);color:#fff;border-radius:9px;padding:5px 9px}
+.dsaat-ctrl select{background:var(--panel2);border:1px solid var(--cizgi);color:#fff;border-radius:8px;padding:4px}
 </style>
 
 </head>
@@ -1689,9 +1703,11 @@ ${i>0?gecenOzet(tid,i):''}
         <button onclick="seansAI('ders')">📝 40 dk ders akışı</button>
         <button onclick="seansFark()">🧑‍🏫 Farklılaştır (zorlanan/ileri)</button>
       </div></div>
-      <div class="blok"><div class="bh">🎬 Bu dersin videoları</div><div class="ai-hizli">
-        <button onclick="seansKonuVideo()">🎬 Konu Anlatımı (video)</button>
-        <button onclick="seansIlhamVideo()">🏆 İlham Videosu</button>
+      <div class="blok"><div class="bh">🎬 Bu dersin videoları & saati</div><div class="ai-hizli">
+        <button onclick="seansKonuVideo()">🎬 Konu Anlatımı</button>
+        <button onclick="seansIlhamVideo()">🏆 İlham (TR)</button>
+        <button onclick="seansIlhamVideoW()">🌍 İlham (Dünya)</button>
+        <button onclick="dersSaatAc(true)">⏱️ 40 dk Ders Saati</button>
       </div></div>
       <div class="blok"><div class="bh">🎬 Bu derse özel içerik üret</div><div class="ai-hizli">
         <button onclick="seansVideoPrompt()">🎬 Video Promptu</button>
@@ -3196,11 +3212,66 @@ function gecenOzet(tid,i){
   '</div>';
 }
 
+
+/* ============================================================
+   EK: 🕐 Ders Saati (dijital saat + tarih + 40 dk sayaç) + ilham videoları
+   ============================================================ */
+var DS={sure:2400,kalan:2400,calisiyor:false};
+function dsBeep(){ try{ var a=new (window.AudioContext||window.webkitAudioContext)(); var o=a.createOscillator(),g=a.createGain(); o.connect(g);g.connect(a.destination); o.type='sine'; o.frequency.value=880; g.gain.value=0.2; o.start(); setTimeout(function(){o.frequency.value=660;},250); setTimeout(function(){try{o.stop();a.close();}catch(e){}},650);}catch(e){} }
+function dsCiz(){ var m=Math.floor(DS.kalan/60), sc=DS.kalan%60; var el=document.getElementById('dsaatSayac'); if(el) el.textContent=(m<10?'0':'')+m+':'+(sc<10?'0':'')+sc; var bar=document.getElementById('dsaatBar'); if(bar) bar.style.width=(100*(DS.sure-DS.kalan)/DS.sure)+'%'; }
+function dsBaslat(){ DS.calisiyor=true; }
+function dsDurakla(){ DS.calisiyor=false; }
+function dsSifirla(){ DS.kalan=DS.sure; DS.calisiyor=false; dsCiz(); }
+function dsSure(v){ DS.sure=(parseInt(v,10)||40)*60; DS.kalan=DS.sure; DS.calisiyor=false; dsCiz(); }
+function dersSaatKur(){ if(document.getElementById('dersSaatPanel')) return;
+  var p=document.createElement('div'); p.id='dersSaatPanel'; p.className='dsaat'; p.style.display='none';
+  p.innerHTML='<div class="dsaat-bar" id="dsaatDrag"><span>🕐 Ders Saati</span><span class="dsaat-x" onclick="dersSaatKapat()">×</span></div>'+
+    '<div class="dsaat-clock" id="dsaatSaat">--:--:--</div><div class="dsaat-date" id="dsaatTarih">—</div>'+
+    '<div class="dsaat-sayac" id="dsaatSayac">40:00</div><div class="dsaat-bar2"><span id="dsaatBar"></span></div>'+
+    '<div class="dsaat-ctrl"><button onclick="dsBaslat()">▶️</button><button onclick="dsDurakla()">⏸️</button><button onclick="dsSifirla()">↺</button>'+
+    '<select onchange="dsSure(this.value)"><option>30</option><option>35</option><option selected>40</option><option>45</option></select>dk</div>';
+  document.body.appendChild(p); dsCiz();
+  var bar=document.getElementById('dsaatDrag'), drag=false, ox=0, oy=0;
+  bar.addEventListener('pointerdown',function(e){ drag=true; ox=e.clientX-p.offsetLeft; oy=e.clientY-p.offsetTop; try{bar.setPointerCapture(e.pointerId);}catch(_){}}); 
+  bar.addEventListener('pointermove',function(e){ if(!drag)return; var l=Math.max(4,Math.min(window.innerWidth-p.offsetWidth-4,e.clientX-ox)); var t=Math.max(4,Math.min(window.innerHeight-60,e.clientY-oy)); p.style.left=l+'px'; p.style.top=t+'px'; p.style.right='auto'; });
+  bar.addEventListener('pointerup',function(){ drag=false; });
+}
+function dersSaatAc(baslat){ dersSaatKur(); var p=document.getElementById('dersSaatPanel'); p.style.display='block'; if(baslat){ DS.kalan=DS.sure; DS.calisiyor=true; dsCiz(); toast('⏱️ 40 dk ders saati başladı','ok'); } }
+function dersSaatKapat(){ var p=document.getElementById('dersSaatPanel'); if(p) p.style.display='none'; }
+function dersSaatToggle(){ dersSaatKur(); var p=document.getElementById('dersSaatPanel'); p.style.display=(p.style.display==='none'||!p.style.display)?'block':'none'; }
+setInterval(function(){
+  var d=new Date(), sa=document.getElementById('dsaatSaat'), ta=document.getElementById('dsaatTarih');
+  if(sa) sa.textContent=[d.getHours(),d.getMinutes(),d.getSeconds()].map(function(x){return (x<10?'0':'')+x;}).join(':');
+  if(ta){ var gun=['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'][d.getDay()]; var ay=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'][d.getMonth()]; ta.textContent=gun+', '+d.getDate()+' '+ay+' '+d.getFullYear(); }
+  if(DS.calisiyor && DS.kalan>0){ DS.kalan--; dsCiz(); if(DS.kalan===0){ DS.calisiyor=false; dsBeep(); var p=document.getElementById('dersSaatPanel'); if(p){ p.classList.add('bitti'); setTimeout(function(){ if(p) p.classList.remove('bitti'); },4000);} toast('⏰ Ders süresi doldu!','info',4000); } }
+},1000);
+
+/* dünya ilham videosu (ders sonu) */
+function seansIlhamVideoW(){ var t=aktifSeans; if(!t) return; var b=(typeof BASARI!=='undefined')?BASARI[t.trackId]:null; openYT(b&&b.ytW? b.ytW : 'young inventors students changing the world'); }
+
+/* ilham gruplarını çoğalt: Anaokulu + Dünyadan Daha Fazla */
+(function(){ if(typeof VIDEO_GRUP==='undefined') return;
+ VIDEO_GRUP.push({ad:'🧸 Genç Mucitler — Anaokulu / Küçükler', ik:'🧸', dr:'#22c55e', dr2:'#86efac', items:[
+  {ad:'Okul öncesi bilim deneyi', q:'okul öncesi basit bilim deneyi çocuk', d:'Küçükler için eğlenceli deneyler.'},
+  {ad:'Anaokulu kodlama (ekransız)', q:'okul öncesi kodlama etkinliği ekransız', d:'Ekransız kodlama oyunları.'},
+  {ad:'Küçük çocuk satranç öğreniyor', q:'küçük çocuk satranç öğreniyor', d:'Minik satranççılar.'},
+  {ad:'Okul öncesi zeka oyunları', q:'okul öncesi zeka oyunu etkinlik çocuk', d:'Küçükler için akıl oyunları.'}
+ ]});
+ VIDEO_GRUP.push({ad:'🌟 Dünyadan Daha Fazla İlham', ik:'🌟', dr:'#f43f5e', dr2:'#fb7185', items:[
+  {ad:'Young scientists (science fair)', q:'young scientists science fair winners kids', d:'Genç bilim insanları.'},
+  {ad:'Kids who built robots', q:'kids who built amazing robots', d:'Robot yapan çocuklar.'},
+  {ad:'Teen coders success', q:'teenage programmer success story app kid', d:'Genç yazılımcı başarıları.'},
+  {ad:'Child chess prodigies', q:'child chess prodigy amazing game', d:'Satranç harikaları.'},
+  {ad:'Amazing kid inventions', q:'amazing kid inventions that help people', d:'İnsanlara yardım eden çocuk buluşları.'}
+ ]});
+})();
+
 basla();
 fabYap({id:'sinif',ikon:'⏱️',etiket:'Sınıf Araçları',bayrak:'dk_sinif_gizli',tik:()=>sinifAracAc()});
 fabYap({id:'odak',ikon:'🖥️',etiket:'Sunum / Odak Modu',bayrak:'dk_odak_gizli',tik:()=>odakAc()});
 fabYap({id:'bugun',ikon:'📌',etiket:'Bugünkü Ders',bayrak:'dk_bugun_gizli',tik:()=>bugunkuDersAc()});
 fabYap({id:'robot',ikon:'🤖',etiket:'Sanal Robot Lab',bayrak:'dk_robot_gizli',tik:()=>robotAc()});
+fabYap({id:'dsaat',ikon:'🕐',etiket:'Ders Saati / 40 dk',bayrak:'dk_dsaat_gizli',tik:()=>dersSaatToggle()});
 renderNeredeKaldim();
 </script>
 </body>
