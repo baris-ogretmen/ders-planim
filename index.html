@@ -462,6 +462,26 @@ input[type=date].key{color-scheme:dark}
 .dsaat-ctrl{display:flex;gap:5px;align-items:center;justify-content:center;padding:8px;color:var(--soluk);font-size:12px;flex-wrap:wrap}
 .dsaat-ctrl button{cursor:pointer;font-size:15px;border:1px solid var(--cizgi);background:var(--panel2);color:#fff;border-radius:9px;padding:5px 9px}
 .dsaat-ctrl select{background:var(--panel2);border:1px solid var(--cizgi);color:#fff;border-radius:8px;padding:4px}
+
+.dsaat-moto{font-size:11.5px;font-style:italic;color:#a7f3d0;text-align:center;padding:8px 12px 12px;line-height:1.4;min-height:34px;transition:opacity .25s}
+
+.dsaat-hbtn{display:flex;gap:11px;align-items:center}
+.dsaat-hbtn span{cursor:pointer;font-size:15px;line-height:1}
+.dsaat-sayac.kritik{animation:dsflash .6s ease-in-out infinite}
+.dsaat.kompakt{width:150px}
+.dsaat.kompakt .dsaat-clock{font-size:21px}
+.dsaat.kompakt .dsaat-sayac{font-size:19px}
+.dsaat.kompakt .dsaat-date,.dsaat.kompakt .dsaat-moto{display:none}
+.dsaat.min .dsaat-clock,.dsaat.min .dsaat-date,.dsaat.min .dsaat-sayac,.dsaat.min .dsaat-bar2,.dsaat.min .dsaat-ctrl,.dsaat.min .dsaat-moto{display:none}
+.hz-blok{background:var(--panel2);border:1px solid var(--cizgi);border-radius:14px;padding:14px;margin-bottom:12px}
+.hz-blok h4{margin:0 0 8px;font-size:14px;color:#fff}
+.hz-big{font-size:56px;text-align:center;margin:6px 0}
+.hz-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.puan-tak{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--kart);border:1px solid var(--cizgi);border-radius:12px;padding:8px 10px;margin-top:6px}
+.puan-tak .pv{font-size:20px;font-weight:900;min-width:40px;text-align:center;color:#fff}
+.duyuru-ov{position:fixed;inset:0;z-index:200;background:radial-gradient(circle at 50% 40%,#1e293b,#070b18);display:flex;align-items:center;justify-content:center;text-align:center;padding:24px}
+.duyuru-ov .dz{font-size:min(9vw,90px);font-weight:900;color:#fff;line-height:1.2}
+.duyuru-ov .dx{position:absolute;top:16px;right:22px;font-size:32px;color:#fff;cursor:pointer}
 </style>
 
 </head>
@@ -558,6 +578,7 @@ input[type=date].key{color-scheme:dark}
 <div class="modal-bg" id="dersSonuModal"><div class="modal" id="dersSonuModalIc" style="max-width:520px"></div></div>
 <div class="modal-bg" id="promptModal"><div class="modal" id="promptModalIc" style="max-width:560px"></div></div>
 <div class="modal-bg" id="robotModal"><div class="modal" id="robotModalIc" style="max-width:560px"></div></div>
+<div class="modal-bg" id="hizliModal"><div class="modal" id="hizliModalIc" style="max-width:520px"></div></div>
 
 <script>
 /* ============================================================
@@ -3229,7 +3250,7 @@ function dersSaatKur(){ if(document.getElementById('dersSaatPanel')) return;
     '<div class="dsaat-clock" id="dsaatSaat">--:--:--</div><div class="dsaat-date" id="dsaatTarih">—</div>'+
     '<div class="dsaat-sayac" id="dsaatSayac">40:00</div><div class="dsaat-bar2"><span id="dsaatBar"></span></div>'+
     '<div class="dsaat-ctrl"><button onclick="dsBaslat()">▶️</button><button onclick="dsDurakla()">⏸️</button><button onclick="dsSifirla()">↺</button>'+
-    '<select onchange="dsSure(this.value)"><option>30</option><option>35</option><option selected>40</option><option>45</option></select>dk</div>';
+    '<select onchange="dsSure(this.value)">'+dsSureOpts()+'</select>dk</div>'+'<div class="dsaat-moto" id="dsaatMoto">✨ Hazırsan başlayalım!</div>';
   document.body.appendChild(p); dsCiz();
   var bar=document.getElementById('dsaatDrag'), drag=false, ox=0, oy=0;
   bar.addEventListener('pointerdown',function(e){ drag=true; ox=e.clientX-p.offsetLeft; oy=e.clientY-p.offsetTop; try{bar.setPointerCapture(e.pointerId);}catch(_){}}); 
@@ -3266,12 +3287,92 @@ function seansIlhamVideoW(){ var t=aktifSeans; if(!t) return; var b=(typeof BASA
  ]});
 })();
 
+
+/* ============================================================
+   EK: Ders saati süre 1..40 dk + motive edici sözler
+   ============================================================ */
+function dsSureOpts(){ var o=''; for(var m=1;m<=40;m++){ o+='<option'+(m===40?' selected':'')+'>'+m+'</option>'; } return o; }
+var MOTO=[
+ '🤖 Kod yazmak, bilgisayara ne yapacağını SEN söylemektir!',
+ '🤖 Hata yapmak öğrenmenin parçası — dene, düzelt, başar!',
+ '💡 Her büyük mucit bir zamanlar senin yaşındaydı!',
+ '🧠 Yapay zekâ örneklerle öğrenir; sen de deneyerek öğrenirsin!',
+ '🧠 Merak eden beyin, en hızlı öğrenen beyindir!',
+ '♟️ Satrançta acele yok: önce düşün, sonra hamle yap!',
+ '♟️ Her usta bir zamanlar acemiydi — sabırla ustalaşırsın!',
+ '♟️ Bir sonraki hamleyi görmek, geleceği planlamaktır!',
+ '🧩 Bulmaca çözmek beynini güçlendirir — pes etme!',
+ '🧩 Zor görünen her problem, küçük adımlara bölününce kolaylaşır!',
+ '🚀 Bugün küçük bir adım, yarın büyük bir buluş olabilir!',
+ '🌟 Sen de bir gün dünyayı değiştiren projeyi yapabilirsin!',
+ '🔁 Vazgeçme! Bir kez daha dene; ustalar hiç durmaz.',
+ '🎯 Odaklan, dene, öğren — başarı adım adım gelir!',
+ '🤝 Birlikte düşünmek, tek başına düşünmekten güçlüdür!',
+ '⭐ Hayal et, planla, kodla — sen bir yaratıcısın!',
+ '🤖 Robotlar bizim için çalışır; onları programlayan da SENSİN!',
+ '♟️ Kaybetmek yok, öğrenmek var — her oyun yeni bir ders!'
+];
+var motoI=Math.floor(Math.random()*MOTO.length);
+function motoGoster(){ var el=document.getElementById('dsaatMoto'); if(!el) return; el.style.opacity=0; setTimeout(function(){ el.textContent=MOTO[motoI%MOTO.length]; motoI++; el.style.opacity=1; },250); }
+setInterval(function(){ var p=document.getElementById('dersSaatPanel'); if(p && p.style.display!=='none') motoGoster(); }, 7000);
+dersSaatAc=function(baslat){ dersSaatKur(); var p=document.getElementById('dersSaatPanel'); p.style.display='block'; motoGoster(); if(baslat){ DS.kalan=DS.sure; DS.calisiyor=true; dsCiz(); toast(MOTO[Math.floor(Math.random()*MOTO.length)],'ok',3800); } };
+
+
+/* ============================================================
+   EK: Ders saati renk uyarısı + küçült/boyut/konum hafızası
+       + Hızlı Sınıf Araçları (zar/yazı-tura/takım/puan/duyuru)
+   ============================================================ */
+function dsSureOpts(){ var cur=Math.round(DS.sure/60), o=''; for(var m=1;m<=40;m++){ o+='<option'+(m===cur?' selected':'')+'>'+m+'</option>'; } return o; }
+dsCiz=function(){ var m=Math.floor(DS.kalan/60), sc=DS.kalan%60; var el=document.getElementById('dsaatSayac');
+  if(el){ el.textContent=(m<10?'0':'')+m+':'+(sc<10?'0':'')+sc; el.style.color = DS.kalan<=60?'#ef4444':(DS.kalan<=300?'#f59e0b':'#34d399'); el.classList.toggle('kritik', DS.kalan<=60 && DS.kalan>0); }
+  var bar=document.getElementById('dsaatBar'); if(bar){ bar.style.width=(100*(DS.sure-DS.kalan)/Math.max(1,DS.sure))+'%'; bar.style.background = DS.kalan<=60?'#ef4444':(DS.kalan<=300?'linear-gradient(90deg,#f59e0b,#fbbf24)':'linear-gradient(90deg,#34d399,#22d3ee)'); } };
+function dsDurumKaydet(){ var p=document.getElementById('dersSaatPanel'); if(!p) return; LS.set('dk_dsaat_ui',{l:p.style.left,t:p.style.top,k:p.classList.contains('kompakt'),m:p.classList.contains('min'),sure:Math.round(DS.sure/60)}); }
+function dsMin(e){ if(e)e.stopPropagation(); var p=document.getElementById('dersSaatPanel'); if(p){p.classList.toggle('min'); dsDurumKaydet();} }
+function dsKompakt(e){ if(e)e.stopPropagation(); var p=document.getElementById('dersSaatPanel'); if(p){p.classList.toggle('kompakt'); dsDurumKaydet();} }
+dsSure=function(v){ DS.sure=(parseInt(v,10)||40)*60; DS.kalan=DS.sure; DS.calisiyor=false; dsCiz(); dsDurumKaydet(); };
+dersSaatKur=function(){ if(document.getElementById('dersSaatPanel')) return;
+  var sv=LS.get('dk_dsaat_ui',null); if(sv&&sv.sure){ DS.sure=sv.sure*60; DS.kalan=DS.sure; }
+  var p=document.createElement('div'); p.id='dersSaatPanel'; p.className='dsaat'; p.style.display='none';
+  p.innerHTML='<div class="dsaat-bar" id="dsaatDrag"><span>🕐 Ders Saati</span><span class="dsaat-hbtn"><span onclick="dsKompakt(event)" title="Boyut">⤡</span><span onclick="dsMin(event)" title="Küçült">–</span><span class="dsaat-x" onclick="dersSaatKapat()">×</span></span></div>'+
+    '<div class="dsaat-clock" id="dsaatSaat">--:--:--</div><div class="dsaat-date" id="dsaatTarih">—</div>'+
+    '<div class="dsaat-sayac" id="dsaatSayac">40:00</div><div class="dsaat-bar2"><span id="dsaatBar"></span></div>'+
+    '<div class="dsaat-ctrl"><button onclick="dsBaslat()">▶️</button><button onclick="dsDurakla()">⏸️</button><button onclick="dsSifirla()">↺</button>'+
+    '<select onchange="dsSure(this.value)">'+dsSureOpts()+'</select>dk</div>'+
+    '<div class="dsaat-moto" id="dsaatMoto">✨ Hazırsan başlayalım!</div>';
+  document.body.appendChild(p); dsCiz();
+  if(sv){ if(sv.l)p.style.left=sv.l; if(sv.t){p.style.top=sv.t; p.style.right='auto';} if(sv.k)p.classList.add('kompakt'); if(sv.m)p.classList.add('min'); }
+  var bar=document.getElementById('dsaatDrag'), drag=false, ox=0, oy=0;
+  bar.addEventListener('pointerdown',function(e){ if(e.target.onclick) return; drag=true; ox=e.clientX-p.offsetLeft; oy=e.clientY-p.offsetTop; try{bar.setPointerCapture(e.pointerId);}catch(_){}}); 
+  bar.addEventListener('pointermove',function(e){ if(!drag)return; var l=Math.max(4,Math.min(window.innerWidth-p.offsetWidth-4,e.clientX-ox)); var t=Math.max(4,Math.min(window.innerHeight-50,e.clientY-oy)); p.style.left=l+'px'; p.style.top=t+'px'; p.style.right='auto'; });
+  bar.addEventListener('pointerup',function(){ if(drag){ drag=false; dsDurumKaydet(); } });
+};
+
+/* Hızlı Sınıf Araçları */
+function zarAt(){ var fa=['⚀','⚁','⚂','⚃','⚄','⚅'], n=Math.floor(Math.random()*6); var el=document.getElementById('zarSonuc'); if(el){ el.textContent=fa[n]; try{el.animate([{transform:'rotate(0) scale(.7)'},{transform:'rotate(360deg) scale(1)'}],{duration:450});}catch(_){}} }
+function yaziTura(){ var el=document.getElementById('ytSonuc'); if(el) el.textContent = Math.random()<0.5?'🪙 Yazı':'🪙 Tura'; }
+function takimYap(){ var t=(document.getElementById('takimIsim')||{}).value||''; var arr=t.split('\n').map(function(x){return x.trim();}).filter(Boolean); var g=parseInt((document.getElementById('takimSayi')||{}).value||'2',10); if(arr.length<2){ toast('En az 2 isim gir','err'); return; } for(var i=arr.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),tmp=arr[i];arr[i]=arr[j];arr[j]=tmp;} var gr=[]; for(var k=0;k<g;k++)gr.push([]); arr.forEach(function(ad,idx){gr[idx%g].push(ad);}); document.getElementById('takimSonuc').innerHTML=gr.map(function(gg,idx){return '<div class="puan-tak"><b>Takım '+(idx+1)+'</b><span style="text-align:right">'+gg.join(', ')+'</span></div>';}).join(''); }
+function puanGet(){ return LS.get('dk_puan',{a:0,b:0,c:0,d:0}); }
+function puanDeg(t,d){ var o=puanGet(); o[t]=(o[t]||0)+d; if(o[t]<0)o[t]=0; LS.set('dk_puan',o); puanCiz(); }
+function puanSifirla(){ LS.set('dk_puan',{a:0,b:0,c:0,d:0}); puanCiz(); }
+function puanCiz(){ var o=puanGet(); ['a','b','c','d'].forEach(function(t){ var e=document.getElementById('pv-'+t); if(e)e.textContent=o[t]||0; }); }
+function duyuruGoster(){ var t=(document.getElementById('duyuruInput')||{}).value||'Sessiz olalım 🤫'; var ov=document.createElement('div'); ov.className='duyuru-ov'; ov.innerHTML='<span class="dx" onclick="this.parentNode.remove()">✕</span><div class="dz">'+t.replace(/</g,'&lt;')+'</div>'; ov.addEventListener('click',function(e){ if(e.target===ov) ov.remove(); }); document.body.appendChild(ov); }
+function hizliAc(){
+  $('#hizliModalIc').innerHTML='<div class="mbas" style="--dr:#f59e0b;--dr2:#fbbf24"><div class="ik">🎲</div><div style="min-width:0"><h3>Hızlı Sınıf Araçları</h3><div class="alt">Zar · Yazı-Tura · Takım · Puan · Duyuru</div></div><div class="kapat" onclick="modalKapat(\'hizliModal\')">✕</div></div><div class="mgov">'+
+    '<div class="hz-blok"><h4>🎲 Zar</h4><div class="hz-big" id="zarSonuc">⚄</div><div class="hz-row" style="justify-content:center"><button class="btn y" onclick="zarAt()">Zar At</button></div></div>'+
+    '<div class="hz-blok"><h4>🪙 Yazı-Tura</h4><div class="hz-big" id="ytSonuc" style="font-size:32px">🪙 Hazır</div><div class="hz-row" style="justify-content:center"><button class="btn y" onclick="yaziTura()">At</button></div></div>'+
+    '<div class="hz-blok"><h4>👥 Takım Oluşturucu</h4><textarea id="takimIsim" class="key" style="min-height:80px" placeholder="Her satıra bir öğrenci adı yaz..."></textarea><div class="hz-row" style="margin-top:8px"><span class="et">Takım sayısı:</span><select id="takimSayi" class="key" style="width:auto"><option>2</option><option>3</option><option>4</option></select><button class="btn p" onclick="takimYap()">Takımları Oluştur</button></div><div id="takimSonuc" style="margin-top:8px"></div></div>'+
+    '<div class="hz-blok"><h4>🏆 Puan Tahtası</h4>'+['a','b','c','d'].map(function(t,i){return '<div class="puan-tak"><b>Takım '+(i+1)+'</b><div class="hz-row"><button class="btn g" onclick="puanDeg(\''+t+'\',-1)">−</button><span class="pv" id="pv-'+t+'">0</span><button class="btn y" onclick="puanDeg(\''+t+'\',1)">+</button></div></div>';}).join('')+'<div class="hz-row" style="margin-top:8px;justify-content:center"><button class="fbtn" onclick="puanSifirla()">↺ Sıfırla</button></div></div>'+
+    '<div class="hz-blok"><h4>📢 Tam Ekran Duyuru</h4><div class="hz-row"><input id="duyuruInput" class="key" placeholder="Örn: Sessiz olalım 🤫 / Ara: 5 dk" style="flex:1"><button class="btn p" onclick="duyuruGoster()">Göster</button></div></div>'+
+  '</div>'; modalAc('hizliModal'); puanCiz();
+}
+
 basla();
 fabYap({id:'sinif',ikon:'⏱️',etiket:'Sınıf Araçları',bayrak:'dk_sinif_gizli',tik:()=>sinifAracAc()});
 fabYap({id:'odak',ikon:'🖥️',etiket:'Sunum / Odak Modu',bayrak:'dk_odak_gizli',tik:()=>odakAc()});
 fabYap({id:'bugun',ikon:'📌',etiket:'Bugünkü Ders',bayrak:'dk_bugun_gizli',tik:()=>bugunkuDersAc()});
 fabYap({id:'robot',ikon:'🤖',etiket:'Sanal Robot Lab',bayrak:'dk_robot_gizli',tik:()=>robotAc()});
 fabYap({id:'dsaat',ikon:'🕐',etiket:'Ders Saati / 40 dk',bayrak:'dk_dsaat_gizli',tik:()=>dersSaatToggle()});
+fabYap({id:'hizli',ikon:'🎲',etiket:'Hızlı Sınıf Araçları',bayrak:'dk_hizli_gizli',tik:()=>hizliAc()});
 renderNeredeKaldim();
 </script>
 </body>
