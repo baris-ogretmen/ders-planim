@@ -482,6 +482,15 @@ input[type=date].key{color-scheme:dark}
 .duyuru-ov{position:fixed;inset:0;z-index:200;background:radial-gradient(circle at 50% 40%,#1e293b,#070b18);display:flex;align-items:center;justify-content:center;text-align:center;padding:24px}
 .duyuru-ov .dz{font-size:min(9vw,90px);font-weight:900;color:#fff;line-height:1.2}
 .duyuru-ov .dx{position:absolute;top:16px;right:22px;font-size:32px;color:#fff;cursor:pointer}
+
+.mem-wrap{display:grid;gap:10px;justify-content:center;margin:10px auto}
+.mem-card{aspect-ratio:1;min-width:60px;border-radius:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:clamp(15px,3.4vw,26px);font-weight:800;color:#fff;border:2px solid var(--cizgi);transition:transform .18s,background .2s;text-align:center;padding:4px;user-select:none;line-height:1.15}
+.mem-card.kapali{background:linear-gradient(135deg,#334155,#1e293b)}
+.mem-card.acik{background:linear-gradient(135deg,var(--dr),var(--dr2));transform:scale(1.04)}
+.mem-card.eslesti{background:linear-gradient(135deg,#059669,#34d399);border-color:#34d399;cursor:default}
+.mem-ust{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;align-items:center;font-weight:800;color:#cbd5e1;font-size:13px;margin-bottom:8px}
+.konfeti{position:fixed;top:-10vh;z-index:9999;pointer-events:none;animation:kdus linear forwards}
+@keyframes kdus{to{transform:translateY(120vh) rotate(400deg);opacity:.85}}
 </style>
 
 </head>
@@ -579,6 +588,7 @@ input[type=date].key{color-scheme:dark}
 <div class="modal-bg" id="promptModal"><div class="modal" id="promptModalIc" style="max-width:560px"></div></div>
 <div class="modal-bg" id="robotModal"><div class="modal" id="robotModalIc" style="max-width:560px"></div></div>
 <div class="modal-bg" id="hizliModal"><div class="modal" id="hizliModalIc" style="max-width:520px"></div></div>
+<div class="modal-bg" id="oyunMerkeziModal"><div class="modal" id="oyunMerkeziModalIc" style="max-width:600px"></div></div>
 
 <script>
 /* ============================================================
@@ -1735,6 +1745,7 @@ ${i>0?gecenOzet(tid,i):''}
         <button onclick="seansOyunPrompt()">🎮 Oyun Promptu</button>
         <button onclick="seansRobotPrompt()">🤖 Robot Etkinliği</button>
         <button onclick="robotAc()">🤖 Robot Lab</button>
+        <button onclick="dersiOyunlaBitir()">🎮 Dersi Oyunla Bitir</button>
       </div></div>
     </div>`;
   modalAc('haftaModal');
@@ -3366,6 +3377,50 @@ function hizliAc(){
   '</div>'; modalAc('hizliModal'); puanCiz();
 }
 
+
+/* ============================================================
+   EK: 🎮 Oyun Merkezi — derse özel Hafıza Eşleştirme (oynanabilir, seviyeli)
+   ============================================================ */
+var MEM_ICERIK={
+ robokod:[['Döngü','🔁'],['Koşul','🔀'],['Değişken','📦'],['Algoritma','📝'],['Sensör','📡'],['Robot','🤖'],['Blok','🧩'],['Hata Ayıklama','🐞']],
+ yz:[['Veri','📊'],['Model','🧠'],['Tahmin','🔮'],['Eğitim','🏋️'],['Görüntü','🖼️'],['Ses','🎤'],['Sınıflama','🗂️'],['Robot','🤖']],
+ satranc:[['Şah','♔'],['Vezir','♕'],['Kale','♖'],['Fil','♗'],['At','♘'],['Piyon','♙'],['Rok','🏰'],['Mat','👑']],
+ akil:[['Örüntü','🔷'],['Hafıza','🧠'],['Mantık','🧩'],['Strateji','♟️'],['Dikkat','🎯'],['Simetri','🪞'],['Sayı','🔢'],['Labirent','🌀']],
+ kocluk:[['Hedef','🎯'],['Plan','🗓️'],['Odak','🔎'],['Tekrar','🔁'],['Not Alma','📝'],['Motivasyon','🚀'],['Uyku','😴'],['Zaman','⏰']]
+};
+var MG={};
+function konfetiPatlat(){ var e=['🎉','⭐','✨','🎊','🏆','🥳','🌟']; for(var i=0;i<30;i++){ var sp=document.createElement('div'); sp.className='konfeti'; sp.textContent=e[Math.floor(Math.random()*e.length)]; sp.style.left=Math.random()*100+'vw'; sp.style.animationDuration=(2+Math.random()*2.2)+'s'; sp.style.fontSize=(18+Math.random()*24)+'px'; document.body.appendChild(sp); (function(x){ setTimeout(function(){x.remove();},4400); })(sp); } }
+function karistir(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)), t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+function hafizaAc(sid,lvl){
+  sid = sid || (aktifSeans?aktifSeans.trackId:'akil'); if(!MEM_ICERIK[sid]) sid='akil';
+  if(!lvl){ var g=SINIF_LISTE[ST.gradeIdx].g; lvl = g==='Ana'?'k':(+g<=4?'o':'b'); }
+  var cift = lvl==='k'?4:(lvl==='b'?8:6);
+  var seti=karistir(MEM_ICERIK[sid].slice()).slice(0,cift);
+  var kartlar=[]; seti.forEach(function(p,idx){ kartlar.push({id:idx,t:p[0]}); kartlar.push({id:idx,t:p[1]}); }); karistir(kartlar);
+  var tr=TRACKS.filter(function(x){return x.id===sid;})[0]||{ad:'Akıl-Zeka',dr:'#db2777',dr2:'#f472b6'};
+  MG={sid:sid,lvl:lvl,kartlar:kartlar,acik:[],eslesen:0,hamle:0,cift:cift,kilit:false,tr:tr,bas:Date.now()};
+  hafizaCiz(); modalAc('oyunMerkeziModal');
+}
+function hafizaCiz(){
+  var cols=Math.ceil(Math.sqrt(MG.kartlar.length));
+  var grid=MG.kartlar.map(function(k,idx){ var acik=MG.acik.indexOf(idx)>=0; var cls=k.eslesti?'eslesti':(acik?'acik':'kapali'); return '<div class="mem-card '+cls+'" style="--dr:'+MG.tr.dr+';--dr2:'+MG.tr.dr2+'" onclick="hafizaTik('+idx+')">'+((acik||k.eslesti)?k.t:'❓')+'</div>'; }).join('');
+  var schips=['robokod','yz','satranc','akil'].map(function(x){var trx=TRACKS.filter(function(y){return y.id===x;})[0]; return '<span class="fbtn'+(x===MG.sid?' aktif':'')+'" title="'+(trx?trx.ad:x)+'" onclick="hafizaAc(\''+x+'\',\''+MG.lvl+'\')">'+(trx?trx.ik:'🎮')+'</span>';}).join('');
+  var lchips=[['k','Kolay'],['o','Orta'],['b','Zor']].map(function(p){return '<span class="fbtn'+(p[0]===MG.lvl?' aktif':'')+'" onclick="hafizaAc(\''+MG.sid+'\',\''+p[0]+'\')">'+p[1]+'</span>';}).join('');
+  $('#oyunMerkeziModalIc').innerHTML='<div class="mbas" style="--dr:'+MG.tr.dr+';--dr2:'+MG.tr.dr2+'"><div class="ik">🧠</div><div style="min-width:0"><h3>Hafıza Eşleştirme — '+MG.tr.ad+'</h3><div class="alt">Kavramı simgesiyle eşleştir!</div></div><div class="kapat" onclick="modalKapat(\'oyunMerkeziModal\')">✕</div></div>'+
+    '<div class="mgov"><div class="mem-ust"><span class="et">Ders:</span>'+schips+'<span class="et" style="margin-left:6px">Zorluk:</span>'+lchips+'</div>'+
+    '<div class="mem-ust"><span>🎯 Eşleşen: '+MG.eslesen+'/'+MG.cift+'</span><span>👆 Hamle: '+MG.hamle+'</span><button class="fbtn" onclick="hafizaTamEkran()">⛶ Tam Ekran</button><button class="fbtn" onclick="hafizaAc(MG.sid,MG.lvl)">🔄 Yeni Oyun</button></div>'+
+    '<div class="mem-wrap" style="grid-template-columns:repeat('+cols+',1fr);max-width:'+(cols*94)+'px">'+grid+'</div></div>';
+}
+function hafizaTik(idx){ if(MG.kilit) return; var k=MG.kartlar[idx]; if(k.eslesti || MG.acik.indexOf(idx)>=0) return; MG.acik.push(idx);
+  if(MG.acik.length===2){ MG.hamle++; var a=MG.kartlar[MG.acik[0]], b=MG.kartlar[MG.acik[1]];
+    if(a.id===b.id){ a.eslesti=b.eslesti=true; MG.eslesen++; MG.acik=[]; hafizaCiz();
+      if(MG.eslesen===MG.cift){ konfetiPatlat(); var sn=Math.round((Date.now()-MG.bas)/1000); setTimeout(function(){ toast('🎉 Süper! '+MG.hamle+' hamle · '+sn+' sn — Tebrikler!','ok',4500); },150); } }
+    else { MG.kilit=true; hafizaCiz(); setTimeout(function(){ MG.acik=[]; MG.kilit=false; hafizaCiz(); },850); }
+  } else hafizaCiz();
+}
+function hafizaTamEkran(){ var box=document.querySelector('#oyunMerkeziModal .modal'); if(box&&box.requestFullscreen) box.requestFullscreen(); else toast('Tam ekran desteklenmiyor','err'); }
+function dersiOyunlaBitir(){ var t=aktifSeans; hafizaAc(t?t.trackId:'akil'); }
+
 basla();
 fabYap({id:'sinif',ikon:'⏱️',etiket:'Sınıf Araçları',bayrak:'dk_sinif_gizli',tik:()=>sinifAracAc()});
 fabYap({id:'odak',ikon:'🖥️',etiket:'Sunum / Odak Modu',bayrak:'dk_odak_gizli',tik:()=>odakAc()});
@@ -3373,6 +3428,7 @@ fabYap({id:'bugun',ikon:'📌',etiket:'Bugünkü Ders',bayrak:'dk_bugun_gizli',t
 fabYap({id:'robot',ikon:'🤖',etiket:'Sanal Robot Lab',bayrak:'dk_robot_gizli',tik:()=>robotAc()});
 fabYap({id:'dsaat',ikon:'🕐',etiket:'Ders Saati / 40 dk',bayrak:'dk_dsaat_gizli',tik:()=>dersSaatToggle()});
 fabYap({id:'hizli',ikon:'🎲',etiket:'Hızlı Sınıf Araçları',bayrak:'dk_hizli_gizli',tik:()=>hizliAc()});
+fabYap({id:'oyunm',ikon:'🎮',etiket:'Oyun Merkezi (Hafıza)',bayrak:'dk_oyunm_gizli',tik:()=>hafizaAc()});
 renderNeredeKaldim();
 </script>
 </body>
