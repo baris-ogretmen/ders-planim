@@ -1740,6 +1740,11 @@ ${i>0?gecenOzet(tid,i):''}
         <button onclick="seansIlhamVideoW()">🌍 İlham (Dünya)</button>
         <button onclick="dersSaatAc(true)">⏱️ 40 dk Ders Saati</button>
       </div></div>
+      <div class="blok"><div class="bh">🔗 Farklı Bakış & Bağlantılar (neden-sonuç)</div><div class="ai-hizli">
+        <button onclick="seansBaglanti()">🔗 AI ile Bağlantı Kur</button>
+        <button onclick="seansBaglantiVideo('strateji')">🎬 Strateji & Tarih</button>
+        <button onclick="seansBaglantiVideo('kultur')">🕌 Kültür & Değer</button>
+      </div></div>
       <div class="blok"><div class="bh">🎬 Bu derse özel içerik üret</div><div class="ai-hizli">
         <button onclick="seansVideoPrompt()">🎬 Video Promptu</button>
         <button onclick="seansOyunPrompt()">🎮 Oyun Promptu</button>
@@ -3442,6 +3447,22 @@ setInterval(dsStateKaydet,1000);
  ROBOT_GOREV.push({ad:'Üçgen Çiz ✏️', mod:'ciz', n:8, robot:{x:1,y:6,dir:0}, hedef:null, duvar:[]});
  ROBOT_GOREV.push({ad:'Merdiven Çiz ✏️', mod:'ciz', n:8, robot:{x:1,y:6,dir:0}, hedef:null, duvar:[]});
 })();
+
+
+/* ============================================================
+   EK: 🔗 Disiplinler arası bağlantı (neden-sonuç) — her ders
+   ============================================================ */
+var BAGLANTI={
+ robokod:{strateji:'teknoloji ve icatların tarihi neden sonuç Türkçe belgesel',kultur:'icatlar medeniyet ve değerler çocuklar için Türkçe'},
+ yz:{strateji:'yapay zeka gelecek ve toplum neden sonuç Türkçe',kultur:'yapay zeka etik ve sorumluluk değerler Türkçe'},
+ satranc:{strateji:'satranç strateji savaş taktiği tarih belgesel Türkçe',kultur:'Kanije müdafaası tarih belgesel Türkçe'},
+ akil:{strateji:'strateji ve zeka tarihten örnekler Türkçe',kultur:'mantık hikmet ve değerler hikaye Türkçe'},
+ kocluk:{strateji:'azim ve başarı tarihten ilham hikayeleri Türkçe',kultur:'sabır hedef ve değerler ibretlik hikaye Türkçe'}
+};
+function seansBaglantiVideo(tur){ var t=aktifSeans; var sid=t?t.trackId:'akil'; var m=BAGLANTI[sid]||BAGLANTI.akil; openYT(m[tur]||m.kultur); }
+function seansBaglanti(){ var c=seansPromptKonu(); if(!c) return;
+  var sistem='Sen disiplinler arası bir öğretmen asistanısın. Verilen ders ve konuyu, çocukların ilgisini çekecek biçimde BAŞKA bir alanla (tarih, strateji, günlük hayat, değerler, İslam/Osmanlı tarihi, doğa) NEDEN-SONUÇ ilişkisi kurarak bağla. Biçim: "🔗 Köprü:" tek cümle · "📖 Bağlantı:" 2-3 cümlelik somut, DOĞRU bir örnek/kısa hikâye · "🎬 İzlet/araştır:" 1 kısa video arama önerisi · "❓ Sınıfa sor:" düşündürücü tek soru. Türkçe, akılda kalıcı, yaşa uygun, abartısız ve tarihsel olarak doğru.';
+  aiSor('Disiplinler arası bağlantı',{sistem, on:'Ders: '+c.dersAd+'. Konu: "'+c.konu+'". Kademe: '+c.kademe+'.', baslik:'🔗 Bağlantı · '+c.konu}); }
 
 basla();
 fabYap({id:'sinif',ikon:'⏱️',etiket:'Sınıf Araçları',bayrak:'dk_sinif_gizli',tik:()=>sinifAracAc()});
