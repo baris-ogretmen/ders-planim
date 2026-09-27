@@ -3652,6 +3652,19 @@ async function dkDuzenleGonder(){
   }catch(e){ toast('Gönderilemedi — internet bağlantısını kontrol et','err',4000); }
 }
 
+function okulMerkeziAc(){
+  var k=document.getElementById('dkOkulMerkez'); if(k) k.remove();
+  k=document.createElement('div'); k.id='dkOkulMerkez'; k.style.cssText='position:fixed;inset:0;z-index:99998;background:rgba(2,6,23,.75);display:flex;align-items:center;justify-content:center;padding:14px';
+  k.onclick=function(e){ if(e.target===k) k.remove(); };
+  var b=function(ik,bas,alt,fn,renk){ return '<button onclick="document.getElementById(\'dkOkulMerkez\').remove();'+fn+'" style="width:100%;text-align:left;display:flex;gap:12px;align-items:center;background:'+renk+';color:#fff;border:0;border-radius:14px;padding:12px 14px;margin-bottom:8px;cursor:pointer"><span style="font-size:26px">'+ik+'</span><span><b style="font-size:15px">'+bas+'</b><br><span style="font-size:12px;opacity:.9">'+alt+'</span></span></button>'; };
+  k.innerHTML='<div style="background:#0f172a;color:#e2e8f0;border-radius:20px;max-width:440px;width:100%;padding:16px;border:1px solid #334155"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><b style="font-size:17px">🏫 Okula Gönder Merkezi</b><button onclick="document.getElementById(\'dkOkulMerkez\').remove()" style="background:#334155;color:#fff;border:0;border-radius:8px;padding:6px 10px;cursor:pointer">✕</button></div>'+
+    b('📌','Günün Özeti','Bugünkü derslerini sınıflara gönder (düzenleyebilirsin)','bugunkuDersAc()','linear-gradient(135deg,#f59e0b,#ea580c)')+
+    b('📰','Haftanın Özeti','Seçili sınıflara haftalık özet (düzenleyebilirsin)','ozetAc()','linear-gradient(135deg,#7c3aed,#db2777)')+
+    b('📋','Gönderdiklerim','Okul panosundaki özetlerini gör / sil','gonderilenlerAc()','linear-gradient(135deg,#0891b2,#059669)')+
+    '<div style="font-size:11.5px;color:#94a3b8;margin-top:4px">Gönderdiklerin Değişim Koleji sisteminde velinin ve öğrencinin ekranında <b>renkli kart</b> olarak görünür. Günlükler 7, haftalıklar 21 gün sonra kendiliğinden kalkar.</div></div>';
+  document.body.appendChild(k);
+}
+
 basla();
 fabYap({id:'sinif',ikon:'⏱️',etiket:'Sınıf Araçları',bayrak:'dk_sinif_gizli',tik:()=>sinifAracAc()});
 fabYap({id:'odak',ikon:'🖥️',etiket:'Sunum / Odak Modu',bayrak:'dk_odak_gizli',tik:()=>odakAc()});
@@ -3661,7 +3674,50 @@ fabYap({id:'dsaat',ikon:'🕐',etiket:'Ders Saati / 40 dk',bayrak:'dk_dsaat_gizl
 fabYap({id:'hizli',ikon:'🎲',etiket:'Hızlı Sınıf Araçları',bayrak:'dk_hizli_gizli',tik:()=>hizliAc()});
 fabYap({id:'oyunm',ikon:'🎮',etiket:'Oyun Merkezi (Hafıza)',bayrak:'dk_oyunm_gizli',tik:()=>hafizaAc()});
 fabYap({id:'ozet',ikon:'📰',etiket:'Haftalık Veli Özeti',bayrak:'dk_ozet_gizli',tik:()=>ozetAc()});
+fabYap({id:'okul',ikon:'🏫',etiket:'Okula Gönder Merkezi',bayrak:'dk_okul_gizli',tik:()=>okulMerkeziAc()});
+try{ if(!((window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true)) fabYap({id:'yukle',ikon:'📲',etiket:'Uygulama Olarak Yükle',bayrak:'dk_yukle_gizli',tik:()=>{ if(window.ZPWA_YUKLE) window.ZPWA_YUKLE(); }}); }catch(e){}
 renderNeredeKaldim();
+</script>
+<script>window.__ZPWA_AD="Ders Planı";window.__ZPWA_RENK="#7c3aed";
+/* ZİRVE · UYGULAMA OLARAK YÜKLE — ilk açılışta otomatik öneri (Android/PC: tek dokunuş, iPhone: adım adım) */
+(function(){try{
+  var AD=window.__ZPWA_AD||'Değişim Koleji', RENK=window.__ZPWA_RENK||'#4f46e5';
+  // 1) Manifest'i mutlak adreslerle yeniden kur (kurulabilirlik için)
+  try{
+    var baz=location.origin+location.pathname, kapsam=location.origin+location.pathname.replace(/[^\/]*$/,'');
+    var l=document.querySelector('link[rel="manifest"]'), m=null;
+    if(window.__ZPWA_MANIFEST){ m=window.__ZPWA_MANIFEST; }
+    else if(l && /^data:/.test(l.href)){ var b64=l.href.split(',')[1]||''; try{ m=JSON.parse(decodeURIComponent(escape(atob(b64)))); }catch(e){ try{ m=JSON.parse(atob(b64)); }catch(e2){} } }
+    if(m && location.protocol.indexOf('http')===0){ m.start_url=baz; m.scope=kapsam; m.id=baz; var u=URL.createObjectURL(new Blob([JSON.stringify(m)],{type:'application/manifest+json'})); if(l){ l.href=u; } else { l=document.createElement('link'); l.rel='manifest'; l.href=u; document.head.appendChild(l); } }
+  }catch(e){}
+  // 2) Aynı klasörde sw.js varsa servis çalışanını kaydet (yoksa sessizce geçer)
+  try{ if('serviceWorker' in navigator && location.protocol==='https:'){ fetch('sw.js',{method:'HEAD'}).then(function(r){ if(r.ok) navigator.serviceWorker.register('sw.js').catch(function(){}); }).catch(function(){}); } }catch(e){}
+  var kurulu = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone===true;
+  if(kurulu) return;
+  var ANAHTAR='zpwa_kapat_'+location.pathname;
+  function kapatildi(){ try{ var t=Number(localStorage.getItem(ANAHTAR)||0); return t && (Date.now()-t) < 5*864e5; }catch(e){ return false; } }
+  var ua=navigator.userAgent||'', ios=/iphone|ipad|ipod/i.test(ua) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+  var uygIci=/FBAN|FBAV|Instagram|WhatsApp|Line\//i.test(ua), safariDegil=ios && /CriOS|FxiOS|EdgiOS/i.test(ua);
+  var ertelenen=null, bant=null;
+  function bantGoster(html, butonlu){
+    if(kapatildi() || bant) return;
+    bant=document.createElement('div');
+    bant.style.cssText='position:fixed;left:10px;right:10px;bottom:12px;z-index:2147483200;background:linear-gradient(135deg,'+RENK+',#7c3aed);color:#fff;border-radius:18px;padding:12px 14px;box-shadow:0 12px 40px rgba(0,0,0,.35);font:600 14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;display:flex;gap:10px;align-items:center;max-width:560px;margin:0 auto';
+    bant.innerHTML='<div style="font-size:28px">📲</div><div style="flex:1;min-width:0">'+html+'</div>'+(butonlu?'<button id="zpwaKur" style="background:#fff;color:'+RENK+';border:0;border-radius:12px;padding:9px 12px;font-weight:900;cursor:pointer;white-space:nowrap">Yükle</button>':'')+'<button id="zpwaKapat" aria-label="Kapat" style="background:rgba(255,255,255,.2);color:#fff;border:0;border-radius:10px;width:30px;height:30px;cursor:pointer;font-size:16px">✕</button>';
+    document.body.appendChild(bant);
+    document.getElementById('zpwaKapat').onclick=function(){ try{ localStorage.setItem(ANAHTAR,String(Date.now())); }catch(e){} bant.remove(); bant=null; };
+    var k=document.getElementById('zpwaKur'); if(k) k.onclick=function(){ if(!ertelenen) return; ertelenen.prompt(); ertelenen.userChoice.then(function(c){ if(c&&c.outcome==='accepted'){ bant&&bant.remove(); bant=null; } ertelenen=null; }).catch(function(){}); };
+  }
+  window.addEventListener('beforeinstallprompt',function(e){ e.preventDefault(); ertelenen=e; setTimeout(function(){ bantGoster('<b>'+AD+'</b> uygulamasını telefonunuza yükleyin<br><span style="font-weight:500;font-size:12px;opacity:.9">Tek dokunuşla ana ekranda — uygulama gibi açılır.</span>', true); },1500); });
+  window.addEventListener('appinstalled',function(){ if(bant){ bant.remove(); bant=null; } });
+  window.ZPWA_YUKLE=function(){ try{ localStorage.removeItem(ANAHTAR); }catch(e){} if(ertelenen){ ertelenen.prompt(); return; } if(ios){ alert('📲 iPhone/iPad:\n\n1) Safari\'de alttaki Paylaş (⬆️) düğmesine dokunun\n2) "Ana Ekrana Ekle"yi seçin\n3) Sağ üstte "Ekle"ye dokunun'); } else { alert('📲 Tarayıcı menüsünden (⋮) "Uygulamayı yükle" veya "Ana ekrana ekle"yi seçin.'); } };
+  setTimeout(function(){
+    if(ertelenen || bant) return;
+    if(uygIci){ bantGoster('<b>Uygulama olarak yüklemek için</b><br><span style="font-weight:500;font-size:12px">Sağ üstteki ⋯ menüden <b>'+(ios?'Safari':'Chrome')+'\'de aç</b>\'ı seçin, sonra yükleyin.</span>', false); return; }
+    if(ios){ bantGoster(safariDegil?'<b>Uygulama olarak yüklemek için</b> bu sayfayı <b>Safari</b>\'de açın.':'<b>'+AD+'</b>\'ni ana ekrana ekleyin:<br><span style="font-weight:500;font-size:12px">Alttaki <b>Paylaş ⬆️</b> düğmesi → <b>"Ana Ekrana Ekle"</b> → <b>Ekle</b></span>', false); return; }
+    if(/android/i.test(ua)){ bantGoster('<b>'+AD+'</b>\'ni ana ekrana ekleyin:<br><span style="font-weight:500;font-size:12px">Sağ üstteki <b>⋮</b> menü → <b>"Uygulamayı yükle"</b> / <b>"Ana ekrana ekle"</b></span>', false); }
+  },4500);
+}catch(e){}})();
 </script>
 </body>
 </html>
