@@ -600,6 +600,10 @@ input[type=date].key{color-scheme:dark}
 <div class="modal-bg" id="hizliModal"><div class="modal" id="hizliModalIc" style="max-width:520px"></div></div>
 <div class="modal-bg" id="oyunMerkeziModal"><div class="modal" id="oyunMerkeziModalIc" style="max-width:600px"></div></div>
 <div class="modal-bg" id="ozetModal"><div class="modal" id="ozetModalIc" style="max-width:640px"></div></div>
+<div class="modal-bg" id="planKaynakModal"><div class="modal" id="planKaynakModalIc" style="max-width:720px"></div></div>
+<div class="modal-bg" id="defterModal"><div class="modal" id="defterModalIc" style="max-width:680px"></div></div>
+<div class="modal-bg" id="okulGonderModal"><div class="modal" id="okulGonderModalIc" style="max-width:720px"></div></div>
+<div class="modal-bg" id="gonderModal" style="z-index:9000"><div class="modal" id="gonderModalIc" style="max-width:600px"></div></div>
 
 <script>
 /* ============================================================
@@ -1320,7 +1324,6 @@ function aiAracCubugu(){
   var diller=['İngilizce','Almanca','Fransızca','Arapça','Rusça','Ukraynaca','Farsça','İspanyolca'];
   var opts=diller.map(function(d){return '<option>'+d+'</option>';}).join('');
   return '<div class="ai-arac">'+
-    '<button onclick="aiDuzenle(this)" style="background:#f59e0b;color:#fff;font-weight:900">✏️ Elle Düzenle</button>'+
     '<button onclick="aiWhatsapp()">🟢 WhatsApp</button>'+
     '<button onclick="aiKopyala()">📋 Kopyala</button>'+
     '<button onclick="aiPaylas()">📤 Paylaş</button>'+
@@ -1331,12 +1334,6 @@ function aiAracCubugu(){
   '</div>';
 }
 function sonAiDuz(){ return ZIRVE.duzMetin(sonAiHTML); }
-function aiDuzenle(btn){ try{ var ar=btn.closest('.ai-arac'); var el=ar&&ar.previousElementSibling; if(!el||!el.classList.contains('prose')){ el=ar&&ar.parentElement&&ar.parentElement.querySelector('.prose'); } if(!el) return;
-  if(el.isContentEditable){ el.contentEditable='false'; el.style.outline=''; btn.textContent='✏️ Elle Düzenle'; sonAiHTML='<div class="prose">'+el.innerHTML+'</div>'; toast('✅ Düzenleme kaydedildi — Kopyala/PDF/WhatsApp düzenlenmiş hali kullanır','ok',3000); return; }
-  el.contentEditable='true'; el.style.outline='3px dashed #f59e0b'; el.style.borderRadius='10px'; el.style.padding='6px'; el.focus(); btn.textContent='✅ Bitti (kaydet)';
-  el.oninput=function(){ sonAiHTML='<div class="prose">'+el.innerHTML+'</div>'; };
-  toast('✏️ Metne dokunup istediğin gibi düzelt; bitince “✅ Bitti”','info',3200);
-}catch(e){} }
 function aiKopyala(){ navigator.clipboard.writeText(sonAiDuz()).then(()=>toast('📋 Kopyalandı','ok')).catch(()=>toast('Kopyalanamadı','err')); }
 function aiPaylas(){ const t=sonAiDuz(); if(navigator.share){navigator.share({text:t}).catch(()=>{});}else{aiKopyala();} }
 function aiSesli(){ try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(sonAiDuz()); u.lang='tr-TR'; speechSynthesis.speak(u); toast('🔊 Okunuyor…','info'); }catch(e){toast('Sesli okuma desteklenmiyor','err');} }
@@ -1740,6 +1737,9 @@ function seansAc(tid,i){
       </div>
 ${i>0?gecenOzet(tid,i):''}
       <div class="blok"><div class="bh">🎯 Kazanım</div><div class="bt">${se.z}</div></div>
+      ${se.b?'<div class="blok"><div class="bh">🧭 Beceri (Maarif çerçevesi)</div><div class="bt">'+se.b+(se.ozel?' · <b>✏️ senin düzenlemen</b>':'')+'</div></div>':''}
+      <div class="blok" style="display:flex;gap:8px;flex-wrap:wrap"><button class="fbtn" onclick="haftaDuzenle('${tid}',${i})">✏️ Bu haftayı düzenle</button><button class="fbtn" onclick="maarifEslestir('${tid}',${i})">🤖 Maarif eşleştir</button><button class="fbtn" onclick="defterTekKopya(ST.gradeIdx,'${tid}',${i+1})">📒 Sınıf defterine kopyala</button><button class="fbtn" onclick="aiDersEkle('${tid}',${i})">🤖 AI ile ders ekle</button><button class="fbtn" onclick="modalKapat('haftaModal');okulGonderAc()">📤 Okula Gönder</button></div>
+      ${derseEkHTML(tid,i)}
       <div class="blok"><div class="bh">🧩 Etkinlik</div><div class="bt">${se.e}</div></div>
       ${se.m?`<div class="blok"><div class="bh">📦 Materyal</div><div class="bt">${se.m}</div></div>`:''}
       <div class="blok"><div class="bh">🧰 Bu Düzey İçin Araçlar</div><div class="arac-satir">${araclar||'<span style="color:var(--soluk)">Ekransız/materyal ağırlıklı.</span>'}</div></div>
@@ -2761,7 +2761,10 @@ function maceraAc(gi, tid){
 planAracCubugu=function(){
   $('#filtre').innerHTML='<span class="ara" style="margin-left:0"><input id="araInput" placeholder="Konu ara…"><span class="x" id="araX">✕</span></span>'+
     '<button class="fbtn" onclick="maceraAc(ST.gradeIdx)">🛤️ Maceralı Yol</button>'+
+    '<button class="fbtn" onclick="planKaynakAc()">📘 Plan: '+planKaynakEtiket()+'</button>'+
     '<button class="fbtn" onclick="ozetAc()">📰 Haftalık Veli Özeti</button>'+
+    '<button class="fbtn" onclick="defterAc()">📒 Sınıf Defteri</button>'+
+    '<button class="fbtn" onclick="okulGonderAc()">📤 Okula Gönder</button>'+
     '<button class="fbtn" onclick="haritaAc(ST.gradeIdx)">🧠 Zihin Haritası</button>'+
     '<button class="fbtn" onclick="yilPdf()">🗂️ Tüm Yıl → PDF</button>'+
     '<button class="fbtn" onclick="ozetPdf()">📈 Yıl Sonu Özeti</button>'+
@@ -2864,9 +2867,7 @@ function bugunkuDersAc(){
   if(g<0){ body='<div style="padding:18px;color:var(--soluk);text-align:center">Bugün hafta sonu 🎉<br>Program Pzt–Cum içindir.</div>'; }
   else if(!list.length){ body='<div style="padding:18px;color:var(--soluk);text-align:center">Bugün için programda ders yok.<br>🗓️ <b>Program</b> sekmesinden bugüne ders ekleyebilirsin.</div>'; }
   else { body=list.map(function(x){ var gname=(SINIF_LISTE[x.grade].g==='Ana'?'Anaokulu':SINIF_LISTE[x.grade].g+'. Sınıf'); var se=SEANS[x.track][x.idx]; return '<div class="bugun-satir" style="--dr:'+x.tr.dr+'"><div class="bs-ic"><div class="bs-saat">'+x.p+'. DERS · '+gname+'</div><b>'+x.tr.ik+' '+x.tr.ad+'</b><div class="bs-konu">Hafta '+(x.idx+1)+': '+se.k+'</div></div><button class="btn y" onclick="bugunBasla(\''+x.track+'\','+x.grade+','+x.idx+')">🚀 Başla</button></div>'; }).join(''); }
-  window._DK_BUGUN=list;
-  var gonderHTML = list.length ? '<div style="margin-top:12px;background:linear-gradient(135deg,rgba(16,185,129,.15),rgba(34,211,238,.12));border:1px solid rgba(52,211,153,.4);border-radius:14px;padding:12px"><div style="font-weight:900;margin-bottom:6px">🚀 Günün Özetini Okula Gönder</div><div style="font-size:12px;color:var(--soluk);margin-bottom:6px">Bugünkü dersler her sınıfın velisine/öğrencisine renkli kart olarak gider (7 gün sonra kendiliğinden kalkar).</div><textarea id="gunNot" class="key" style="min-height:60px" placeholder="İsteğe bağlı: bugün sınıfta neler yaptık? (tüm sınıflara eklenir)"></textarea><div class="btnsira" style="margin-top:8px"><button class="btn y" onclick="gunOkulaGonder()" style="font-weight:900">🚀 Günün Özetini Gönder</button><button class="btn g" onclick="dkDuzenleAc(gunParcalar(),7,\'📌 Günün Özeti\')" style="background:#f59e0b;color:#fff;font-weight:900">✏️ Düzenleyip Gönder</button><button class="btn g" onclick="gonderilenlerAc()">📋 Gönderdiklerim / Sil</button></div></div>' : '';
-  $('#bugunModalIc').innerHTML='<div class="mbas" style="--dr:#f59e0b;--dr2:#f97316"><div class="ik">📌</div><div><h3>Bugünkü Dersler</h3><div class="alt">'+gunAd+(hn?' · Takvim: '+hn+'. hafta':'')+'</div></div><div class="kapat" onclick="modalKapat(\'bugunModal\')">✕</div></div><div class="mgov">'+body+gonderHTML+'</div>';
+  $('#bugunModalIc').innerHTML='<div class="mbas" style="--dr:#f59e0b;--dr2:#f97316"><div class="ik">📌</div><div><h3>Bugünkü Dersler</h3><div class="alt">'+gunAd+(hn?' · Takvim: '+hn+'. hafta':'')+'</div></div><div class="kapat" onclick="modalKapat(\'bugunModal\')">✕</div></div><div class="mgov">'+body+'</div>';
   modalAc('bugunModal');
 }
 function bugunBasla(tid,gi,idx){ ST.gradeIdx=gi; if(typeof stKaydet==='function')stKaydet(); modalKapat('bugunModal'); if(ST.view!=='plan') viewDegis('plan'); seansAc(tid,idx); }
@@ -3519,9 +3520,9 @@ function ozetCiz(){
     '<div class="ilerseridi"><span class="et">Hafta:</span>'+wsel+'<span style="font-size:11.5px;color:var(--soluk)">(tahmini: '+ozHaftaTahmin()+'. hafta)</span></div>'+
     '<div class="ilerseridi" style="margin-top:6px"><span class="et">Sınıf:</span>'+gch+'</div>'+
     '<div class="ilerseridi" style="margin-top:6px"><span class="et">Ders:</span>'+tch+'</div>'+
-    '<div class="btnsira" style="margin:12px 0"><button class="btn y" onclick="ozPdf()">📄 Renkli PDF</button><button class="btn g" onclick="ozPng()">🖼️ Görsel (PNG)</button><button class="btn y" onclick="ozOkulaGonder()" style="font-weight:900">🚀 Okula Gönder (seçili sınıflara)</button><button class="btn g" onclick="dkDuzenleAc(ozParcalar(),21,\'📰 Haftanın Özeti\')" style="background:#f59e0b;color:#fff;font-weight:900">✏️ Düzenleyip Gönder</button><button class="btn g" onclick="gonderilenlerAc()">📋 Gönderdiklerim / Sil</button><button class="btn p" onclick="ozKopya()">📋 Kopyala</button><button class="btn g" onclick="ozWa()">🟢 WhatsApp</button></div>'+
+    '<div class="btnsira" style="margin:12px 0"><button class="btn y" onclick="ozPdf()">📄 Renkli PDF</button><button class="btn g" onclick="ozPng()">🖼️ Görsel (PNG)</button><button class="btn p" onclick="ozKopya()">📋 Kopyala (ekosisteme yapıştır)</button><button class="btn g" onclick="ozWa()">🟢 WhatsApp</button></div>'+
     '<div id="ozetSaha" style="background:#f1f5f9;border-radius:16px;padding:12px">'+(kartlar||'<div style="color:#64748b;padding:14px">Bu seçim için içerik yok.</div>')+'</div>'+
-    '<div style="font-size:11.5px;color:var(--soluk);margin-top:8px">💡 <b>🚀 Okula Gönder</b>: seçili her sınıfın özeti Değişim Koleji sisteminde o sınıfın <b>Sınıf Panosu</b>’na düşer — kayıtlı öğrenci ve veliler anında görür. Kopyala-yapıştır gerekmez.</div></div>'; }
+    '<div style="font-size:11.5px;color:var(--soluk);margin-top:8px">💡 “Kopyala” metnini Değişim Koleji ekosisteminde Öğretmen Merkezi → <b>Duyuru</b> alanına yapıştırabilirsin.</div></div>'; }
 function ozKopya(){ var t=ozMetin(); try{ navigator.clipboard.writeText(t).then(function(){toast('📋 Özet kopyalandı — ekosistemde Duyuru’ya yapıştır','ok',3200);}); }catch(e){ toast('Kopyalanamadı','err'); } }
 function ozWa(){ window.open('https://wa.me/?text='+encodeURIComponent(ozMetin()),'_blank','noopener'); }
 function ozPdf(){ var ov=document.getElementById('ozetPrint'); if(!ov){ ov=document.createElement('div'); ov.id='ozetPrint'; document.body.appendChild(ov); }
@@ -3529,141 +3530,561 @@ function ozPdf(){ var ov=document.getElementById('ozetPrint'); if(!ov){ ov=docum
   document.body.classList.add('yazdir-ozet'); window.print(); setTimeout(function(){document.body.classList.remove('yazdir-ozet');},700); }
 async function ozPng(){ try{ toast('🖼️ Görsel hazırlanıyor…','info'); await scriptYukle('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js'); var el=document.getElementById('ozetSaha'); var cv=await html2canvas(el,{backgroundColor:'#f1f5f9',scale:2}); cv.toBlob(function(b){ var a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='haftalik-ozet-'+OZ.hafta+'-hafta.png'; a.click(); toast('📥 Görsel indirildi','ok'); }); }catch(e){ toast('Görsel oluşturulamadı (internet gerekli)','err'); } }
 
-/* ============================================================
-   EK: 🚀 OKULA GÖNDER — Değişim Koleji MEGA (Firebase) Sınıf Panosu'na doğrudan yazar
-   ============================================================ */
-var DK_OKUL={cfg:{apiKey:"AIzaSyAqeO-yQyQPnLsOqKmSNvVH23WPvneIjaU",authDomain:"shaped-totem-481514-c5.firebaseapp.com",projectId:"shaped-totem-481514-c5",storageBucket:"shaped-totem-481514-c5.firebasestorage.app",messagingSenderId:"519295049418",appId:"1:519295049418:web:7d04e18c4ea36bc088de33"}, fs:null, sdk:null};
-async function dkOkulBaglan(){
-  if(DK_OKUL.fs) return DK_OKUL;
-  var V='https://www.gstatic.com/firebasejs/11.0.1/';
-  var A=await import(V+'firebase-app.js'), U=await import(V+'firebase-auth.js'), F=await import(V+'firebase-firestore.js');
-  var app; try{ app=A.getApp('dkokul'); }catch(e){ app=A.initializeApp(DK_OKUL.cfg,'dkokul'); }
-  try{ await U.signInAnonymously(U.getAuth(app)); }catch(e){}
-  DK_OKUL.fs=F.getFirestore(app); DK_OKUL.sdk=F; return DK_OKUL;
-}
-function ozParcalar(){ var h=OZ.hafta, out=[];
-  OZ.grades.forEach(function(gi){ var satir=[]; ozTrackleri(gi).forEach(function(tr){ var se=SEANS[tr.id][h-1]; if(!se) return;
-    satir.push(tr.ik+' '+tr.ad+' · '+h+'. Hafta\n📚 Bu hafta: '+se.k+'\n🎯 Kazanım: '+se.z+'\n🏠 Evde sorun: '+ozSoru(se.k)); });
-    var kd=ozTrackleri(gi).map(function(tr){ var se=SEANS[tr.id][h-1]; if(!se) return null; return {ik:tr.ik,ad:tr.ad,dr:tr.dr,dr2:tr.dr2,k:se.k,z:se.z,soru:ozSoru(se.k),durum:ozDurum(gi,tr.id,h-1)}; }).filter(Boolean);
-    if(satir.length) out.push({sinif:ozGname(gi), metin:satir.join('\n\n')+'\n\n— Barış Öğretmen', kart:{tur:'hafta',baslik:h+'. Hafta Özeti',sinif:ozGname(gi),hafta:h,tarih:Date.now(),dersler:kd,not:''}}); });
-  return out; }
-async function ozOkulaGonder(){
-  var p=ozParcalar(); if(!p.length){ toast('Gönderilecek içerik yok','err'); return; }
-  if(!confirm('🚀 '+OZ.hafta+'. hafta özeti şu sınıfların panosuna gönderilecek:\n\n'+p.map(function(x){return '• '+x.sinif;}).join('\n')+'\n\nOnaylıyor musun?')) return;
-  try{
-    toast('🚀 Okula gönderiliyor…','info');
-    var o=await dkOkulBaglan(), F=o.sdk, ref=F.doc(o.fs,'maas_config','k12_pano');
-    var sn=await F.getDoc(ref); var liste=(sn.exists()&&Array.isArray((sn.data()||{}).liste))?sn.data().liste:[];
-    var ts=Date.now(), yeni=[], atla=0;
-    p.forEach(function(x,i){ if(liste.some(function(q){return q.sinif===x.sinif && q.metin===x.metin;})){ atla++; return; }
-      yeni.push({id:ts.toString(36)+Math.random().toString(36).slice(2,7), sinif:x.sinif, metin:x.metin, ogretmen:'Barış Öğretmen', ts:ts-i, kaynak:'ozet', kart:x.kart||null, bitis:ts+21*864e5}); });
-    if(!yeni.length){ toast('ℹ️ Bu özet zaten gönderilmiş (tekrar gönderilmedi)','info',3500); return; }
-    await F.setDoc(ref,{liste:yeni.concat(liste)},{merge:true});
-    toast('✅ '+yeni.length+' sınıfa gönderildi'+(atla?(' ('+atla+' zaten vardı)'):'')+' — veliler Sınıf Panosu’nda görüyor 🎉','ok',4200);
-  }catch(e){ toast('Gönderilemedi — internet bağlantısını kontrol et','err',4000); }
-}
+var MAARIF_HAM={
+ana:{
+robokod:`Tanışalım: Robotlar Nerede?|Çevresindeki makineleri ve robotları fark eder.|Robot resmi avı;"Robot ol" dans oyunu;Kutudan robot boyama|Merak · İletişim
+Önce–Sonra Sıralama|Günlük olayları doğru sıraya koyar.|Diş fırçalama kartları;Sandviç sıralama oyunu;Kendi sıra şeridini yap|Sıralama · Problem çözme
+Yönler: İleri–Geri–Sağ–Sol|Temel yön kavramlarını kullanır.|Yön şarkısı;Yere çizili yolda yürüme;Arkadaşını yönlendir|Uzamsal düşünme
+Oklarla Komut Verelim|Ok kartlarıyla basit bir yolu tarif eder.|Ok kartı oyunu;Halı labirenti;Hazine avı yolu|Algoritmik düşünme
+Renk ve Şekil Örüntüleri|Basit örüntüyü sürdürür ve oluşturur.|Boncuk dizme;Renk treni oyunu;Kendi örüntünü yap|Örüntü tanıma
+Tekrar Eden Hareketler|Tekrar eden hareketleri fark eder.|Alkış–zıpla dansı;Şarkıdaki tekrarlar;Tekrar kolyesi|Döngü sezgisi
+Eğer… O Zaman|Basit neden-sonuç kurallarını uygular.|Kırmızı ışıkta dur oyunu;Havaya göre kıyafet;Kural kartları|Neden-sonuç
+Hata Bul, Düzelt!|Yanlış adımı bulup düzeltir.|Karışık yol kartları;Robot şaşırdı oyunu;Düzelt ve dene|Deneme-yanılma
+Sanal Robotla Tanışma|Tahtadaki sanal robota yön komutu verir.|Robot Lab: Hedefe Git;Sırayla komut ver;Takım görevi|Dijital okuryazarlık
+Robotumu Tasarlıyorum|Hayalindeki robotu tasarlayıp anlatır.|Atık malzemeden robot;Robotuna isim ver;Robotunu tanıt|Yaratıcılık
+Birlikte Kodlayalım|Arkadaşlarıyla bir görevi birlikte tamamlar.|Takım labirenti;Sırayla kodlama;Grup yolu çizimi|İş birliği
+Küçük Mucitler Sergisi|Yaptıklarını paylaşır, arkadaşını dinler.|Sergi hazırlığı;Robot geçidi;Aile ile paylaşım|Özgüven · Paylaşım`,
+satranc:`Tanışalım: Satranç Masalı|Satranç tahtası ve taşlarla tanışır.|Satranç masalı;Taşlara dokun–tanı;Siyah-beyaz kareler|Merak
+Tahta: Açık ve Koyu Kareler|Tahtadaki renk düzenini fark eder.|Dama boyama;Kare atlama oyunu;Renk bulmacası|Görsel algı
+Piyon Asker|Piyonun ileri gidişini canlandırır.|Piyon yürüyüşü;Piyon yarışı;Piyon şarkısı|Kural takibi
+Kale Kule|Kalenin düz gidişini gösterir.|Düz yol oyunu;Kale ile hedefe git;Kule yapımı|Yön kavramı
+Fil Çapraz Gider|Filin çapraz gidişini gösterir.|Çapraz yürüyüş;Aynı renk kuralı;Fil avı|Uzamsal düşünme
+At Zıplar|Atın L hareketini oyunla dener.|L yürüyüşü;Atlı zıplama;At ile hazine|Uzamsal düşünme
+Vezir ve Şah|Vezir ve şahın özelliklerini söyler.|Saray masalı;Şahı koru oyunu;Vezirin gücü|Koruma · Sorumluluk
+Taş Yeme Oyunları|Taşların yeme kuralını uygular.|Mini oyunlar;Piyon savaşı;Yem avı|Strateji
+Şahı Koru|Şahın tehlikede olduğunu fark eder.|Şah çekme oyunu;Kaç–Koru;Tehlike avı|Dikkat
+Mini Satranç Oyunları|Az taşla oyunlar oynar.|Piyon oyunu;Kale–piyon oyunu;Takım oyunu|Sabır
+Kazanmak ve Kaybetmek|Oyun sonunda duygularını yönetir.|Tokalaşma;Tebrik etme;Duygu kartları|Sporcu ahlakı
+Minik Satranç Şenliği|Öğrendiklerini şenlikte gösterir.|Taş geçidi;Mini turnuva;Madalya töreni|Özgüven`,
+yz:`Tanışalım: Akıllı Makineler|Konuşan ve tanıyan makineleri fark eder.|Evdeki akıllı eşyalar;Makine mi insan mı?;Resim avı|Merak
+Görerek Tanıma|Nesneleri özelliklerine göre gruplar.|Renk–şekil gruplama;Meyve sepeti;Tahmin et|Sınıflama
+Sesle Tanıma|Sesleri dinleyip ayırt eder.|Hayvan sesleri;Kimin sesi?;Ses tahmini|Dikkat
+Örnekle Öğrenme|Örneklere bakarak tahmin yapar.|Kedi mi köpek mi kartları;Çok örnek–az örnek;Tahmin oyunu|Örüntü tanıma
+Canlı mı Makine mi?|Canlı ile makine arasındaki farkı söyler.|Karşılaştırma kartları;Robot hayvan tasarımı;Anlatma|Karşılaştırma
+Duygu Kartları|Yüz ifadelerinden duyguyu tanır.|Duygu kartları;Ayna oyunu;Emoji eşleştirme|Sosyal-duygusal
+Çizimi Tahmin Et|Makinenin çizim tahminini gözlemler.|Quick Draw izleme;Çiz–tahmin et;Grup oyunu|Dijital okuryazarlık
+Konuşan Asistanlar|Asistanlara nazik ve güvenli soru sorar.|Öğretmenle asistan denemesi;Nazik dil;Güvenli kullanım|Sorumluluk
+Makine de Yanılır|Makinenin de yanılabileceğini fark eder.|Yanılan tahminler;Birlikte düzelt;Sohbet|Eleştirel düşünme
+Yardımcı Robotumu Tasarla|Yardımcı bir robot hayal edip anlatır.|Robot çizimi;Ne işe yarar?;Anlatma|Yaratıcılık
+Güvenli Teknoloji|Ekran süresi ve güvenlik kurallarını bilir.|Kural şarkısı;Doğru–yanlış;Aile ile kural|Sorumluluk
+Minik Keşifçiler Sergisi|Öğrendiklerini paylaşır.|Sergi;Tasarım geçidi;Aile paylaşımı|Özgüven`,
+akil:`Tanışalım: Oyunla Düşünelim|Grup oyunlarında kurallara uyar.|Tanışma oyunu;Kural kartları;Isınma bulmacası|Kural takibi
+Eşleştirme|Aynı ve benzer olanı eşleştirir.|Gölge eşleştirme;Çiftini bul;Hafıza kartı|Görsel algı
+Farkı Bul|İki resim arasındaki farkları bulur.|Farkı bul;Eksik parça;Dikkat oyunu|Dikkat
+Renk ve Şekil Örüntüleri|Örüntüyü sürdürür.|Boncuk dizme;Renk treni;Örüntü kartı|Örüntü tanıma
+Hafıza Oyunları|Gördüklerini hatırlar.|Kim kayıp?;Tepsi oyunu;Kart hafıza|Hafıza
+Yapboz ve Parça–Bütün|Parçaları birleştirip bütünü oluşturur.|Yapboz;Kes–birleştir;Tangram tanışma|Uzamsal düşünme
+Labirent|Basit labirentte yol bulur.|Kâğıt labirent;Yer labirenti;Okla yol|Planlama
+Sayı ve Miktar Oyunları|Miktarları karşılaştırır ve sayar.|Zar oyunu;Çok–az;Sayı avı|Matematiksel düşünme
+Büyükten Küçüğe Sıralama|Nesneleri boyuta göre sıralar.|İç içe kaplar;Sıralama kartları;Kule yapma|Sıralama
+Mini Strateji Oyunları|Sıra beklemeyi ve basit stratejiyi uygular.|Üç taş;Mini nim;Takım oyunu|Strateji · Sabır
+Takım Bulmacaları|Arkadaşlarıyla birlikte bulmaca çözer.|Takım yapbozu;Birlikte labirent;Ödül|İş birliği
+Minik Dahiler Şenliği|Öğrendiği oyunları gösterir.|Oyun istasyonları;Aile oyunu;Madalya|Özgüven`},
+'12':{
+robokod:`Tanışalım: Kodlama Nedir?|Kodlamanın günlük hayattaki yerini fark eder.|Evdeki makineler sohbeti;Robot öğretmen oyunu;Atölye kural panosu|Merak
+Algoritma: Adım Adım|Bir işi adımlara böler.|Sandviç algoritması;Adım kartları;Kendi algoritmanı çiz|Algoritmik düşünme
+Yön ve Konum|Izgarada yön ve konum belirtir.|Kareli kâğıt yolları;Satır–sütun oyunu;Hazine haritası|Uzamsal düşünme
+Ekransız Kodlama Kartları|Ok komutlarıyla bir yolu programlar.|Kart dizisi;Arkadaşını kodla;Labirent görevleri|Problem çözme
+Örüntü ve Tekrar|Tekrarı fark edip kısaltır.|Desen boyama;Tekrarı say;x3 gösterimi|Örüntü tanıma
+Döngülerle Kısaltma|Tekrar eden komutları döngüyle yazar.|Dans döngüsü;Kare çizme;Robot Lab: Kare Çiz|Döngü
+Hata Ayıklama|Programdaki hatayı bulup düzeltir.|Bozuk yol kartları;Böcek avı;Düzelt–dene|Deneme-yanılma
+ScratchJr ile Tanışma|Bloklarla karakteri hareket ettirir.|ScratchJr turu;Karakteri yürüt;Ses ekle|Dijital okuryazarlık
+Olaylar: Dokun ve Başla|Bir olayla komut başlatır.|Dokununca konuşan karakter;Başla bayrağı;Mini sahne|Neden-sonuç
+Hikâye Kodlayalım|Kısa bir hikâyeyi bloklarla canlandırır.|Hikâye kurgula;Sahne ve karakter;Canlandır|Yaratıcılık
+Sanal Robot Görevleri|Hedefe ulaşan komut dizisi kurar.|Robot Lab görevleri;Engel aş;Takım yarışı|İş birliği
+Mini Proje ve Sergi|Ürününü tanıtır, arkadaşına geri bildirim verir.|Proje seçimi;Yapım;Sergi|Özgüven`,
+satranc:`Tanışalım: Satranç Tahtası|Tahtayı doğru kurar, kareleri tanır.|Tahta kurma;Satır–sütun;Kare bulma|Uzamsal düşünme
+Piyon|Piyon hareketini ve yemesini uygular.|Piyon yarışı;Çapraz yeme;Piyon savaşı|Kural takibi
+Kale ve Fil|Kale ve filin hareketlerini uygular.|Kale labirenti;Fil yolu;Taş avı|Uzamsal düşünme
+At|Atın L hareketini uygular.|At turu;Hedef kare;At bulmacası|Problem çözme
+Vezir ve Şah|Vezir ve şah hareketlerini uygular.|Vezir avı;Şah yürüyüşü;Mini oyun|Kural takibi
+Taşların Değeri|Taşların puan değerlerini karşılaştırır.|Değer kartları;Takas oyunu;Puan hesabı|Matematiksel düşünme
+Şah Çekme ve Kurtulma|Şah çekmeyi ve kurtulma yollarını bilir.|Kaç–Kapat–Ye;Bulmacalar;Eşli oyun|Problem çözme
+Mat Nedir?|Basit mat durumlarını tanır.|Mat mı değil mi?;Tek hamlede mat;Bulmaca|Analitik düşünme
+Rok ve Terfi|Özel kuralları uygular.|Rok uygulaması;Piyon terfisi;Mini oyun|Kural takibi
+Pat ve Beraberlik|Pat durumunu ayırt eder.|Pat bulmacası;Sayma oyunu;Sohbet|Eleştirel düşünme
+Tam Oyun|Kurallara uyarak tam oyun oynar.|Tam oyun;Kare adları;Tokalaşma|Sporcu ahlakı
+Sınıf Turnuvası|Turnuvada kurallara uyar, sonucu kabullenir.|Turnuva;Madalya;Değerlendirme|Özgüven`,
+yz:`Tanışalım: Yapay Zekâ Nedir?|Yapay zekâyı basitçe tanımlar.|Bu YZ mi? oyunu;Örnek avı;Sohbet|Merak
+Günlük Hayatta YZ|Çevresindeki YZ örneklerini bulur.|Evde ve okulda YZ;Resimli liste;Paylaşım|Farkındalık
+Veri Nedir?|Veriyi toplar ve gruplar.|Sınıf anketi;Resimli grafik;Yorumlama|Veri okuryazarlığı
+Örüntü Bulma|Verideki örüntüyü fark eder.|Şekil örüntüleri;Tahmin;Oyun|Örüntü tanıma
+Sınıflama|Nesneleri etiketleyip sınıflar.|Etiketleme oyunu;Sepet ayırma;Kontrol et|Sınıflama
+Makine Nasıl Öğrenir?|Örnekle öğrenmeyi canlandırır.|Öğretmen–makine oyunu;Çok örnek;Test|Model kavramı
+Teachable Machine ile Tanışma|Öğretmen eşliğinde resimle basit model eğitir.|Model eğit;Test et;Sohbet|Dijital okuryazarlık
+Çizimi Tanıyan Makine|Quick Draw ile tahmini gözlemler.|Quick Draw;AutoDraw;Karşılaştır|Deneme
+YZ Yanılabilir|Makinenin hata yapabileceğini açıklar.|Yanılan örnekler;Neden?;Düzelt|Eleştirel düşünme
+Güvenli ve Nazik Kullanım|YZ'yi güvenli kullanma kurallarını bilir.|Kural panosu;Senaryolar;Aile ile kural|Sorumluluk
+YZ ile Yaratıcılık|YZ destekli çizim ve hikâye dener.|Hikâye tamamla;Resim fikri;Paylaş|Yaratıcılık
+Proje ve Sergi|Basit bir YZ fikrini sunar.|Fikir;Poster;Sergi|Sunum`,
+akil:`Tanışalım: Akıl Oyunları|Oyun kurallarını anlar ve uygular.|Tanışma oyunu;Kural kartları;Isınma|Kural takibi
+Görsel Dikkat|Dikkatini sürdürerek ayrıntıyı fark eder.|Farkı bul;Gizli nesne;Süreli oyun|Dikkat
+Hafıza Oyunları|Görsel ve işitsel hafızasını kullanır.|Kart hafıza;Sıra hatırla;Hafıza zinciri|Hafıza
+Örüntü ve Sıralama|Şekil ve sayı örüntülerini tamamlar.|Örüntü kartı;Eksik şekil;Kendi örüntün|Örüntü tanıma
+Tangram|Parçalarla şekil oluşturur.|Hayvan şekilleri;Serbest tasarım;Eşli yarış|Uzamsal düşünme
+Labirent ve Yol|Planlayarak labirent çözer.|Kâğıt labirent;Zaman yarışı;Kendi labirentin|Planlama
+Sayı Bulmacaları|Basit sayı bulmacaları çözer.|Sayı zinciri;4x4 mini sudoku;Toplam bulmacası|Matematiksel düşünme
+Mantık Soruları|Basit mantık sorularını çözüp açıklar.|Kim nerede?;Doğru–yanlış;Sohbet|Mantıksal düşünme
+Üç Taş ve Nim|Kazanma stratejisi arar.|Üç taş;Nim;Eşli turnuva|Strateji
+Simetri ve Ayna|Simetriyi tamamlar.|Ayna çizimi;Simetri tamamla;Kelebek|Uzamsal düşünme
+Takım Bulmaca Yarışı|İş birliğiyle bulmaca çözer.|İstasyonlar;Takım puanı;Ödül|İş birliği
+Akıl Oyunları Turnuvası|Öğrendiği oyunlarda yarışır.|Turnuva;Final;Madalya|Sporcu ahlakı`},
+'34':{
+robokod:`Tanışalım: Bilgisayarla Düşünme|Problem çözme adımlarını açıklar.|Günlük problemi parçala;Algoritma kartları;Atölye kuralları|Problem çözme
+Algoritma ve Akış Şeması|Basit akış şeması çizer.|Sabah rutini şeması;Başla–Bitir sembolleri;Eşli şema|Algoritmik düşünme
+Scratch'e Giriş|Scratch arayüzünü tanır, kukla hareket ettirir.|Arayüz turu;Kuklayı yürüt;Dekor değiştir|Dijital okuryazarlık
+Olaylar ve Sıralı Komutlar|Olay bloklarıyla sahne kurar.|Tıkla–konuş;Tuşla hareket;Diyalog sahnesi|Neden-sonuç
+Döngüler|Tekrarı döngü bloklarıyla kurar.|Çokgen çizimi;Sürekli hareket;Animasyon|Döngü
+Koşullar: Eğer–İse|Koşula göre karar veren program yazar.|Kenara değince dön;Renge dokununca;Mini labirent|Karar verme
+Değişkenler ve Puan|Değişkenle skor tutar.|Skor değişkeni;Toplama oyunu;Süre sayacı|Veri kavramı
+Oyun Tasarımı|Basit bir oyunu planlayıp kodlar.|Oyun fikri;Kodlama;Test et|Tasarım
+Hata Ayıklama Ustalığı|Hataları sistemli biçimde bulur.|Hata avı;Eşli kontrol;Hata listesi|Eleştirel düşünme
+Robotik: Sensör–Motor–Kontrol|Robotun temel parçalarını açıklar.|Robot ol oyunu;Girdi–çıktı kartları;Sanal robot|Sistem düşüncesi
+Sanal Robot Görevleri|Döngü ve koşullu robot görevleri çözer.|Robot Lab: Engelleri Aş;Zikzak Yol;Takım görevi|Problem çözme
+Yıl Sonu Proje Sergisi|Projesini sunar, gelişimini değerlendirir.|Proje planı;Yapım;Sergi ve sertifika|Özgüven · Sunum`,
+satranc:`Tanışalım: Satrancın Tarihi|Satrancın tarihini ve kurallarını hatırlar.|Tarih hikâyesi;Tahta kurma;Kural tekrarı|Kültürel bilgi
+Notasyon|Hamleleri notasyonla yazar ve okur.|Kare adları;Hamle yazma;Oyun kaydı|Okuryazarlık
+Taş Değerleri ve Takas|Doğru takas kararı verir.|Takas bulmacası;Puan hesabı;Oyun|Karar verme
+Mat Kalıpları I|Vezir ve kale ile mat kurar.|Merdiven matı;Bulmaca;Eşli çalışma|Analitik düşünme
+Mat Kalıpları II|Şah ve vezir ile mat eder.|Teknik çalışma;Süreli deneme;Yarış|Planlama
+Açılış İlkeleri|Merkez ve gelişim ilkesini uygular.|İyi–kötü açılış;Çoban matını önleme;Oyun|Stratejik düşünme
+Taktik: Çatal|Çatal desenini bulur.|Çatal bulmacaları;At çatalı;Oyun|Örüntü tanıma
+Taktik: Şiş ve Bağlama|Şiş ve bağlamayı kullanır.|Bulmaca istasyonu;Eşli çözüm;Oyun|Problem çözme
+Savunma|Tehdidi fark edip savunur.|Tehdit avı;Savunma bulmacası;Oyun|Dikkat
+Oyun Sonu Temelleri|Temel piyon oyun sonlarını bilir.|Kare kuralı;Geçer piyon;Uygulama|Planlama
+Kendi Oyununu Analiz Et|Hatalarından öğrenir.|Oyun kaydı;Hata defteri;Eşli analiz|Öz değerlendirme
+Sınıf Ligi ve Final|Turnuvada stratejik oynar.|Lig maçları;Final;Ödül|Sporcu ahlakı`,
+yz:`Tanışalım: Yapay Zekâ Nedir?|YZ'yi tanımlar, insan zekâsıyla karşılaştırır.|Bu YZ mi?;Karşılaştırma;Tartışma|Eleştirel düşünme
+Veri Toplama ve Grafik|Veri toplayıp grafikle gösterir.|Sınıf anketi;Sütun grafiği;Yorum|Veri okuryazarlığı
+Örüntü ve Tahmin|Veriden tahmin yapar.|Hava durumu tahmini;Örüntü kartları;Tartışma|Analitik düşünme
+Sınıflandırma ve Etiket|Etiketli veriyle sınıflama yapar.|Etiketleme;Karar ağacı;Oyun|Sınıflama
+Görüntü Tanıma Modeli|Teachable Machine ile görüntü modeli eğitir.|Veri topla;Eğit;Test et|Model kavramı
+Ses Tanıma Modeli|Ses modeli eğitip test eder.|Ses örnekleri;Eğit;Komutla kontrol|Deneme
+Modeli İyileştirme|Daha çok ve çeşitli veriyle modeli iyileştirir.|Hatalı tahminler;Veri ekle;Karşılaştır|Deneme-yanılma
+Makine Öğrenmesi ve Scratch|Modeli bir oyuna bağlar (ML4Kids).|Proje seçimi;Model;Oyun|Algoritmik düşünme
+Üretici YZ ile Tanışma|Öğretmen eşliğinde metin ve görsel üretimini dener.|Görsel üret;Metin üret;Karşılaştır|Dijital okuryazarlık
+YZ ve Etik|Önyargı, gizlilik ve telif kavramlarını tartışır.|Vaka tartışması;Kurallar;Poster|Etik · Sorumluluk
+YZ Projesi|Bir sorunu YZ ile çözen fikir geliştirir.|Problem;Model;Demo|Problem çözme
+Proje Sunumu|YZ projesini sunar.|Sunum;Sergi;Değerlendirme|Sunum`,
+akil:`Tanışalım: Zekâ Oyunları|Oyun türlerini ve kurallarını tanır.|Oyun istasyonları;Kurallar;Isınma|Kural takibi
+Dikkat ve Hız|Dikkat ve algı hızını geliştirir.|SET oyunu;Farkı bul;Süreli görev|Dikkat
+Hafıza Teknikleri|Hafıza stratejisi kullanır.|Hikâye zinciri;Kart hafıza;Tekrar|Hafıza
+Sayısal Örüntüler|Sayı dizilerinin kuralını bulur.|Eksik sayı;Kural bul;Kendi dizini yaz|Örüntü tanıma
+Sudoku|4x4 ve 6x6 sudoku çözer.|Mini sudoku;Strateji;Yarış|Mantıksal düşünme
+KenKen ve İşlem Bulmacaları|İşlem ve mantığı birleştirir.|KenKen;İşlem bulmacası;Kendi bulmacan|Matematiksel düşünme
+Tangram ve Pentomino|Parçalarla karmaşık şekiller kurar.|Tangram;Pentomino;Tasarım|Uzamsal düşünme
+Mantık Izgaraları|Kim–nerede ızgarası çözer.|Mantık ızgarası;Eşli çözüm;Kendi ızgaran|Tümdengelim
+Strateji Oyunları|Mangala ve reversi ile strateji kurar.|Mangala;Reversi;Turnuva|Strateji
+Uzamsal Zekâ|Küp ve katlama problemlerini çözer.|Küp açınımı;Kâğıt katlama;Yarış|Uzamsal düşünme
+Bulmaca Maratonu|Farklı bulmaca türlerini çözer.|İstasyonlar;Takım;Puan|Problem çözme
+Zekâ Oyunları Turnuvası|Turnuvada stratejik oynar.|Turnuva;Final;Ödül|Sporcu ahlakı`},
+'56':{
+robokod:`Tanışalım: Dijital Dünyada Üretmek|Üretici teknoloji kullanıcısı olmanın önemini açıklar.|Tüketici–üretici tartışması;Atölye sözleşmesi;Yıl hedefi|Dijital vatandaşlık
+Problem Çözme ve Ayrıştırma|Karmaşık problemi alt problemlere ayırır.|Problem parçalama;Akış şeması;Sözde kod|Problem çözme
+Scratch ile İleri Animasyon|Çoklu kukla ve mesajlaşma kullanır.|Mesaj yayınla;Çoklu kukla;Animasyon filmi|Algoritmik düşünme
+İç İçe Döngü ve Koşullar|İç içe yapıları kurar.|İç içe döngü desenleri;Koşullu döngü;Mini oyun|Mantıksal düşünme
+Değişkenler ve Listeler|Değişken ve liste ile veri yönetir.|Skor ve can;Listeyle soru bankası;Quiz oyunu|Veri okuryazarlığı
+Fonksiyonlar (Kendi Bloğum)|Tekrar eden işi fonksiyonla paketler.|Kendi blok;Parametre;Desen üretici|Soyutlama
+Oyun Projesi|Kurallı bir oyunu tasarlayıp geliştirir.|Oyun tasarım belgesi;Geliştirme;Akran testi|Tasarım
+micro:bit ve MakeCode|Girdi–çıktı ile fiziksel hesaplama yapar (simülatör).|LED ile ifade;Buton olayı;Adım sayar|Fiziksel hesaplama
+Sensörlerle Karar|Sensör verisine göre karar verir.|Işık sensörü;Sıcaklık göstergesi;Uyarı sistemi|Sistem düşüncesi
+Robotik Görevler|Robot görevini planlayıp kodlar.|Robot Lab zor görevler;Rota planlama;Takım yarışması|Problem çözme
+Python'a Giriş|Temel Python komutlarını yazar.|print ve değişken;Döngü;Basit hesap makinesi|Dijital okuryazarlık
+Proje Sergisi|Projesini tanıtır, geri bildirimle geliştirir.|Proje;Sunum;Sergi|Sunum · Özgüven`,
+satranc:`Tanışalım: Satranç ve Düşünme|Satrancın düşünme becerilerine katkısını açıklar.|Tartışma;Seviye belirleme oyunu;Hedef|Üst biliş
+Açılış Planları|Açılışta plan ve gelişim yapar.|İtalyan açılışı;Merkez mücadelesi;Oyun|Stratejik düşünme
+Taktik Motifler I|Çatal, şiş ve bağlama motiflerini birleştirir.|Karma bulmacalar;Süreli çözüm;Oyun|Örüntü tanıma
+Taktik Motifler II|Açılan saldırı ve saptırmayı kullanır.|Bulmaca istasyonu;Eşli çözüm;Oyun|Problem çözme
+Kombinasyon Hesabı|2-3 hamlelik hesap yapar.|Hesap bulmacaları;Aday hamle;Oyun|Hesaplama
+Oyun Ortası Planı|Zayıf kare ve plan belirler.|Pozisyon analizi;Plan yazma;Oyun|Planlama
+Taş Aktivitesi|Taşları aktif karelere yerleştirir.|İyi–kötü taş;Pozisyon oyunu;Analiz|Değerlendirme
+Oyun Sonu Teknikleri|Kale ve piyon oyun sonlarını uygular.|Temel kale oyun sonları;Uygulama;Yarış|Teknik beceri
+Hızlı Satranç ve Süre|Süreyi verimli kullanır.|Saat kullanımı;Hızlı oyun;Değerlendirme|Zaman yönetimi
+Ünlü Oyunlar|Ünlü bir oyunu analiz eder.|Oyun izleme;Tartışma;Kendi yorumun|Eleştirel düşünme
+Kendi Oyun Analizim|Oyununu analiz ederek gelişim planı yapar.|Hata defteri;Motorla kontrol;Hedef|Öz değerlendirme
+Okul Turnuvası|Turnuvada sporcu ahlakıyla oynar.|Turnuva;Final;Ödül|Sporcu ahlakı`,
+yz:`Tanışalım: YZ ve Toplum|YZ'nin toplumdaki etkilerini tartışır.|Örnek vakalar;Tartışma;Yıl hedefi|Dijital vatandaşlık
+Veri Okuryazarlığı|Veri toplar, düzenler ve görselleştirir.|Veri seti;Tablo;Grafik|Veri okuryazarlığı
+Makine Öğrenmesi Türleri|Denetimli ve denetimsiz öğrenmeyi karşılaştırır.|Kartlarla ayırt et;Örnek;Tartışma|Kavramsal düşünme
+Görüntü Modeli Projesi|Görüntü modeli eğitip doğruluğunu ölçer.|Veri seti;Eğit;Doğruluk ölç|Model kavramı
+Ses ve Poz Modelleri|Ses ve poz modelleriyle etkileşimli uygulama yapar.|Ses modeli;Poz modeli;Uygulama|Deneme
+Sohbet Botları|Sohbet botunun çalışma mantığını açıklar.|Kural tabanlı bot;Karşılaştırma;Tasarım|Algoritmik düşünme
+Üretici YZ ve Prompt|Etkili prompt yazar, çıktıyı değerlendirir.|Prompt denemeleri;Karşılaştır;Doğrula|Eleştirel düşünme
+YZ ile Oyun (ML4Kids)|Modeli bir oyuna entegre eder.|Proje;Kodlama;Test|Tasarım
+Önyargı ve Adalet|Modeldeki önyargıyı fark eder.|Önyargılı veri deneyi;Tartışma;Çözüm|Etik
+Gizlilik ve Güvenlik|Kişisel veriyi korumanın yollarını bilir.|Senaryolar;Kurallar;Poster|Sorumluluk
+YZ Projesi (Tasarım Döngüsü)|Gerçek bir soruna YZ çözümü tasarlar.|Problem;Prototip;Test|Problem çözme
+Proje Sergisi|Projesini sunar, geri bildirim alır.|Sunum;Sergi;Değerlendirme|Sunum`,
+akil:`Tanışalım: Düşünme Becerileri|Farklı düşünme türlerini tanır.|Isınma bulmacası;Tartışma;Hedef|Üst biliş
+Akıl Yürütme|Tümevarım ve tümdengelim uygular.|Mantık soruları;Kural bulma;Tartışma|Mantıksal düşünme
+Sudoku (Orta–Zor)|Gelişmiş sudoku stratejisi kullanır.|Aday sayılar;Süreli çözüm;Yarış|Analitik düşünme
+Mantık Izgaraları|Çok değişkenli ızgara çözer.|Izgara;Eşli çözüm;Kendi sorun|Tümdengelim
+Uzamsal Problemler|3B düşünme problemlerini çözer.|Küp sayma;Açınım;Döndürme|Uzamsal düşünme
+Sayı Bulmacaları|KenKen ve Kakuro çözer.|KenKen;Kakuro;Yarış|Matematiksel düşünme
+Strateji ve Oyun Teorisi|Kazanma stratejisini analiz eder.|Nim stratejisi;Mangala;Analiz|Stratejik düşünme
+Hafıza ve Dikkat|Çalışma belleğini geliştirir.|N-geri oyunu;Hafıza sarayı;Tekrar|Hafıza
+Yaratıcı Düşünme|Farklı çözüm yolları üretir.|Alternatif kullanımlar;Beyin fırtınası;Sunum|Yaratıcılık
+Eleştirel Düşünme|Kanıt ve neden-sonuç ilişkisi kurar.|Senaryo;Yanıltıcı soru;Tartışma|Eleştirel düşünme
+Bulmaca Tasarımı|Kendi bulmacasını tasarlar.|Tasarım;Test;Paylaşım|Yaratıcılık
+Zekâ Oyunları Şampiyonası|Turnuvada strateji uygular.|Turnuva;Final;Ödül|Sporcu ahlakı`},
+'78':{
+robokod:`Tanışalım: Teknoloji ve Gelecek|Kodlamanın meslekler ve toplum üzerindeki etkisini tartışır.|Geleceğin meslekleri;Atölye sözleşmesi;Yıl proje fikri|Dijital vatandaşlık
+Algoritma Tasarımı ve Verimlilik|Farklı çözümleri verimliliğe göre karşılaştırır.|Kartla sıralama algoritmaları;Adım sayma;Sözde kod|Analitik düşünme
+Python Temelleri|Değişken, veri tipi ve girdi–çıktı kullanır.|input ve print;Tip dönüşümü;Mini hesaplayıcı|Dijital okuryazarlık
+Koşullar ve Mantıksal Operatörler|and, or, not ile karar yapıları kurar.|Not hesaplayıcı;Şifre kontrolü;Karar ağacı|Mantıksal düşünme
+Döngüler (for ve while)|Döngülerle tekrar eden işlemleri otomatikleştirir.|Çarpım tablosu;Tahmin oyunu;Desen|Otomasyon
+Listeler ve Veri İşleme|Liste ile veri toplar ve filtreler.|Sınıf verisi;Ortalama bulma;Sıralama|Veri okuryazarlığı
+Fonksiyonlar ve Modüler Kod|Fonksiyonlarla kodu modüllere ayırır.|Fonksiyon yaz;Parametre ve dönüş;Kod düzenleme|Soyutlama
+Web'e Giriş (HTML/CSS)|Basit bir web sayfası tasarlar.|HTML iskeleti;CSS ile stil;Kişisel sayfa|Tasarım
+Fiziksel Hesaplama ve Sensörler|Sensör verisini işleyen devre ve program tasarlar.|micro:bit veya Arduino simülatörü;Sensör okuma;Alarm sistemi|Sistem düşüncesi
+Robotik ve Otonom Sistemler|Otonom davranışın mantığını açıklar ve simüle eder.|Engelden kaçma mantığı;Robot Lab zor görevler;Rota planlama|Problem çözme
+Takım Projesi (Tasarım Döngüsü)|Problem–tasarım–test döngüsüyle ürün geliştirir.|Problem tanımı;Prototip;Test ve iyileştirme|İş birliği · Girişimcilik
+Proje Sunumu ve Portfolyo|Projesini sunar, dijital portfolyo hazırlar.|Sunum;Portfolyo;Değerlendirme|Sunum · Öz değerlendirme`,
+satranc:`Tanışalım: Stratejik Düşünme|Stratejik düşünmenin hayattaki yerini tartışır.|Tartışma;Seviye maçı;Hedef belirleme|Üst biliş
+Açılış Repertuvarı|Kendine uygun açılış seçer.|Açılış türleri;Repertuvar kartı;Oyun|Planlama
+İleri Taktik|Karmaşık kombinasyonları çözer.|Zor bulmacalar;Süreli yarış;Analiz|Hesaplama
+Pozisyonel Oyun|Pozisyonu değerlendirip plan kurar.|Piyon yapısı;Açık hat;Oyun|Değerlendirme
+Hesaplama ve Aday Hamle|Aday hamleleri sistemli değerlendirir.|Aday hamle tablosu;Karar ağacı;Oyun|Analitik düşünme
+Saldırı ve Savunma|Şah saldırısı ve savunmasını planlar.|Saldırı kalıpları;Savunma;Oyun|Stratejik düşünme
+Oyun Sonu Ustalığı|Kale oyun sonlarında teknik uygular.|Lucena ve Philidor;Uygulama;Yarış|Teknik beceri
+Satranç ve Karar Verme|Baskı altında karar verme stratejisi geliştirir.|Süreli pozisyon;Duygu yönetimi;Tartışma|Öz düzenleme
+Tarihte Strateji|Tarihî stratejiler ile satranç arasında bağ kurar.|Tarih vakası;Neden-sonuç;Sunum|Disiplinler arası
+Usta Oyunu Analizi|Usta oyunlarını yorumlar.|İzleme;Analiz;Yorum yazma|Eleştirel düşünme
+Gelişim Planım|Kendi oyununu analiz edip hedef koyar.|Hata defteri;Motor analizi;Plan|Öz değerlendirme
+Okul Şampiyonası|Turnuvada stratejik ve centilmence oynar.|Turnuva;Final;Ödül|Sporcu ahlakı`,
+yz:`Tanışalım: YZ Okuryazarlığı|YZ okuryazarlığının önemini açıklar.|Vaka;Tartışma;Yıl projesi fikri|Dijital vatandaşlık
+Veri Bilimi Temelleri|Veri setini analiz edip yorumlar.|Veri seti;Ortalama ve dağılım;Grafik|Veri okuryazarlığı
+Makine Öğrenmesi Süreci|Veri–eğitim–test–değerlendirme sürecini uygular.|Süreç şeması;Model eğit;Doğruluk|Sistem düşüncesi
+Sinir Ağlarının Mantığı|Basit sinir ağının öğrenme mantığını açıklar.|TensorFlow Playground;Deney;Yorum|Kavramsal düşünme
+Görüntü ve Ses Modelleri|Çok sınıflı model eğitip değerlendirir.|Veri seti;Eğit;Hata tablosu|Analitik düşünme
+Python ile Veri|Python ile veri işler.|Liste ve sözlük;Ortalama;Basit grafik|Algoritmik düşünme
+Doğal Dil İşleme|Metin sınıflama mantığını uygular.|Duygu analizi deneyi;Kelime sayma;Tartışma|Veri okuryazarlığı
+Prompt Mühendisliği|Rol, bağlam ve biçim içeren prompt yazar.|Prompt şablonu;Karşılaştırma;Doğrulama|Eleştirel düşünme
+Etik, Önyargı ve Telif|Etik ikilemleri tartışıp ilke önerir.|Vaka analizi;Münazara;İlke listesi|Etik
+YZ ve Meslekler|YZ'nin meslekleri nasıl değiştirdiğini araştırır.|Araştırma;Röportaj;Sunum|Kariyer farkındalığı
+Uçtan Uca YZ Projesi|Bir problemi YZ ile uçtan uca çözer.|Problem;Model;Uygulama|Problem çözme
+Proje Sunumu ve Portfolyo|Projesini sunar ve portfolyoya ekler.|Sunum;Portfolyo;Değerlendirme|Sunum`,
+akil:`Tanışalım: Üst Düzey Düşünme|Kendi düşünme sürecini fark eder.|Isınma;Düşünme günlüğü;Hedef|Üst biliş
+Mantıksal Akıl Yürütme|Karmaşık mantık problemlerini çözer.|Mantık soruları;Kanıtla;Tartışma|Tümdengelim
+İleri Sudoku ve Kakuro|İleri teknikleri uygular.|Teknik;Süreli çözüm;Yarış|Analitik düşünme
+Uzamsal Zekâ|3B döndürme ve açınım problemlerini çözer.|Döndürme;Açınım;Yarış|Uzamsal düşünme
+Oyun Teorisi ve Strateji|Stratejik karar verme modellerini tartışır.|Basit mahkûm ikilemi;Nim;Analiz|Stratejik düşünme
+Algoritmik Bulmacalar|Hanoi kulesi gibi algoritmik bulmacalar çözer.|Hanoi kulesi;Sıralama bulmacası;Genelleme|Algoritmik düşünme
+Olasılık ve Tahmin|Olasılıkla tahmin stratejisi kurar.|Zar deneyi;Tahmin oyunu;Tartışma|Matematiksel düşünme
+İleri Hafıza Teknikleri|İleri hafıza tekniklerini uygular.|Hafıza sarayı;Kodlama;Test|Hafıza
+Mantık Yanılgıları|Mantık hatalarını fark eder.|Yanıltıcı argümanlar;Tartışma;Analiz|Eleştirel düşünme
+Yaratıcı Problem Çözme|Gerçek hayat problemlerine yaratıcı çözüm üretir.|Vaka;Beyin fırtınası;Sunum|Yaratıcılık
+Zekâ Oyunu Tasarımı|Kurallı bir zekâ oyunu tasarlar.|Tasarım;Test;Sunum|Tasarım
+Şampiyona ve Değerlendirme|Turnuvada strateji uygular, gelişimini değerlendirir.|Turnuva;Final;Değerlendirme|Öz değerlendirme`}
+};
 
 /* ============================================================
-   EK: 📌 GÜNÜN ÖZETİ → OKULA · 📋 GÖNDERDİKLERİM (silme)
+   EK: Seviye bazlı plan motoru (Maarif / Klasik / Benim Planım)
    ============================================================ */
-async function gunOkulaGonder(){
-  var list=window._DK_BUGUN||[]; if(!list.length){ toast('Bugün için programda ders yok','err'); return; }
-  var not=(document.getElementById('gunNot')||{}).value||''; not=String(not).trim();
-  var gruplar={}; list.forEach(function(x){ var g=ozGname(x.grade); (gruplar[g]=gruplar[g]||[]).push(x); });
-  var siniflar=Object.keys(gruplar);
-  if(!confirm('📌 Günün özeti şu sınıflara gönderilecek:\n\n'+siniflar.map(function(s){return '• '+s;}).join('\n')+'\n\nOnaylıyor musun?')) return;
-  try{
-    toast('🚀 Gönderiliyor…','info');
-    var o=await dkOkulBaglan(), F=o.sdk, ref=F.doc(o.fs,'maas_config','k12_pano');
-    var sn=await F.getDoc(ref); var liste=(sn.exists()&&Array.isArray((sn.data()||{}).liste))?sn.data().liste:[];
-    var ts=Date.now(), tarih=new Date().toLocaleDateString('tr-TR'), yeni=[];
-    siniflar.forEach(function(s,i){
-      var kd=gruplar[s].map(function(x){ var se=SEANS[x.track][x.idx]; return {ik:x.tr.ik,ad:x.tr.ad,dr:x.tr.dr,dr2:x.tr.dr2,k:se.k,z:se.z,soru:ozSoru(se.k),durum:'',ders:x.p+'. ders'}; });
-      var metin='📌 Günün Özeti · '+s+' · '+tarih+'\n\n'+kd.map(function(d){return d.ik+' '+d.ad+'\n📚 Bugün: '+d.k+'\n🎯 Kazanım: '+d.z+'\n🏠 Evde sorun: '+d.soru;}).join('\n\n')+(not?('\n\n✨ '+not):'')+'\n\n— Barış Öğretmen';
-      if(liste.some(function(q){return q.sinif===s && q.metin===metin;})) return;
-      yeni.push({id:ts.toString(36)+Math.random().toString(36).slice(2,7), sinif:s, metin:metin, ogretmen:'Barış Öğretmen', ts:ts-i, kaynak:'ozet', bitis:ts+7*864e5, kart:{tur:'gun',baslik:'Günün Özeti · '+tarih,sinif:s,tarih:ts,dersler:kd,not:not}});
-    });
-    if(!yeni.length){ toast('ℹ️ Bugünün özeti zaten gönderilmiş','info',3500); return; }
-    await F.setDoc(ref,{liste:yeni.concat(liste)},{merge:true});
-    toast('✅ '+yeni.length+' sınıfa günün özeti gitti 🎉','ok',4000);
-  }catch(e){ toast('Gönderilemedi — internet bağlantısını kontrol et','err',4000); }
-}
-async function gonderilenlerAc(){
-  var kutu=document.getElementById('dkGonderilen');
-  if(!kutu){ kutu=document.createElement('div'); kutu.id='dkGonderilen'; kutu.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(2,6,23,.75);display:flex;align-items:center;justify-content:center;padding:14px'; document.body.appendChild(kutu); }
-  kutu.innerHTML='<div style="background:#0f172a;color:#e2e8f0;border-radius:18px;max-width:560px;width:100%;max-height:85vh;overflow:auto;padding:16px;border:1px solid #334155"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><b style="font-size:16px">📋 Okula Gönderdiklerim</b><button onclick="document.getElementById(\'dkGonderilen\').remove()" style="background:#334155;color:#fff;border:0;border-radius:8px;padding:6px 10px;cursor:pointer">✕</button></div><div id="dkGonList">⏳ Yükleniyor…</div></div>';
-  try{
-    var o=await dkOkulBaglan(), F=o.sdk, ref=F.doc(o.fs,'maas_config','k12_pano');
-    var sn=await F.getDoc(ref); var liste=(sn.exists()&&Array.isArray((sn.data()||{}).liste))?sn.data().liste:[];
-    var benim=liste.filter(function(p){return p && p.kaynak==='ozet';}).sort(function(a,b){return (b.ts||0)-(a.ts||0);});
-    var el=document.getElementById('dkGonList'); if(!el) return;
-    if(!benim.length){ el.innerHTML='<div style="color:#94a3b8;padding:12px;text-align:center">Panoda gönderilmiş özet yok.</div>'; return; }
-    el.innerHTML='<div style="font-size:12px;color:#94a3b8;margin-bottom:8px">Toplam '+benim.length+' özet. Günlük özetler 7, haftalık özetler 21 gün sonra kendiliğinden kalkar.</div><button onclick="gonderilenSil(\'__HEPSI__\')" style="width:100%;background:#be123c;color:#fff;border:0;border-radius:10px;padding:9px;font-weight:900;margin-bottom:10px;cursor:pointer">🗑️ Hepsini Sil</button>'+benim.map(function(p){ var t=new Date(p.ts||0).toLocaleDateString('tr-TR'); var b=String(p.metin||'').split('\n')[0]; return '<div style="background:#1e293b;border-radius:12px;padding:10px;margin-bottom:6px;display:flex;gap:8px;align-items:center"><div style="flex:1;min-width:0"><div style="font-weight:800;font-size:13px">'+esc(p.sinif)+' · '+t+'</div><div style="font-size:12px;color:#94a3b8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(b)+'</div></div><button onclick="gonderilenSil(\''+p.id+'\')" style="background:#e11d48;color:#fff;border:0;border-radius:8px;padding:6px 10px;font-weight:800;cursor:pointer">Sil</button></div>'; }).join('');
-  }catch(e){ var el2=document.getElementById('dkGonList'); if(el2) el2.innerHTML='Yüklenemedi — internet bağlantısını kontrol et.'; }
-}
-async function gonderilenSil(id){
-  if(id==='__HEPSI__' && !confirm('Okula gönderdiğin TÜM özetler panodan silinsin mi?')) return;
-  try{
-    var o=await dkOkulBaglan(), F=o.sdk, ref=F.doc(o.fs,'maas_config','k12_pano');
-    var sn=await F.getDoc(ref); var liste=(sn.exists()&&Array.isArray((sn.data()||{}).liste))?sn.data().liste:[];
-    var kalan=liste.filter(function(p){ return id==='__HEPSI__' ? !(p&&p.kaynak==='ozet') : !(p&&p.id===id); });
-    await F.setDoc(ref,{liste:kalan},{merge:true}); toast('🗑️ Silindi','ok'); gonderilenlerAc();
-  }catch(e){ toast('Silinemedi','err'); }
-}
+var KLASIK={}; ['robokod','satranc','yz','akil','kocluk'].forEach(function(t){ KLASIK[t]=SEANS[t]; });
+var __PGI=null, PLAN_CACHE={};
+function planGi(){ return (__PGI!=null)?__PGI:ST.gradeIdx; }
+function planKaynak(){ return LS.get('dk_plan_kaynak','maarif'); }
+function planKaynakEtiket(){ return {maarif:'Maarif (seviye)',klasik:'Klasik',ozel:'Benim planım'}[planKaynak()]||'Maarif'; }
+function planCacheSil(){ PLAN_CACHE={}; }
+function maarifDizi(band,tid){ var key='M|'+band+'|'+tid; if(PLAN_CACHE[key]) return PLAN_CACHE[key];
+  var ham=(MAARIF_HAM[band]||{})[tid]; if(!ham) return null;
+  var genc=(band==='ana'||band==='12'); var ADIM=genc?['Keşfediyoruz','Oynuyoruz','Üretiyoruz']:['Keşfet','Uygula','Üret & Paylaş'];
+  var out=[]; ham.trim().split('\n').forEach(function(l){ var p=l.split('|'), et=p[2].split(';'); for(var s=0;s<3;s++) out.push({k:p[0]+' · '+ADIM[s], z:p[1], e:et[s], b:p[3], u:p[0]}); });
+  PLAN_CACHE[key]=out; return out; }
+function ozelGet(){ return LS.get('dk_ozel_plan',{}); }
+function planGetir(tid,gi){ var src=planKaynak(), band=SINIF_LISTE[gi].d, key=src+'|'+gi+'|'+tid; if(PLAN_CACHE[key]) return PLAN_CACHE[key];
+  var base = (src==='klasik') ? KLASIK[tid] : (maarifDizi(band,tid)||KLASIK[tid]);
+  var arr=base;
+  if(src==='ozel'){ var o=ozelGet(), g=(o[gi]&&o[gi][tid])||{}; arr=base.map(function(x,i){ return g[i]? Object.assign({},x,g[i],{ozel:true}) : x; }); }
+  PLAN_CACHE[key]=arr; return arr; }
+['robokod','satranc','yz','akil','kocluk'].forEach(function(t){
+  Object.defineProperty(SEANS,t,{configurable:true,enumerable:true,get:function(){ return planGetir(t,planGi()); },set:function(v){ KLASIK[t]=v; planCacheSil(); }}); });
+function giSar(ad){ var f=window[ad]; if(typeof f!=='function') return; window[ad]=function(gi){ var p=__PGI; if(typeof gi==='number') __PGI=gi; try{ return f.apply(this,arguments); } finally{ __PGI=p; } }; }
+['haritaAc','maceraAc','oyunSeansListesi'].forEach(giSar);
+function giIle(gi,fn){ var p=__PGI; __PGI=gi; try{ return fn(); } finally{ __PGI=p; } }
+renderNeredeKaldim=function(){
+  var host=$('#v-veli'); if(!host) return; var el=document.getElementById('neredePanel');
+  if(!el){ el=document.createElement('div'); el.id='neredePanel'; host.insertBefore(el, host.firstChild); }
+  var cards='';
+  SINIF_LISTE.forEach(function(sn,gi){ giIle(gi,function(){ var gname=(sn.g==='Ana'?'Anaokulu':sn.g+'. Sınıf'), rows='';
+    gorunenTracks(gi).forEach(function(tr){ var n=SEANS[tr.id].length, nx=trackSonraki(gi,tr.id,n); var txt = nx<0 ? '✓ tamamlandı' : ('Ders '+(nx+1)+' · '+SEANS[tr.id][nx].k); rows+='<div class="nct"><span class="ik">'+tr.ik+'</span><span class="konu">'+esc(txt)+'</span></div>'; });
+    cards+='<div class="ncard" onclick="haritaAc('+gi+')"><div class="nc-bas"><b>'+gname+'</b><span class="pct">%'+gradeYuzde(gi)+'</span></div><div class="nc-tracks">'+rows+'</div></div>'; }); });
+  el.innerHTML='<div class="veli-hero" style="padding:22px"><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><h2 style="margin:0;font-size:20px">📍 Yıl Boyu Nerede Kaldım?</h2><span class="turaktif" style="margin-left:6px">📘 '+planKaynakEtiket()+'</span><button class="btn p" style="margin-left:auto" onclick="haritaAc(ST.gradeIdx)">🗺️ Kavram Haritası</button></div><p class="big" style="font-size:13.5px;margin-top:6px">Her sınıfta, <b>o sınıfın seviyesine özel</b> planda nerede kaldığını gör; karta dokun → o sınıfın haritası açılır.</p><div class="nerede-grid">'+cards+'</div></div>';
+};
+bugunkuDersAc=function(){
+  var g=bugunGun(), prog=(typeof progGet==='function')?progGet():LS.get('dk_prog',{}), hn=(typeof haftaNo==='function')?haftaNo():null;
+  var gunAd=['Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi','Pazar'][(new Date().getDay()+6)%7], list=[];
+  if(g>=0){ for(var p=1;p<=8;p++){ var c=prog[g+'-'+p]; if(!c) continue; var tr=TRACKS.filter(function(x){return x.id===c.track;})[0]; if(!tr) continue;
+    (function(c,tr,p){ giIle(c.grade,function(){ var n=SEANS[c.track].length, idx=hn?Math.min(hn-1,n-1):trackSonraki(c.grade,c.track,n); if(idx<0) idx=n-1; list.push({p:p,grade:c.grade,track:c.track,tr:tr,idx:idx,se:SEANS[c.track][idx]}); }); })(c,tr,p); } }
+  var body;
+  if(g<0) body='<div style="padding:18px;color:var(--soluk);text-align:center">Bugün hafta sonu 🎉</div>';
+  else if(!list.length) body='<div style="padding:18px;color:var(--soluk);text-align:center">Bugün için programda ders yok.<br>🗓️ <b>Program</b> sekmesinden ekleyebilirsin.</div>';
+  else body=list.map(function(x){ return '<div class="bugun-satir" style="--dr:'+x.tr.dr+'"><div class="bs-ic"><div class="bs-saat">'+x.p+'. DERS · '+ozGname(x.grade)+'</div><b>'+x.tr.ik+' '+x.tr.ad+'</b><div class="bs-konu">Hafta '+(x.idx+1)+': '+esc(x.se.k)+'</div></div><div style="display:flex;gap:6px"><button class="fbtn" onclick="defterTekKopya('+x.grade+',\''+x.track+'\','+(x.idx+1)+')">📒</button><button class="btn y" onclick="bugunBasla(\''+x.track+'\','+x.grade+','+x.idx+')">🚀 Başla</button></div></div>'; }).join('');
+  $('#bugunModalIc').innerHTML='<div class="mbas" style="--dr:#f59e0b;--dr2:#f97316"><div class="ik">📌</div><div><h3>Bugünkü Dersler</h3><div class="alt">'+gunAd+(hn?' · Takvim: '+hn+'. hafta':'')+' · 📒 = sınıf defteri metnini kopyala</div></div><div class="kapat" onclick="modalKapat(\'bugunModal\')">✕</div></div><div class="mgov">'+body+'</div>';
+  modalAc('bugunModal');
+};
+
+/* ---------- Plan Kaynağı + Hafta Hafta Düzenleyici ---------- */
+var PK={gi:null,tid:'robokod'};
+function planKaynakSec(k){ LS.set('dk_plan_kaynak',k); planCacheSil(); planYenile(); toast('📘 Plan kaynağı: '+planKaynakEtiket(),'ok'); planKaynakAc(); }
+function planYenile(){ try{ if(ST.view==='plan'){ renderPlan(); } }catch(e){} try{ renderNeredeKaldim(); }catch(e){} }
+function planKaynakAc(){ if(PK.gi==null) PK.gi=ST.gradeIdx; var src=planKaynak();
+  var kart=function(k,ik,ad,ac){ return '<div class="neden-kart" style="--dr:'+(src===k?'#22c55e':'#475569')+';cursor:pointer;margin-bottom:8px" onclick="planKaynakSec(\''+k+'\')"><b style="font-size:15px">'+(src===k?'✅ ':'')+ik+' '+ad+'</b><div style="font-size:12.5px;color:var(--soluk);margin-top:4px">'+ac+'</div></div>'; };
+  var gch=SINIF_LISTE.map(function(sn,i){return '<div class="gchip'+(i===PK.gi?' akt':'')+'" onclick="PK.gi='+i+';planKaynakAc()">'+(sn.g==='Ana'?'Ana':sn.g)+'</div>';}).join('');
+  var tch=gorunenTracks(PK.gi).map(function(t){return '<div class="gchip'+(t.id===PK.tid?' akt':'')+'" onclick="PK.tid=\''+t.id+'\';planKaynakAc()">'+t.ik+' '+t.ad+'</div>';}).join('');
+  if(!gorunenTracks(PK.gi).some(function(t){return t.id===PK.tid;})) PK.tid='robokod';
+  var satir=giIle(PK.gi,function(){ var o=ozelGet(), g=(o[PK.gi]&&o[PK.gi][PK.tid])||{}; var base=(src==='klasik')?KLASIK[PK.tid]:(maarifDizi(SINIF_LISTE[PK.gi].d,PK.tid)||KLASIK[PK.tid]);
+    return base.map(function(x,i){ var v=g[i]||x; return '<div class="mak-satir" style="align-items:stretch"><div style="font-weight:900;min-width:34px;color:#fbbf24">'+(i+1)+'.'+(g[i]?' ✏️':'')+'</div><div style="flex:1;display:grid;gap:4px"><input class="key pe-k" data-i="'+i+'" value="'+esc(v.k).replace(/"/g,'&quot;')+'" placeholder="Konu"><input class="key pe-z" data-i="'+i+'" value="'+esc(v.z).replace(/"/g,'&quot;')+'" placeholder="Kazanım"><input class="key pe-e" data-i="'+i+'" value="'+esc(v.e).replace(/"/g,'&quot;')+'" placeholder="Etkinlik"></div></div>'; }).join(''); });
+  $('#planKaynakModalIc').innerHTML='<div class="mbas" style="--dr:#22c55e;--dr2:#22d3ee"><div class="ik">📘</div><div style="min-width:0"><h3>Plan Kaynağı & Hafta Hafta Düzenle</h3><div class="alt">Her sınıf seviyesine özel 36 haftalık plan</div></div><div class="kapat" onclick="modalKapat(\'planKaynakModal\')">✕</div></div><div class="mgov">'+
+    kart('maarif','🇹🇷','Maarif Modeli uyumlu · seviye bazlı (önerilen)','Anaokulu, 1-2, 3-4, 5-6 ve 7-8 için AYRI konular. Türkiye Yüzyılı Maarif Modeli beceri çerçevesine (kavramsal beceriler, alan becerileri, sosyal-duygusal beceriler, değerler, okuryazarlıklar) ve yaş gelişimine göre hazırlandı. 12 ünite × 3 hafta (Keşfet → Uygula → Üret).')+
+    kart('klasik','📗','Klasik plan (önceki)','Önceki tek-sıra plan; tüm sınıflarda aynı konu sırası.')+
+    kart('ozel','✏️','Benim planım','Maarif planı temel alınır; aşağıda düzenlediğin haftalar senin yazdığın şekilde görünür.')+
+    '<div style="font-size:11.5px;color:var(--soluk);margin:6px 0 12px;line-height:1.5">ℹ️ Robotik, kodlama, satranç ve yapay zekâ için her kademede ayrı bir resmî MEB öğretim programı bulunmayabilir; bu yüzden <b>resmî kazanım kodu uydurulmamıştır</b>. Resmî eşleştirme için haftayı açıp <b>🤖 Maarif eşleştir</b> düğmesini kullan ve MEB’in güncel programından kontrol et.</div>'+
+    '<div class="ilerseridi"><span class="et">Sınıf:</span>'+gch+'</div><div class="ilerseridi" style="margin-top:6px"><span class="et">Ders:</span>'+tch+'</div>'+
+    '<div class="btnsira" style="margin:10px 0"><button class="btn y" onclick="planTopluKaydet()">💾 Değişiklikleri Kaydet (Benim planım)</button><button class="fbtn" onclick="planOzelSifirla()">↺ Bu sınıf/ders düzenlemelerini sil</button></div>'+
+    '<div style="max-height:46vh;overflow-y:auto">'+satir+'</div></div>';
+  modalAc('planKaynakModal'); }
+function planTopluKaydet(){ var o=ozelGet(); o[PK.gi]=o[PK.gi]||{}; var g=o[PK.gi][PK.tid]||{}; var base=maarifDizi(SINIF_LISTE[PK.gi].d,PK.tid)||KLASIK[PK.tid]; var c=0;
+  document.querySelectorAll('#planKaynakModalIc .pe-k').forEach(function(inp){ var i=+inp.dataset.i; var k=inp.value.trim(), z=document.querySelector('#planKaynakModalIc .pe-z[data-i="'+i+'"]').value.trim(), e=document.querySelector('#planKaynakModalIc .pe-e[data-i="'+i+'"]').value.trim(); var b=base[i];
+    if(b && k===b.k && z===b.z && e===b.e){ delete g[i]; } else { g[i]={k:k||b.k,z:z||b.z,e:e||b.e}; c++; } });
+  o[PK.gi][PK.tid]=g; LS.set('dk_ozel_plan',o); LS.set('dk_plan_kaynak','ozel'); planCacheSil(); planYenile(); toast('💾 Kaydedildi · '+c+' hafta senin planında · kaynak: Benim planım','ok',3500); planKaynakAc(); }
+function planOzelSifirla(){ if(!confirm('Bu sınıf ve ders için yaptığın düzenlemeler silinsin mi?')) return; var o=ozelGet(); if(o[PK.gi]) delete o[PK.gi][PK.tid]; LS.set('dk_ozel_plan',o); planCacheSil(); planYenile(); planKaynakAc(); }
+function haftaDuzenle(tid,i){ PK.gi=ST.gradeIdx; PK.tid=tid; modalKapat('haftaModal'); planKaynakAc(); setTimeout(function(){ var el=document.querySelector('#planKaynakModalIc .pe-k[data-i="'+i+'"]'); if(el){ el.scrollIntoView({block:'center'}); el.focus(); } },120); }
+function maarifEslestir(tid,i){ var se=SEANS[tid][i], tr=TRACKS.filter(function(x){return x.id===tid;})[0]||{}, sinif=ozGname(ST.gradeIdx);
+  var sistem='Sen Türkiye Yüzyılı Maarif Modeli’ni iyi bilen bir program uzmanısın. Verilen haftalık konuyu bu kademedeki EN YAKIN resmî MEB programıyla (ör. okul öncesinde alan becerileri, ortaokulda Bilişim Teknolojileri ve Yazılım) ve Maarif Modeli becerileriyle eşleştir. Biçim: "🧭 Beceri alanı:" · "📌 En yakın öğrenme çıktısı/kazanım (varsa):" · "🧩 Değer/eğilim:" · "✍️ Sınıf defteri için tek cümle:". KESİN KURAL: emin olmadığın kazanım KODU yazma, uydurma; resmî programda doğrudan karşılığı yoksa açıkça "resmî programda doğrudan karşılığı yok, beceri temelli eşleştirme" de. Kısa ve Türkçe.';
+  aiSor('Maarif eşleştirme',{sistem, on:'Sınıf: '+sinif+'. Ders: '+(tr.ad||'')+'. Hafta '+(i+1)+': '+se.k+'. Kazanım: '+se.z+'. Etkinlik: '+se.e+'.', baslik:'🧭 Maarif · '+se.k}); }
+
+/* ---------- 📰 Haftalık Veli Özeti: 5 versiyon + düzenlenebilir ---------- */
+var OZ_VER_AD=['Kısa & Net','Sıcak Veli Dili','Tek Cümle','Evde Destek','Çocuğun Ağzından'];
+OZ.ver=OZ.ver||{};
+function ozEvOneri(tid,band){ var genc=(band==='ana'||band==='12');
+  return ({robokod: genc?'Evde birlikte bir işi adım adım sıralayın (ör. kahvaltı hazırlama).':'Çocuğunuzdan bu hafta kodladığı çalışmayı size göstermesini isteyin.',
+    satranc: genc?'Evde birlikte 10 dakika taşların yürüyüşünü oynayın.':'Evde birlikte kısa bir satranç oyunu oynayın; hamleyi neden seçtiğini sorun.',
+    yz: genc?'Evdeki akıllı eşyaları birlikte bulun, güvenli kullanımı konuşun.':'Kullandığı bir yapay zekâ aracında sonucu nasıl doğruladığını sorun.',
+    akil: genc?'Birlikte bir yapboz ya da eşleştirme oyunu oynayın.':'Birlikte bir bulmaca çözün; nasıl düşündüğünü anlatmasını isteyin.',
+    kocluk:'Haftalık çalışma planını birlikte gözden geçirin.'})[tid]||'Bu hafta öğrendiklerini size anlatmasını isteyin.'; }
+function ozVersiyon(v,gi,tr,se,h){ var band=SINIF_LISTE[gi].d, genc=(band==='ana'||band==='12'), konu=(se.u||se.k).replace(/^Tanışalım:\s*/,''), sn=ozGname(gi);
+  var yol=genc?'oyunlarla ve somut materyallerle':'uygulamalı etkinliklerle';
+  switch(v){
+   case 2: return '<p>Bu hafta '+sn+' öğrencilerimizle <b>“'+esc(konu)+'”</b> konusunu '+yol+' işledik. 😊</p><p>🎯 Hedefimiz: '+esc(se.z)+'</p><p>🏠 Evde “'+esc(konu)+'” dersinde ne yaptığını sorarsanız çok sevinecektir.</p>';
+   case 3: return '<p>🌟 Bu hafta <b>'+esc(konu)+'</b>: '+esc(se.e)+'.</p>';
+   case 4: return '<p>📚 <b>Konu:</b> '+esc(konu)+'</p><p>🧩 <b>Sınıfta:</b> '+esc(se.e)+'</p><p>🏠 <b>Evde destek:</b> '+esc(ozEvOneri(tr.id,band))+'</p>';
+   case 5: return '<p>🗣️ “Bu hafta <b>'+esc(konu)+'</b> öğrendim! '+esc(se.e)+' yaptık. Bana sorarsan anlatırım!”</p>';
+   default: return '<p>📚 <b>Bu hafta:</b> '+esc(konu)+'</p><p>🎯 <b>Kazanım:</b> '+esc(se.z)+'</p><p>🏠 <b>Evde sorun:</b> “'+esc(konu)+'” dersinde ne yaptınız?</p>';
+  } }
+ozKartHTML=function(gi){ return giIle(gi,function(){ var h=OZ.hafta, i=h-1, out='';
+  ozTrackleri(gi).forEach(function(tr){ var se=SEANS[tr.id][i]; if(!se) return; var d=ozDurum(gi,tr.id,i), key=gi+'|'+tr.id, v=OZ.ver[key]||OZ.verAll||1;
+    var chips=[1,2,3,4,5].map(function(n){return '<span class="fbtn'+(n===v?' aktif':'')+'" title="'+OZ_VER_AD[n-1]+'" onclick="OZ.ver[\''+key+'\']='+n+';ozetCiz()">'+n+'</span>';}).join('');
+    out+='<div class="hoz-kart" data-key="'+key+'" style="--dr:'+tr.dr+';--dr2:'+tr.dr2+'"><div class="hoz-ust"><div class="hoz-sinif">'+tr.ik+' '+ozGname(gi)+' · '+tr.ad+'</div><div class="hoz-hafta">'+h+'. HAFTA'+(d?' · '+d:'')+'</div></div>'+
+      '<div class="oz-noprint" style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;margin-top:8px;font-size:11px;color:#64748b">Versiyon: '+chips+' <span style="margin-left:4px">'+OZ_VER_AD[v-1]+' · ✏️ metne dokunup düzenleyebilirsin</span></div>'+
+      '<div class="hoz-satir oz-govde" contenteditable="true" spellcheck="false" style="outline:none;border-radius:8px">'+ozVersiyon(v,gi,tr,se,h)+'</div>'+
+      '<div class="hoz-alt">Barış Öğretmen · Değişim Koleji</div></div>'; });
+  return out; }); };
+ozMetin=function(){ var parts=[]; document.querySelectorAll('#ozetSaha .hoz-kart').forEach(function(k){ var bas=k.querySelector('.hoz-sinif').innerText.trim(), hf=k.querySelector('.hoz-hafta').innerText.trim(), gv=k.querySelector('.oz-govde').innerText.trim(); parts.push('*'+bas+' · '+hf+'*\n'+gv); }); return parts.join('\n\n')+'\n\n— Barış Öğretmen · Değişim Koleji'; };
+function ozHepsiVer(n){ OZ.verAll=n; OZ.ver={}; ozetCiz(); }
+var _ozetCizEski=ozetCiz;
+ozetCiz=function(){ _ozetCizEski(); var saha=document.getElementById('ozetSaha'); if(!saha) return;
+  var bar=document.createElement('div'); bar.className='ilerseridi'; bar.style.margin='0 0 10px'; bar.innerHTML='<span class="et">Tüm kartlara versiyon:</span>'+[1,2,3,4,5].map(function(n){return '<div class="gchip'+((OZ.verAll||1)===n?' akt':'')+'" onclick="ozHepsiVer('+n+')">'+n+' · '+OZ_VER_AD[n-1]+'</div>';}).join('')+'<div class="gchip" onclick="defterAc()">📒 Sınıf Defteri</div>';
+  saha.parentNode.insertBefore(bar,saha); };
+ozPdf=function(){ var ov=document.getElementById('ozetPrint'); if(!ov){ ov=document.createElement('div'); ov.id='ozetPrint'; document.body.appendChild(ov); }
+  var kopya=document.getElementById('ozetSaha').cloneNode(true); kopya.querySelectorAll('.oz-noprint').forEach(function(x){x.remove();}); kopya.querySelectorAll('[contenteditable]').forEach(function(x){x.removeAttribute('contenteditable');});
+  ov.innerHTML='<div style="font-family:system-ui,Arial;padding:14px"><h2 style="margin:0 0 4px;color:#4f46e5">📰 Haftalık Veli Özeti · '+OZ.hafta+'. Hafta</h2><div style="color:#64748b;font-size:12px;margin-bottom:12px">Barış Öğretmen · Değişim Koleji · '+new Date().toLocaleDateString('tr-TR')+'</div>'+kopya.innerHTML+'</div>';
+  document.body.classList.add('yazdir-ozet'); window.print(); setTimeout(function(){document.body.classList.remove('yazdir-ozet');},700); };
+ozPng=async function(){ try{ toast('🖼️ Görsel hazırlanıyor…','info'); await scriptYukle('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js'); var el=document.getElementById('ozetSaha'); var cv=await html2canvas(el,{backgroundColor:'#f1f5f9',scale:2,ignoreElements:function(n){ return n.classList && n.classList.contains('oz-noprint'); }}); cv.toBlob(function(b){ var a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='haftalik-ozet-'+OZ.hafta+'-hafta.png'; a.click(); toast('📥 Görsel indirildi','ok'); }); }catch(e){ toast('Görsel oluşturulamadı (internet gerekli)','err'); } };
+
+/* ---------- 📒 Sınıf Defteri ---------- */
+var DF={hafta:null,grades:null,track:'robokod'};
+function defterSatir(gi,tr,h){ return giIle(gi,function(){ var se=SEANS[tr.id][h-1]; if(!se) return null; var yontem=(SINIF_LISTE[gi].d==='ana'||SINIF_LISTE[gi].d==='12')?'Oyun temelli öğrenme, gösterip yaptırma, eşli çalışma':'Yaparak-yaşayarak öğrenme, proje/problem temelli öğrenme, grup çalışması';
+  return {sinif:ozGname(gi),ders:tr.ad,ik:tr.ik,konu:(se.u||se.k).replace(/^Tanışalım:\s*/,''),kazanim:se.z,etkinlik:se.e,yontem:yontem,beceri:se.b||''}; }); }
+function defterMetin(r,h){ return r.sinif+' · '+r.ders+' · '+h+'. Hafta\nKonu: '+r.konu+'\nKazanım: '+r.kazanim+'\nEtkinlik: '+r.etkinlik+'\nYöntem-Teknik: '+r.yontem+(r.beceri?'\nBeceri: '+r.beceri:''); }
+function defterAc(){ if(DF.hafta==null) DF.hafta=(OZ.hafta||ozHaftaTahmin()); if(DF.grades==null) DF.grades=SINIF_LISTE.map(function(_,i){return i;}); defterCiz(); modalAc('defterModal'); }
+function defterSatirlar(){ var rows=[]; DF.grades.forEach(function(gi){ gorunenTracks(gi).filter(function(t){ return DF.track==='hepsi'||t.id===DF.track; }).forEach(function(tr){ var r=defterSatir(gi,tr,DF.hafta); if(r) rows.push(r); }); }); return rows; }
+function defterCiz(){
+  var gch=SINIF_LISTE.map(function(sn,i){return '<div class="gchip'+(DF.grades.indexOf(i)>=0?' akt':'')+'" onclick="defterGrade('+i+')">'+(sn.g==='Ana'?'Ana':sn.g)+'</div>';}).join('')+'<div class="gchip" onclick="DF.grades=SINIF_LISTE.map(function(_,i){return i;});defterCiz()">Tümü</div>';
+  var tch=[['robokod','🤖 Robotik-Kodlama'],['satranc','♟️ Satranç'],['yz','🧠 Yapay Zeka'],['akil','🧩 Akıl-Zeka'],['kocluk','🎯 Koçluk'],['hepsi','📚 Hepsi']].map(function(p){return '<div class="gchip'+(DF.track===p[0]?' akt':'')+'" onclick="DF.track=\''+p[0]+'\';defterCiz()">'+p[1]+'</div>';}).join('');
+  var wsel='<select class="key" style="width:auto" onchange="DF.hafta=+this.value;defterCiz()">'+Array.from({length:36},function(_,k){return '<option value="'+(k+1)+'"'+(k+1===DF.hafta?' selected':'')+'>'+(k+1)+'. hafta</option>';}).join('')+'</select>';
+  var rows=defterSatirlar();
+  var html=rows.map(function(r,idx){ return '<div class="mak-satir" style="align-items:flex-start"><div class="ms-ad" style="line-height:1.5"><b>'+r.ik+' '+r.sinif+' · '+r.ders+'</b><br>📌 <b>Konu:</b> '+esc(r.konu)+'<br>🎯 <b>Kazanım:</b> '+esc(r.kazanim)+'<br>🧩 <b>Etkinlik:</b> '+esc(r.etkinlik)+'<br><span style="color:var(--soluk2)">🛠️ '+esc(r.yontem)+'</span></div><div class="ms-btn"><button class="fbtn" onclick="defterKopya('+idx+')">📋 Kopyala</button><button class="fbtn" onclick="defterKonuKopya('+idx+')">📌 Sadece konu</button></div></div>'; }).join('')||'<div style="color:var(--soluk);padding:12px">Bu seçim için satır yok.</div>';
+  $('#defterModalIc').innerHTML='<div class="mbas" style="--dr:#0ea5e9;--dr2:#22d3ee"><div class="ik">📒</div><div style="min-width:0"><h3>Sınıf Defteri</h3><div class="alt">Sınıf bazlı · kopyala-yapıştır hazır · seviyeye özel</div></div><div class="kapat" onclick="modalKapat(\'defterModal\')">✕</div></div><div class="mgov">'+
+    '<div class="ilerseridi"><span class="et">Hafta:</span>'+wsel+'</div><div class="ilerseridi" style="margin-top:6px"><span class="et">Sınıf:</span>'+gch+'</div><div class="ilerseridi" style="margin-top:6px"><span class="et">Ders:</span>'+tch+'</div>'+
+    '<div class="btnsira" style="margin:10px 0"><button class="btn p" onclick="defterHepsiKopya()">📋 Tümünü Kopyala</button><button class="btn y" onclick="defterPdf()">🖨️ Tablo (PDF)</button></div>'+
+    '<div style="max-height:50vh;overflow-y:auto">'+html+'</div><div style="font-size:11.5px;color:var(--soluk);margin-top:8px">💡 “Sadece konu” e-Okul sınıf defterindeki kısa Konu alanı içindir.</div></div>'; }
+function defterGrade(i){ var k=DF.grades.indexOf(i); if(k>=0){ if(DF.grades.length>1) DF.grades.splice(k,1); } else DF.grades.push(i); DF.grades.sort(function(a,b){return a-b;}); defterCiz(); }
+function kopyala(t,msg){ try{ navigator.clipboard.writeText(t).then(function(){toast(msg||'📋 Kopyalandı','ok');}); }catch(e){ toast('Kopyalanamadı','err'); } }
+function defterKopya(idx){ var r=defterSatirlar()[idx]; if(r) kopyala(defterMetin(r,DF.hafta),'📋 '+r.sinif+' defter metni kopyalandı'); }
+function defterKonuKopya(idx){ var r=defterSatirlar()[idx]; if(r) kopyala(r.konu,'📌 Konu kopyalandı'); }
+function defterHepsiKopya(){ kopyala(defterSatirlar().map(function(r){return defterMetin(r,DF.hafta);}).join('\n\n'),'📋 Tüm sınıfların defter metni kopyalandı'); }
+function defterTekKopya(gi,tid,h){ var tr=TRACKS.filter(function(x){return x.id===tid;})[0]; var r=defterSatir(gi,tr,h); if(r) kopyala(defterMetin(r,h),'📒 '+r.sinif+' defter metni kopyalandı'); }
+function defterPdf(){ var rows=defterSatirlar(); var ov=document.getElementById('yilPrint'); if(!ov){ ov=document.createElement('div'); ov.id='yilPrint'; document.body.appendChild(ov); }
+  ov.innerHTML='<div class="yilbas"><h1>Sınıf Defteri · '+DF.hafta+'. Hafta</h1><h2>Barış Öğretmen · Değişim Koleji · '+new Date().toLocaleDateString('tr-TR')+'</h2></div><table style="width:100%;border-collapse:collapse;font-size:11.5px"><tr style="background:#e0e7ff">'+['Sınıf','Ders','Konu','Kazanım','Etkinlik / Yöntem'].map(function(x){return '<th style="border:1px solid #cbd5e1;padding:6px;text-align:left">'+x+'</th>';}).join('')+'</tr>'+rows.map(function(r){return '<tr>'+[r.sinif,r.ders,r.konu,r.kazanim,r.etkinlik+' — '+r.yontem].map(function(x){return '<td style="border:1px solid #cbd5e1;padding:6px;vertical-align:top">'+esc(x)+'</td>';}).join('')+'</tr>';}).join('')+'</table>';
+  document.body.classList.add('yazdir-yil'); window.print(); setTimeout(function(){document.body.classList.remove('yazdir-yil');},700); }
 
 /* ============================================================
-   EK: ✏️ ÖZETİ ELLE DÜZENLEYİP GÖNDER (günlük & haftalık)
+   EK: 📤 OKULA GÖNDER — geçmiş kaydı + akıllı kontrol + ONAY KAPISI
+        (hiçbir şey onaysız gönderilmez) + AI ile ders ekleme
    ============================================================ */
-function gunParcalar(){
-  var list=window._DK_BUGUN||[]; var not=String(((document.getElementById('gunNot')||{}).value)||'').trim();
-  var gruplar={}; list.forEach(function(x){ var g=ozGname(x.grade); (gruplar[g]=gruplar[g]||[]).push(x); });
-  var tarih=new Date().toLocaleDateString('tr-TR'), ts=Date.now();
-  return Object.keys(gruplar).map(function(s){
-    var kd=gruplar[s].map(function(x){ var se=SEANS[x.track][x.idx]; return {ik:x.tr.ik,ad:x.tr.ad,dr:x.tr.dr,dr2:x.tr.dr2,k:se.k,z:se.z,soru:ozSoru(se.k),durum:'',ders:x.p+'. ders'}; });
-    var metin='📌 Günün Özeti · '+s+' · '+tarih+'\n\n'+kd.map(function(d){return d.ik+' '+d.ad+'\n📚 Bugün: '+d.k+'\n🎯 Kazanım: '+d.z+'\n🏠 Evde sorun: '+d.soru;}).join('\n\n')+(not?('\n\n✨ '+not):'')+'\n\n— Barış Öğretmen';
-    return {sinif:s, metin:metin, kart:{tur:'gun',baslik:'Günün Özeti · '+tarih,sinif:s,tarih:ts,dersler:kd,not:not}};
-  });
-}
-var DK_DUZ=[];
-function dkDuzenleAc(parts,gun,baslik){
-  if(!parts||!parts.length){ toast('Düzenlenecek özet yok','err'); return; }
-  DK_DUZ=parts.map(function(p){ return {sinif:p.sinif, metin:p.metin, orijinal:p.metin, kart:p.kart||null, gun:gun}; });
-  var k=document.getElementById('dkDuzen'); if(!k){ k=document.createElement('div'); k.id='dkDuzen'; k.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(2,6,23,.8);display:flex;align-items:center;justify-content:center;padding:12px'; document.body.appendChild(k); }
-  k.innerHTML='<div style="background:#0f172a;color:#e2e8f0;border-radius:18px;max-width:640px;width:100%;max-height:90vh;overflow:auto;padding:16px;border:1px solid #334155">'+
-    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><b style="font-size:16px">✏️ '+esc(baslik||'Özet')+' — Elle Düzenle</b><button onclick="document.getElementById(\'dkDuzen\').remove()" style="background:#334155;color:#fff;border:0;border-radius:8px;padding:6px 10px;cursor:pointer">✕</button></div>'+
-    '<div style="font-size:12px;color:#94a3b8;margin-bottom:10px">Her sınıfın metnini istediğin gibi değiştir, silmek istediğin sınıfın işaretini kaldır. Değiştirdiğin metin velide renkli satırlar halinde görünür.</div>'+
-    DK_DUZ.map(function(p,i){ return '<div style="background:#1e293b;border-radius:12px;padding:10px;margin-bottom:8px"><label style="display:flex;gap:8px;align-items:center;font-weight:900;margin-bottom:6px"><input type="checkbox" checked id="dkChk'+i+'"> '+esc(p.sinif)+'</label><textarea id="dkTxt'+i+'" style="width:100%;min-height:150px;background:#0b1220;color:#e2e8f0;border:1px solid #334155;border-radius:10px;padding:8px;font-size:13px;line-height:1.5">'+esc(p.metin)+'</textarea></div>'; }).join('')+
-    '<button onclick="dkDuzenleGonder()" style="width:100%;background:linear-gradient(90deg,#059669,#0891b2);color:#fff;border:0;border-radius:12px;padding:12px;font-weight:900;font-size:15px;cursor:pointer">🚀 Düzenlenmiş Hali Okula Gönder</button></div>';
-}
-async function dkDuzenleGonder(){
-  var sec=[]; DK_DUZ.forEach(function(p,i){ var c=document.getElementById('dkChk'+i), t=document.getElementById('dkTxt'+i); if(c&&c.checked&&t&&t.value.trim()) sec.push({sinif:p.sinif, metin:t.value.trim(), kart:(t.value.trim()===String(p.orijinal).trim())?p.kart:null, gun:p.gun}); });
-  if(!sec.length){ toast('Gönderilecek sınıf seçili değil','err'); return; }
-  if(!confirm(sec.length+' sınıfa gönderilecek:\n'+sec.map(function(x){return '• '+x.sinif;}).join('\n'))) return;
-  try{
-    toast('🚀 Gönderiliyor…','info');
-    var o=await dkOkulBaglan(), F=o.sdk, ref=F.doc(o.fs,'maas_config','k12_pano');
-    var sn=await F.getDoc(ref); var liste=(sn.exists()&&Array.isArray((sn.data()||{}).liste))?sn.data().liste:[];
-    var ts=Date.now();
-    var yeni=sec.filter(function(x){ return !liste.some(function(q){return q.sinif===x.sinif && q.metin===x.metin;}); }).map(function(x,i){ return {id:ts.toString(36)+Math.random().toString(36).slice(2,7), sinif:x.sinif, metin:x.metin, ogretmen:'Barış Öğretmen', ts:ts-i, kaynak:'ozet', kart:x.kart, bitis:ts+(x.gun||14)*864e5}; });
-    if(!yeni.length){ toast('ℹ️ Bu özet zaten gönderilmiş','info',3500); return; }
-    await F.setDoc(ref,{liste:yeni.concat(liste)},{merge:true});
-    var k=document.getElementById('dkDuzen'); if(k) k.remove();
-    toast('✅ '+yeni.length+' sınıfa gönderildi 🎉','ok',4000);
-  }catch(e){ toast('Gönderilemedi — internet bağlantısını kontrol et','err',4000); }
-}
+function glGet(){ return LS.get('dk_gonderim',{kayit:[]}); }
+function glSet(o){ LS.set('dk_gonderim',o); }
+function strHash(t){ var h=0; t=String(t||''); for(var i=0;i<t.length;i++){ h=((h<<5)-h)+t.charCodeAt(i); h|=0; } return String(h); }
+function sonHafta(tip,gi,tid){ var m=null; glGet().kayit.forEach(function(k){ if(k.tip!==tip) return; k.items.forEach(function(it){ if(it.gi===gi&&it.tid===tid&&(m===null||k.hafta>m)) m=k.hafta; }); }); return m; }
+function gonderildiMi(tip,gi,tid,h){ return glGet().kayit.some(function(k){ return k.tip===tip&&k.hafta===h&&k.items.some(function(it){return it.gi===gi&&it.tid===tid;}); }); }
+function ayniMetinMi(tip,gi,tid,h,hash){ return glGet().kayit.some(function(k){ return k.tip===tip&&k.hafta===h&&k.items.some(function(it){return it.gi===gi&&it.tid===tid&&it.hash===hash;}); }); }
+function trAd(tid){ var t=TRACKS.filter(function(x){return x.id===tid;})[0]; return t?t.ad:tid; }
+function normTR(s){ return String(s||'').toLocaleLowerCase('tr').replace(/[“”"'’.,:;!?()·—–\-]/g,' ').replace(/\s+/g,' ').trim(); }
+function uniteAd(se){ return String((se&&(se.u||se.k))||'').replace(/^Tanışalım:\s*/,'').replace(/\s·\s(Keşfet|Uygula|Üret & Paylaş|Keşfediyoruz|Oynuyoruz|Üretiyoruz)$/,''); }
+var KONU_DUR=['tanışalım','nedir','ders','için','ile','hafta','bizim','ve'];
+function konuIlgiliMi(metin,se){ var m=normTR(metin); var kaynak=normTR(uniteAd(se)+' '+(se.z||'')+' '+(se.e||''));
+  var tok=kaynak.split(' ').filter(function(w){ return w.length>=4 && KONU_DUR.indexOf(w)<0; });
+  if(!tok.length) return true; return tok.some(function(w){ return m.indexOf(w.slice(0,Math.min(5,w.length)))>=0; }); }
+var ILERI_TERIM=['python','fonksiyon','değişken','sinir ağ','prompt','notasyon','verimlilik','html','css','while','for döngü','veri bilimi','kombinasyon','sözde kod','operatör','aday hamle','sensör verisi'];
+function gonderKontrol(tip,h,items){ var sonuc=[]; var hn=ozHaftaTahmin();
+  var ekle=function(seviye,gi,tid,mesaj){ sonuc.push({seviye:seviye,kim:(gi==null?'':ozGname(gi)+' · '+trAd(tid)),mesaj:mesaj}); };
+  if(h>hn) ekle('kritik',null,null,'İleri tarihli hafta: takvime göre şu an '+hn+'. hafta, sen '+h+'. haftayı gönderiyorsun (henüz işlenmemiş olabilir).');
+  else if(h<hn-1) ekle('uyari',null,null,'Geride kalan bir hafta: takvime göre şu an '+hn+'. hafta, sen '+h+'. haftayı gönderiyorsun.');
+  items.forEach(function(it){ var gi=it.gi, tid=it.tid, se=giIle(gi,function(){ return SEANS[tid][h-1]; }); if(!se){ ekle('kritik',gi,tid,'Bu hafta için planda konu bulunamadı.'); return; }
+    var L=sonHafta(tip,gi,tid);
+    if(L!==null){ if(h===L) ekle(ayniMetinMi(tip,gi,tid,h,it.hash)?'kritik':'uyari',gi,tid, ayniMetinMi(tip,gi,tid,h,it.hash)?'Bu metni '+h+'. hafta için ZATEN göndermiştin (aynı metin).':h+'. hafta bu sınıfa zaten gönderilmiş; bu bir tekrar/düzeltme gönderimi olacak.');
+      else if(h<L) ekle('kritik',gi,tid,'Geriye dönük gönderim: son gönderimin '+L+'. hafta, şimdi '+h+'. haftayı gönderiyorsun.');
+      else if(h>L+1){ var at=[]; for(var w=L+1;w<h;w++) at.push(w); ekle('uyari',gi,tid,'Hafta atlanıyor: son gönderim '+L+'. hafta; '+at.join(', ')+'. hafta'+(at.length>1?'lar':'')+' gönderilmedi.'); } }
+    else if(h>1 && tip!=='idare') ekle('bilgi',gi,tid,'Bu sınıfa bu türde ilk gönderim ('+h+'. hafta).');
+    if(!ilrDone(gi,tid,h-1)){ if(typeof yarimGet==='function'&&yarimGet(gi,tid,h-1)) ekle('uyari',gi,tid,'Bu hafta “⏸️ yarım kaldı” olarak işaretli.'); else ekle('uyari',gi,tid,'Bu hafta “✅ işlendi” olarak işaretlenmemiş.'); }
+    if(it.metin!=null){
+      if(!konuIlgiliMi(it.metin,se)) ekle('kritik',gi,tid,'Metin bu haftanın konusuyla (“'+uniteAd(se)+'”) ilişkili görünmüyor.');
+      var m=normTR(it.metin), cur=normTR(uniteAd(se)); var arr=giIle(gi,function(){ return SEANS[tid]; });
+      for(var j=0;j<arr.length;j++){ if(j===h-1) continue; var u=normTR(uniteAd(arr[j])); if(u.length>=8 && u!==cur && m.indexOf(u)>=0){ ekle('kritik',gi,tid,'Metinde '+(j+1)+'. haftanın konusu (“'+uniteAd(arr[j])+'”) geçiyor — yanlış hafta olabilir.'); break; } }
+      var band=SINIF_LISTE[gi].d; if(band==='ana'||band==='12'){ var ag=ILERI_TERIM.filter(function(t){ return m.indexOf(t)>=0; }); if(ag.length) ekle('uyari',gi,tid,'Bu yaş için ağır terim var: '+ag.join(', ')+'. Veli “çocuğum için zor değil mi?” diyebilir.'); }
+      if(it.metin.length>700) ekle('uyari',gi,tid,'Metin uzun ('+it.metin.length+' karakter). Veliler kısa metni daha çok okur.');
+      if(it.metin.trim().length<25) ekle('kritik',gi,tid,'Metin çok kısa/boş görünüyor.');
+    } });
+  return sonuc; }
+var GO=null;
+function gonderOnay(o){ GO=o; GO.kontrol=gonderKontrol(o.tip,o.hafta,o.items); gonderCiz(); modalAc('gonderModal'); }
+function gonderCiz(){ var k=GO.kontrol, kr=k.filter(function(x){return x.seviye==='kritik';}), uy=k.filter(function(x){return x.seviye==='uyari';}), bl=k.filter(function(x){return x.seviye==='bilgi';});
+  var ikon={kritik:'🔴',uyari:'🟡',bilgi:'🔵'}, renk={kritik:'#fecaca',uyari:'#fde68a',bilgi:'#bfdbfe'};
+  var liste=k.map(function(x){ return '<div style="background:rgba(255,255,255,.04);border-left:4px solid '+renk[x.seviye]+';border-radius:10px;padding:8px 10px;margin-top:6px;font-size:12.5px;line-height:1.45">'+ikon[x.seviye]+' '+(x.kim?'<b>'+x.kim+':</b> ':'')+esc(x.mesaj)+'</div>'; }).join('');
+  var durum = kr.length? '<div style="color:#fca5a5;font-weight:900">🔴 '+kr.length+' kritik uyarı var — lütfen kontrol et.</div>' : (uy.length? '<div style="color:#fde68a;font-weight:900">🟡 '+uy.length+' uyarı var.</div>' : '<div style="color:#86efac;font-weight:900">🟢 Her şey uyumlu görünüyor.</div>');
+  var islenmemis=GO.items.filter(function(it){ return !ilrDone(it.gi,it.tid,GO.hafta-1); });
+  var onayMetni = kr.length? 'Kritik uyarıları okudum; bu içeriği yine de göndermek istiyorum.' : (uy.length? 'Uyarıları okudum, göndermeyi onaylıyorum.' : 'İçeriği kontrol ettim, göndermeyi onaylıyorum.');
+  $('#gonderModalIc').innerHTML='<div class="mbas" style="--dr:#16a34a;--dr2:#22d3ee"><div class="ik">🛡️</div><div style="min-width:0"><h3>Gönderim Onayı</h3><div class="alt">'+esc(GO.baslik)+' · '+GO.hafta+'. hafta · '+GO.items.length+' kart · kanal: '+esc(GO.kanalAd)+'</div></div><div class="kapat" onclick="modalKapat(\'gonderModal\')">✕</div></div><div class="mgov">'+
+    durum+liste+
+    (islenmemis.length?'<div class="btnsira" style="margin-top:8px"><button class="fbtn" onclick="gonderIslendiYap()">✅ '+islenmemis.length+' dersi “işlendi” olarak işaretle ve yeniden kontrol et</button></div>':'')+
+    '<div style="font-size:12px;color:var(--soluk);margin:12px 0 4px">👀 Önizleme:</div><div style="max-height:190px;overflow:auto;white-space:pre-wrap;background:var(--panel2);border:1px solid var(--cizgi);border-radius:12px;padding:10px;font-size:12.5px">'+esc(GO.onizleme||'')+'</div>'+
+    '<label style="display:flex;gap:8px;align-items:flex-start;margin-top:12px;font-size:13px;cursor:pointer"><input type="checkbox" id="gonderTik" style="width:20px;height:20px;margin-top:1px" onchange="document.getElementById(\'gonderBtn\').disabled=!this.checked"> '+onayMetni+'</label>'+
+    '<div class="btnsira" style="margin-top:12px"><button class="btn g" onclick="modalKapat(\'gonderModal\')">✏️ Geri dön, düzenle</button><button class="btn y" id="gonderBtn" disabled onclick="gonderYap()">✅ Onayla ve Gönder</button></div></div>'; }
+function gonderIslendiYap(){ GO.items.forEach(function(it){ if(!ilrDone(it.gi,it.tid,GO.hafta-1)) ilrToggle(it.gi,it.tid,GO.hafta-1); if(typeof yarimSet==='function') yarimSet(it.gi,it.tid,GO.hafta-1,false); }); try{renderNeredeKaldim();}catch(e){} GO.kontrol=gonderKontrol(GO.tip,GO.hafta,GO.items); gonderCiz(); toast('✅ İşaretlendi, kontrol yenilendi','ok'); }
+function gonderYap(){ var t=document.getElementById('gonderTik'); if(!t||!t.checked){ toast('Önce onay kutusunu işaretle','err'); return; }
+  var o=GO; modalKapat('gonderModal');
+  try{ o.eylem(); }catch(e){ toast('Gönderim sırasında hata: '+(e.message||e),'err'); return; }
+  var g=glGet(); g.kayit.push({id:Date.now(),ts:new Date().toISOString(),tip:o.tip,kanal:o.kanalAd,hafta:o.hafta,baslik:o.baslik,uyari:o.kontrol.filter(function(x){return x.seviye!=='bilgi';}).length,items:o.items.map(function(it){return {gi:it.gi,tid:it.tid,hash:it.hash};}),ozet:String(o.onizleme||'').slice(0,500)}); glSet(g);
+  toast('📤 Gönderildi ve geçmişe kaydedildi ('+o.hafta+'. hafta)','ok',3200);
+  if(o.tip==='veli'){ var eksik=o.items.filter(function(it){ return !gonderildiMi('defter',it.gi,it.tid,o.hafta); }); if(eksik.length) setTimeout(function(){ toast('📒 Hatırlatma: '+o.hafta+'. hafta sınıf defteri henüz işaretlenmedi','info',4200); },3400); }
+  try{ if(document.getElementById('okulGonderModal').classList.contains('acik')) okulGonderAc(); }catch(e){} }
+var TIP_AD={veli:'📰 Veli Özeti',defter:'📒 Sınıf Defteri',idare:'🏫 İdare Raporu'};
+/* --- Veli özeti kanallarını onay kapısına bağla --- */
+var _ozKopyaEski=ozKopya, _ozWaEski=ozWa, _ozPdfEski=ozPdf, _ozPngEski=ozPng;
+function ozItems(){ var arr=[]; document.querySelectorAll('#ozetSaha .hoz-kart').forEach(function(k){ var p=(k.dataset.key||'').split('|'); var gv=k.querySelector('.oz-govde'); var metin=gv?gv.innerText.trim():''; arr.push({gi:+p[0],tid:p[1],metin:metin,hash:strHash(metin)}); }); return arr; }
+function ozGonder(kanalAd,eylem){ var items=ozItems(); if(!items.length){ toast('Gönderilecek kart yok','err'); return; } gonderOnay({tip:'veli',baslik:TIP_AD.veli,hafta:OZ.hafta,items:items,kanalAd:kanalAd,eylem:eylem,onizleme:ozMetin()}); }
+ozKopya=function(){ ozGonder('Kopyala (ekosistem Duyuru)',_ozKopyaEski); };
+ozWa=function(){ ozGonder('WhatsApp',_ozWaEski); };
+ozPdf=function(){ ozGonder('PDF',_ozPdfEski); };
+ozPng=function(){ ozGonder('Görsel (PNG)',_ozPngEski); };
+/* --- Sınıf defteri kanallarını onay kapısına bağla --- */
+var _defterSatirEski=defterSatir; defterSatir=function(gi,tr,h){ var r=_defterSatirEski(gi,tr,h); if(r){ r.gi=gi; r.tid=tr.id; } return r; };
+var _dKopya=defterKopya, _dHepsi=defterHepsiKopya, _dPdf=defterPdf, _dTek=defterTekKopya;
+function dfItems(rows,h){ return rows.map(function(r){ var t=defterMetin(r,h); return {gi:r.gi,tid:r.tid,metin:t,hash:strHash(t)}; }); }
+defterKopya=function(idx){ var r=defterSatirlar()[idx]; if(!r) return; gonderOnay({tip:'defter',baslik:TIP_AD.defter,hafta:DF.hafta,items:dfItems([r],DF.hafta),kanalAd:'Kopyala (e-Okul)',eylem:function(){ _dKopya(idx); },onizleme:defterMetin(r,DF.hafta)}); };
+defterHepsiKopya=function(){ var rows=defterSatirlar(); if(!rows.length) return; gonderOnay({tip:'defter',baslik:TIP_AD.defter,hafta:DF.hafta,items:dfItems(rows,DF.hafta),kanalAd:'Tümünü kopyala (e-Okul)',eylem:_dHepsi,onizleme:rows.map(function(r){return defterMetin(r,DF.hafta);}).join('\n\n')}); };
+defterPdf=function(){ var rows=defterSatirlar(); if(!rows.length) return; gonderOnay({tip:'defter',baslik:TIP_AD.defter,hafta:DF.hafta,items:dfItems(rows,DF.hafta),kanalAd:'PDF tablo',eylem:_dPdf,onizleme:rows.map(function(r){return defterMetin(r,DF.hafta);}).join('\n\n')}); };
+defterTekKopya=function(gi,tid,h){ var tr=TRACKS.filter(function(x){return x.id===tid;})[0]; var r=defterSatir(gi,tr,h); if(!r) return; gonderOnay({tip:'defter',baslik:TIP_AD.defter,hafta:h,items:dfItems([r],h),kanalAd:'Kopyala (e-Okul)',eylem:function(){ _dTek(gi,tid,h); },onizleme:defterMetin(r,h)}); };
+/* --- Durum metnine gönderim bilgisi --- */
+var _sdm=seansDurumMetni; seansDurumMetni=function(tid,i){ var gi=ST.gradeIdx, s=_sdm(tid,i); if(gonderildiMi('veli',gi,tid,i+1)) s+=' · 📤 Veliye gönderildi'; if(gonderildiMi('defter',gi,tid,i+1)) s+=' · 📒 Deftere yazıldı'; return s; };
+/* --- Veli özeti: geçen haftayla bağla + düzenlemeleri koru + AI ile yeniden yaz + son gönderim bandı --- */
+OZ.duzen=OZ.duzen||{};
+var _ozVer=ozVersiyon; ozVersiyon=function(v,gi,tr,se,h){ var s=_ozVer(v,gi,tr,se,h); if(OZ.bagla && h>1){ var p=giIle(gi,function(){ return SEANS[tr.id][h-2]; }); if(p) s='<p>🔙 <b>Geçen hafta:</b> '+esc(uniteAd(p))+'</p>'+s; } return s; };
+var _ozetCiz2=ozetCiz;
+ozetCiz=function(){ _ozetCiz2(); var saha=document.getElementById('ozetSaha'); if(!saha) return;
+  saha.querySelectorAll('.hoz-kart').forEach(function(k){ var key=k.dataset.key, v=OZ.ver[key]||OZ.verAll||1, sk=key+'|'+OZ.hafta+'|'+v+'|'+(OZ.bagla?1:0), gv=k.querySelector('.oz-govde'); if(!gv) return;
+    if(OZ.duzen[sk]){ gv.innerHTML=OZ.duzen[sk]; gv.style.boxShadow='inset 0 0 0 2px #f59e0b'; }
+    gv.addEventListener('input',function(){ OZ.duzen[sk]=gv.innerHTML; gv.style.boxShadow='inset 0 0 0 2px #f59e0b'; });
+    var bar=k.querySelector('.oz-noprint'); if(bar){ var b1=document.createElement('span'); b1.className='fbtn'; b1.textContent='🤖 AI ile yaz'; b1.onclick=function(){ ozKartAI(k,sk); }; bar.appendChild(b1); var b2=document.createElement('span'); b2.className='fbtn'; b2.textContent='↺ Orijinal'; b2.onclick=function(){ delete OZ.duzen[sk]; ozetCiz(); }; bar.appendChild(b2); }
+    var p=key.split('|'), gi=+p[0], tid=p[1], L=sonHafta('veli',gi,tid); var etiket=document.createElement('div'); etiket.className='oz-noprint'; etiket.style.cssText='font-size:11px;margin-top:6px;color:'+(L===null?'#64748b':(OZ.hafta===L+1?'#16a34a':'#b45309'));
+    etiket.textContent= L===null? '📤 Bu sınıfa henüz veli özeti gönderilmedi.' : ('📤 Son gönderim: '+L+'. hafta'+(OZ.hafta===L+1?' → bu gönderim sıradaki hafta ✅':(OZ.hafta<=L?' → bu hafta zaten gönderilmiş ⚠️':' → arada '+(OZ.hafta-L-1)+' hafta atlanıyor ⚠️')));
+    k.appendChild(etiket); });
+  var ust=document.createElement('div'); ust.className='ilerseridi'; ust.style.margin='0 0 10px'; ust.innerHTML='<label style="display:flex;gap:6px;align-items:center;font-size:12.5px;cursor:pointer"><input type="checkbox" '+(OZ.bagla?'checked':'')+' onchange="OZ.bagla=this.checked;ozetCiz()"> 🔗 Geçen haftayla bağla (kartın başına “Geçen hafta” satırı)</label><div class="gchip" onclick="okulGonderAc()">📤 Gönderim Merkezi</div>';
+  saha.parentNode.insertBefore(ust,saha); };
+async function ozKartAI(k,sk){ var p=(k.dataset.key||'').split('|'), gi=+p[0], tid=p[1], h=OZ.hafta; var se=giIle(gi,function(){ return SEANS[tid][h-1]; }); var gv=k.querySelector('.oz-govde'); if(!se||!gv) return;
+  var band=SINIF_LISTE[gi].d; gv.innerHTML='<p>🤖 Yazılıyor…</p>';
+  var sistem='Sen bir öğretmenin veli iletişim asistanısın. Veliye gidecek ÇOK KISA (en fazla 3 kısa satır) haftalık ders özeti yaz. Kurallar: (1) Bu haftanın konusunu MUTLAKA adıyla an. (2) '+(band==='ana'||band==='12'?'Küçük yaş: oyun ve somut etkinlik dili; teknik terim KULLANMA.':'Yaşa uygun, sade dil.')+' (3) Sıcak, olumlu, abartısız. (4) Son satır evde küçük bir öneri ya da soru olsun. (5) Başlık, imza, markdown yıldızı KULLANMA; her satır bir emojiyle başlasın. Türkçe.';
+  try{ var t=await generateText('Sınıf: '+ozGname(gi)+'. Ders: '+trAd(tid)+'. Hafta '+h+'. Konu: '+uniteAd(se)+'. Kazanım: '+se.z+'. Sınıf etkinliği: '+se.e+'.',{sistem:sistem});
+    t=String(t||'').replace(/\*\*/g,'').trim(); var html=t.split(/\n+/).filter(Boolean).map(function(l){return '<p>'+esc(l)+'</p>';}).join('');
+    gv.innerHTML=html||'<p>(boş yanıt)</p>'; OZ.duzen[sk]=gv.innerHTML; gv.style.boxShadow='inset 0 0 0 2px #a855f7';
+    if(!konuIlgiliMi(gv.innerText,se)) toast('⚠️ AI metni konudan uzaklaşmış olabilir — gönderimde uyarılacaksın','err',3800); else toast('🤖 Yazıldı — dilediğin gibi düzenleyebilirsin','ok'); }
+  catch(e){ gv.innerHTML=_ozVer(OZ.ver[k.dataset.key]||OZ.verAll||1,gi,TRACKS.filter(function(x){return x.id===tid;})[0],se,h); toast('AI yazamadı: '+((e&&e.message)||'')+' — ⚙️ Ayarlar’dan Gemini anahtarını kontrol et','err',4200); } }
+/* --- 🏫 İdareye haftalık rapor --- */
+function idareMetin(h){ var satir=[], tam=0, yar=0, yok=0;
+  SINIF_LISTE.forEach(function(sn,gi){ gorunenTracks(gi).forEach(function(tr){ var se=giIle(gi,function(){ return SEANS[tr.id][h-1]; }); if(!se) return; var d=ilrDone(gi,tr.id,h-1)?'✅':((typeof yarimGet==='function'&&yarimGet(gi,tr.id,h-1))?'⏸️':'○'); if(d==='✅')tam++; else if(d==='⏸️')yar++; else yok++;
+    if(d!=='○') satir.push(d+' '+ozGname(gi)+' · '+tr.ad+': '+uniteAd(se)); }); });
+  return '🏫 Haftalık Ders Raporu · '+h+'. Hafta\nBarış Öğretmen · Değişim Koleji · '+new Date().toLocaleDateString('tr-TR')+'\n\n'+(satir.join('\n')||'(Bu hafta için işaretlenmiş ders yok)')+'\n\nÖzet: ✅ '+tam+' işlendi · ⏸️ '+yar+' yarım · ○ '+yok+' işaretlenmedi'; }
+function idareGonder(h){ h=h||ozHaftaTahmin(); var items=[]; SINIF_LISTE.forEach(function(sn,gi){ gorunenTracks(gi).forEach(function(tr){ if(ilrDone(gi,tr.id,h-1)||(typeof yarimGet==='function'&&yarimGet(gi,tr.id,h-1))) items.push({gi:gi,tid:tr.id,hash:''}); }); });
+  var t=idareMetin(h); if(!items.length){ toast('Bu hafta işaretlenmiş ders yok — önce dersleri ✅/⏸️ işaretle','err',3600); return; }
+  gonderOnay({tip:'idare',baslik:TIP_AD.idare,hafta:h,items:items,kanalAd:'Kopyala',eylem:function(){ kopyala(t,'🏫 İdare raporu kopyalandı'); },onizleme:t}); }
+/* --- 📤 Gönderim Merkezi --- */
+var OG={tid:'robokod',tip:'veli'};
+function okulGonderAc(){ var hn=ozHaftaTahmin(); var g=glGet();
+  var tch=[['robokod','🤖 Robotik-Kodlama'],['satranc','♟️ Satranç'],['yz','🧠 Yapay Zeka'],['akil','🧩 Akıl-Zeka'],['kocluk','🎯 Koçluk']].map(function(p){return '<div class="gchip'+(OG.tid===p[0]?' akt':'')+'" onclick="OG.tid=\''+p[0]+'\';okulGonderAc()">'+p[1]+'</div>';}).join('');
+  var tipch=[['veli','📰 Veli'],['defter','📒 Defter']].map(function(p){return '<div class="gchip'+(OG.tip===p[0]?' akt':'')+'" onclick="OG.tip=\''+p[0]+'\';okulGonderAc()">'+p[1]+'</div>';}).join('');
+  var uyar=[], satirlar='';
+  SINIF_LISTE.forEach(function(sn,gi){ if(!gorunenTracks(gi).some(function(t){return t.id===OG.tid;})) return; var L=sonHafta(OG.tip,gi,OG.tid), sira=(L===null?1:L+1);
+    var kutu=''; for(var w=1;w<=36;w++){ var gon=gonderildiMi(OG.tip,gi,OG.tid,w), isl=ilrDone(gi,OG.tid,w-1), yar=(typeof yarimGet==='function'&&yarimGet(gi,OG.tid,w-1)); var bg=gon?'#16a34a':(isl?'#2563eb':(yar?'#d97706':'#334155')); kutu+='<span title="'+w+'. hafta'+(gon?' · gönderildi':(isl?' · işlendi (gönderilmedi)':(yar?' · yarım':'')))+'" onclick="okulHaftaAc('+gi+','+w+')" style="display:inline-block;width:15px;height:15px;border-radius:4px;margin:1px;cursor:pointer;background:'+bg+';'+(w===hn?'outline:2px solid #fbbf24;':'')+'"></span>'; }
+    for(var w2=1;w2<hn;w2++){ if(ilrDone(gi,OG.tid,w2-1)&&!gonderildiMi(OG.tip,gi,OG.tid,w2)){ uyar.push(ozGname(gi)+': '+w2+'. hafta işlendi ama '+(OG.tip==='veli'?'veliye gönderilmedi':'deftere işaretlenmedi')); break; } }
+    satirlar+='<div class="mak-satir" style="align-items:center"><div style="min-width:92px;font-weight:900">'+ozGname(gi)+'<div style="font-size:11px;color:var(--soluk2);font-weight:700">'+(L===null?'hiç gönderilmedi':'son: '+L+'. hafta')+' · sıradaki: '+Math.min(sira,36)+'</div></div><div style="flex:1;line-height:0">'+kutu+'</div></div>'; });
+  var gecmis=g.kayit.slice(-12).reverse().map(function(k){ var tarih=new Date(k.ts); return '<div class="mak-satir"><div class="ms-ad">'+(TIP_AD[k.tip]||k.tip)+' · <b>'+k.hafta+'. hafta</b> · '+k.items.length+' kart · '+esc(k.kanal)+(k.uyari?' · <span style="color:#fde68a">'+k.uyari+' uyarıyla</span>':'')+'<br><span style="color:var(--soluk2);font-size:11px">'+tarih.toLocaleDateString('tr-TR')+' '+tarih.toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})+'</span></div><div class="ms-btn"><button class="fbtn" onclick="gecmisGoster('+k.id+')">👀</button><button class="fbtn" onclick="gecmisGeriAl('+k.id+')">↩️ Geri al</button></div></div>'; }).join('')||'<div style="color:var(--soluk);padding:8px">Henüz gönderim yok.</div>';
+  $('#okulGonderModalIc').innerHTML='<div class="mbas" style="--dr:#16a34a;--dr2:#22d3ee"><div class="ik">📤</div><div style="min-width:0"><h3>Okula Gönder · Gönderim Merkezi</h3><div class="alt">Takvime göre şu an '+hn+'. hafta · her gönderim önce kontrol + onaydan geçer</div></div><div class="kapat" onclick="modalKapat(\'okulGonderModal\')">✕</div></div><div class="mgov">'+
+    '<div class="btnsira"><button class="btn y" onclick="modalKapat(\'okulGonderModal\');OZ.hafta='+hn+';ozetAc()">📰 Veli Özeti Hazırla</button><button class="btn p" onclick="modalKapat(\'okulGonderModal\');DF.hafta='+hn+';defterAc()">📒 Sınıf Defteri</button><button class="btn g" onclick="idareGonder('+hn+')">🏫 İdareye Haftalık Rapor</button></div>'+
+    (uyar.length?'<div style="margin-top:10px;background:rgba(245,158,11,.12);border:1px solid #f59e0b;border-radius:12px;padding:8px 10px;font-size:12.5px">⚠️ Eksik gönderimler:<br>'+uyar.map(esc).join('<br>')+'</div>':'')+
+    '<div class="ilerseridi" style="margin-top:12px"><span class="et">Ders:</span>'+tch+'</div><div class="ilerseridi" style="margin-top:6px"><span class="et">Tür:</span>'+tipch+'</div>'+
+    '<div style="font-size:11.5px;color:var(--soluk);margin:8px 0">🟩 gönderildi · 🟦 işlendi (gönderilmedi) · 🟧 yarım · ⬛ bekliyor · sarı çerçeve = bu hafta · kutuya dokun → o haftayı hazırla</div>'+satirlar+
+    '<h4 style="margin:14px 0 4px">📜 Son gönderimler</h4>'+gecmis+'</div>';
+  modalAc('okulGonderModal'); }
+function okulHaftaAc(gi,w){ modalKapat('okulGonderModal'); if(OG.tip==='defter'){ DF.hafta=w; DF.grades=[gi]; DF.track=OG.tid; defterAc(); } else { OZ.hafta=w; OZ.grades=[gi]; OZ.track=OG.tid; ozetAc(); } }
+function gecmisGoster(id){ var k=glGet().kayit.filter(function(x){return x.id===id;})[0]; if(!k) return; alert((TIP_AD[k.tip]||k.tip)+' · '+k.hafta+'. hafta\n\n'+(k.ozet||'')); }
+function gecmisGeriAl(id){ if(!confirm('Bu gönderim kaydı geçmişten silinsin mi? (Gönderilen mesaj geri alınmaz; yalnızca kayıt silinir.)')) return; var g=glGet(); g.kayit=g.kayit.filter(function(x){return x.id!==id;}); glSet(g); toast('↩️ Kayıt silindi','info'); okulGonderAc(); }
+/* --- 🤖 AI ile ders ekleme / düzenleme --- */
+async function planAIOner(i){ var gi=PK.gi, tid=PK.tid, band=SINIF_LISTE[gi].d; var q=function(c){ return document.querySelector('#planKaynakModalIc .'+c+'[data-i="'+i+'"]'); }; var kI=q('pe-k'), zI=q('pe-z'), eI=q('pe-e'); if(!kI) return;
+  var fikir=prompt('🤖 '+(i+1)+'. hafta için konu fikrin? (Boş bırakırsan yapay zekâ, önceki ve sonraki haftalarla uyumlu bir konu önerir.)', ''); if(fikir===null) return;
+  var once=q2(i-1), sonra=q2(i+1); function q2(j){ var x=document.querySelector('#planKaynakModalIc .pe-k[data-i="'+j+'"]'); return x?x.value:''; }
+  var yas=(DUZEYLER.filter(function(d){return d.id===band;})[0]||{}).yas||'';
+  var sistem='Sen Türkiye Yüzyılı Maarif Modeli’ne hâkim bir öğretim programı uzmanısın. Bir haftalık ders için SADECE geçerli JSON döndür: {"k":"konu başlığı (en fazla 6 kelime)","z":"tek cümlelik gözlenebilir kazanım (…r/…ar/…er ile biten)","e":"tek kısa etkinlik"}. Kurallar: yaş ve seviyeye KESİNLİKLE uygun ol ('+(band==='ana'?'okul öncesi: ekransız, oyun ve somut materyal; teknik terim yok':band==='12'?'1-2. sınıf: çok basit dil, somut ve oyunla':'')+'); önceki ve sonraki haftayla mantıklı bağ kur; resmî kazanım KODU yazma; JSON dışında hiçbir şey yazma.';
+  var on='Ders: '+trAd(tid)+'. Sınıf: '+ozGname(gi)+' ('+yas+'). Hafta: '+(i+1)+'/36. Önceki hafta: '+(once||'-')+'. Sonraki hafta: '+(sonra||'-')+'. '+(fikir.trim()?'Öğretmenin konu fikri: '+fikir.trim():'Konu fikrini sen öner.');
+  kI.value='🤖 yazılıyor…';
+  try{ var t=await generateText(on,{sistem:sistem}); var js=String(t||'').replace(/```json|```/g,'').trim(); var a=js.indexOf('{'), b=js.lastIndexOf('}'); var o=JSON.parse(js.slice(a,b+1));
+    kI.value=o.k||''; zI.value=o.z||''; eI.value=o.e||''; [kI,zI,eI].forEach(function(x){ x.style.boxShadow='0 0 0 2px #a855f7'; }); toast('🤖 Önerildi — kontrol et, sonra “💾 Kaydet”e bas (kaydetmeden plana eklenmez)','ok',4200); }
+  catch(e){ kI.value=(kI.dataset.eski||''); toast('AI öneremedi: '+((e&&e.message)||'')+' — ⚙️ Ayarlar’dan Gemini anahtarını kontrol et','err',4200); } }
+var _pkaEski=planKaynakAc;
+planKaynakAc=function(){ _pkaEski(); document.querySelectorAll('#planKaynakModalIc .pe-k').forEach(function(inp){ inp.dataset.eski=inp.value; var row=inp.closest('.mak-satir'); if(!row) return; var b=document.createElement('button'); b.className='fbtn'; b.style.alignSelf='flex-start'; b.textContent='🤖 AI'; b.title='Bu haftaya yapay zekâ ile ders öner'; var i=+inp.dataset.i; b.onclick=function(){ planAIOner(i); }; row.appendChild(b); }); };
+function aiDersEkle(tid,i){ haftaDuzenle(tid,i); setTimeout(function(){ planAIOner(i); },260); }
+/* --- 📎 AI çıktısını derse ekle (onaylı) --- */
+function derseEkGet(){ return LS.get('dk_derse_ek',{}); }
+function aiDerseEkle(){ var t=aktifSeans; var metin=(typeof sonAiMetin!=='undefined'&&sonAiMetin)||''; if(!t){ toast('Önce bir ders aç (Yıllık Plan’dan), sonra AI çıktısını ekle','err',3600); return; } if(!metin.trim()){ toast('Eklenecek AI çıktısı yok','err'); return; }
+  var se=SEANS[t.trackId][t.idx]; if(!confirm('Bu yapay zekâ çıktısı şu derse eklensin mi?\n\n'+ozGname(ST.gradeIdx)+' · '+trAd(t.trackId)+' · '+(t.idx+1)+'. hafta\n“'+uniteAd(se)+'”')) return;
+  var o=derseEkGet(), key=ST.gradeIdx+'|'+t.trackId+'|'+t.idx; o[key]=o[key]||[]; o[key].push({ts:Date.now(),metin:metin.slice(0,6000)}); LS.set('dk_derse_ek',o); toast('📎 Derse eklendi','ok'); }
+function derseEkHTML(tid,i){ var list=derseEkGet()[ST.gradeIdx+'|'+tid+'|'+i]||[]; if(!list.length) return '';
+  return '<div class="blok"><div class="bh">📎 Bu derse eklediklerin ('+list.length+')</div>'+list.map(function(x,n){ return '<details style="background:var(--panel2);border:1px solid var(--cizgi);border-radius:10px;padding:8px 10px;margin-top:6px"><summary style="cursor:pointer;font-size:12.5px">📄 '+new Date(x.ts).toLocaleDateString('tr-TR')+' · '+esc(x.metin.slice(0,60))+'…</summary><div style="white-space:pre-wrap;font-size:12.5px;margin-top:6px">'+esc(x.metin)+'</div><div class="btnsira" style="margin-top:6px"><button class="fbtn" onclick="kopyala(derseEkGet()[\''+ST.gradeIdx+'|'+tid+'|'+i+'\']['+n+'].metin,\'📋 Kopyalandı\')">📋 Kopyala</button><button class="fbtn" onclick="derseEkSil(\''+tid+'\','+i+','+n+')">🗑️ Sil</button></div></details>'; }).join('')+'</div>'; }
+function derseEkSil(tid,i,n){ if(!confirm('Bu ek silinsin mi?')) return; var o=derseEkGet(), key=ST.gradeIdx+'|'+tid+'|'+i; if(o[key]){ o[key].splice(n,1); LS.set('dk_derse_ek',o); } seansAc(tid,i); }
+var _aacEski=aiAracCubugu; aiAracCubugu=function(){ var s=_aacEski(); return s.replace(/<\/div>\s*$/,'<button onclick="aiDerseEkle()">📎 Derse ekle</button></div>'); };
 
-function okulMerkeziAc(){
-  var k=document.getElementById('dkOkulMerkez'); if(k) k.remove();
-  k=document.createElement('div'); k.id='dkOkulMerkez'; k.style.cssText='position:fixed;inset:0;z-index:99998;background:rgba(2,6,23,.75);display:flex;align-items:center;justify-content:center;padding:14px';
-  k.onclick=function(e){ if(e.target===k) k.remove(); };
-  var b=function(ik,bas,alt,fn,renk){ return '<button onclick="document.getElementById(\'dkOkulMerkez\').remove();'+fn+'" style="width:100%;text-align:left;display:flex;gap:12px;align-items:center;background:'+renk+';color:#fff;border:0;border-radius:14px;padding:12px 14px;margin-bottom:8px;cursor:pointer"><span style="font-size:26px">'+ik+'</span><span><b style="font-size:15px">'+bas+'</b><br><span style="font-size:12px;opacity:.9">'+alt+'</span></span></button>'; };
-  k.innerHTML='<div style="background:#0f172a;color:#e2e8f0;border-radius:20px;max-width:440px;width:100%;padding:16px;border:1px solid #334155"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><b style="font-size:17px">🏫 Okula Gönder Merkezi</b><button onclick="document.getElementById(\'dkOkulMerkez\').remove()" style="background:#334155;color:#fff;border:0;border-radius:8px;padding:6px 10px;cursor:pointer">✕</button></div>'+
-    b('📌','Günün Özeti','Bugünkü derslerini sınıflara gönder (düzenleyebilirsin)','bugunkuDersAc()','linear-gradient(135deg,#f59e0b,#ea580c)')+
-    b('📰','Haftanın Özeti','Seçili sınıflara haftalık özet (düzenleyebilirsin)','ozetAc()','linear-gradient(135deg,#7c3aed,#db2777)')+
-    b('📋','Gönderdiklerim','Okul panosundaki özetlerini gör / sil','gonderilenlerAc()','linear-gradient(135deg,#0891b2,#059669)')+
-    '<div style="font-size:11.5px;color:#94a3b8;margin-top:4px">Gönderdiklerin Değişim Koleji sisteminde velinin ve öğrencinin ekranında <b>renkli kart</b> olarak görünür. Günlükler 7, haftalıklar 21 gün sonra kendiliğinden kalkar.</div></div>';
-  document.body.appendChild(k);
-}
+
+/* --- ✍️ Daha önce (uygulama dışından) gönderdiklerini geçmişe kaydet --- */
+function gecmisElleKaydet(){ var hn=ozHaftaTahmin(); var w=prompt('Hangi haftayı daha önce gönderdin? (1-36)\nSeçili ders: '+trAd(OG.tid)+' · Tür: '+(TIP_AD[OG.tip]||OG.tip), String(hn)); if(w===null) return; w=parseInt(w,10); if(!(w>=1&&w<=36)){ toast('1 ile 36 arasında bir hafta yaz','err'); return; }
+  var siniflar=SINIF_LISTE.map(function(sn,gi){return gi;}).filter(function(gi){ return gorunenTracks(gi).some(function(t){return t.id===OG.tid;}); });
+  var sec=prompt('Hangi sınıflara gönderdin? Tümü için boş bırak.\nÖrnek: Ana,1,2,3', ''); if(sec===null) return;
+  if(sec.trim()){ var ist=sec.split(',').map(function(x){return x.trim().toLocaleLowerCase('tr');}); siniflar=siniflar.filter(function(gi){ var g=SINIF_LISTE[gi].g.toLocaleLowerCase('tr'); return ist.indexOf(g)>=0 || (g==='ana'&&ist.indexOf('anaokulu')>=0); }); }
+  if(!siniflar.length){ toast('Eşleşen sınıf bulunamadı','err'); return; }
+  if(!confirm(w+'. hafta · '+trAd(OG.tid)+' · '+(TIP_AD[OG.tip]||OG.tip)+'\nSınıflar: '+siniflar.map(ozGname).join(', ')+'\n\nBu gönderim “daha önce yapıldı” olarak geçmişe kaydedilsin mi? (Hiçbir mesaj gönderilmez.)')) return;
+  var g=glGet(); g.kayit.push({id:Date.now(),ts:new Date().toISOString(),tip:OG.tip,kanal:'Elle kayıt (önceden gönderildi)',hafta:w,baslik:TIP_AD[OG.tip],uyari:0,items:siniflar.map(function(gi){return {gi:gi,tid:OG.tid,hash:''};}),ozet:'Uygulama dışından gönderildi olarak kaydedildi.'}); glSet(g);
+  toast('✍️ '+w+'. hafta geçmişe kaydedildi — sonraki kontroller bunu baz alacak','ok',3800); okulGonderAc(); }
+var _ogaEski=okulGonderAc; okulGonderAc=function(){ _ogaEski(); var bs=document.querySelector('#okulGonderModalIc .btnsira'); if(bs){ var b=document.createElement('button'); b.className='btn g'; b.textContent='✍️ Önceden gönderdiğimi kaydet'; b.onclick=gecmisElleKaydet; bs.appendChild(b); } };
 
 basla();
 fabYap({id:'sinif',ikon:'⏱️',etiket:'Sınıf Araçları',bayrak:'dk_sinif_gizli',tik:()=>sinifAracAc()});
@@ -3674,50 +4095,8 @@ fabYap({id:'dsaat',ikon:'🕐',etiket:'Ders Saati / 40 dk',bayrak:'dk_dsaat_gizl
 fabYap({id:'hizli',ikon:'🎲',etiket:'Hızlı Sınıf Araçları',bayrak:'dk_hizli_gizli',tik:()=>hizliAc()});
 fabYap({id:'oyunm',ikon:'🎮',etiket:'Oyun Merkezi (Hafıza)',bayrak:'dk_oyunm_gizli',tik:()=>hafizaAc()});
 fabYap({id:'ozet',ikon:'📰',etiket:'Haftalık Veli Özeti',bayrak:'dk_ozet_gizli',tik:()=>ozetAc()});
-fabYap({id:'okul',ikon:'🏫',etiket:'Okula Gönder Merkezi',bayrak:'dk_okul_gizli',tik:()=>okulMerkeziAc()});
-try{ if(!((window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true)) fabYap({id:'yukle',ikon:'📲',etiket:'Uygulama Olarak Yükle',bayrak:'dk_yukle_gizli',tik:()=>{ if(window.ZPWA_YUKLE) window.ZPWA_YUKLE(); }}); }catch(e){}
+fabYap({id:'okulgonder',ikon:'📤',etiket:'Okula Gönder (Gönderim Merkezi)',bayrak:'dk_okulgonder_gizli',tik:()=>okulGonderAc()});
 renderNeredeKaldim();
-</script>
-<script>window.__ZPWA_AD="Ders Planı";window.__ZPWA_RENK="#7c3aed";
-/* ZİRVE · UYGULAMA OLARAK YÜKLE — ilk açılışta otomatik öneri (Android/PC: tek dokunuş, iPhone: adım adım) */
-(function(){try{
-  var AD=window.__ZPWA_AD||'Değişim Koleji', RENK=window.__ZPWA_RENK||'#4f46e5';
-  // 1) Manifest'i mutlak adreslerle yeniden kur (kurulabilirlik için)
-  try{
-    var baz=location.origin+location.pathname, kapsam=location.origin+location.pathname.replace(/[^\/]*$/,'');
-    var l=document.querySelector('link[rel="manifest"]'), m=null;
-    if(window.__ZPWA_MANIFEST){ m=window.__ZPWA_MANIFEST; }
-    else if(l && /^data:/.test(l.href)){ var b64=l.href.split(',')[1]||''; try{ m=JSON.parse(decodeURIComponent(escape(atob(b64)))); }catch(e){ try{ m=JSON.parse(atob(b64)); }catch(e2){} } }
-    if(m && location.protocol.indexOf('http')===0){ m.start_url=baz; m.scope=kapsam; m.id=baz; var u=URL.createObjectURL(new Blob([JSON.stringify(m)],{type:'application/manifest+json'})); if(l){ l.href=u; } else { l=document.createElement('link'); l.rel='manifest'; l.href=u; document.head.appendChild(l); } }
-  }catch(e){}
-  // 2) Aynı klasörde sw.js varsa servis çalışanını kaydet (yoksa sessizce geçer)
-  try{ if('serviceWorker' in navigator && location.protocol==='https:'){ fetch('sw.js',{method:'HEAD'}).then(function(r){ if(r.ok) navigator.serviceWorker.register('sw.js').catch(function(){}); }).catch(function(){}); } }catch(e){}
-  var kurulu = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone===true;
-  if(kurulu) return;
-  var ANAHTAR='zpwa_kapat_'+location.pathname;
-  function kapatildi(){ try{ var t=Number(localStorage.getItem(ANAHTAR)||0); return t && (Date.now()-t) < 5*864e5; }catch(e){ return false; } }
-  var ua=navigator.userAgent||'', ios=/iphone|ipad|ipod/i.test(ua) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
-  var uygIci=/FBAN|FBAV|Instagram|WhatsApp|Line\//i.test(ua), safariDegil=ios && /CriOS|FxiOS|EdgiOS/i.test(ua);
-  var ertelenen=null, bant=null;
-  function bantGoster(html, butonlu){
-    if(kapatildi() || bant) return;
-    bant=document.createElement('div');
-    bant.style.cssText='position:fixed;left:10px;right:10px;bottom:12px;z-index:2147483200;background:linear-gradient(135deg,'+RENK+',#7c3aed);color:#fff;border-radius:18px;padding:12px 14px;box-shadow:0 12px 40px rgba(0,0,0,.35);font:600 14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;display:flex;gap:10px;align-items:center;max-width:560px;margin:0 auto';
-    bant.innerHTML='<div style="font-size:28px">📲</div><div style="flex:1;min-width:0">'+html+'</div>'+(butonlu?'<button id="zpwaKur" style="background:#fff;color:'+RENK+';border:0;border-radius:12px;padding:9px 12px;font-weight:900;cursor:pointer;white-space:nowrap">Yükle</button>':'')+'<button id="zpwaKapat" aria-label="Kapat" style="background:rgba(255,255,255,.2);color:#fff;border:0;border-radius:10px;width:30px;height:30px;cursor:pointer;font-size:16px">✕</button>';
-    document.body.appendChild(bant);
-    document.getElementById('zpwaKapat').onclick=function(){ try{ localStorage.setItem(ANAHTAR,String(Date.now())); }catch(e){} bant.remove(); bant=null; };
-    var k=document.getElementById('zpwaKur'); if(k) k.onclick=function(){ if(!ertelenen) return; ertelenen.prompt(); ertelenen.userChoice.then(function(c){ if(c&&c.outcome==='accepted'){ bant&&bant.remove(); bant=null; } ertelenen=null; }).catch(function(){}); };
-  }
-  window.addEventListener('beforeinstallprompt',function(e){ e.preventDefault(); ertelenen=e; setTimeout(function(){ bantGoster('<b>'+AD+'</b> uygulamasını telefonunuza yükleyin<br><span style="font-weight:500;font-size:12px;opacity:.9">Tek dokunuşla ana ekranda — uygulama gibi açılır.</span>', true); },1500); });
-  window.addEventListener('appinstalled',function(){ if(bant){ bant.remove(); bant=null; } });
-  window.ZPWA_YUKLE=function(){ try{ localStorage.removeItem(ANAHTAR); }catch(e){} if(ertelenen){ ertelenen.prompt(); return; } if(ios){ alert('📲 iPhone/iPad:\n\n1) Safari\'de alttaki Paylaş (⬆️) düğmesine dokunun\n2) "Ana Ekrana Ekle"yi seçin\n3) Sağ üstte "Ekle"ye dokunun'); } else { alert('📲 Tarayıcı menüsünden (⋮) "Uygulamayı yükle" veya "Ana ekrana ekle"yi seçin.'); } };
-  setTimeout(function(){
-    if(ertelenen || bant) return;
-    if(uygIci){ bantGoster('<b>Uygulama olarak yüklemek için</b><br><span style="font-weight:500;font-size:12px">Sağ üstteki ⋯ menüden <b>'+(ios?'Safari':'Chrome')+'\'de aç</b>\'ı seçin, sonra yükleyin.</span>', false); return; }
-    if(ios){ bantGoster(safariDegil?'<b>Uygulama olarak yüklemek için</b> bu sayfayı <b>Safari</b>\'de açın.':'<b>'+AD+'</b>\'ni ana ekrana ekleyin:<br><span style="font-weight:500;font-size:12px">Alttaki <b>Paylaş ⬆️</b> düğmesi → <b>"Ana Ekrana Ekle"</b> → <b>Ekle</b></span>', false); return; }
-    if(/android/i.test(ua)){ bantGoster('<b>'+AD+'</b>\'ni ana ekrana ekleyin:<br><span style="font-weight:500;font-size:12px">Sağ üstteki <b>⋮</b> menü → <b>"Uygulamayı yükle"</b> / <b>"Ana ekrana ekle"</b></span>', false); }
-  },4500);
-}catch(e){}})();
 </script>
 </body>
 </html>
