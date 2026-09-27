@@ -491,6 +491,16 @@ input[type=date].key{color-scheme:dark}
 .mem-ust{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;align-items:center;font-weight:800;color:#cbd5e1;font-size:13px;margin-bottom:8px}
 .konfeti{position:fixed;top:-10vh;z-index:9999;pointer-events:none;animation:kdus linear forwards}
 @keyframes kdus{to{transform:translateY(120vh) rotate(400deg);opacity:.85}}
+
+.hoz-kart{border-radius:18px;padding:16px 16px 14px;margin-bottom:12px;color:#0f172a;background:#fff;border-top:8px solid var(--dr);box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.hoz-ust{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.hoz-sinif{font-size:18px;font-weight:900;color:var(--dr)}
+.hoz-hafta{font-size:11.5px;font-weight:900;color:#fff;background:linear-gradient(135deg,var(--dr),var(--dr2));padding:4px 10px;border-radius:999px}
+.hoz-satir{margin-top:9px;font-size:14px;line-height:1.45}
+.hoz-satir b{color:var(--dr)}
+.hoz-alt{margin-top:10px;font-size:11px;color:#64748b}
+#ozetPrint{display:none}
+@media print{ body.yazdir-ozet>*:not(#ozetPrint){display:none!important} body.yazdir-ozet #ozetPrint{display:block!important} #ozetPrint,#ozetPrint *{-webkit-print-color-adjust:exact;print-color-adjust:exact} #ozetPrint .hoz-kart{break-inside:avoid;box-shadow:none;border:1px solid #e2e8f0;border-top:8px solid var(--dr)} }
 </style>
 
 </head>
@@ -589,6 +599,7 @@ input[type=date].key{color-scheme:dark}
 <div class="modal-bg" id="robotModal"><div class="modal" id="robotModalIc" style="max-width:560px"></div></div>
 <div class="modal-bg" id="hizliModal"><div class="modal" id="hizliModalIc" style="max-width:520px"></div></div>
 <div class="modal-bg" id="oyunMerkeziModal"><div class="modal" id="oyunMerkeziModalIc" style="max-width:600px"></div></div>
+<div class="modal-bg" id="ozetModal"><div class="modal" id="ozetModalIc" style="max-width:640px"></div></div>
 
 <script>
 /* ============================================================
@@ -2743,6 +2754,7 @@ function maceraAc(gi, tid){
 planAracCubugu=function(){
   $('#filtre').innerHTML='<span class="ara" style="margin-left:0"><input id="araInput" placeholder="Konu ara…"><span class="x" id="araX">✕</span></span>'+
     '<button class="fbtn" onclick="maceraAc(ST.gradeIdx)">🛤️ Maceralı Yol</button>'+
+    '<button class="fbtn" onclick="ozetAc()">📰 Haftalık Veli Özeti</button>'+
     '<button class="fbtn" onclick="haritaAc(ST.gradeIdx)">🧠 Zihin Haritası</button>'+
     '<button class="fbtn" onclick="yilPdf()">🗂️ Tüm Yıl → PDF</button>'+
     '<button class="fbtn" onclick="ozetPdf()">📈 Yıl Sonu Özeti</button>'+
@@ -3464,6 +3476,50 @@ function seansBaglanti(){ var c=seansPromptKonu(); if(!c) return;
   var sistem='Sen disiplinler arası bir öğretmen asistanısın. Verilen ders ve konuyu, çocukların ilgisini çekecek biçimde BAŞKA bir alanla (tarih, strateji, günlük hayat, değerler, İslam/Osmanlı tarihi, doğa) NEDEN-SONUÇ ilişkisi kurarak bağla. Biçim: "🔗 Köprü:" tek cümle · "📖 Bağlantı:" 2-3 cümlelik somut, DOĞRU bir örnek/kısa hikâye · "🎬 İzlet/araştır:" 1 kısa video arama önerisi · "❓ Sınıfa sor:" düşündürücü tek soru. Türkçe, akılda kalıcı, yaşa uygun, abartısız ve tarihsel olarak doğru.';
   aiSor('Disiplinler arası bağlantı',{sistem, on:'Ders: '+c.dersAd+'. Konu: "'+c.konu+'". Kademe: '+c.kademe+'.', baslik:'🔗 Bağlantı · '+c.konu}); }
 
+
+/* ============================================================
+   EK: 📰 Haftalık Veli Özeti — kısa, renkli, PDF/Görsel/Kopyala/WhatsApp
+   ============================================================ */
+var OZ={hafta:null, grades:null, track:'robokod'};
+function ozHaftaTahmin(){ var hn=(typeof haftaNo==='function')?haftaNo():null; if(!hn){ var d0=new Date('2026-09-14'); hn=Math.floor((Date.now()-d0.getTime())/(7*864e5))+1; } return Math.max(1,Math.min(36,hn||1)); }
+function ozGname(gi){ var g=SINIF_LISTE[gi].g; return g==='Ana'?'Anaokulu':g+'. Sınıf'; }
+function ozTrackleri(gi){ var ts=gorunenTracks(gi); if(OZ.track==='hepsi') return ts; return ts.filter(function(t){return t.id===OZ.track;}); }
+function ozSoru(k){ return 'Bugün “'+k+'” dersinde ne yaptınız, bana göster!'; }
+function ozDurum(gi,tid,i){ if(ilrDone(gi,tid,i)) return '✅ İşlendi'; if(typeof yarimGet==='function'&&yarimGet(gi,tid,i)) return '⏸️ Devam ediyor'; return ''; }
+function ozKartHTML(gi){ var h=OZ.hafta, i=h-1, out='';
+  ozTrackleri(gi).forEach(function(tr){ var se=SEANS[tr.id][i]; if(!se) return; var d=ozDurum(gi,tr.id,i);
+    out+='<div class="hoz-kart" style="--dr:'+tr.dr+';--dr2:'+tr.dr2+'"><div class="hoz-ust"><div class="hoz-sinif">'+tr.ik+' '+ozGname(gi)+' · '+tr.ad+'</div><div class="hoz-hafta">'+h+'. HAFTA'+(d?' · '+d:'')+'</div></div>'+
+      '<div class="hoz-satir">📚 <b>Bu hafta:</b> '+esc(se.k)+'</div>'+
+      '<div class="hoz-satir">🎯 <b>Kazanım:</b> '+esc(se.z)+'</div>'+
+      '<div class="hoz-satir">🏠 <b>Evde sorun:</b> '+esc(ozSoru(se.k))+'</div>'+
+      '<div class="hoz-alt">Barış Öğretmen · Değişim Koleji</div></div>'; });
+  return out; }
+function ozMetin(){ var h=OZ.hafta, parts=[];
+  OZ.grades.forEach(function(gi){ ozTrackleri(gi).forEach(function(tr){ var se=SEANS[tr.id][h-1]; if(!se) return;
+    parts.push(tr.ik+' *'+ozGname(gi)+' · '+tr.ad+' · '+h+'. Hafta*\n📚 Bu hafta: '+se.k+'\n🎯 Kazanım: '+se.z+'\n🏠 Evde sorun: '+ozSoru(se.k)); }); });
+  return parts.join('\n\n')+'\n\n— Barış Öğretmen · Değişim Koleji'; }
+function ozetAc(){ if(OZ.hafta==null) OZ.hafta=ozHaftaTahmin(); if(OZ.grades==null) OZ.grades=[ST.gradeIdx]; ozetCiz(); modalAc('ozetModal'); }
+function ozGradeTik(i){ var k=OZ.grades.indexOf(i); if(k>=0){ if(OZ.grades.length>1) OZ.grades.splice(k,1); } else OZ.grades.push(i); OZ.grades.sort(function(a,b){return a-b;}); ozetCiz(); }
+function ozTumu(){ OZ.grades=SINIF_LISTE.map(function(_,i){return i;}); ozetCiz(); }
+function ozetCiz(){
+  var gch=SINIF_LISTE.map(function(sn,i){return '<div class="gchip'+(OZ.grades.indexOf(i)>=0?' akt':'')+'" onclick="ozGradeTik('+i+')">'+(sn.g==='Ana'?'Ana':sn.g)+'</div>';}).join('')+'<div class="gchip" onclick="ozTumu()">Tümü</div>';
+  var tch=[['robokod','🤖 Robotik-Kodlama']].concat(TRACKS.filter(function(t){return t.id!=='robokod';}).map(function(t){return [t.id,t.ik+' '+t.ad];})).concat([['hepsi','📚 Tüm dersler']]).map(function(p){return '<div class="gchip'+(OZ.track===p[0]?' akt':'')+'" onclick="OZ.track=\''+p[0]+'\';ozetCiz()">'+p[1]+'</div>';}).join('');
+  var wsel='<select class="key" style="width:auto" onchange="OZ.hafta=+this.value;ozetCiz()">'+Array.from({length:36},function(_,k){return '<option value="'+(k+1)+'"'+(k+1===OZ.hafta?' selected':'')+'>'+(k+1)+'. hafta</option>';}).join('')+'</select>';
+  var kartlar=OZ.grades.map(ozKartHTML).join('');
+  $('#ozetModalIc').innerHTML='<div class="mbas" style="--dr:#ec4899;--dr2:#f59e0b"><div class="ik">📰</div><div style="min-width:0"><h3>Haftalık Veli Özeti</h3><div class="alt">Kısa · renkli · PDF / görsel / kopyala / WhatsApp</div></div><div class="kapat" onclick="modalKapat(\'ozetModal\')">✕</div></div><div class="mgov">'+
+    '<div class="ilerseridi"><span class="et">Hafta:</span>'+wsel+'<span style="font-size:11.5px;color:var(--soluk)">(tahmini: '+ozHaftaTahmin()+'. hafta)</span></div>'+
+    '<div class="ilerseridi" style="margin-top:6px"><span class="et">Sınıf:</span>'+gch+'</div>'+
+    '<div class="ilerseridi" style="margin-top:6px"><span class="et">Ders:</span>'+tch+'</div>'+
+    '<div class="btnsira" style="margin:12px 0"><button class="btn y" onclick="ozPdf()">📄 Renkli PDF</button><button class="btn g" onclick="ozPng()">🖼️ Görsel (PNG)</button><button class="btn p" onclick="ozKopya()">📋 Kopyala (ekosisteme yapıştır)</button><button class="btn g" onclick="ozWa()">🟢 WhatsApp</button></div>'+
+    '<div id="ozetSaha" style="background:#f1f5f9;border-radius:16px;padding:12px">'+(kartlar||'<div style="color:#64748b;padding:14px">Bu seçim için içerik yok.</div>')+'</div>'+
+    '<div style="font-size:11.5px;color:var(--soluk);margin-top:8px">💡 “Kopyala” metnini Değişim Koleji ekosisteminde Öğretmen Merkezi → <b>Duyuru</b> alanına yapıştırabilirsin.</div></div>'; }
+function ozKopya(){ var t=ozMetin(); try{ navigator.clipboard.writeText(t).then(function(){toast('📋 Özet kopyalandı — ekosistemde Duyuru’ya yapıştır','ok',3200);}); }catch(e){ toast('Kopyalanamadı','err'); } }
+function ozWa(){ window.open('https://wa.me/?text='+encodeURIComponent(ozMetin()),'_blank','noopener'); }
+function ozPdf(){ var ov=document.getElementById('ozetPrint'); if(!ov){ ov=document.createElement('div'); ov.id='ozetPrint'; document.body.appendChild(ov); }
+  ov.innerHTML='<div style="font-family:system-ui,Arial;padding:14px"><h2 style="margin:0 0 4px;color:#4f46e5">📰 Haftalık Veli Özeti · '+OZ.hafta+'. Hafta</h2><div style="color:#64748b;font-size:12px;margin-bottom:12px">Barış Öğretmen · Değişim Koleji · '+new Date().toLocaleDateString('tr-TR')+'</div>'+OZ.grades.map(ozKartHTML).join('')+'</div>';
+  document.body.classList.add('yazdir-ozet'); window.print(); setTimeout(function(){document.body.classList.remove('yazdir-ozet');},700); }
+async function ozPng(){ try{ toast('🖼️ Görsel hazırlanıyor…','info'); await scriptYukle('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js'); var el=document.getElementById('ozetSaha'); var cv=await html2canvas(el,{backgroundColor:'#f1f5f9',scale:2}); cv.toBlob(function(b){ var a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='haftalik-ozet-'+OZ.hafta+'-hafta.png'; a.click(); toast('📥 Görsel indirildi','ok'); }); }catch(e){ toast('Görsel oluşturulamadı (internet gerekli)','err'); } }
+
 basla();
 fabYap({id:'sinif',ikon:'⏱️',etiket:'Sınıf Araçları',bayrak:'dk_sinif_gizli',tik:()=>sinifAracAc()});
 fabYap({id:'odak',ikon:'🖥️',etiket:'Sunum / Odak Modu',bayrak:'dk_odak_gizli',tik:()=>odakAc()});
@@ -3472,6 +3528,7 @@ fabYap({id:'robot',ikon:'🤖',etiket:'Sanal Robot Lab',bayrak:'dk_robot_gizli',
 fabYap({id:'dsaat',ikon:'🕐',etiket:'Ders Saati / 40 dk',bayrak:'dk_dsaat_gizli',tik:()=>dersSaatToggle()});
 fabYap({id:'hizli',ikon:'🎲',etiket:'Hızlı Sınıf Araçları',bayrak:'dk_hizli_gizli',tik:()=>hizliAc()});
 fabYap({id:'oyunm',ikon:'🎮',etiket:'Oyun Merkezi (Hafıza)',bayrak:'dk_oyunm_gizli',tik:()=>hafizaAc()});
+fabYap({id:'ozet',ikon:'📰',etiket:'Haftalık Veli Özeti',bayrak:'dk_ozet_gizli',tik:()=>ozetAc()});
 renderNeredeKaldim();
 </script>
 </body>
