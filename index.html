@@ -3510,15 +3510,48 @@ function ozetCiz(){
     '<div class="ilerseridi"><span class="et">Hafta:</span>'+wsel+'<span style="font-size:11.5px;color:var(--soluk)">(tahmini: '+ozHaftaTahmin()+'. hafta)</span></div>'+
     '<div class="ilerseridi" style="margin-top:6px"><span class="et">Sınıf:</span>'+gch+'</div>'+
     '<div class="ilerseridi" style="margin-top:6px"><span class="et">Ders:</span>'+tch+'</div>'+
-    '<div class="btnsira" style="margin:12px 0"><button class="btn y" onclick="ozPdf()">📄 Renkli PDF</button><button class="btn g" onclick="ozPng()">🖼️ Görsel (PNG)</button><button class="btn p" onclick="ozKopya()">📋 Kopyala (ekosisteme yapıştır)</button><button class="btn g" onclick="ozWa()">🟢 WhatsApp</button></div>'+
+    '<div class="btnsira" style="margin:12px 0"><button class="btn y" onclick="ozPdf()">📄 Renkli PDF</button><button class="btn g" onclick="ozPng()">🖼️ Görsel (PNG)</button><button class="btn y" onclick="ozOkulaGonder()" style="font-weight:900">🚀 Okula Gönder (seçili sınıflara)</button><button class="btn p" onclick="ozKopya()">📋 Kopyala</button><button class="btn g" onclick="ozWa()">🟢 WhatsApp</button></div>'+
     '<div id="ozetSaha" style="background:#f1f5f9;border-radius:16px;padding:12px">'+(kartlar||'<div style="color:#64748b;padding:14px">Bu seçim için içerik yok.</div>')+'</div>'+
-    '<div style="font-size:11.5px;color:var(--soluk);margin-top:8px">💡 “Kopyala” metnini Değişim Koleji ekosisteminde Öğretmen Merkezi → <b>Duyuru</b> alanına yapıştırabilirsin.</div></div>'; }
+    '<div style="font-size:11.5px;color:var(--soluk);margin-top:8px">💡 <b>🚀 Okula Gönder</b>: seçili her sınıfın özeti Değişim Koleji sisteminde o sınıfın <b>Sınıf Panosu</b>’na düşer — kayıtlı öğrenci ve veliler anında görür. Kopyala-yapıştır gerekmez.</div></div>'; }
 function ozKopya(){ var t=ozMetin(); try{ navigator.clipboard.writeText(t).then(function(){toast('📋 Özet kopyalandı — ekosistemde Duyuru’ya yapıştır','ok',3200);}); }catch(e){ toast('Kopyalanamadı','err'); } }
 function ozWa(){ window.open('https://wa.me/?text='+encodeURIComponent(ozMetin()),'_blank','noopener'); }
 function ozPdf(){ var ov=document.getElementById('ozetPrint'); if(!ov){ ov=document.createElement('div'); ov.id='ozetPrint'; document.body.appendChild(ov); }
   ov.innerHTML='<div style="font-family:system-ui,Arial;padding:14px"><h2 style="margin:0 0 4px;color:#4f46e5">📰 Haftalık Veli Özeti · '+OZ.hafta+'. Hafta</h2><div style="color:#64748b;font-size:12px;margin-bottom:12px">Barış Öğretmen · Değişim Koleji · '+new Date().toLocaleDateString('tr-TR')+'</div>'+OZ.grades.map(ozKartHTML).join('')+'</div>';
   document.body.classList.add('yazdir-ozet'); window.print(); setTimeout(function(){document.body.classList.remove('yazdir-ozet');},700); }
 async function ozPng(){ try{ toast('🖼️ Görsel hazırlanıyor…','info'); await scriptYukle('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js'); var el=document.getElementById('ozetSaha'); var cv=await html2canvas(el,{backgroundColor:'#f1f5f9',scale:2}); cv.toBlob(function(b){ var a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='haftalik-ozet-'+OZ.hafta+'-hafta.png'; a.click(); toast('📥 Görsel indirildi','ok'); }); }catch(e){ toast('Görsel oluşturulamadı (internet gerekli)','err'); } }
+
+/* ============================================================
+   EK: 🚀 OKULA GÖNDER — Değişim Koleji MEGA (Firebase) Sınıf Panosu'na doğrudan yazar
+   ============================================================ */
+var DK_OKUL={cfg:{apiKey:"AIzaSyAqeO-yQyQPnLsOqKmSNvVH23WPvneIjaU",authDomain:"shaped-totem-481514-c5.firebaseapp.com",projectId:"shaped-totem-481514-c5",storageBucket:"shaped-totem-481514-c5.firebasestorage.app",messagingSenderId:"519295049418",appId:"1:519295049418:web:7d04e18c4ea36bc088de33"}, fs:null, sdk:null};
+async function dkOkulBaglan(){
+  if(DK_OKUL.fs) return DK_OKUL;
+  var V='https://www.gstatic.com/firebasejs/11.0.1/';
+  var A=await import(V+'firebase-app.js'), U=await import(V+'firebase-auth.js'), F=await import(V+'firebase-firestore.js');
+  var app; try{ app=A.getApp('dkokul'); }catch(e){ app=A.initializeApp(DK_OKUL.cfg,'dkokul'); }
+  try{ await U.signInAnonymously(U.getAuth(app)); }catch(e){}
+  DK_OKUL.fs=F.getFirestore(app); DK_OKUL.sdk=F; return DK_OKUL;
+}
+function ozParcalar(){ var h=OZ.hafta, out=[];
+  OZ.grades.forEach(function(gi){ var satir=[]; ozTrackleri(gi).forEach(function(tr){ var se=SEANS[tr.id][h-1]; if(!se) return;
+    satir.push(tr.ik+' '+tr.ad+' · '+h+'. Hafta\n📚 Bu hafta: '+se.k+'\n🎯 Kazanım: '+se.z+'\n🏠 Evde sorun: '+ozSoru(se.k)); });
+    if(satir.length) out.push({sinif:ozGname(gi), metin:satir.join('\n\n')+'\n\n— Barış Öğretmen'}); });
+  return out; }
+async function ozOkulaGonder(){
+  var p=ozParcalar(); if(!p.length){ toast('Gönderilecek içerik yok','err'); return; }
+  if(!confirm('🚀 '+OZ.hafta+'. hafta özeti şu sınıfların panosuna gönderilecek:\n\n'+p.map(function(x){return '• '+x.sinif;}).join('\n')+'\n\nOnaylıyor musun?')) return;
+  try{
+    toast('🚀 Okula gönderiliyor…','info');
+    var o=await dkOkulBaglan(), F=o.sdk, ref=F.doc(o.fs,'maas_config','k12_pano');
+    var sn=await F.getDoc(ref); var liste=(sn.exists()&&Array.isArray((sn.data()||{}).liste))?sn.data().liste:[];
+    var ts=Date.now(), yeni=[], atla=0;
+    p.forEach(function(x,i){ if(liste.some(function(q){return q.sinif===x.sinif && q.metin===x.metin;})){ atla++; return; }
+      yeni.push({id:ts.toString(36)+Math.random().toString(36).slice(2,7), sinif:x.sinif, metin:x.metin, ogretmen:'Barış Öğretmen', ts:ts-i, kaynak:'ozet'}); });
+    if(!yeni.length){ toast('ℹ️ Bu özet zaten gönderilmiş (tekrar gönderilmedi)','info',3500); return; }
+    await F.setDoc(ref,{liste:yeni.concat(liste)},{merge:true});
+    toast('✅ '+yeni.length+' sınıfa gönderildi'+(atla?(' ('+atla+' zaten vardı)'):'')+' — veliler Sınıf Panosu’nda görüyor 🎉','ok',4200);
+  }catch(e){ toast('Gönderilemedi — internet bağlantısını kontrol et','err',4000); }
+}
 
 basla();
 fabYap({id:'sinif',ikon:'⏱️',etiket:'Sınıf Araçları',bayrak:'dk_sinif_gizli',tik:()=>sinifAracAc()});
