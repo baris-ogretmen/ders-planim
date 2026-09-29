@@ -514,6 +514,19 @@ input[type=date].key{color-scheme:dark}
 .surum-rozet{position:fixed;left:10px;bottom:10px;z-index:130;font-size:11px;font-weight:800;background:rgba(15,23,42,.88);color:#a7f3d0;border:1px solid var(--cizgi);padding:5px 10px;border-radius:999px;cursor:pointer}
 .surum-banner{position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:9500;width:min(560px,92vw);background:linear-gradient(135deg,#065f46,#0e7490);color:#fff;border-radius:14px;padding:10px 14px;font-size:13.5px;box-shadow:0 10px 30px rgba(0,0,0,.5);display:flex;gap:10px;align-items:center}
 .surum-banner.hata{background:linear-gradient(135deg,#7f1d1d,#b45309)}
+
+.oz-okul{width:100%;justify-content:center;text-align:center;flex-direction:column;margin-top:12px;padding:16px 10px;font-size:17px;line-height:1.2}
+.oz-okul small{font-size:11px;opacity:.85;font-weight:600}
+.dy-kart{transition:.15s}
+.dy-kart.sec{outline:3px solid #22c55e;outline-offset:2px}
+.dy-kart:not(.sec){opacity:.72}
+
+.oz-alt-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--panel2);border:1px solid var(--cizgi);border-radius:14px;padding:10px 12px;margin-top:12px;font-size:14px}
+.oz-alt-bar .btn{white-space:nowrap;padding:12px 16px;font-size:15px}
+.oz-gonder-btn{width:100%;margin-top:10px;padding:16px;font-size:18px;justify-content:center}
+.ss-liste label{display:flex;gap:12px;align-items:center;padding:12px;border:1px solid var(--cizgi);border-radius:12px;margin-top:6px;font-size:15px;background:var(--kart);cursor:pointer}
+.gk-btn[disabled]{opacity:.35;pointer-events:none}
+.sa-onizle{background:#f1f5f9;border-radius:14px;padding:10px;max-height:42vh;overflow:auto}
 </style>
 
 </head>
@@ -543,6 +556,7 @@ input[type=date].key{color-scheme:dark}
     <div class="seri" data-v="plan">📅 Yıllık Plan</div>
     <div class="seri" data-v="program">🗓️ Program</div>
     <div class="seri" data-v="neden">🎓 Neden?</div>
+    <div class="seri" data-v="duyuru">✍️ Duyuru Yazarı</div>
     <div class="seri" data-v="araclar">🧰 Araç Kütüphanesi</div>
     <div class="seri" data-v="oyun">🎮 Eğitim Oyunları</div>
     <div class="seri" data-v="video">🎬 Videolar</div>
@@ -573,6 +587,8 @@ input[type=date].key{color-scheme:dark}
   <div id="v-program" style="display:none"></div>
 
   <div id="v-neden" style="display:none"></div>
+
+  <div id="v-duyuru" style="display:none"></div>
 
 </div>
 
@@ -617,6 +633,7 @@ input[type=date].key{color-scheme:dark}
 <div class="modal-bg" id="defterModal"><div class="modal" id="defterModalIc" style="max-width:680px"></div></div>
 <div class="modal-bg" id="okulGonderModal"><div class="modal" id="okulGonderModalIc" style="max-width:720px"></div></div>
 <div class="modal-bg" id="surumModal"><div class="modal" id="surumModalIc" style="max-width:600px"></div></div>
+<div class="modal-bg" id="sinifSecModal" style="z-index:8600"><div class="modal" id="sinifSecModalIc" style="max-width:420px"></div></div>
 <div class="modal-bg" id="gonderModal" style="z-index:9000"><div class="modal" id="gonderModalIc" style="max-width:600px"></div></div>
 
 <script>
@@ -3978,7 +3995,7 @@ function gonderCiz(){ var k=GO.kontrol, kr=k.filter(function(x){return x.seviye=
   var ikon={kritik:'🔴',uyari:'🟡',bilgi:'🔵'}, renk={kritik:'#fecaca',uyari:'#fde68a',bilgi:'#bfdbfe'};
   var liste=k.map(function(x){ return '<div style="background:rgba(255,255,255,.04);border-left:4px solid '+renk[x.seviye]+';border-radius:10px;padding:8px 10px;margin-top:6px;font-size:12.5px;line-height:1.45">'+ikon[x.seviye]+' '+(x.kim?'<b>'+x.kim+':</b> ':'')+esc(x.mesaj)+'</div>'; }).join('');
   var durum = kr.length? '<div style="color:#fca5a5;font-weight:900">🔴 '+kr.length+' kritik uyarı var — lütfen kontrol et.</div>' : (uy.length? '<div style="color:#fde68a;font-weight:900">🟡 '+uy.length+' uyarı var.</div>' : '<div style="color:#86efac;font-weight:900">🟢 Her şey uyumlu görünüyor.</div>');
-  var islenmemis=GO.items.filter(function(it){ return !ilrDone(it.gi,it.tid,GO.hafta-1); });
+  var islenmemis=(GO.tip==="veli"||GO.tip==="defter")?GO.items.filter(function(it){ return !ilrDone(it.gi,it.tid,GO.hafta-1); }):[];
   var onayMetni = kr.length? 'Kritik uyarıları okudum; bu içeriği yine de göndermek istiyorum.' : (uy.length? 'Uyarıları okudum, göndermeyi onaylıyorum.' : 'İçeriği kontrol ettim, göndermeyi onaylıyorum.');
   $('#gonderModalIc').innerHTML='<div class="mbas" style="--dr:#16a34a;--dr2:#22d3ee"><div class="ik">🛡️</div><div style="min-width:0"><h3>Gönderim Onayı</h3><div class="alt">'+esc(GO.baslik)+' · '+GO.hafta+'. hafta · '+GO.items.length+' kart · kanal: '+esc(GO.kanalAd)+'</div></div><div class="kapat" onclick="modalKapat(\'gonderModal\')">✕</div></div><div class="mgov">'+
     durum+liste+
@@ -4185,7 +4202,7 @@ ozetCiz=function(){
   var km=document.getElementById('ozKime'); if(km) km.innerHTML=kime||'<div style="color:var(--soluk)">Önce yukarıdan sınıf seç.</div>'; ozKimeSayac(); };
 
 /* ---------- 🏷️ Sürüm + açılış bildirimi + sistem öz-kontrolü ---------- */
-var APP={surum:'3.0',tarih:'27.09.2026',satir:4223,kb:438,onceki:{surum:'2.9',satir:4102,kb:417},
+var APP={surum:'3.2',tarih:'29.09.2026',satir:4436,kb:472,onceki:{surum:'3.1',satir:4330,kb:455},
   yenilikler:['Veli özeti sadeleşti: metnin üstünde düğme yok','10 yazım versiyonu + 🤖 Yapay zekâ ile yaz','Altta “Kime gönderilecek?” seçimi ve telefonda kolay 4 büyük gönder düğmesi','Açılışta sürüm ve sistem öz-kontrolü','Önceki tüm özellikler korunmuştur']};
 var MODULLER=[['Yıllık Plan','renderPlan'],['Seviye bazlı plan motoru','planGetir'],['Nerede Kaldım','renderNeredeKaldim'],['Zihin Haritası','haritaAc'],['Maceralı Yol','maceraAc'],['Haftalık Program','renderProgram'],['Araç Kütüphanesi','renderAraclar'],['Oyun & Prompt Atölyesi','renderOyun'],['Video Kütüphanesi','renderVideo'],['Neden Öğretiyoruz','renderNeden'],['Veli Özeti','ozetAc'],['Sınıf Defteri','defterAc'],['Gönderim Merkezi','okulGonderAc'],['Onay Kapısı','gonderOnay'],['Plan Düzenleyici','planKaynakAc'],['AI ile Ders Ekle','planAIOner'],['Ders Detayı','seansAc'],['Sanal Robot Lab','robotAc'],['Hafıza Oyunu','hafizaAc'],['Ders Saati','dersSaatToggle'],['Hızlı Sınıf Araçları','hizliAc'],['Bugünkü Ders','bugunkuDersAc'],['Ders Sonu','dersSonuAc'],['Yarım Kaldı','yarimToggleUI'],['Geçen Hafta Özeti','gecenOzet'],['Disiplinler Arası Bağlantı','seansBaglanti'],['Video Promptu','videoPromptVer'],['Yedekle / Geri Yükle','yedekAl'],['Tüm Yıl PDF','yilPdf'],['Çok Dilli Çeviri','aiCevir'],['Farklılaştırma','seansFark'],['Sunum / Odak Modu','odakAc'],['AI Asistan','aiSor'],['Yapay Zekâ Bağlantısı','generateText']];
 function sistemKontrol(){ var sonuc=MODULLER.map(function(m){ return {ad:m[0],ok:typeof window[m[1]]==='function'}; });
@@ -4206,6 +4223,202 @@ function surumAcilis(){ try{
   document.body.appendChild(b); setTimeout(function(){ if(b.parentNode) b.remove(); }, yeni?9000:4500);
   LS.set('dk_surum',APP.surum); }catch(e){} }
 setTimeout(surumAcilis,700);
+
+/* ============================================================
+   SÜRÜM 3.1 — Özet: sınıflar tek sırada + 📤 Okula Gönder metnin altında
+              + ✍️ Duyuru Yazarı (AI pedagojik mesaj)
+   ============================================================ */
+TIP_AD.duyuru='✍️ Duyuru';
+/* ortak: tek sırada sınıf seçici (Tümü dahil) */
+function sinifSeciciHTML(secili,fn){ var tum=secili.length===SINIF_LISTE.length;
+  return '<div class="oz-scroll" style="flex-wrap:wrap"><div class="gchip'+(tum?' akt':'')+'" onclick="'+fn+'(\'tum\')">✅ Tümü</div>'+SINIF_LISTE.map(function(sn,i){ return '<div class="gchip'+(secili.indexOf(i)>=0?' akt':'')+'" onclick="'+fn+'('+i+')">'+(sn.g==='Ana'?'Ana':sn.g)+'</div>'; }).join('')+'</div>'; }
+function sinifSecDegis(arr,x){ if(x==='tum'){ return arr.length===SINIF_LISTE.length?[ST.gradeIdx]:SINIF_LISTE.map(function(_,i){return i;}); } var k=arr.indexOf(x); if(k>=0){ if(arr.length>1) arr.splice(k,1); } else arr.push(x); return arr.sort(function(a,b){return a-b;}); }
+function sinifEtiket(arr){ return arr.length===SINIF_LISTE.length?'Tüm sınıflar':arr.map(ozGname).join(', '); }
+/* ekosistem adresi: bir kez sorulur, hatırlanır */
+function ekoUrl(sor){ var u=LS.get('dk_eko_url',''); if((!u&&sor)||sor==='degistir'){ var y=prompt('Değişim Koleji ekosistem adresin (Okula Gönder bu sayfayı açsın).\nBoş bırakırsan yalnızca kopyalanır.', u||'https://'); if(y===null) return u; y=y.trim(); if(y==='https://') y=''; LS.set('dk_eko_url',y); u=y; } return u; }
+function okulaGonderEylem(metin){ return function(){ kopyala(metin,'📋 Kopyalandı'); var u=ekoUrl(true); if(u){ window.open(u,'_blank','noopener'); toast('📤 Ekosistem açıldı → Öğretmen Merkezi → Duyuru’ya yapıştır','ok',5200); } else toast('📋 Kopyalandı → ekosistemde Duyuru’ya yapıştır','ok',4500); }; }
+/* onay kapısı: duyuru için ayrı kontrol */
+var _gonderOnayEski=gonderOnay;
+gonderOnay=function(o){ if(!o.kontrolFn) return _gonderOnayEski(o); GO=o; GO.kontrol=o.kontrolFn(); gonderCiz(); modalAc('gonderModal'); };
+
+/* ---------- 📰 Veli özeti: sınıflar metnin altında, tek sırada ---------- */
+function ozSinifSec(x){ OZ.grades=sinifSecDegis(OZ.grades.slice(),x); OZ.secili={}; ozetCiz(); }
+function ozOkulaGonder(){ var items=ozItems(); if(!items.length){ toast('Önce sınıf seç','err'); return; } var m=ozMetin(); gonderOnay({tip:'veli',baslik:TIP_AD.veli,hafta:OZ.hafta,items:items,kanalAd:'📤 Okula Gönder (ekosistem Duyuru)',eylem:okulaGonderEylem(m),onizleme:m}); }
+var _ozetCiz3=ozetCiz;
+ozetCiz=function(){ OZ.secili={}; _ozetCiz3();
+  var mg=document.querySelector('#ozetModalIc .mgov'); if(!mg) return;
+  var ilk=mg.querySelector('.oz-adim .ilerseridi'); if(ilk) ilk.remove();
+  var adimlar=mg.querySelectorAll('.oz-adim'); var son=adimlar[adimlar.length-1]; if(!son) return;
+  var n=OZ.grades.length;
+  son.innerHTML='<h4>3️⃣ Hangi sınıflara? <span style="font-weight:600;color:var(--soluk);font-size:12px">(birden fazla seçebilirsin)</span></h4>'+sinifSeciciHTML(OZ.grades,'ozSinifSec')+
+    '<div style="font-size:12.5px;color:#a7f3d0;margin-top:6px">🎯 '+esc(sinifEtiket(OZ.grades))+' · '+document.querySelectorAll('#ozetSaha .hoz-kart').length+' kart</div>'+
+    '<button class="btn y oz-okul" onclick="ozOkulaGonder()">📤 Okula Gönder<br><small>ekosistem Duyuru</small></button>'+
+    '<div class="oz-gbtn"><button class="btn g" onclick="ozKopya()">📋 Kopyala</button><button class="btn g" onclick="ozWa()">🟢 WhatsApp</button><button class="btn g" onclick="ozPdf()">📄 PDF</button><button class="btn g" onclick="ozPng()">🖼️ Görsel</button></div>'+
+    '<div style="font-size:11.5px;color:var(--soluk);margin-top:8px">🛡️ Her gönderim önce kontrol edilir; onayın olmadan hiçbir şey gitmez.</div>'+
+    '<div class="btnsira" style="margin-top:10px"><button class="fbtn" onclick="modalKapat(\'ozetModal\');okulGonderAc()">📤 Gönderim Merkezi</button><button class="fbtn" onclick="defterAc()">📒 Sınıf Defteri</button><button class="fbtn" onclick="ekoUrl(\'degistir\')">⚙️ Ekosistem adresi</button></div>';
+  var h=mg.querySelector('.mbas .alt'); var alt=document.querySelector('#ozetModalIc .mbas .alt'); if(alt) alt.textContent='1) Hafta ve ders · 2) Yazım · 3) Sınıf seç ve gönder'; };
+
+/* ---------- ✍️ Duyuru Yazarı ---------- */
+var DY={grades:null,hedef:'veli',tur:'Bilgilendirme',uzun:'kisa',ders:'satranc',not:'',link:true,sonuc:[],sec:0,yukleniyor:false};
+function dySite(){ return LS.get('dk_site_url','https://baris-ogretmen.github.io/site-1/'); }
+function dyAlan(k,v){ DY[k]=v; renderDuyuru(); }
+function dySinifSec(x){ DY.grades=sinifSecDegis(DY.grades.slice(),x); renderDuyuru(); }
+function dyNotKaydet(el){ DY.not=el.value; }
+function dySiteDegis(){ var y=prompt('Site adresin:',dySite()); if(y===null) return; LS.set('dk_site_url',y.trim()); renderDuyuru(); }
+function dyImza(){ return '— Barış Öğretmen · Değişim Koleji'; }
+function dyTamMetin(){ var kart=document.querySelector('#dySonuc .dy-kart.sec .oz-govde'); var govde=kart?kart.innerText.trim():''; return govde? ('*'+sinifEtiket(DY.grades)+' · '+DY.tur+'*\n'+govde+'\n\n'+dyImza()) : ''; }
+function dyYedek(not){ var s=dySite(), l=(DY.link&&s)?'\n🔗 '+s:''; var bas={Bilgilendirme:'📢 Değerli velilerimiz,',Hatırlatma:'⏰ Küçük bir hatırlatma:',Duyuru:'📌 Duyuru:','Teşekkür & Tebrik':'👏 Tebrikler!'}[DY.tur]||'📢';
+  return [bas+'\n'+not.trim()+l]; }
+async function dyUret(){ var el=document.getElementById('dyNot'); if(el) DY.not=el.value; if(!DY.not.trim()){ toast('Önce ne söylemek istediğini kısaca yaz','err'); return; }
+  DY.yukleniyor=true; DY.sonuc=[]; renderDuyuru();
+  var satir=DY.uzun==='kisa'?'en fazla 3 kısa satır':'en fazla 5 kısa satır'; var hedef=DY.hedef==='veli'?'VELİLERE':'ÖĞRENCİLERE (yaşlarına uygun, sıcak ve anlaşılır dille)';
+  var dersAd={robokod:'Robotik ve Kodlama',satranc:'Satranç',yz:'Yapay Zekâ',akil:'Akıl-Zekâ Oyunları',genel:'genel'}[DY.ders];
+  var link=(DY.link&&dySite())?dySite():'';
+  var sistem='Sen Değişim Koleji’nde çalışan, çocuk gelişimini ve pedagojiyi iyi bilen deneyimli bir öğretmensin. Öğretmenin kısa notunu '+hedef+' gönderilecek, "'+DY.tur+'" amaçlı bir mesaja dönüştür. KURALLAR: (1) Öğretmenin verdiği bilgiyi DEĞİŞTİRME ve UYDURMA: tarih, saat, isim, yer, ödül ekleme. (2) Eğitim dili kullan: çocuğun hangi beceriyi geliştirdiğini (dikkat, planlama, problem çözme, iş birliği vb.) bir cümleyle belirt. (3) Sıcak, olumlu, saygılı ve abartısız ol. (4) '+satir+'; her satır bir emojiyle başlasın. (5) '+(link?'Şu linki mesajın içinde AYNEN, tek başına bir satırda ver: '+link:'Link ekleme.')+' (6) Selamlama cümlesi olabilir ama imza EKLEME. (7) Yıldız, başlık, markdown KULLANMA. (8) Birbirinden farklı üslupta TAM 3 SEÇENEK üret ve seçenekleri yalnızca ayrı bir satırda === ile ayır. Türkçe.';
+  var on='Öğretmenin notu: "'+DY.not.trim()+'". Sınıf: '+sinifEtiket(DY.grades)+'. Ders: '+dersAd+'.';
+  try{ var t=await generateText(on,{sistem:sistem}); t=String(t||'').replace(/```[a-z]*|```/g,'').replace(/\*\*/g,'').replace(/\*/g,'');
+    var parca=t.split(/\n?\s*={3,}\s*\n?/).map(function(x){return x.trim();}).filter(function(x){return x.length>8;}).slice(0,3);
+    DY.sonuc=parca.length?parca:dyYedek(DY.not); DY.sec=0; }
+  catch(e){ DY.sonuc=dyYedek(DY.not); DY.sec=0; toast('Yapay zekâ yazamadı — notun sade hâliyle hazırlandı. ⚙️ Ayarlar’dan Gemini anahtarını kontrol et.','err',5000); }
+  DY.yukleniyor=false; renderDuyuru(); }
+function dySecKart(i){ DY.sec=i; document.querySelectorAll('#dySonuc .dy-kart').forEach(function(k,n){ k.classList.toggle('sec',n===i); var r=k.querySelector('.dy-radyo'); if(r) r.textContent=(n===i?'🔘 Seçildi':'⚪ Bunu seç'); }); }
+function dyKontrol(){ var m=dyTamMetin(), r=[]; var ek=function(s,msg){ r.push({seviye:s,kim:'',mesaj:msg}); };
+  if(!m) ek('kritik','Gönderilecek metin yok.');
+  else { if(m.length>900) ek('uyari','Metin uzun ('+m.length+' karakter); veliler kısa metni daha çok okur.');
+    if(DY.link && dySite() && m.indexOf(dySite().replace(/\/$/,''))<0) ek('uyari','Site linkini eklemek istemiştin ama metinde link yok.');
+    if(/\d{1,2}[.:]\d{2}|\d{1,2}\s*(ocak|şubat|mart|nisan|mayıs|haziran|temmuz|ağustos|eylül|ekim|kasım|aralık)/i.test(m) && !/\d{1,2}[.:]\d{2}|\d{1,2}\s*(ocak|şubat|mart|nisan|mayıs|haziran|temmuz|ağustos|eylül|ekim|kasım|aralık)/i.test(DY.not)) ek('kritik','Metinde senin notunda olmayan bir tarih/saat var — yapay zekâ eklemiş olabilir, kontrol et.');
+    var g=glGet(); var ayni=g.kayit.some(function(k){ return k.tip==='duyuru'&&k.items[0]&&k.items[0].hash===strHash(m); }); if(ayni) ek('kritik','Bu metni daha önce göndermiştin (aynı metin).');
+    if(DY.hedef==='ogrenci') ek('bilgi','Hedef: öğrenciler.'); }
+  return r; }
+function dyGonder(kanal){ var m=dyTamMetin(); if(!m){ toast('Önce metni oluştur ve bir seçenek seç','err'); return; }
+  var eylem = kanal==='okul'?okulaGonderEylem(m): kanal==='wa'?function(){ window.open('https://wa.me/?text='+encodeURIComponent(m),'_blank','noopener'); }: kanal==='png'?dyPng: kanal==='pdf'?dyPdf: function(){ kopyala(m,'📋 Duyuru kopyalandı'); };
+  var kad={okul:'📤 Okula Gönder (ekosistem Duyuru)',wa:'WhatsApp',png:'Görsel (PNG)',pdf:'PDF',kopya:'Kopyala'}[kanal];
+  gonderOnay({tip:'duyuru',baslik:TIP_AD.duyuru+' · '+DY.tur,hafta:ozHaftaTahmin(),items:DY.grades.map(function(gi,n){ return {gi:gi,tid:'duyuru',hash:n===0?strHash(m):''}; }),kanalAd:kad,eylem:eylem,onizleme:m,kontrolFn:dyKontrol}); }
+function dyKartKopya(){ var k=document.querySelector('#dySonuc .dy-kart.sec'); var d=document.createElement('div'); d.innerHTML='<div class="hoz-kart" style="--dr:#ec4899;--dr2:#f59e0b"><div class="hoz-ust"><div class="hoz-sinif">✍️ '+esc(sinifEtiket(DY.grades))+'</div><div class="hoz-hafta">'+esc(DY.tur.toUpperCase())+'</div></div><div class="hoz-satir" style="white-space:pre-wrap">'+esc(k?k.querySelector('.oz-govde').innerText.trim():'')+'</div><div class="hoz-alt">Barış Öğretmen · Değişim Koleji</div></div>'; return d; }
+function dyPdf(){ var ov=document.getElementById('ozetPrint'); if(!ov){ ov=document.createElement('div'); ov.id='ozetPrint'; document.body.appendChild(ov); } ov.innerHTML='<div style="font-family:system-ui,Arial;padding:14px">'+dyKartKopya().innerHTML+'</div>'; document.body.classList.add('yazdir-ozet'); window.print(); setTimeout(function(){document.body.classList.remove('yazdir-ozet');},700); }
+async function dyPng(){ var tut=document.createElement('div'); tut.style.cssText='position:fixed;left:-10000px;top:0;width:560px;background:#f1f5f9;padding:12px;font-family:system-ui,Arial'; tut.appendChild(dyKartKopya()); document.body.appendChild(tut);
+  try{ await scriptYukle('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js'); var cv=await html2canvas(tut,{backgroundColor:'#f1f5f9',scale:2}); cv.toBlob(function(b){ var a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='duyuru.png'; a.click(); toast('📥 Görsel indirildi','ok'); }); }catch(e){ toast('Görsel oluşturulamadı (internet gerekli)','err'); } finally{ tut.remove(); } }
+function renderDuyuru(){ var host=document.getElementById('v-duyuru'); if(!host) return; if(!DY.grades) DY.grades=[ST.gradeIdx];
+  var ch=function(k,arr){ return arr.map(function(p){ return '<div class="gchip'+(DY[k]===p[0]?' akt':'')+'" onclick="dyAlan(\''+k+'\',\''+p[0]+'\')">'+p[1]+'</div>'; }).join(''); };
+  var kartlar='';
+  if(DY.yukleniyor) kartlar='<div class="oz-adim" style="text-align:center;font-size:15px">🤖 Pedagojik dille yazılıyor… <span style="opacity:.7">(3 seçenek)</span></div>';
+  else if(DY.sonuc.length) kartlar='<div style="font-size:12.5px;color:var(--soluk);margin:4px 0 8px">Beğendiğini seç · ✏️ metne dokunup düzeltebilirsin</div>'+DY.sonuc.map(function(t,i){ return '<div class="hoz-kart dy-kart'+(i===DY.sec?' sec':'')+'" style="--dr:#ec4899;--dr2:#f59e0b;cursor:pointer" onclick="dySecKart('+i+')"><div class="hoz-ust"><div class="hoz-sinif">Seçenek '+(i+1)+'</div><div class="hoz-hafta dy-radyo">'+(i===DY.sec?'🔘 Seçildi':'⚪ Bunu seç')+'</div></div><div class="hoz-satir oz-govde" contenteditable="true" spellcheck="false" style="white-space:pre-wrap;outline:none" onclick="event.stopPropagation();dySecKart('+i+')">'+esc(t)+'</div></div>'; }).join('');
+  host.innerHTML='<div class="veli-hero" style="padding:20px"><h2 style="margin:0 0 4px;font-size:20px">✍️ Duyuru Yazarı</h2><p class="big" style="font-size:13px">Kısa notunu yaz; yapay zekâ onu pedagojik, sıcak bir veli (ya da öğrenci) mesajına çevirsin. 3 seçenekten birini seç, sınıfları işaretle, gönder.</p></div>'+
+    '<div class="oz-adim"><h4>1️⃣ Ne söylemek istiyorsun?</h4><textarea id="dyNot" class="key" style="min-height:90px" oninput="dyNotKaydet(this)" placeholder="Örnek: Dün 1. sınıflarla satranç oynadık, taşların hareketlerini öğrendik. Sitemdeki satranç oyunuyla evde de oynayabilirler.">'+esc(DY.not)+'</textarea>'+
+      '<div class="ilerseridi" style="margin-top:8px"><span class="et">Kime:</span>'+ch('hedef',[['veli','👨‍👩‍👧 Veliye'],['ogrenci','🧒 Öğrenciye']])+'</div>'+
+      '<div class="ilerseridi" style="margin-top:6px"><span class="et">Tür:</span><div class="oz-scroll">'+ch('tur',[['Bilgilendirme','📢 Bilgilendirme'],['Hatırlatma','⏰ Hatırlatma'],['Duyuru','📌 Duyuru'],['Teşekkür & Tebrik','👏 Teşekkür & Tebrik']])+'</div></div>'+
+      '<div class="ilerseridi" style="margin-top:6px"><span class="et">Ders:</span><div class="oz-scroll">'+ch('ders',[['satranc','♟️ Satranç'],['robokod','🤖 Robotik-Kodlama'],['yz','🧠 Yapay Zekâ'],['akil','🧩 Akıl-Zekâ'],['genel','📚 Genel']])+'</div></div>'+
+      '<div class="ilerseridi" style="margin-top:6px"><span class="et">Uzunluk:</span>'+ch('uzun',[['kisa','Kısa (3 satır)'],['orta','Orta (5 satır)']])+'</div>'+
+      '<label style="display:flex;gap:8px;align-items:center;margin-top:10px;font-size:13px;cursor:pointer"><input type="checkbox" style="width:20px;height:20px" '+(DY.link?'checked':'')+' onchange="DY.link=this.checked"> 🔗 Site linkimi ekle <span style="color:var(--soluk2)">('+esc(dySite())+')</span></label><div style="margin-top:4px"><span class="fbtn" onclick="dySiteDegis()">✏️ Site adresini değiştir</span></div>'+
+      '<button class="btn p" style="width:100%;justify-content:center;margin-top:12px;padding:14px;font-size:15px" onclick="dyUret()">🤖 Pedagojik dille yaz (3 seçenek)</button></div>'+
+    '<div id="dySonuc">'+kartlar+'</div>'+
+    (DY.sonuc.length?'<div class="oz-adim" style="margin-top:12px"><h4>2️⃣ Hangi sınıflara?</h4>'+sinifSeciciHTML(DY.grades,'dySinifSec')+'<div style="font-size:12.5px;color:#a7f3d0;margin-top:6px">🎯 '+esc(sinifEtiket(DY.grades))+'</div>'+
+      '<button class="btn y oz-okul" onclick="dyGonder(\'okul\')">📤 Okula Gönder<br><small>ekosistem Duyuru</small></button>'+
+      '<div class="oz-gbtn"><button class="btn g" onclick="dyGonder(\'kopya\')">📋 Kopyala</button><button class="btn g" onclick="dyGonder(\'wa\')">🟢 WhatsApp</button><button class="btn g" onclick="dyGonder(\'pdf\')">📄 PDF</button><button class="btn g" onclick="dyGonder(\'png\')">🖼️ Görsel</button></div>'+
+      '<div style="font-size:11.5px;color:var(--soluk);margin-top:8px">🛡️ Göndermeden önce kontrol edilir: senin notunda olmayan tarih/saat, eksik link ve tekrar gönderim yakalanır.</div></div>':'');
+}
+var _viewDegisDY=viewDegis;
+viewDegis=function(v){ _viewDegisDY(v); var el=document.getElementById('v-duyuru'); if(el) el.style.display=(v==='duyuru')?'block':'none'; if(v==='duyuru') renderDuyuru(); };
+MODULLER.push(['Duyuru Yazarı','renderDuyuru'],['Okula Gönder','okulaGonderEylem']);
+APP.yenilikler=['Veli özetinde sınıf seçimi metnin altında tek sırada (✅ Tümü dahil)','📤 Okula Gönder: onaydan sonra kopyalar ve ekosistemi açar','Yeni sekme: ✍️ Duyuru Yazarı — notunu pedagojik dille 3 seçeneğe çevirir, site linkini ekler','Duyurularda uydurma tarih/saat, eksik link ve tekrar gönderim kontrolü','Önceki tüm özellikler korunmuştur'];
+
+/* ============================================================
+   SÜRÜM 3.2 — SADE: Kendim yazayım + altta "Sınıf seç ▾" + tek "📤 Gönder"
+              → son önizleme (velinin göreceği hâl) → onay → kanal seç
+   ============================================================ */
+OZ_VER_AD[11]='✍️ Kendim yazayım'; OZ_VER_ACK[11]='Mesajını sen yaz; seçili tüm sınıflara aynı metin gider';
+var _ozVer32=ozVersiyon;
+ozVersiyon=function(v,gi,tr,se,h){ if(v===12){ var t=(OZ.elle||'').trim(); return t? t.split(/\n+/).map(function(l){return '<p>'+esc(l)+'</p>';}).join('') : '<p style="color:#94a3b8">✍️ Yukarıdaki kutuya mesajını yaz, burada görünecek…</p>'; } return _ozVer32(v,gi,tr,se,h); };
+/* ---- sınıf seçme penceresi (Tümü + tek tek) ---- */
+var SS={arr:[],cb:null};
+function sinifSecAc(arr,cb){ SS.arr=arr.slice(); SS.cb=cb; sinifSecCiz(); modalAc('sinifSecModal'); }
+function sinifSecCiz(){ var tum=SS.arr.length===SINIF_LISTE.length;
+  $('#sinifSecModalIc').innerHTML='<div class="mbas" style="--dr:#0ea5e9;--dr2:#22d3ee"><div class="ik">🎯</div><div><h3>Sınıf seç</h3><div class="alt">'+SS.arr.length+' sınıf seçili</div></div><div class="kapat" onclick="modalKapat(\'sinifSecModal\')">✕</div></div><div class="mgov ss-liste">'+
+    '<label style="border-color:#22c55e"><input type="checkbox" style="width:24px;height:24px" '+(tum?'checked':'')+' onchange="SS.arr=this.checked?SINIF_LISTE.map(function(_,i){return i;}):[];sinifSecCiz()"> <b>✅ Tümü</b></label>'+
+    SINIF_LISTE.map(function(sn,i){ return '<label><input type="checkbox" style="width:24px;height:24px" '+(SS.arr.indexOf(i)>=0?'checked':'')+' onchange="sinifSecTik('+i+',this.checked)"> '+ozGname(i)+'</label>'; }).join('')+
+    '<button class="btn y" style="width:100%;justify-content:center;margin-top:12px;padding:14px;font-size:16px" onclick="sinifSecTamam()">Tamam</button></div>'; }
+function sinifSecTik(i,v){ var k=SS.arr.indexOf(i); if(v&&k<0) SS.arr.push(i); if(!v&&k>=0) SS.arr.splice(k,1); SS.arr.sort(function(a,b){return a-b;}); sinifSecCiz(); }
+function sinifSecTamam(){ if(!SS.arr.length){ toast('En az bir sınıf seç','err'); return; } modalKapat('sinifSecModal'); if(SS.cb) SS.cb(SS.arr.slice()); }
+/* ---- SON ADIM: önizle → onayla → kanal seç ---- */
+var KANAL_AD={okul:'📤 Okula Gönder (ekosistem Duyuru)',kopya:'📋 Kopyala',wa:'🟢 WhatsApp',pdf:'📄 PDF',png:'🖼️ Görsel'};
+function sonAdimAc(o){ GO=o; GO.kontrol=o.kontrolFn?o.kontrolFn():gonderKontrol(o.tip,o.hafta,o.items);
+  if(o.elle) GO.kontrol=GO.kontrol.map(function(x){ return (x.seviye==='kritik'&&/ilişkili görünmüyor/.test(x.mesaj))?{seviye:'uyari',kim:x.kim,mesaj:'Kendi yazdığın metin bu haftanın konusunu anmıyor (bilerek yazdıysan sorun değil).'}:x; });
+  sonAdimCiz(); modalAc('gonderModal'); }
+function sonAdimCiz(){ var k=GO.kontrol, kr=k.filter(function(x){return x.seviye==='kritik';}), uy=k.filter(function(x){return x.seviye==='uyari';});
+  var renk={kritik:'#fca5a5',uyari:'#fde68a',bilgi:'#93c5fd'}, ikon={kritik:'🔴',uyari:'🟡',bilgi:'🔵'};
+  var liste=k.filter(function(x){return x.seviye!=='bilgi';}).map(function(x){ return '<div style="border-left:4px solid '+renk[x.seviye]+';padding:6px 10px;margin-top:6px;font-size:12.5px;line-height:1.45;background:rgba(255,255,255,.04);border-radius:8px">'+ikon[x.seviye]+' '+(x.kim?'<b>'+x.kim+':</b> ':'')+esc(x.mesaj)+'</div>'; }).join('');
+  var durum=kr.length?'<div style="color:#fca5a5;font-weight:900">🔴 '+kr.length+' önemli uyarı — lütfen oku</div>':(uy.length?'<div style="color:#fde68a;font-weight:900">🟡 '+uy.length+' uyarı</div>':'<div style="color:#86efac;font-weight:900">🟢 Her şey uyumlu</div>');
+  var isl=(GO.tip==='veli'||GO.tip==='defter')?GO.items.filter(function(it){ return !ilrDone(it.gi,it.tid,GO.hafta-1); }):[];
+  var siniflar=[]; GO.items.forEach(function(it){ var a=ozGname(it.gi); if(siniflar.indexOf(a)<0) siniflar.push(a); });
+  var onay=kr.length?'Uyarıları okudum; yine de göndermek istiyorum.':'Önizlemeyi kontrol ettim, göndermeyi onaylıyorum.';
+  $('#gonderModalIc').innerHTML='<div class="mbas" style="--dr:#16a34a;--dr2:#22d3ee"><div class="ik">📤</div><div style="min-width:0"><h3>Son adım: önizle ve gönder</h3><div class="alt">'+esc(GO.baslik)+' · '+esc(siniflar.join(', '))+'</div></div><div class="kapat" onclick="modalKapat(\'gonderModal\')">✕</div></div><div class="mgov">'+
+    '<div style="font-size:13px;color:var(--soluk);margin-bottom:6px">👀 Karşı tarafın göreceği hâli:</div><div class="sa-onizle">'+GO.onizlemeHTML+'</div>'+
+    '<div style="margin-top:12px">'+durum+liste+'</div>'+
+    (isl.length?'<button class="fbtn" style="margin-top:8px" onclick="gonderIslendiYap()">✅ '+isl.length+' dersi “işlendi” işaretle</button>':'')+
+    '<label style="display:flex;gap:10px;align-items:center;margin-top:14px;font-size:14px;cursor:pointer;background:var(--panel2);border:1px solid var(--cizgi);border-radius:12px;padding:12px"><input type="checkbox" id="gonderTik" style="width:24px;height:24px" onchange="document.querySelectorAll(\'.gk-btn\').forEach(function(b){b.disabled=!this.checked;}.bind(this))"> '+onay+'</label>'+
+    '<button class="btn y gk-btn oz-okul" disabled onclick="gonderKanal(\'okul\')">📤 Okula Gönder<br><small>kopyalar ve ekosistemi açar</small></button>'+
+    '<div class="oz-gbtn"><button class="btn g gk-btn" disabled onclick="gonderKanal(\'kopya\')">📋 Kopyala</button><button class="btn g gk-btn" disabled onclick="gonderKanal(\'wa\')">🟢 WhatsApp</button><button class="btn g gk-btn" disabled onclick="gonderKanal(\'pdf\')">📄 PDF</button><button class="btn g gk-btn" disabled onclick="gonderKanal(\'png\')">🖼️ Görsel</button></div>'+
+    '<button class="btn g" style="width:100%;justify-content:center;margin-top:10px" onclick="modalKapat(\'gonderModal\')">✏️ Geri dön, düzenle</button></div>'; }
+function gonderKanal(k){ if(!GO||!GO.kanallar||!GO.kanallar[k]) return; GO.kanalAd=KANAL_AD[k]; GO.eylem=GO.kanallar[k]; gonderYap(); }
+var _gonderCizEski=gonderCiz; gonderCiz=function(){ if(GO&&GO.kanallar) return sonAdimCiz(); return _gonderCizEski(); };
+/* ---- 📰 VELİ ÖZETİ (sade) ---- */
+function ozSahaCiz(){ var saha=document.getElementById('ozetSaha'); if(!saha) return; OZ.secili={};
+  saha.innerHTML=OZ.grades.map(function(gi){ return ozKartHTML(gi); }).join('')||'<div style="color:#64748b;padding:14px">Bu seçim için içerik yok.</div>';
+  saha.querySelectorAll('.hoz-kart').forEach(function(k){ var sk=ozSK(k.dataset.key), gv=k.querySelector('.oz-govde'); if(!gv) return; if(OZ.duzen[sk]) gv.innerHTML=OZ.duzen[sk]; gv.addEventListener('input',function(){ OZ.duzen[sk]=gv.innerHTML; }); });
+  var lb=document.getElementById('ozSinifLbl'); if(lb) lb.innerHTML='🎯 <b>'+esc(sinifEtiket(OZ.grades))+'</b><br><small style="color:var(--soluk)">'+saha.querySelectorAll('.hoz-kart').length+' kart</small>'; }
+function ozElleGir(el){ OZ.elle=el.value; Object.keys(OZ.duzen).forEach(function(k){ if(/\|12\|/.test(k)) delete OZ.duzen[k]; }); ozSahaCiz(); }
+function ozSinifAc(){ sinifSecAc(OZ.grades,function(a){ OZ.grades=a; ozetCiz(); }); }
+function ozSonAdim(){ var items=ozItems(); if(!items.length){ toast('Önce “Sınıf seç ▾” ile sınıf seç','err'); return; }
+  if(OZ.verAll===12 && !(OZ.elle||'').trim()){ toast('Önce mesajını yaz','err'); return; }
+  var m=ozMetin(); sonAdimAc({tip:'veli',baslik:'📰 Veli Özeti · '+OZ.hafta+'. hafta',hafta:OZ.hafta,items:items,onizleme:m,onizlemeHTML:ozTemizKopya().innerHTML,elle:OZ.verAll===12,
+    kanallar:{okul:okulaGonderEylem(m),kopya:ozEylemKopya,wa:ozEylemWa,pdf:ozEylemPdf,png:ozEylemPng}}); }
+ozetCiz=function(){ if(!OZ.grades||!OZ.grades.length) OZ.grades=[ST.gradeIdx];
+  var wsel='<select class="key" style="width:auto" onchange="OZ.hafta=+this.value;ozetCiz()">'+Array.from({length:36},function(_,k){return '<option value="'+(k+1)+'"'+(k+1===OZ.hafta?' selected':'')+'>'+(k+1)+'. hafta</option>';}).join('')+'</select>';
+  var dsel='<select class="key" style="width:auto;flex:1;min-width:140px" onchange="OZ.track=this.value;ozetCiz()">'+[['robokod','🤖 Robotik-Kodlama'],['satranc','♟️ Satranç'],['yz','🧠 Yapay Zeka'],['akil','🧩 Akıl-Zeka'],['kocluk','🎯 Eğitim Koçluğu'],['hepsi','📚 Tüm dersler']].map(function(p){return '<option value="'+p[0]+'"'+(OZ.track===p[0]?' selected':'')+'>'+p[1]+'</option>';}).join('')+'</select>';
+  var ysel='<select class="key" style="width:100%" onchange="ozVerSec(+this.value)">'+OZ_VER_AD.map(function(ad,n){ var no=n+1; return '<option value="'+no+'"'+(OZ.verAll===no?' selected':'')+'>'+(no<=10?no+' · ':'')+ad+'</option>'; }).join('')+'</select>';
+  $('#ozetModalIc').innerHTML='<div class="mbas" style="--dr:#ec4899;--dr2:#f59e0b"><div class="ik">📰</div><div style="min-width:0"><h3>Haftalık Veli Özeti</h3><div class="alt">Seç · önizle · gönder</div></div><div class="kapat" onclick="modalKapat(\'ozetModal\')">✕</div></div><div class="mgov">'+
+    '<div class="oz-adim"><div style="display:flex;gap:8px;flex-wrap:wrap">'+wsel+dsel+'</div>'+
+      '<div style="margin-top:10px;font-size:12.5px;color:var(--soluk)">Yazım</div>'+ysel+'<div style="font-size:12.5px;color:#a7f3d0;margin-top:6px">✨ '+OZ_VER_ACK[OZ.verAll-1]+'</div>'+
+      (OZ.verAll===12?'<textarea id="ozElle" class="key" style="min-height:100px;margin-top:8px" placeholder="Örnek: Bu hafta satrançta taşların hareketlerini öğrendik. Evde birlikte oynamanızı öneririz 😊" oninput="ozElleGir(this)">'+esc(OZ.elle||'')+'</textarea>':'')+
+      (OZ.verAll===11?'<button class="fbtn" style="margin-top:8px" onclick="ozAIHepsi()">🤖 Yeniden yaz</button>':'')+
+      (OZ.verAll!==12?'<label style="display:flex;gap:8px;align-items:center;margin-top:10px;font-size:13px;cursor:pointer"><input type="checkbox" style="width:20px;height:20px" '+(OZ.bagla?'checked':'')+' onchange="OZ.bagla=this.checked;ozetCiz()"> 🔗 Başına “Geçen hafta” satırı ekle</label>':'')+'</div>'+
+    '<div style="font-size:12.5px;color:var(--soluk);margin:0 0 6px">👀 Önizleme · ✏️ metne dokunup düzeltebilirsin</div>'+
+    '<div id="ozetSaha" style="background:#f1f5f9;border-radius:16px;padding:12px"></div>'+
+    '<div class="oz-alt-bar"><div id="ozSinifLbl"></div><button class="btn p" onclick="ozSinifAc()">Sınıf seç ▾</button></div>'+
+    '<button class="btn y oz-gonder-btn" onclick="ozSonAdim()">📤 Gönder</button>'+
+    '<div style="font-size:11.5px;color:var(--soluk);margin-top:8px;text-align:center">Gönder’e basınca son önizleme açılır; onaylamadan hiçbir şey gitmez.</div>'+
+    '<div class="btnsira" style="margin-top:10px;justify-content:center"><button class="fbtn" onclick="modalKapat(\'ozetModal\');okulGonderAc()">📤 Gönderim Merkezi</button><button class="fbtn" onclick="defterAc()">📒 Sınıf Defteri</button><button class="fbtn" onclick="ekoUrl(\'degistir\')">⚙️ Ekosistem adresi</button></div></div>';
+  ozSahaCiz(); };
+/* ---- ✍️ DUYURU YAZARI (sade) ---- */
+if(!DY.mod) DY.mod='ai';
+function dyNotGir(el){ DY.not=el.value; if(DY.mod==='elle') dyElleCiz(); }
+function dyElleMetin(){ var t=(DY.not||'').trim(), s=dySite(); if(t && DY.link && s && t.indexOf(s.replace(/\/$/,''))<0) t+='\n🔗 '+s; return t; }
+function dyElleCiz(){ var box=document.getElementById('dySonuc'); if(!box) return; var t=dyElleMetin();
+  box.innerHTML='<div style="font-size:12.5px;color:var(--soluk);margin:10px 0 6px">👀 Önizleme</div><div class="hoz-kart dy-kart sec" style="--dr:#ec4899;--dr2:#f59e0b"><div class="hoz-ust"><div class="hoz-sinif">✍️ '+esc(sinifEtiket(DY.grades))+'</div><div class="hoz-hafta">'+esc(DY.tur.toUpperCase())+'</div></div><div class="hoz-satir oz-govde" style="white-space:pre-wrap">'+(t?esc(t):'<span style="color:#94a3b8">Yukarıya mesajını yaz…</span>')+'</div></div>'; }
+function dySinifAc(){ sinifSecAc(DY.grades,function(a){ DY.grades=a; renderDuyuru(); }); }
+function dySonAdim(){ var m=dyTamMetin(); if(!m){ toast(DY.mod==='elle'?'Önce mesajını yaz':'Önce “Yaz” düğmesine bas ve bir seçenek seç','err'); return; }
+  sonAdimAc({tip:'duyuru',baslik:'✍️ Duyuru · '+DY.tur,hafta:ozHaftaTahmin(),items:DY.grades.map(function(gi,n){ return {gi:gi,tid:'duyuru',hash:n===0?strHash(m):''}; }),onizleme:m,onizlemeHTML:dyKartKopya().innerHTML,kontrolFn:dyKontrol,
+    kanallar:{okul:okulaGonderEylem(m),kopya:function(){ kopyala(m,'📋 Duyuru kopyalandı'); },wa:function(){ window.open('https://wa.me/?text='+encodeURIComponent(m),'_blank','noopener'); },pdf:dyPdf,png:dyPng}}); }
+renderDuyuru=function(){ var host=document.getElementById('v-duyuru'); if(!host) return; if(!DY.grades) DY.grades=[ST.gradeIdx];
+  var ch=function(k,arr){ return arr.map(function(p){ return '<div class="gchip'+(DY[k]===p[0]?' akt':'')+'" onclick="dyAlan(\''+k+'\',\''+p[0]+'\')">'+p[1]+'</div>'; }).join(''); };
+  var ai=DY.mod==='ai', kartlar='';
+  if(ai){ if(DY.yukleniyor) kartlar='<div class="oz-adim" style="text-align:center;font-size:15px">🤖 Pedagojik dille yazılıyor… (3 seçenek)</div>';
+    else if(DY.sonuc.length) kartlar='<div style="font-size:12.5px;color:var(--soluk);margin:10px 0 6px">👀 Beğendiğini seç · ✏️ metne dokunup düzeltebilirsin</div>'+DY.sonuc.map(function(t,i){ return '<div class="hoz-kart dy-kart'+(i===DY.sec?' sec':'')+'" style="--dr:#ec4899;--dr2:#f59e0b;cursor:pointer" onclick="dySecKart('+i+')"><div class="hoz-ust"><div class="hoz-sinif">Seçenek '+(i+1)+'</div><div class="hoz-hafta dy-radyo">'+(i===DY.sec?'🔘 Seçildi':'⚪ Bunu seç')+'</div></div><div class="hoz-satir oz-govde" contenteditable="true" spellcheck="false" style="white-space:pre-wrap;outline:none" onclick="event.stopPropagation();dySecKart('+i+')">'+esc(t)+'</div></div>'; }).join(''); }
+  host.innerHTML='<div class="veli-hero" style="padding:18px"><h2 style="margin:0 0 4px;font-size:20px">✍️ Duyuru Yazarı</h2><p class="big" style="font-size:13px">Notunu yaz → yapay zekâ pedagojik dille yazsın ya da kendin yaz → sınıf seç → gönder.</p></div>'+
+    '<div class="oz-adim"><div class="ilerseridi" style="margin-bottom:8px">'+ch('mod',[['ai','🤖 Yapay zekâ yazsın'],['elle','✍️ Kendim yazacağım']])+'</div>'+
+      '<textarea id="dyNot" class="key" style="min-height:100px" oninput="dyNotGir(this)" placeholder="'+(ai?'Örnek: Dün 1. sınıflarla satranç oynadık, taşların hareketlerini öğrendik. Sitemdeki satranç oyunuyla evde de oynayabilirler.':'Mesajını buraya yaz; aşağıda önizlemesi görünür.')+'">'+esc(DY.not)+'</textarea>'+
+      (ai?'<div class="ilerseridi" style="margin-top:8px"><span class="et">Kime:</span>'+ch('hedef',[['veli','👨‍👩‍👧 Veli'],['ogrenci','🧒 Öğrenci']])+'</div>'+
+        '<div class="ilerseridi" style="margin-top:6px"><span class="et">Tür:</span><div class="oz-scroll">'+ch('tur',[['Bilgilendirme','📢 Bilgi'],['Hatırlatma','⏰ Hatırlatma'],['Duyuru','📌 Duyuru'],['Teşekkür & Tebrik','👏 Tebrik']])+'</div></div>'+
+        '<div class="ilerseridi" style="margin-top:6px"><span class="et">Ders:</span><div class="oz-scroll">'+ch('ders',[['satranc','♟️ Satranç'],['robokod','🤖 Robotik'],['yz','🧠 YZ'],['akil','🧩 Akıl-Zekâ'],['genel','📚 Genel']])+'</div></div>':'')+
+      '<label style="display:flex;gap:8px;align-items:center;margin-top:10px;font-size:13px;cursor:pointer"><input type="checkbox" style="width:20px;height:20px" '+(DY.link?'checked':'')+' onchange="DY.link=this.checked;if(DY.mod===\'elle\')dyElleCiz()"> 🔗 Site linkimi ekle</label>'+
+      (ai?'<button class="btn p" style="width:100%;justify-content:center;margin-top:12px;padding:14px;font-size:15px" onclick="dyUret()">🤖 Pedagojik dille yaz</button>':'')+'</div>'+
+    '<div id="dySonuc">'+kartlar+'</div>'+
+    '<div class="oz-alt-bar"><div>🎯 <b>'+esc(sinifEtiket(DY.grades))+'</b></div><button class="btn p" onclick="dySinifAc()">Sınıf seç ▾</button></div>'+
+    '<button class="btn y oz-gonder-btn" onclick="dySonAdim()">📤 Gönder</button>'+
+    '<div style="font-size:11.5px;color:var(--soluk);margin-top:8px;text-align:center">Gönder’e basınca son önizleme açılır; onaylamadan hiçbir şey gitmez.</div>';
+  if(!ai) dyElleCiz(); };
+MODULLER.push(['Sınıf Seçme Penceresi','sinifSecAc'],['Son Adım Önizleme','sonAdimAc']);
+APP.yenilikler=['Sadeleşti: sınıf seçimi altta tek düğme (“Sınıf seç ▾”, ✅ Tümü dahil)','✍️ Kendim yazayım (veli özeti + duyuru)','Tek “📤 Gönder” → son önizleme (karşı tarafın göreceği hâl) → onay → kanal seç','Önceki tüm özellikler korunmuştur'];
 
 basla();
 fabYap({id:'sinif',ikon:'⏱️',etiket:'Sınıf Araçları',bayrak:'dk_sinif_gizli',tik:()=>sinifAracAc()});
