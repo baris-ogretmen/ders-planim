@@ -4004,7 +4004,8 @@ function gonderCiz(){ var k=GO.kontrol, kr=k.filter(function(x){return x.seviye=
     '<label style="display:flex;gap:8px;align-items:flex-start;margin-top:12px;font-size:13px;cursor:pointer"><input type="checkbox" id="gonderTik" style="width:20px;height:20px;margin-top:1px" onchange="document.getElementById(\'gonderBtn\').disabled=!this.checked"> '+onayMetni+'</label>'+
     '<div class="btnsira" style="margin-top:12px"><button class="btn g" onclick="modalKapat(\'gonderModal\')">✏️ Geri dön, düzenle</button><button class="btn y" id="gonderBtn" disabled onclick="gonderYap()">✅ Onayla ve Gönder</button></div></div>'; }
 function gonderIslendiYap(){ GO.items.forEach(function(it){ if(!ilrDone(it.gi,it.tid,GO.hafta-1)) ilrToggle(it.gi,it.tid,GO.hafta-1); if(typeof yarimSet==='function') yarimSet(it.gi,it.tid,GO.hafta-1,false); }); try{renderNeredeKaldim();}catch(e){} GO.kontrol=gonderKontrol(GO.tip,GO.hafta,GO.items); gonderCiz(); toast('✅ İşaretlendi, kontrol yenilendi','ok'); }
-function gonderYap(){ var t=document.getElementById('gonderTik'); if(!t||!t.checked){ toast('Önce onay kutusunu işaretle','err'); return; }
+function gonderYap(){ var t=document.getElementById('gonderTik'); if(!t||!t.checked){ var kr=(GO&&GO.kontrol||[]).filter(function(x){return x.seviye==='kritik';}); if(kr.length && !window.confirm('⚠️ '+kr.map(function(x){return (x.kim?x.kim+': ':'')+x.mesaj;}).join('\n')+'\n\nYine de gönderilsin mi?')) return; }
+  try{ if(GO && GO.tip==='veli' && GO.kanalAd===KANAL_AD.okul){ GO.items.forEach(function(it){ if(!ilrDone(it.gi,it.tid,GO.hafta-1)) ilrToggle(it.gi,it.tid,GO.hafta-1); }); try{renderNeredeKaldim();}catch(e){} } }catch(e){}
   var o=GO; modalKapat('gonderModal');
   try{ o.eylem(); }catch(e){ toast('Gönderim sırasında hata: '+(e.message||e),'err'); return; }
   var g=glGet(); g.kayit.push({id:Date.now(),ts:new Date().toISOString(),tip:o.tip,kanal:o.kanalAd,hafta:o.hafta,baslik:o.baslik,uyari:o.kontrol.filter(function(x){return x.seviye!=='bilgi';}).length,items:o.items.map(function(it){return {gi:it.gi,tid:it.tid,hash:it.hash};}),ozet:String(o.onizleme||'').slice(0,500)}); glSet(g);
@@ -4202,8 +4203,8 @@ ozetCiz=function(){
   var km=document.getElementById('ozKime'); if(km) km.innerHTML=kime||'<div style="color:var(--soluk)">Önce yukarıdan sınıf seç.</div>'; ozKimeSayac(); };
 
 /* ---------- 🏷️ Sürüm + açılış bildirimi + sistem öz-kontrolü ---------- */
-var APP={surum:'3.3',tarih:'30.09.2026',satir:4443,kb:474,onceki:{surum:'3.2',satir:4436,kb:472},
-  yenilikler:['⏳ Okula Gönder: ekosistemde ne kadar kalacağını seç (Bugün · Yarın · 1 hafta · 2 hafta · 1 ay · Kalıcı), süre dolunca kendiliğinden silinir','📤 Okula Gönder artık ekosistemde Özet Aktar ekranını kendiliğinden açar','Veli özeti sadeleşti: metnin üstünde düğme yok','10 yazım versiyonu + 🤖 Yapay zekâ ile yaz','Altta “Kime gönderilecek?” seçimi ve telefonda kolay 4 büyük gönder düğmesi','Açılışta sürüm ve sistem öz-kontrolü','Önceki tüm özellikler korunmuştur']};
+var APP={surum:'3.4',tarih:'01.10.2026',satir:4485,kb:478,onceki:{surum:'3.3',satir:4443,kb:474},
+  yenilikler:['📤 Okula Gönder artık DOĞRUDAN: kopyala-yapıştır yok, adres sorma yok — veli ve öğrenci anında “📰 Özetler”de görür','Onay kutusu kaldırıldı; önemli uyarı varsa tek soru sorulur','Okula gönderilen veli özeti o dersi otomatik “✅ işlendi” yapar','⏳ Okula Gönder: ekosistemde ne kadar kalacağını seç (Bugün · Yarın · 1 hafta · 2 hafta · 1 ay · Kalıcı), süre dolunca kendiliğinden silinir','📤 Okula Gönder artık ekosistemde Özet Aktar ekranını kendiliğinden açar','Veli özeti sadeleşti: metnin üstünde düğme yok','10 yazım versiyonu + 🤖 Yapay zekâ ile yaz','Altta “Kime gönderilecek?” seçimi ve telefonda kolay 4 büyük gönder düğmesi','Açılışta sürüm ve sistem öz-kontrolü','Önceki tüm özellikler korunmuştur']};
 var MODULLER=[['Yıllık Plan','renderPlan'],['Seviye bazlı plan motoru','planGetir'],['Nerede Kaldım','renderNeredeKaldim'],['Zihin Haritası','haritaAc'],['Maceralı Yol','maceraAc'],['Haftalık Program','renderProgram'],['Araç Kütüphanesi','renderAraclar'],['Oyun & Prompt Atölyesi','renderOyun'],['Video Kütüphanesi','renderVideo'],['Neden Öğretiyoruz','renderNeden'],['Veli Özeti','ozetAc'],['Sınıf Defteri','defterAc'],['Gönderim Merkezi','okulGonderAc'],['Onay Kapısı','gonderOnay'],['Plan Düzenleyici','planKaynakAc'],['AI ile Ders Ekle','planAIOner'],['Ders Detayı','seansAc'],['Sanal Robot Lab','robotAc'],['Hafıza Oyunu','hafizaAc'],['Ders Saati','dersSaatToggle'],['Hızlı Sınıf Araçları','hizliAc'],['Bugünkü Ders','bugunkuDersAc'],['Ders Sonu','dersSonuAc'],['Yarım Kaldı','yarimToggleUI'],['Geçen Hafta Özeti','gecenOzet'],['Disiplinler Arası Bağlantı','seansBaglanti'],['Video Promptu','videoPromptVer'],['Yedekle / Geri Yükle','yedekAl'],['Tüm Yıl PDF','yilPdf'],['Çok Dilli Çeviri','aiCevir'],['Farklılaştırma','seansFark'],['Sunum / Odak Modu','odakAc'],['AI Asistan','aiSor'],['Yapay Zekâ Bağlantısı','generateText']];
 function sistemKontrol(){ var sonuc=MODULLER.map(function(m){ return {ad:m[0],ok:typeof window[m[1]]==='function'}; });
   var planOk=true; try{ for(var gi=0;gi<SINIF_LISTE.length;gi++){ gorunenTracks(gi).forEach(function(tr){ if(giIle(gi,function(){ return SEANS[tr.id].length; })!==36) planOk=false; }); } }catch(e){ planOk=false; }
@@ -4240,9 +4241,51 @@ function ekoUrl(sor){ var u=LS.get('dk_eko_url',''); if((!u&&sor)||sor==='degist
 var EKO_SURE=[['bugun','☀️ Bugün'],['yarin','🌙 Yarın akşama'],['7','1 hafta'],['14','2 hafta'],['30','1 ay'],['0','📌 Kalıcı']];
 var EKO_SURE_AD={bugun:'Bugün',yarin:'Yarın akşama','7':'1 hafta','14':'2 hafta','30':'1 ay','0':'Kalıcı'};
 function ekoSure(){ var v=LS.get('dk_eko_sure','7'); return EKO_SURE_AD[v]?v:'7'; }
-function ekoSureSec(v,el){ LS.set('dk_eko_sure',v); try{ var kap=el&&el.parentNode; if(kap) kap.querySelectorAll('.gchip').forEach(function(c){ c.classList.toggle('akt', c.getAttribute('data-v')===v); }); var y=document.getElementById('ekoSureYazi'); if(y) y.textContent=EKO_SURE_AD[v]; }catch(e){} toast('⏳ Ekosistemde kalma süresi: '+EKO_SURE_AD[v],'ok',1800); }
+function ekoSureSec(v,el){ LS.set('dk_eko_sure',v); try{ var kap=el&&el.parentNode; if(kap) kap.querySelectorAll('.gchip').forEach(function(c){ c.classList.toggle('akt', c.getAttribute('data-v')===v); }); var y=document.getElementById('ekoSureYazi'); if(y) y.textContent=EKO_SURE_AD[v]; var sb=document.querySelector('.oz-okul small'); if(sb) sb.textContent='tek dokunuş · veli ve öğrenci “📰 Özetler”de görür · süre: '+EKO_SURE_AD[v]; }catch(e){} toast('⏳ Ekosistemde kalma süresi: '+EKO_SURE_AD[v],'ok',1800); }
 function ekoSureHTML(){ var v=ekoSure(); return '<div style="margin-top:12px;background:var(--panel2);border:1px solid var(--cizgi);border-radius:12px;padding:10px"><div style="font-size:13px;font-weight:800;margin-bottom:6px">⏳ Okulun ekosisteminde ne kadar kalsın? <span style="color:var(--soluk);font-weight:600">(süre dolunca panodan kendiliğinden silinir · şu an: <b id="ekoSureYazi">'+EKO_SURE_AD[v]+'</b>)</span></div><div class="oz-scroll" style="flex-wrap:wrap">'+EKO_SURE.map(function(x){ return '<div class="gchip'+(x[0]===v?' akt':'')+'" data-v="'+x[0]+'" onclick="ekoSureSec(\''+x[0]+'\',this)">'+x[1]+'</div>'; }).join('')+'</div></div>'; }
-function okulaGonderEylem(metin){ return function(){ metin=String(metin||'').replace(/\n*⏳ Ekosistem süresi:[^\n]*/g,'')+'\n\n⏳ Ekosistem süresi: '+EKO_SURE_AD[ekoSure()]; kopyala(metin,'📋 Kopyalandı'); var u=ekoUrl(true); if(u){ u=String(u).split('#')[0]+'#ozetaktar'; window.open(u,'_blank','noopener'); toast('📤 Ekosistem açıldı → Özet Aktar kendiliğinden açılır → 📥 Panodan Yapıştır → 🚀 Yayınla','ok',6000); } else toast('📋 Kopyalandı → ekosistemde Özet Aktar’a yapıştır (süre otomatik gelir)','ok',4500); }; }
+/* ============================================================
+   📤 DOĞRUDAN OKULA GÖNDER (v3.4) — kopyala/yapıştır YOK, adres sorma YOK
+   Özet, Değişim Koleji ekosistemindeki sınıf panosuna doğrudan yazılır.
+   Veli: Hızlı Menü → 📰 Özetler · Öğrenci: ana sayfada "📰 Günün & Haftanın Özeti"
+   ============================================================ */
+var EKO_CFG={apiKey:"AIzaSyAqeO-yQyQPnLsOqKmSNvVH23WPvneIjaU",authDomain:"shaped-totem-481514-c5.firebaseapp.com",projectId:"shaped-totem-481514-c5",storageBucket:"shaped-totem-481514-c5.firebasestorage.app",messagingSenderId:"519295049418",appId:"1:519295049418:web:7d04e18c4ea36bc088de33"};
+var EKO_FB=null;
+async function ekoFb(){ if(EKO_FB) return EKO_FB; var V='https://www.gstatic.com/firebasejs/11.0.1/';
+  var A=await import(V+'firebase-app.js'), F=await import(V+'firebase-firestore.js'), Au=await import(V+'firebase-auth.js');
+  var app; try{ app=A.getApp('robotikEko'); }catch(e){ app=A.initializeApp(EKO_CFG,'robotikEko'); }
+  try{ await Au.signInAnonymously(Au.getAuth(app)); }catch(e){}
+  EKO_FB={F:F, db:F.getFirestore(app)}; return EKO_FB; }
+function ekoBitis(v){ var gs=function(ek){ var d=new Date(); d.setHours(23,59,0,0); d.setDate(d.getDate()+ek); return d.getTime(); };
+  if(v==='bugun') return gs(0); if(v==='yarin') return gs(1); var n=+v||0; return n>0?Date.now()+n*86400000:0; }
+function ekoNorm(s){ return String(s||'').toLocaleLowerCase('tr').replace(/ı/g,'i').replace(/ğ/g,'g').replace(/ü/g,'u').replace(/ş/g,'s').replace(/ö/g,'o').replace(/ç/g,'c'); }
+/* robotik sınıfı (Ana, 1..8) → okuldaki gerçek sınıf adları (şubeler dahil: 4-A, 4-B …) */
+function ekoSinifEsle(gi, okulSiniflari){ var g=SINIF_LISTE[gi].g, out=[];
+  (okulSiniflari||[]).forEach(function(s){ var n=ekoNorm(s).trim(); var uy = g==='Ana' ? /ana ?(okul|sinif)|okul ?oncesi|kres/.test(n) : new RegExp('^'+g+'(?![0-9])').test(n); if(uy && out.indexOf(s)<0) out.push(s); });
+  return out.length?out:[ozGname(gi)]; }
+function ekoTemizle(m){ return String(m||'').split('\n').filter(function(l){ return !/^\s*📤\s*(Bu sınıfa|Son gönderim)/.test(l) && !/^\s*⏳ Ekosistem süresi:/.test(l); }).join('\n').replace(/\n{3,}/g,'\n\n').trim(); }
+/* parcalar: [{gi, metin}] → her sınıfın panosuna doğrudan yazar */
+async function ekoDogrudanGonder(parcalar){
+  var sure=ekoSure(), bitis=ekoBitis(sure);
+  toast('📤 Okula gönderiliyor…','info',2500);
+  try{
+    var fb=await ekoFb(), F=fb.F;
+    var okulS=[]; try{ var sn=await F.getDoc(F.doc(fb.db,'maas_config','k12_ogrenciler')); ((sn.exists()&&sn.data().liste)||[]).forEach(function(o){ if(o&&o.sinif&&okulS.indexOf(o.sinif)<0) okulS.push(o.sinif); }); }catch(e){}
+    var ts=Date.now(), yeni=[], hedefAd=[];
+    parcalar.forEach(function(p,i){ var m=ekoTemizle(p.metin); if(!m) return; ekoSinifEsle(p.gi,okulS).forEach(function(s,j){ yeni.push({id:'rb'+ts.toString(36)+i+'_'+j+Math.random().toString(36).slice(2,6), sinif:s, metin:m, ogretmen:'Barış Öğretmen', ts:ts-(i*10+j), kaynak:'ozet', bitis:bitis, robotik:true}); if(hedefAd.indexOf(s)<0) hedefAd.push(s); }); });
+    if(!yeni.length){ toast('Gönderilecek metin yok','err'); return false; }
+    await F.setDoc(F.doc(fb.db,'maas_config','k12_pano'),{liste:F.arrayUnion.apply(null,yeni), guncelleme:Date.now()},{merge:true});
+    toast('✅ Okula gönderildi → '+hedefAd.join(', ')+' · veli ve öğrenci “📰 Özetler”de görüyor · süre: '+EKO_SURE_AD[sure],'ok',6500);
+    return true;
+  }catch(e){
+    var tum=parcalar.map(function(p){ return ekoTemizle(p.metin); }).join('\n\n');
+    kopyala(tum,'📋 Kopyalandı');
+    alert('Okula doğrudan gönderilemedi (internet bağlantısını kontrol et).\nMetin kopyalandı; istersen ekosistemde Özet Aktar’a yapıştırabilirsin.\n\nHata: '+(e&&e.message||e));
+    return false; } }
+/* Veli özeti kartlarından parçalar (başlık + hafta + metin) */
+function ozParcalar(){ var arr=[]; document.querySelectorAll('#ozetSaha .hoz-kart').forEach(function(k){ var p=(k.dataset.key||'').split('|'); var bas=(k.querySelector('.hoz-sinif')||{}).innerText||'', hf=(k.querySelector('.hoz-hafta')||{}).innerText||'', gv=k.querySelector('.oz-govde'); var govde=gv?gv.innerText.trim():''; if(!govde) return; arr.push({gi:+p[0], metin:(bas.trim()+' · '+hf.trim()).trim()+'\n\n'+govde}); }); return arr; }
+function okulaGonderEylem(metin, parcalar){ return function(){ var pr=parcalar;
+  if(!pr){ var gs=(GO&&GO.items)?GO.items.map(function(it){return it.gi;}):[ST.gradeIdx]; var tek=[]; gs.forEach(function(g){ if(tek.indexOf(g)<0) tek.push(g); }); pr=tek.map(function(g){ return {gi:g, metin:metin}; }); }
+  ekoDogrudanGonder(pr); }; }
 /* onay kapısı: duyuru için ayrı kontrol */
 var _gonderOnayEski=gonderOnay;
 gonderOnay=function(o){ if(!o.kontrolFn) return _gonderOnayEski(o); GO=o; GO.kontrol=o.kontrolFn(); gonderCiz(); modalAc('gonderModal'); };
@@ -4261,7 +4304,7 @@ ozetCiz=function(){ OZ.secili={}; _ozetCiz3();
     '<button class="btn y oz-okul" onclick="ozOkulaGonder()">📤 Okula Gönder<br><small>ekosistem Duyuru</small></button>'+
     '<div class="oz-gbtn"><button class="btn g" onclick="ozKopya()">📋 Kopyala</button><button class="btn g" onclick="ozWa()">🟢 WhatsApp</button><button class="btn g" onclick="ozPdf()">📄 PDF</button><button class="btn g" onclick="ozPng()">🖼️ Görsel</button></div>'+
     '<div style="font-size:11.5px;color:var(--soluk);margin-top:8px">🛡️ Her gönderim önce kontrol edilir; onayın olmadan hiçbir şey gitmez.</div>'+
-    '<div class="btnsira" style="margin-top:10px"><button class="fbtn" onclick="modalKapat(\'ozetModal\');okulGonderAc()">📤 Gönderim Merkezi</button><button class="fbtn" onclick="defterAc()">📒 Sınıf Defteri</button><button class="fbtn" onclick="ekoUrl(\'degistir\')">⚙️ Ekosistem adresi</button></div>';
+    '<div class="btnsira" style="margin-top:10px"><button class="fbtn" onclick="modalKapat(\'ozetModal\');okulGonderAc()">📤 Gönderim Merkezi</button><button class="fbtn" onclick="defterAc()">📒 Sınıf Defteri</button></div>';
   var h=mg.querySelector('.mbas .alt'); var alt=document.querySelector('#ozetModalIc .mbas .alt'); if(alt) alt.textContent='1) Hafta ve ders · 2) Yazım · 3) Sınıf seç ve gönder'; };
 
 /* ---------- ✍️ Duyuru Yazarı ---------- */
@@ -4359,12 +4402,11 @@ function sonAdimCiz(){ var k=GO.kontrol, kr=k.filter(function(x){return x.seviye
   var onay=kr.length?'Uyarıları okudum; yine de göndermek istiyorum.':'Önizlemeyi kontrol ettim, göndermeyi onaylıyorum.';
   $('#gonderModalIc').innerHTML='<div class="mbas" style="--dr:#16a34a;--dr2:#22d3ee"><div class="ik">📤</div><div style="min-width:0"><h3>Son adım: önizle ve gönder</h3><div class="alt">'+esc(GO.baslik)+' · '+esc(siniflar.join(', '))+'</div></div><div class="kapat" onclick="modalKapat(\'gonderModal\')">✕</div></div><div class="mgov">'+
     '<div style="font-size:13px;color:var(--soluk);margin-bottom:6px">👀 Karşı tarafın göreceği hâli:</div><div class="sa-onizle">'+GO.onizlemeHTML+'</div>'+
-    '<div style="margin-top:12px">'+durum+liste+'</div>'+
+    '<details style="margin-top:12px"><summary style="cursor:pointer;list-style:none">'+durum+'<span style="font-size:11.5px;color:var(--soluk)"> (ayrıntı için dokun)</span></summary>'+liste+'</details>'+
     (isl.length?'<button class="fbtn" style="margin-top:8px" onclick="gonderIslendiYap()">✅ '+isl.length+' dersi “işlendi” işaretle</button>':'')+
-    '<label style="display:flex;gap:10px;align-items:center;margin-top:14px;font-size:14px;cursor:pointer;background:var(--panel2);border:1px solid var(--cizgi);border-radius:12px;padding:12px"><input type="checkbox" id="gonderTik" style="width:24px;height:24px" onchange="document.querySelectorAll(\'.gk-btn\').forEach(function(b){b.disabled=!this.checked;}.bind(this))"> '+onay+'</label>'+
     ekoSureHTML()+
-    '<button class="btn y gk-btn oz-okul" disabled onclick="gonderKanal(\'okul\')">📤 Okula Gönder<br><small>kopyalar, ekosistemde Özet Aktar\'ı açar · süre: '+EKO_SURE_AD[ekoSure()]+'</small></button>'+
-    '<div class="oz-gbtn"><button class="btn g gk-btn" disabled onclick="gonderKanal(\'kopya\')">📋 Kopyala</button><button class="btn g gk-btn" disabled onclick="gonderKanal(\'wa\')">🟢 WhatsApp</button><button class="btn g gk-btn" disabled onclick="gonderKanal(\'pdf\')">📄 PDF</button><button class="btn g gk-btn" disabled onclick="gonderKanal(\'png\')">🖼️ Görsel</button></div>'+
+    '<button class="btn y gk-btn oz-okul" onclick="gonderKanal(\'okul\')">📤 Okula Gönder<br><small>tek dokunuş · veli ve öğrenci “📰 Özetler”de görür · süre: '+EKO_SURE_AD[ekoSure()]+'</small></button>'+
+    '<div class="oz-gbtn"><button class="btn g gk-btn" onclick="gonderKanal(\'kopya\')">📋 Kopyala</button><button class="btn g gk-btn" onclick="gonderKanal(\'wa\')">🟢 WhatsApp</button><button class="btn g gk-btn" onclick="gonderKanal(\'pdf\')">📄 PDF</button><button class="btn g gk-btn" onclick="gonderKanal(\'png\')">🖼️ Görsel</button></div>'+
     '<button class="btn g" style="width:100%;justify-content:center;margin-top:10px" onclick="modalKapat(\'gonderModal\')">✏️ Geri dön, düzenle</button></div>'; }
 function gonderKanal(k){ if(!GO||!GO.kanallar||!GO.kanallar[k]) return; GO.kanalAd=KANAL_AD[k]; GO.eylem=GO.kanallar[k]; gonderYap(); }
 var _gonderCizEski=gonderCiz; gonderCiz=function(){ if(GO&&GO.kanallar) return sonAdimCiz(); return _gonderCizEski(); };
@@ -4378,7 +4420,7 @@ function ozSinifAc(){ sinifSecAc(OZ.grades,function(a){ OZ.grades=a; ozetCiz(); 
 function ozSonAdim(){ var items=ozItems(); if(!items.length){ toast('Önce “Sınıf seç ▾” ile sınıf seç','err'); return; }
   if(OZ.verAll===12 && !(OZ.elle||'').trim()){ toast('Önce mesajını yaz','err'); return; }
   var m=ozMetin(); sonAdimAc({tip:'veli',baslik:'📰 Veli Özeti · '+OZ.hafta+'. hafta',hafta:OZ.hafta,items:items,onizleme:m,onizlemeHTML:ozTemizKopya().innerHTML,elle:OZ.verAll===12,
-    kanallar:{okul:okulaGonderEylem(m),kopya:ozEylemKopya,wa:ozEylemWa,pdf:ozEylemPdf,png:ozEylemPng}}); }
+    kanallar:{okul:okulaGonderEylem(m,ozParcalar()),kopya:ozEylemKopya,wa:ozEylemWa,pdf:ozEylemPdf,png:ozEylemPng}}); }
 ozetCiz=function(){ if(!OZ.grades||!OZ.grades.length) OZ.grades=[ST.gradeIdx];
   var wsel='<select class="key" style="width:auto" onchange="OZ.hafta=+this.value;ozetCiz()">'+Array.from({length:36},function(_,k){return '<option value="'+(k+1)+'"'+(k+1===OZ.hafta?' selected':'')+'>'+(k+1)+'. hafta</option>';}).join('')+'</select>';
   var dsel='<select class="key" style="width:auto;flex:1;min-width:140px" onchange="OZ.track=this.value;ozetCiz()">'+[['robokod','🤖 Robotik-Kodlama'],['satranc','♟️ Satranç'],['yz','🧠 Yapay Zeka'],['akil','🧩 Akıl-Zeka'],['kocluk','🎯 Eğitim Koçluğu'],['hepsi','📚 Tüm dersler']].map(function(p){return '<option value="'+p[0]+'"'+(OZ.track===p[0]?' selected':'')+'>'+p[1]+'</option>';}).join('')+'</select>';
@@ -4393,8 +4435,8 @@ ozetCiz=function(){ if(!OZ.grades||!OZ.grades.length) OZ.grades=[ST.gradeIdx];
     '<div id="ozetSaha" style="background:#f1f5f9;border-radius:16px;padding:12px"></div>'+
     '<div class="oz-alt-bar"><div id="ozSinifLbl"></div><button class="btn p" onclick="ozSinifAc()">Sınıf seç ▾</button></div>'+
     '<button class="btn y oz-gonder-btn" onclick="ozSonAdim()">📤 Gönder</button>'+
-    '<div style="font-size:11.5px;color:var(--soluk);margin-top:8px;text-align:center">Gönder’e basınca son önizleme açılır; onaylamadan hiçbir şey gitmez.</div>'+
-    '<div class="btnsira" style="margin-top:10px;justify-content:center"><button class="fbtn" onclick="modalKapat(\'ozetModal\');okulGonderAc()">📤 Gönderim Merkezi</button><button class="fbtn" onclick="defterAc()">📒 Sınıf Defteri</button><button class="fbtn" onclick="ekoUrl(\'degistir\')">⚙️ Ekosistem adresi</button></div></div>';
+    '<div style="font-size:11.5px;color:var(--soluk);margin-top:8px;text-align:center">Gönder’e bas → son önizleme → 📤 Okula Gönder. Veli ve öğrenci “📰 Özetler”de görür.</div>'+
+    '<div class="btnsira" style="margin-top:10px;justify-content:center"><button class="fbtn" onclick="modalKapat(\'ozetModal\');okulGonderAc()">📤 Gönderim Merkezi</button><button class="fbtn" onclick="defterAc()">📒 Sınıf Defteri</button></div></div>';
   ozSahaCiz(); };
 /* ---- ✍️ DUYURU YAZARI (sade) ---- */
 if(!DY.mod) DY.mod='ai';
@@ -4405,7 +4447,7 @@ function dyElleCiz(){ var box=document.getElementById('dySonuc'); if(!box) retur
 function dySinifAc(){ sinifSecAc(DY.grades,function(a){ DY.grades=a; renderDuyuru(); }); }
 function dySonAdim(){ var m=dyTamMetin(); if(!m){ toast(DY.mod==='elle'?'Önce mesajını yaz':'Önce “Yaz” düğmesine bas ve bir seçenek seç','err'); return; }
   sonAdimAc({tip:'duyuru',baslik:'✍️ Duyuru · '+DY.tur,hafta:ozHaftaTahmin(),items:DY.grades.map(function(gi,n){ return {gi:gi,tid:'duyuru',hash:n===0?strHash(m):''}; }),onizleme:m,onizlemeHTML:dyKartKopya().innerHTML,kontrolFn:dyKontrol,
-    kanallar:{okul:okulaGonderEylem(m),kopya:function(){ kopyala(m,'📋 Duyuru kopyalandı'); },wa:function(){ window.open('https://wa.me/?text='+encodeURIComponent(m),'_blank','noopener'); },pdf:dyPdf,png:dyPng}}); }
+    kanallar:{okul:okulaGonderEylem(m,DY.grades.map(function(gi){ return {gi:gi, metin:m}; })),kopya:function(){ kopyala(m,'📋 Duyuru kopyalandı'); },wa:function(){ window.open('https://wa.me/?text='+encodeURIComponent(m),'_blank','noopener'); },pdf:dyPdf,png:dyPng}}); }
 renderDuyuru=function(){ var host=document.getElementById('v-duyuru'); if(!host) return; if(!DY.grades) DY.grades=[ST.gradeIdx];
   var ch=function(k,arr){ return arr.map(function(p){ return '<div class="gchip'+(DY[k]===p[0]?' akt':'')+'" onclick="dyAlan(\''+k+'\',\''+p[0]+'\')">'+p[1]+'</div>'; }).join(''); };
   var ai=DY.mod==='ai', kartlar='';
@@ -4422,7 +4464,7 @@ renderDuyuru=function(){ var host=document.getElementById('v-duyuru'); if(!host)
     '<div id="dySonuc">'+kartlar+'</div>'+
     '<div class="oz-alt-bar"><div>🎯 <b>'+esc(sinifEtiket(DY.grades))+'</b></div><button class="btn p" onclick="dySinifAc()">Sınıf seç ▾</button></div>'+
     '<button class="btn y oz-gonder-btn" onclick="dySonAdim()">📤 Gönder</button>'+
-    '<div style="font-size:11.5px;color:var(--soluk);margin-top:8px;text-align:center">Gönder’e basınca son önizleme açılır; onaylamadan hiçbir şey gitmez.</div>';
+    '<div style="font-size:11.5px;color:var(--soluk);margin-top:8px;text-align:center">Gönder’e bas → son önizleme → 📤 Okula Gönder. Veli ve öğrenci “📰 Özetler”de görür.</div>';
   if(!ai) dyElleCiz(); };
 MODULLER.push(['Sınıf Seçme Penceresi','sinifSecAc'],['Son Adım Önizleme','sonAdimAc']);
 APP.yenilikler=['Sadeleşti: sınıf seçimi altta tek düğme (“Sınıf seç ▾”, ✅ Tümü dahil)','✍️ Kendim yazayım (veli özeti + duyuru)','Tek “📤 Gönder” → son önizleme (karşı tarafın göreceği hâl) → onay → kanal seç','Önceki tüm özellikler korunmuştur'];
