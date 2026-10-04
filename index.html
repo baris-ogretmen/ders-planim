@@ -4204,8 +4204,8 @@ ozetCiz=function(){
   var km=document.getElementById('ozKime'); if(km) km.innerHTML=kime||'<div style="color:var(--soluk)">Önce yukarıdan sınıf seç.</div>'; ozKimeSayac(); };
 
 /* ---------- 🏷️ Sürüm + açılış bildirimi + sistem öz-kontrolü ---------- */
-var APP={surum:'3.8',tarih:'04.10.2026',satir:4670,kb:517,onceki:{surum:'3.7',satir:4659,kb:514},
-  yenilikler:['📝 Haftalık özete site mesajı yapıştırınca: linkler düğme olur, her etkinliğin kendi dersi ve kendi sınıfı (örn. yalnız Anaokulu) dikkate alınır, ham metin görünmez','🎯 8. sınıf: özet ve hatırlatmalar yalnızca Eğitim Koçluğu üzerinden','⏰ 8. sınıf hatırlatmasında tablet yerine defter/haftalık plan','🎨 Hızlı Paylaş önizlemeleri renkli kart oldu (veli ekranındaki gibi) ve metne dokunup düzeltilebiliyor','📚 Birden fazla ders aynı anda seçilebiliyor (Tüm dersler)','⏰ Hatırlatma ders planından sıradaki konuları yazıyor; 2. sınıftan itibaren “tabletini getirmeyi unutmayalım”','🔗 Haftalık Veli Özeti’ne de kart görseli ve bağlantı eklenebiliyor','⚡ Hızlı Paylaş: sitendeki etkinlik mesajını yapıştır → her sınıfa kendi seviyesinde pedagojik metin + 🎮 Aç düğmesi','📝 Bu hafta ne yaptık: kısa notundan her seviyeye veliye güven veren haftalık özet (plan dışı haftalar dahil)','⏰ Ders günü hatırlatma: dijital ders programına göre yarın dersi olan sınıflara tek dokunuşla (veli/öğrenci 🎒 Getir kutusunda)','Pazar akşamı haftalık özet hatırlatıcısı','🖼️ Okula Gönder’e kart görseli eklenebilir (galeriden ya da panodan yapıştır)','🔗 En fazla 10 bağlantı — veli ve öğrenci ekranında renkli “Aç ›” düğmeleri','📤 Okula Gönder artık DOĞRUDAN: kopyala-yapıştır yok, adres sorma yok — veli ve öğrenci anında “📰 Özetler”de görür','Onay kutusu kaldırıldı; önemli uyarı varsa tek soru sorulur','Okula gönderilen veli özeti o dersi otomatik “✅ işlendi” yapar','⏳ Okula Gönder: ekosistemde ne kadar kalacağını seç (Bugün · Yarın · 1 hafta · 2 hafta · 1 ay · Kalıcı), süre dolunca kendiliğinden silinir','📤 Okula Gönder artık ekosistemde Özet Aktar ekranını kendiliğinden açar','Veli özeti sadeleşti: metnin üstünde düğme yok','10 yazım versiyonu + 🤖 Yapay zekâ ile yaz','Altta “Kime gönderilecek?” seçimi ve telefonda kolay 4 büyük gönder düğmesi','Açılışta sürüm ve sistem öz-kontrolü','Önceki tüm özellikler korunmuştur']};
+var APP={surum:'3.9',tarih:'04.10.2026',satir:4760,kb:532,onceki:{surum:'3.8',satir:4670,kb:517},
+  yenilikler:['🧭 Bu Hafta: “ne işleyeceğim, ne göndermeliyim?” listesi — her sınıfın bu haftaki konuları + gönderim adımları, gönderilenler otomatik ✅','🔭 Haftanın ön bilgisi: ders planından konu + kazanım, her sınıfa kendi seviyesinde','🗣️ Mesajların dili her hafta değişir; tekrar ediyormuş gibi durmaz','📝 Haftalık özete site mesajı yapıştırınca: linkler düğme olur, her etkinliğin kendi dersi ve kendi sınıfı (örn. yalnız Anaokulu) dikkate alınır, ham metin görünmez','🎯 8. sınıf: özet ve hatırlatmalar yalnızca Eğitim Koçluğu üzerinden','⏰ 8. sınıf hatırlatmasında tablet yerine defter/haftalık plan','🎨 Hızlı Paylaş önizlemeleri renkli kart oldu (veli ekranındaki gibi) ve metne dokunup düzeltilebiliyor','📚 Birden fazla ders aynı anda seçilebiliyor (Tüm dersler)','⏰ Hatırlatma ders planından sıradaki konuları yazıyor; 2. sınıftan itibaren “tabletini getirmeyi unutmayalım”','🔗 Haftalık Veli Özeti’ne de kart görseli ve bağlantı eklenebiliyor','⚡ Hızlı Paylaş: sitendeki etkinlik mesajını yapıştır → her sınıfa kendi seviyesinde pedagojik metin + 🎮 Aç düğmesi','📝 Bu hafta ne yaptık: kısa notundan her seviyeye veliye güven veren haftalık özet (plan dışı haftalar dahil)','⏰ Ders günü hatırlatma: dijital ders programına göre yarın dersi olan sınıflara tek dokunuşla (veli/öğrenci 🎒 Getir kutusunda)','Pazar akşamı haftalık özet hatırlatıcısı','🖼️ Okula Gönder’e kart görseli eklenebilir (galeriden ya da panodan yapıştır)','🔗 En fazla 10 bağlantı — veli ve öğrenci ekranında renkli “Aç ›” düğmeleri','📤 Okula Gönder artık DOĞRUDAN: kopyala-yapıştır yok, adres sorma yok — veli ve öğrenci anında “📰 Özetler”de görür','Onay kutusu kaldırıldı; önemli uyarı varsa tek soru sorulur','Okula gönderilen veli özeti o dersi otomatik “✅ işlendi” yapar','⏳ Okula Gönder: ekosistemde ne kadar kalacağını seç (Bugün · Yarın · 1 hafta · 2 hafta · 1 ay · Kalıcı), süre dolunca kendiliğinden silinir','📤 Okula Gönder artık ekosistemde Özet Aktar ekranını kendiliğinden açar','Veli özeti sadeleşti: metnin üstünde düğme yok','10 yazım versiyonu + 🤖 Yapay zekâ ile yaz','Altta “Kime gönderilecek?” seçimi ve telefonda kolay 4 büyük gönder düğmesi','Açılışta sürüm ve sistem öz-kontrolü','Önceki tüm özellikler korunmuştur']};
 var MODULLER=[['Yıllık Plan','renderPlan'],['Seviye bazlı plan motoru','planGetir'],['Nerede Kaldım','renderNeredeKaldim'],['Zihin Haritası','haritaAc'],['Maceralı Yol','maceraAc'],['Haftalık Program','renderProgram'],['Araç Kütüphanesi','renderAraclar'],['Oyun & Prompt Atölyesi','renderOyun'],['Video Kütüphanesi','renderVideo'],['Neden Öğretiyoruz','renderNeden'],['Veli Özeti','ozetAc'],['Sınıf Defteri','defterAc'],['Gönderim Merkezi','okulGonderAc'],['Onay Kapısı','gonderOnay'],['Plan Düzenleyici','planKaynakAc'],['AI ile Ders Ekle','planAIOner'],['Ders Detayı','seansAc'],['Sanal Robot Lab','robotAc'],['Hafıza Oyunu','hafizaAc'],['Ders Saati','dersSaatToggle'],['Hızlı Sınıf Araçları','hizliAc'],['Bugünkü Ders','bugunkuDersAc'],['Ders Sonu','dersSonuAc'],['Yarım Kaldı','yarimToggleUI'],['Geçen Hafta Özeti','gecenOzet'],['Disiplinler Arası Bağlantı','seansBaglanti'],['Video Promptu','videoPromptVer'],['Yedekle / Geri Yükle','yedekAl'],['Tüm Yıl PDF','yilPdf'],['Çok Dilli Çeviri','aiCevir'],['Farklılaştırma','seansFark'],['Sunum / Odak Modu','odakAc'],['AI Asistan','aiSor'],['Yapay Zekâ Bağlantısı','generateText']];
 function sistemKontrol(){ var sonuc=MODULLER.map(function(m){ return {ad:m[0],ok:typeof window[m[1]]==='function'}; });
   var planOk=true; try{ for(var gi=0;gi<SINIF_LISTE.length;gi++){ gorunenTracks(gi).forEach(function(tr){ if(giIle(gi,function(){ return SEANS[tr.id].length; })!==36) planOk=false; }); } }catch(e){ planOk=false; }
@@ -4299,7 +4299,7 @@ var HP_KAZ={
 var HP_EV={ana:'Evde 10-15 dakika birlikte oynamanız ve “Nasıl yaptın?” diye sormanız çok değerli 💛',12:'Evde birlikte oynayıp “Bunu nasıl buldun?” diye sormanız öğrenmeyi pekiştirir 😊',34:'Evde size anlatmasını isteyin; anlatmak öğrenmenin en güçlü yoludur 👏',56:'Evde ne tasarladığını göstermesini isteyin; küçük bir “sunum” özgüvenini artırır 🌟',78:'Evde yaptıklarını size anlatmasını ve neden o yolu seçtiğini sorabilirsiniz 💡'};
 var HP_HITAP={ana:'Sevgili velilerimiz',12:'Sevgili velilerimiz',34:'Sevgili velilerimiz',56:'Değerli velilerimiz',78:'Değerli velilerimiz'};
 function hpDersBul(t){ var n=ekoNorm(t); if(/satran|kale tas|piyon|vezir|\bfil\b|\bsah\b|\brok\b|\bmat\b|at tasi/.test(n)) return 'satranc'; if(/kocluk|hedef|lgs|calisma plan/.test(n)) return 'kocluk'; if(/yapay|\bai\b|model/.test(n)) return 'yz'; if(/akil|zeka|bulmaca|hafiza/.test(n)&&!/robot/.test(n)) return 'akil'; if(/robot|kodla|algoritma|scratch/.test(n)) return 'robokod'; return 'genel'; }
-var HP={sek:'link', ham:'', siniflar:null, tur:'hs', dersler:[], not:'', ai:{}, duzen:{}, hatGun:'yarin', hatDersler:[], hatNot:'', progAcik:false};
+var HP={sek:'asist', hatTarih:'', ham:'', siniflar:null, tur:'hs', dersler:[], not:'', ai:{}, duzen:{}, hatGun:'yarin', hatDersler:[], hatNot:'', progAcik:false};
 var HP_DERS_SIRA=['robokod','satranc','yz','akil'];
 function hpSinifTum(){ var a=[]; hpProg().forEach(function(p){ if(a.indexOf(p.gi)<0) a.push(p.gi); }); if(a.indexOf(0)<0) a.push(0); return a.sort(function(x,y){return x-y;}); }
 /* Site mesajlarından etkinlikleri ayıkla: başlık (*…*), link, ders, (Sınıf) */
@@ -4317,7 +4317,7 @@ function hpKonu(gi,id,sonIslenen){ try{ return giIle(gi,function(){ var l=SEANS[
 function hpLinkDersleri(etk){ if(HP.dersler.length) return HP.dersler; var a=[]; etk.forEach(function(e){ var d=e.ders==='genel'?'':e.ders; if(d&&a.indexOf(d)<0) a.push(d); }); return a.length?a:['genel']; }
 function hpLinkMetin(gi, etk){ etk=hpEtkSinif(gi,etk); var d=hpDuzey(gi), tr=HP_TUR[HP.tur]; var ds=hpLinkDersleri(etk);
   var ad=etk.map(function(e){return '*'+e.ad+'*';}).join(', ');
-  var s=tr[0]+' '+tr[1]+' · '+ozGname(gi)+'\n\n'+HP_HITAP[d]+', '+tr[2]+' '+(etk.length>1?'etkinlikler':'etkinlik')+': '+ad+'.\n\n'+ds.map(function(k){ var D=HP_DERS[k]||HP_DERS.genel; return '🎯 '+(k==='kocluk'?'':D.ik+' ')+(k==='genel'?'Bu çalışmayla':D.ad+' ile')+' çocuğumuz '+HP_KAZ[k][d]+'.'; }).join('\n')+'\n\n🏠 '+HP_EV[d];
+  var s=tr[0]+' '+tr[1]+' · '+ozGname(gi)+'\n\n'+HP_HITAP[d]+', '+tr[2]+' '+(etk.length>1?'etkinlikler':'etkinlik')+': '+ad+'.\n\n'+ds.map(function(k){ var D=HP_DERS[k]||HP_DERS.genel; return '🎯 '+(k==='kocluk'?'':D.ik+' ')+(k==='genel'?'Bu çalışmayla':D.ad+' ile')+' çocuğumuz '+HP_KAZ[k][d]+'.'; }).join('\n')+'\n\n🏠 '+hpEv(d,gi);
   if(HP.not.trim()) s+='\n\n✨ '+HP.not.trim();
   return s+'\n\n👇 Aşağıdaki düğmeye dokunup hemen başlayabilirsiniz.\n— Barış Öğretmen'; }
 /* Notun içine sitedeki mesajlar yapıştırıldıysa: etkinlikleri ayıkla, ham mesajı metinden temizle */
@@ -4331,13 +4331,13 @@ function hpOzetMetin(gi){ var d=hpDuzey(gi); var ds=hpOzetDersleri(gi);
   if(HP.ai[d]) return HP.ai[d];
   var not=hpNotTemiz(); var es=hpOzetEtk(gi);
   var adlar=ds.map(function(k){return (HP_DERS[k]||HP_DERS.genel).ad;});
-  var giris=HP_HITAP[d]+', bu hafta '+(adlar.length>1?adlar.slice(0,-1).join(', ')+' ve '+adlar[adlar.length-1]+' derslerimizde':adlar[0].toLocaleLowerCase('tr')+' dersimizde');
+  var giris=hpSec(HP_OZET_GIRIS,gi)(HP_HITAP[d])+' '+(adlar.length>1?adlar.slice(0,-1).join(', ')+' ve '+adlar[adlar.length-1]+' derslerimizde':adlar[0].toLocaleLowerCase('tr')+' dersimizde');
   var cumle = es.length ? (' '+es.map(function(e){return '*'+e.ad+'*';}).join(' ve ')+' '+(es.length>1?'çalışmalarını':'çalışmasını')+' oyunlaştırarak yaptık.'+(not?' '+not.replace(/[.!]+$/,'')+'.':'')) : (' '+(not?not.replace(/[.!]+$/,'')+'.':(ds[0]==='kocluk'?'hedeflerimizi, haftalık çalışma planımızı ve verimli çalışma stratejilerimizi birlikte ele aldık.':'konularımızı oyun ve etkinliklerle sürdürdük.')));
   var s='📰 Bu Haftanın Özeti · '+ozGname(gi)+'\n\n'+giris+cumle;
   if(es.length) s+='\n\n📚 '+(es.length>1?'Çalışmalarımızı':'Çalışmamızı')+' evde de deneyebilirsiniz; aşağıdaki düğmeye dokunmanız yeterli 👇';
   if(!not && !es.length){ var konular=ds.map(function(k){ var kn=hpKonu(gi,k,true); return kn?('📚 '+HP_DERS[k].ik+' '+HP_DERS[k].ad+': '+kn):''; }).filter(Boolean); if(konular.length) s+='\n\n'+konular.join('\n'); }
   s+='\n\n'+ds.map(function(k){ var D=HP_DERS[k]||HP_DERS.genel; return '🎯 '+(k==='kocluk'?'':D.ik+' ')+D.ad+': çocuğumuz '+HP_KAZ[k][d]+'.'; }).join('\n');
-  s+='\n\n✨ Programımızı sınıfın ilgisine ve öğrenme hızına göre esnek biçimde uyguluyoruz; amacımız her çocuğun konuyu yaşayarak, kalıcı biçimde öğrenmesi.\n\n🏠 '+HP_EV[d]+'\n— Barış Öğretmen';
+  s+='\n\n'+hpSec(HP_ESNEK,gi,2)+'\n\n🏠 '+hpEv(d,gi)+'\n— Barış Öğretmen';
   return s; }
 async function hpAIYaz(){ var _e=hpNotEtk(); var not=(hpNotTemiz()+(_e.length?(' Yapılan çalışmalar: '+_e.map(function(e){return e.ad+(e.gi>=0?' ('+ozGname(e.gi)+' için)':'');}).join(', ')):'')).trim(); if(!not){ toast('Önce kısa notunu yaz','err'); return; } var gs=hpSecili(); var duz=[]; gs.forEach(function(g){ var d=hpDuzey(g); if(duz.indexOf(d)<0) duz.push(d); });
   toast('🤖 '+duz.length+' seviye için yazılıyor…','info',3000); HP.ai={}; HP.duzen={};
@@ -4348,7 +4348,7 @@ async function hpAIYaz(){ var _e=hpNotEtk(); var not=(hpNotTemiz()+(_e.length?('
 function hpSecili(){ if(!HP.siniflar) HP.siniflar=hpSinifTum(); return HP.siniflar; }
 function hpSinifTik(gi){ var a=hpSecili(); var k=a.indexOf(gi); if(k>=0){ if(a.length>1) a.splice(k,1); } else a.push(gi); a.sort(function(x,y){return x-y;}); HP.duzen={}; hpCiz(); }
 function hpSinifChip(){ var a=hpSecili(), tum=hpSinifTum(); return '<div class="oz-scroll" style="flex-wrap:wrap"><div class="gchip'+(a.length===tum.length?' akt':'')+'" onclick="HP.siniflar='+(a.length===tum.length?'['+tum[0]+']':'null')+';HP.duzen={};hpCiz()">✅ Tüm sınıflar</div>'+tum.map(function(gi){ return '<div class="gchip'+(a.indexOf(gi)>=0?' akt':'')+'" onclick="hpSinifTik('+gi+')">'+(gi===0?'Ana':SINIF_LISTE[gi].g)+'</div>'; }).join('')+'</div>'; }
-function hpChip(alan,arr){ return '<div class="oz-scroll" style="flex-wrap:wrap">'+arr.map(function(p){ return '<div class="gchip'+(HP[alan]===p[0]?' akt':'')+'" onclick="HP.'+alan+'=\''+p[0]+'\';HP.ai={};HP.duzen={};hpCiz()">'+p[1]+'</div>'; }).join('')+'</div>'; }
+function hpChip(alan,arr){ return '<div class="oz-scroll" style="flex-wrap:wrap">'+arr.map(function(p){ return '<div class="gchip'+(HP[alan]===p[0]?' akt':'')+'" onclick="HP.'+alan+'=\''+p[0]+'\';'+(alan==='hatGun'?'HP.hatTarih=\'\';':'')+'HP.ai={};HP.duzen={};hpCiz()">'+p[1]+'</div>'; }).join('')+'</div>'; }
 /* çoklu ders seçimi: [] = tümü / otomatik */
 function hpDersTik(alan,k){ var a=HP[alan]; if(k===''){ HP[alan]=[]; } else { var i=a.indexOf(k); if(i>=0) a.splice(i,1); else a.push(k); if(a.length===HP_DERS_SIRA.length && alan!=='dersler') HP[alan]=[]; } HP.ai={}; HP.duzen={}; hpCiz(); }
 function hpDersChip(alan,bosEtiket){ var a=HP[alan]; return '<div class="oz-scroll" style="flex-wrap:wrap"><div class="gchip'+(!a.length?' akt':'')+'" onclick="hpDersTik(\''+alan+'\',\'\')">'+bosEtiket+'</div>'+HP_DERS_SIRA.map(function(k){ var D=HP_DERS[k]; return '<div class="gchip'+(a.indexOf(k)>=0?' akt':'')+'" onclick="hpDersTik(\''+alan+'\',\''+k+'\')">'+D.ik+' '+D.ad+'</div>'; }).join('')+'</div>'; }
@@ -4362,20 +4362,20 @@ function hpKart(gi,metin,linkler,dersId,anahtar){ var T=hpTrack(dersId), ilk=Str
     '<div class="hoz-alt">Barış Öğretmen · Değişim Koleji · ✏️ metne dokunup düzeltebilirsin</div></div>'; }
 function hpSon(anahtar,metin){ var d=HP.duzen[anahtar]; return d?String(d).replace(/\n{3,}/g,'\n\n').trim():metin; }
 /* ---- Ders günü hesapları ---- */
-function hpHedefTarih(){ var d=new Date(); d.setHours(12,0,0,0); if(HP.hatGun==='yarin') d.setDate(d.getDate()+1); if(HP.hatGun==='pzt'){ var k=(8-d.getDay())%7||7; d.setDate(d.getDate()+k); } return d; }
+function hpHedefTarih(){ if(HP.hatTarih){ var t0=new Date(HP.hatTarih+'T12:00:00'); if(!isNaN(t0.getTime())) return t0; } var d=new Date(); d.setHours(12,0,0,0); if(HP.hatGun==='yarin') d.setDate(d.getDate()+1); if(HP.hatGun==='pzt'){ var k=(8-d.getDay())%7||7; d.setDate(d.getDate()+k); } return d; }
 function hpGunSiniflari(d){ var gi=d.getDay()-1; if(gi<0||gi>4) return []; return hpProg().filter(function(p){ return p.gunler.indexOf(gi)>=0; }); }
 function hpHatDersleri(gi){ var tum=hpSinifDersleri(gi); if(tum.length===1&&tum[0]==='kocluk') return tum; if(!HP.hatDersler.length) return tum; var s=HP.hatDersler.filter(function(k){return tum.indexOf(k)>=0;}); return s.length?s:tum; }
 var HP_HAT_SEV={ana:'🎨 Oyunlarla, hikâyelerle ve hareketle öğrenmeye hazırız!',12:'🎨 Oyunlarla, hikâyelerle ve hareketle öğrenmeye hazırız!',34:'🧩 Merakla keşfedip birlikte üreteceğiz!',56:'💡 Düşünecek, tasarlayacak ve birlikte üreteceğiz!',78:'💡 Problemi analiz edip kendi çözümümüzü üreteceğiz!'};
-function hpHatMetin(p,d){ var gunAd=HP_GUN[d.getDay()-1]; var ne=HP.hatGun==='bugun'?'Bugün':(HP.hatGun==='yarin'?'Yarın':gunAd); var dz=hpDuzey(p.gi);
+function hpHatMetin(p,d){ var gunAd=HP_GUN[d.getDay()-1]; var bg=new Date(); bg.setHours(12,0,0,0); var fark=Math.round((new Date(d).setHours(12,0,0,0)-bg.getTime())/864e5); var ne=fark===0?'Bugün':(fark===1?'Yarın':gunAd); var dz=hpDuzey(p.gi);
   var ds=hpHatDersleri(p.gi); var konular=ds.map(function(k){ var kn=hpKonu(p.gi,k,false); return kn?(HP_DERS[k].ik+' '+HP_DERS[k].ad+': '+kn):''; }).filter(Boolean);
-  var s='🎈 '+ne+' ('+gunAd+') dersimiz var!';
+  var ac=hpSec(HP_HAT_ACILIS,p.gi,d.getDay()); var s=ac[0]+' '+ne+(ne===gunAd?'':' ('+gunAd+')')+' '+ac[1];
   if(konular.length) s+='\n📚 '+(konular.length>1?'Sıradaki konularımız:':'Sıradaki konumuz:')+'\n'+konular.map(function(x){return '• '+x;}).join('\n');
-  s+='\n'+HP_HAT_SEV[dz];
-  if(ds.length===1&&ds[0]==='kocluk') s=s.replace(HP_HAT_SEV[dz],'🎯 Hedeflerimizi ve haftalık çalışma planımızı birlikte gözden geçireceğiz!')+'\n📓 Defterini ve haftalık planını getirmeyi unutmayalım.'; else if(p.gi>=2) s+='\n📱 Tabletini getirmeyi unutmayalım.';
+  if(ds.length===1&&ds[0]==='kocluk') s+='\n🎯 Hedeflerimizi ve haftalık çalışma planımızı birlikte gözden geçireceğiz!\n📓 Defterini ve haftalık planını getirmeyi unutmayalım.';
+  else { s+='\n'+hpSec(HP_HAT_SEV_DON[dz]||HP_HAT_SEV_DON['34'],p.gi,d.getDay()); if(p.gi>=2) s+='\n📱 Tabletini getirmeyi unutmayalım.'; }
   if(HP.hatNot.trim()) s+='\n✨ '+HP.hatNot.trim();
   return s; }
 function hpCiz(){ var host=document.getElementById('hpModalIc'); if(!host) return; var sek=HP.sek, ic='';
-  var tabs='<div class="oz-scroll" style="margin-bottom:12px">'+[['link','🎮 Etkinlik / Link'],['ozet','📝 Bu hafta ne yaptık'],['hat','⏰ Ders günü hatırlatma']].map(function(p){ return '<div class="gchip'+(sek===p[0]?' akt':'')+'" onclick="HP.sek=\''+p[0]+'\';HP.duzen={};hpCiz()">'+p[1]+'</div>'; }).join('')+'</div>';
+  var tabs='<div class="oz-scroll" style="margin-bottom:12px">'+[['asist','🧭 Bu Hafta'],['link','🎮 Etkinlik / Link'],['ozet','📝 Bu hafta ne yaptık'],['hat','⏰ Ders günü hatırlatma']].map(function(p){ return '<div class="gchip'+(sek===p[0]?' akt':'')+'" onclick="HP.sek=\''+p[0]+'\';HP.duzen={};hpCiz()">'+p[1]+'</div>'; }).join('')+'</div>';
   var onizle='';
   if(sek==='link'){ var etk=hpEtkinlikler(HP.ham);
     if(etk.length) hpSecili().forEach(function(gi){ var es=hpEtkSinif(gi,etk); if(!es.length) return; onizle+=hpKart(gi,hpSon('link'+gi,hpLinkMetin(gi,etk)),es,hpLinkDersleri(es)[0],'link'+gi); });
@@ -4398,13 +4398,15 @@ function hpCiz(){ var host=document.getElementById('hpModalIc'); if(!host) retur
   if(sek==='hat'){ var d=hpHedefTarih(); var ls=hpGunSiniflari(d); var gunAd=(d.getDay()>=1&&d.getDay()<=5)?HP_GUN[d.getDay()-1]:'Hafta sonu';
     ls.forEach(function(p){ onizle+=hpKart(p.gi,hpSon('hat'+p.gi,'🎒 '+p.ad+' · Ders günü\n'+hpHatMetin(p,d)),null,hpHatDersleri(p.gi)[0],'hat'+p.gi); });
     var tablo='<table style="width:100%;border-collapse:collapse;font-size:12px;margin-top:6px"><tr>'+['Sınıf'].concat(HP_GUN.map(function(g){return g.slice(0,3);})).map(function(h){return '<th style="padding:4px;border-bottom:1px solid var(--cizgi);text-align:center">'+h+'</th>';}).join('')+'</tr>'+hpProg().map(function(p){ return '<tr><td style="padding:4px;font-weight:900">'+esc(p.ad)+'</td>'+HP_GUN.map(function(_,i){ return '<td style="text-align:center">'+(p.gunler.indexOf(i)>=0?'🟢':'·')+'</td>'; }).join('')+'</tr>'; }).join('')+'</table>';
-    ic='<div class="oz-adim"><div style="font-size:13px;font-weight:800;margin-bottom:6px">📅 Hangi gün için?</div>'+hpChip('hatGun',[['bugun','☀️ Bugün'],['yarin','🌙 Yarın'],['pzt','📅 Pazartesi']])+'<div style="font-size:12.5px;font-weight:800;margin:8px 0 6px">Hangi dersler işlenecek? (haftada 3 saatte birkaçı birden olabilir)</div>'+hpDersChip('hatDersler','📚 Tüm dersler')+'<input class="key" style="margin-top:8px" placeholder="➕ Ek not (isteğe bağlı) — örn. Kulaklık da getirsin" value="'+esc(HP.hatNot).replace(/"/g,'&quot;')+'" oninput="HP.hatNot=this.value" onchange="HP.duzen={};hpCiz()"></div>'+
+    ic='<div class="oz-adim"><div style="font-size:13px;font-weight:800;margin-bottom:6px">📅 Hangi gün için?'+(HP.hatTarih?' <span style="color:#fde68a">· '+d.toLocaleDateString('tr-TR',{weekday:'long',day:'numeric',month:'long'})+' (listeden seçildi)</span>':'')+'</div>'+hpChip('hatGun',[['bugun','☀️ Bugün'],['yarin','🌙 Yarın'],['pzt','📅 Pazartesi']])+'<div style="font-size:12.5px;font-weight:800;margin:8px 0 6px">Hangi dersler işlenecek? (haftada 3 saatte birkaçı birden olabilir)</div>'+hpDersChip('hatDersler','📚 Tüm dersler')+'<input class="key" style="margin-top:8px" placeholder="➕ Ek not (isteğe bağlı) — örn. Kulaklık da getirsin" value="'+esc(HP.hatNot).replace(/"/g,'&quot;')+'" oninput="HP.hatNot=this.value" onchange="HP.duzen={};hpCiz()"></div>'+
       '<div class="oz-adim"><div style="font-size:14px;font-weight:900">'+(ls.length?('🗓️ '+gunAd+' derslerin: '+ls.map(function(p){return p.ad;}).join(', ')):('🌤️ '+gunAd+' için programında ders yok'))+'</div>'+
       (onizle?'<div style="background:#f1f5f9;border-radius:16px;padding:6px 10px 12px;margin-top:8px">'+onizle+'</div>':'')+
       '<div style="font-size:11.5px;color:var(--soluk);margin-top:8px">Konular ders planındaki <b>sıradaki (henüz işlenmemiş)</b> dersten gelir. Veli ve öğrenci bunu “🎒 Getir / Unutma!” kutusunda görür; o günün akşamı kendiliğinden kalkar. Anasınıfı ve 1. sınıfa tablet istenmez.</div></div>'+
       (ls.length?'<button class="btn y" style="width:100%;justify-content:center;padding:14px;font-size:16px" onclick="hpHatGonder()">📤 '+ls.length+' sınıfa hatırlatma gönder</button>':'')+
       '<details style="margin-top:12px" '+(HP.progAcik?'open':'')+' ontoggle="HP.progAcik=this.open"><summary style="cursor:pointer;font-weight:800;font-size:13px">🗓️ Haftalık ders programım (dijital Ders Saati’nden)</summary>'+tablo+'<div style="font-size:11.5px;color:var(--soluk);margin-top:8px">Program değişirse düzelt (her satır: <b>Sınıf: günler</b>)</div><textarea class="key" style="min-height:150px;margin-top:4px" onchange="LS.set(\'dk_hp_prog\',this.value);hpCiz();toast(\'🗓️ Program kaydedildi\',\'ok\')">'+esc(hpProgMetin())+'</textarea><button class="fbtn" style="margin-top:6px" onclick="LS.set(\'dk_hp_prog\',HP_PROG_VARS);hpCiz()">↺ Varsayılan program</button></details>';
   }
+  if(sek==='asist') ic=hpAsistCiz();
+  if(sek==='onbilgi') ic=hpOnBilgiCiz();
   host.innerHTML='<div class="mbas" style="--dr:#f59e0b;--dr2:#ec4899"><div class="ik">⚡</div><div style="min-width:0"><h3>Hızlı Paylaş</h3><div class="alt">Etkinlik · haftalık özet · ders günü hatırlatması → okula doğrudan</div></div><div class="kapat" onclick="modalKapat(\'hpModal\')">✕</div></div><div class="mgov">'+tabs+ic+'</div>'; }
 async function hpYapistir(){ try{ var t=await navigator.clipboard.readText(); if(t){ HP.ham=(HP.ham?HP.ham+'\n':'')+t; HP.duzen={}; hpCiz(); } }catch(e){ toast('Pano okunamadı — kutuya uzun basıp yapıştır','err',3500); } }
 async function hpGonder(tur){ var gs=hpSecili().slice(); var parca=[];
@@ -4413,7 +4415,7 @@ async function hpGonder(tur){ var gs=hpSecili().slice(); var parca=[];
     if(!parca.length){ toast('Seçili sınıflara uygun etkinlik yok','err'); return; } if(atla.length) toast('ℹ️ '+atla.join(', ')+' atlandı (etkinlik başka sınıfa özel)','info',4000); gs=parca.map(function(p){return p.gi;}); }
   else { gs.forEach(function(gi){ var es=hpOzetEtk(gi); var p={gi:gi, metin:hpSon('ozet'+gi,hpOzetMetin(gi))}; if(es.length) p.linkler=es.map(function(e){return {url:e.url, ad:e.ad};}).concat(ekLinkler()).slice(0,10); parca.push(p); }); }
   if(!window.confirm(gs.length+' sınıfa gönderilecek ('+gs.map(ozGname).join(', ')+').\n⏳ Süre: '+EKO_SURE_AD[ekoSure()]+'\n\nGönderilsin mi?')) return;
-  var ok=await ekoDogrudanGonder(parca); if(ok){ if(tur==='link'){ HP.ham=''; } else { HP.not=''; HP.ai={}; } HP.duzen={}; modalKapat('hpModal'); } }
+  var ok=await ekoDogrudanGonder(parca); if(ok){ hpLogSet(tur==='link'?'link':'ozet'); if(tur==='link'){ HP.ham=''; } else { HP.not=''; HP.ai={}; } HP.duzen={}; modalKapat('hpModal'); } }
 async function hpHatGonder(){ var d=hpHedefTarih(); var ls=hpGunSiniflari(d); if(!ls.length) return;
   if(!window.confirm(ls.length+' sınıfa hatırlatma gidecek: '+ls.map(function(p){return p.ad;}).join(', ')+'\nGönderilsin mi?')) return;
   toast('📤 Gönderiliyor…','info',2000);
@@ -4422,13 +4424,101 @@ async function hpHatGonder(){ var d=hpHedefTarih(); var ls=hpGunSiniflari(d); if
     ls.forEach(function(p,i){ var tam=hpSon('hat'+p.gi,'🎒 '+p.ad+' · Ders günü\n'+hpHatMetin(p,d)); var m=tam.split('\n').slice(1).join('\n').trim()||hpHatMetin(p,d); var dersAd=hpHatDersleri(p.gi).map(function(k){return HP_DERS[k].ad;}).join(' · ');
       ekoSinifEsle(p.gi,okulS).forEach(function(s,j){ yeni.push({id:'rh'+ts.toString(36)+i+'_'+j, tur:'sinif', sinif:s, ogrenciId:'', ogrenciAd:'', ders:dersAd, konu:'Ders günü hatırlatması', detay:m, ekleyen:'Barış Öğretmen', sonTeslim:'', link:'', resimVar:false, resimTur:'', tarih:ts-(i*10+j), bilgi:true, bitis:bit.getTime(), robotik:true}); if(hedef.indexOf(s)<0) hedef.push(s); }); });
     await F.setDoc(F.doc(fb.db,'maas_config','k12_odevler'),{liste:F.arrayUnion.apply(null,yeni), guncelleme:Date.now()},{merge:true});
-    toast('✅ Hatırlatma gönderildi → '+hedef.join(', ')+' · “🎒 Getir / Unutma!” kutusunda','ok',6000); HP.duzen={}; modalKapat('hpModal');
+    hpLogSet('hat_'+hpTarihKey(d)); HP.hatTarih=''; toast('✅ Hatırlatma gönderildi → '+hedef.join(', ')+' · “🎒 Getir / Unutma!” kutusunda','ok',6000); HP.duzen={}; modalKapat('hpModal');
   }catch(e){ alert('Gönderilemedi (internet?): '+(e&&e.message||e)); } }
 function hpAc(s){ if(s) HP.sek=s; try{ var gi=document.getElementById('gonderModalIc'); if(gi) gi.innerHTML=''; }catch(e){}
   if(!document.getElementById('hpModal')){ var bg=document.createElement('div'); bg.className='modal-bg'; bg.id='hpModal'; bg.style.zIndex='8990'; bg.innerHTML='<div class="modal" id="hpModalIc" style="max-width:640px"></div>'; bg.addEventListener('click',function(e){ if(e.target===bg) modalKapat('hpModal'); }); document.body.appendChild(bg); }
   hpCiz(); modalAc('hpModal'); }
 /* Pazar akşamı nazik hatırlatıcı: haftanın özetini göndermeyi unutma */
-setTimeout(function(){ try{ var d=new Date(); var k='dk_hp_pazar_'+d.toISOString().slice(0,10); if(d.getDay()===0 && d.getHours()>=15 && !LS.get(k,false)){ LS.set(k,true); toast('📰 Pazar hatırlatması: haftanın özetini göndermek ister misin? ⚡ Hızlı Paylaş → 📝 Bu hafta ne yaptık','info',7000); } }catch(e){} },4000);
+setTimeout(function(){ try{ var d=new Date(); var k='dk_hp_pazar_'+d.toISOString().slice(0,10); if(d.getDay()===0 && d.getHours()>=15 && !LS.get(k,false)){ LS.set(k,true); toast('🧭 Pazar akşamı: yeni haftanın listesi hazır — ⚡ Hızlı Paylaş → 🧭 Bu Hafta','info',7000); } }catch(e){} },4000);
+
+/* ============================================================
+   🧭 HAFTALIK ASİSTAN (v3.9) — "Bu hafta ne işleyeceğim, ne göndermeliyim?"
+   · Gönderim haftası sayacı (başlangıç: 28 Eylül 2026 = 1. hafta, değiştirilebilir)
+   · Her sınıf için bu haftanın konuları (ders planındaki sıradaki işlenmemiş ders)
+   · Haftalık gönderim listesi: ön bilgi · ders günü hatırlatmaları · haftalık özet · hafta sonu etkinliği
+   · Gönderilenler otomatik ✓ olur · Dil her hafta değişir (tekrar etmez)
+   ============================================================ */
+function hpBasTarih(){ var b=LS.get('dk_hp_bas','2026-09-28'); var d=new Date(b+'T00:00:00'); return isNaN(d.getTime())?new Date('2026-09-28T00:00:00'):d; }
+function hpPzt(d){ var x=new Date(d||new Date()); x.setHours(0,0,0,0); var g=(x.getDay()+6)%7; x.setDate(x.getDate()-g); return x; }
+/* Pazar akşamı yeni haftaya bakılır: Pazar günü "bu hafta" = ertesi gün başlayan hafta */
+function hpAktifPzt(){ var n=new Date(); if(n.getDay()===0){ var y=new Date(n); y.setDate(y.getDate()+1); return hpPzt(y); } return hpPzt(n); }
+function hpHafta(){ return Math.max(1, Math.floor((hpAktifPzt()-hpPzt(hpBasTarih()))/(7*864e5))+1); }
+function hpTarihKey(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function hpLogKey(){ return 'w'+hpTarihKey(hpAktifPzt()); }
+function hpLogGet(){ var a=LS.get('dk_hp_log',{}); return (a&&a[hpLogKey()])||{}; }
+function hpLogSet(k){ try{ var a=LS.get('dk_hp_log',{})||{}; var w=hpLogKey(); a[w]=a[w]||{}; a[w][k]=Date.now(); var ks=Object.keys(a).sort(); while(ks.length>60){ delete a[ks.shift()]; } LS.set('dk_hp_log',a); }catch(e){} }
+/* ---- Dönüşümlü dil: her hafta ve her sınıf farklı cümle ---- */
+function hpSec(arr,gi,ek){ var w=hpHafta(); return arr[((w*3)+(gi||0)+(ek||0))%arr.length]; }
+var HP_OZET_GIRIS=[
+  function(h){ return h+', bu hafta'; },
+  function(h){ return 'Merhaba sevgili ailelerimiz! Bu hafta'; },
+  function(h){ return h+', keyifli bir haftayı geride bırakıyoruz. Bu hafta'; },
+  function(h){ return 'Güzel bir haftanın ardından herkese merhaba! Bu hafta'; },
+  function(h){ return h+', çocuklarımızla yine verimli bir hafta geçirdik. Bu hafta'; },
+  function(h){ return h+', haftamızı paylaşmak istedik 😊 Bu hafta'; }];
+var HP_ESNEK=[
+  '✨ Programımızı sınıfın ilgisine ve öğrenme hızına göre esnek biçimde uyguluyoruz; amacımız her çocuğun konuyu yaşayarak, kalıcı biçimde öğrenmesi.',
+  '✨ Her konuyu acele etmeden, çocuklarımız gerçekten kavrayana kadar oyunla pekiştiriyoruz.',
+  '✨ Sınıfımızın merakını takip ederek ilerliyoruz; öğrenme, yaşanarak olduğunda kalıcı oluyor.',
+  '✨ Hedefimiz hızlı değil, derin öğrenme: her çocuk kendi temposunda ama hep birlikte ilerliyor.',
+  '✨ Derslerimizde hata yapmak serbest, denemek değerli; çocuklarımız bunu çok güzel içselleştiriyor.'];
+var HP_EV_DON={
+  ana:['Evde 10-15 dakika birlikte oynamanız ve “Nasıl yaptın?” diye sormanız çok değerli 💛','Akşam sofrasında “Bugün robotlara/taşlara ne söyledin?” diye sorabilirsiniz 💛','Evdeki oyuncaklarla “ileri-geri-dön” oyunu oynamak bu hafta harika bir tekrar olur 🧸','Çocuğunuzun anlattıklarını sabırla dinlemeniz, öğrendiklerini kalıcı hâle getirir 💛'],
+  12:['Evde birlikte oynayıp “Bunu nasıl buldun?” diye sormanız öğrenmeyi pekiştirir 😊','Bir işi adım adım sıralamasını isteyin (diş fırçalama, kahvaltı hazırlama…) — bu kodlamanın ta kendisi! 🪥','Kısa bir oyun molasında ona “öğretmen” olmasını ve size öğretmesini isteyin 😊','Bu hafta öğrendiğini resimle anlatmasını isteyebilirsiniz 🎨'],
+  34:['Evde size anlatmasını isteyin; anlatmak öğrenmenin en güçlü yoludur 👏','Birlikte bir bulmaca ya da strateji oyunu oynayıp “Neden o hamleyi yaptın?” diye sorun 🧩','Günlük bir problemi (oda toplama, alışveriş listesi) adımlara bölmesini isteyin 📝','Yaptığı çalışmayı size 2 dakikalık mini sunumla anlatmasını isteyin 🎤'],
+  56:['Evde ne tasarladığını göstermesini isteyin; küçük bir “sunum” özgüvenini artırır 🌟','“Bunu nasıl geliştirebilirsin?” sorusu, tasarım düşüncesini güçlendirir 💡','Birlikte bir hedef koyup haftalık küçük adımlarla takip etmeniz çok faydalı olur 🎯','Ekran süresini üretkenlikle dengelemesi için birlikte kısa bir plan yapabilirsiniz ⏰'],
+  78:['Evde yaptıklarını size anlatmasını ve neden o yolu seçtiğini sorabilirsiniz 💡','Haftalık çalışma planını birlikte gözden geçirmeniz motivasyonunu artırır 📋','“Bu hafta seni en çok ne zorladı, nasıl aştın?” sorusu çok değerli bir sohbet başlatır 🗣️','Küçük başarılarını fark edip takdir etmeniz, uzun vadeli motivasyonun anahtarıdır 🌟']};
+function hpEv(d,gi){ return hpSec(HP_EV_DON[d]||HP_EV_DON['34'],gi,1); }
+var HP_HAT_ACILIS=[['🎈','dersimiz var!'],['🌞','yine birlikteyiz!'],['🚀','yeni bir maceraya çıkıyoruz!'],['✨','dersimizde buluşuyoruz!'],['🎒','derse hazırız!']];
+var HP_HAT_SEV_DON={ana:['🎨 Oyunlarla, hikâyelerle ve hareketle öğrenmeye hazırız!','🧸 Bol oyun, bol merak bizi bekliyor!','🌈 Eğlenerek keşfedeceğiz!'],12:['🎨 Oyunlarla, hikâyelerle ve hareketle öğrenmeye hazırız!','🧸 Bol oyun, bol merak bizi bekliyor!','🌈 Eğlenerek keşfedecek, birlikte üreteceğiz!'],34:['🧩 Merakla keşfedip birlikte üreteceğiz!','🔍 Yeni bir problemi birlikte çözeceğiz!','🛠️ Düşünüp deneyerek öğreneceğiz!'],56:['💡 Düşünecek, tasarlayacak ve birlikte üreteceğiz!','🛠️ Fikirlerimizi teste sokacağız!','🚀 Kendi çözümümüzü tasarlayacağız!'],78:['💡 Problemi analiz edip kendi çözümümüzü üreteceğiz!','🧠 Stratejimizi birlikte kuracağız!','🎯 Hedefe odaklı, verimli bir ders bizi bekliyor!']};
+var HP_ON_GIRIS=[
+  function(h,s){ return h+', bu hafta '+s+' öğrencilerimizle neler öğreneceğimizi paylaşmak istedik 🌱'; },
+  function(h,s){ return 'Merhaba sevgili ailelerimiz! Yeni haftada '+s+' sınıfımızı güzel konular bekliyor 🌟'; },
+  function(h,s){ return h+', yeni bir öğrenme haftasına merhaba! İşte bu haftanın yol haritası 🗺️'; },
+  function(h,s){ return h+', bu hafta derslerimizde şunları keşfedeceğiz 🔭'; },
+  function(h,s){ return 'Yeni haftaya hep birlikte enerjik bir başlangıç! '+s+' için bu haftanın konuları 🚀'; }];
+var HP_IPUCU=[
+  'Konuyu takvime değil sınıfa göre ilerlet: kavranmayan konuyu bir hafta daha oyunla tekrar etmek en kalıcı yoldur.',
+  'İşlediğin dersi planda “✅ işlendi” işaretle; hatırlatmalar hep sıradaki konuyu doğru yazar.',
+  'Derse 2 dakikalık “geçen hafta ne yapmıştık?” sorusuyla başlamak, öğrenmeyi %30’a kadar güçlendirir.',
+  'Anaokulu ve 1. sınıfta ekransız (unplugged) etkinlik + kısa oyun dengesi en verimli formüldür.',
+  'Veliye gönderdiğin etkinliği derste de 5 dakika göster; çocuk evde “bunu biliyorum!” der.',
+  'Haftada bir, en çok çabalayan öğrenciyi sözlü takdir et; motivasyonu tüm sınıfa yayılır.',
+  'Satrançta yeni taşa geçmeden önce “taş avı” mini oyunuyla eski taşı tekrar ettir.',
+  '8. sınıflarda koçlukta haftalık mini hedef (ör. 3 gün × 40 dk) somut ve ölçülebilir olsun.'];
+/* ---- Bu haftanın konuları ---- */
+function hpKonuKazanim(gi,id){ try{ return giIle(gi,function(){ var l=SEANS[id]||[], n=l.length; if(!n) return null; var i=trackSonraki(gi,id,n); if(i<0) i=n-1; var se=l[i]||{}; return {konu:uniteAd(se), z:String(se.z||'').trim(), sira:i+1}; }); }catch(e){ return null; } }
+function hpOnBilgiMetin(gi){ var d=hpDuzey(gi), ds=hpSinifDersleri(gi), sn=ozGname(gi);
+  var s='🔭 Bu Hafta Neler Öğreneceğiz? · '+sn+'\n\n'+hpSec(HP_ON_GIRIS,gi)(HP_HITAP[d],sn);
+  ds.forEach(function(k){ var kz=hpKonuKazanim(gi,k); if(!kz||!kz.konu) return; var D=HP_DERS[k]; s+='\n\n📚 '+D.ik+' '+D.ad+': '+kz.konu+(kz.z?'\n🎯 '+kz.z:''); });
+  s+='\n\n🏠 '+hpEv(d,gi)+'\n— Barış Öğretmen'; return s; }
+function hpGunAdi(i){ return HP_GUN[i]; }
+function hpAsistCiz(){ var w=hpHafta(), pz=hpAktifPzt(), cu=new Date(pz); cu.setDate(cu.getDate()+4); var log=hpLogGet();
+  var tf=function(d){ return d.toLocaleDateString('tr-TR',{day:'numeric',month:'long'}); };
+  var prog=hpProg();
+  var adim=function(k,ik,baslik,alt,btn){ var ok=!!log[k]; return '<div style="display:flex;gap:10px;align-items:center;background:'+(ok?'rgba(34,197,94,.12)':'var(--panel2)')+';border:1px solid '+(ok?'#22c55e':'var(--cizgi)')+';border-radius:12px;padding:10px;margin-top:8px"><div style="font-size:22px">'+(ok?'✅':ik)+'</div><div style="flex:1;min-width:0"><div style="font-weight:900;font-size:13.5px">'+baslik+'</div><div style="font-size:12px;color:var(--soluk)">'+alt+'</div></div>'+(ok?'<span style="font-size:11px;color:#86efac;font-weight:800">gönderildi</span>':btn)+'</div>'; };
+  var liste=adim('onbilgi','🔭','Haftanın ön bilgisi (Pazar akşamı / Pazartesi sabahı)','Her sınıfa bu hafta öğreneceği konular + kazanımlar','<button class="btn y" style="padding:8px 12px" onclick="HP.sek=\'onbilgi\';HP.siniflar=null;HP.duzen={};hpCiz()">Hazırla ›</button>');
+  for(var i=0;i<5;i++){ var gd=new Date(pz); gd.setDate(gd.getDate()+i); var sn=prog.filter(function(p){return p.gunler.indexOf(i)>=0;}).map(function(p){return p.ad;}); if(!sn.length) continue; var onc=new Date(gd); onc.setDate(onc.getDate()-1);
+    liste+=adim('hat_'+hpTarihKey(gd),'⏰',hpGunAdi(i)+' dersleri için hatırlatma',sn.join(', ')+' · '+(i===0?'Pazar akşamı':hpGunAdi(i-1)+' akşamı')+' ya da o sabah gönder','<button class="btn p" style="padding:8px 12px" onclick="HP.sek=\'hat\';HP.hatTarih=\''+hpTarihKey(gd)+'\';HP.duzen={};hpCiz()">Hazırla ›</button>'); }
+  liste+=adim('ozet','📝','Haftalık özet (Cuma ya da Pazar)','Bu hafta ne yaptık — her sınıfa kendi seviyesinde','<button class="btn p" style="padding:8px 12px" onclick="HP.sek=\'ozet\';HP.duzen={};hpCiz()">Hazırla ›</button>');
+  liste+=adim('link','🎈','Hafta sonu etkinliği (isteğe bağlı)','Sitendeki oyun/etkinlik linki — evde tekrar','<button class="btn g" style="padding:8px 12px" onclick="HP.sek=\'link\';HP.tur=\'hs\';HP.duzen={};hpCiz()">Hazırla ›</button>');
+  var tablo=hpSinifTum().map(function(gi){ var pr=prog.find(function(p){return p.gi===gi;}); var gunler=pr?pr.gunler.map(function(x){return HP_GUN[x].slice(0,3);}).join(', '):'—';
+    var satir=hpSinifDersleri(gi).map(function(k){ var kz=hpKonuKazanim(gi,k); if(!kz) return ''; var T=hpTrack(k); return '<div style="margin-top:4px;padding:6px 8px;border-radius:8px;background:#fff;color:#0f172a;border-left:4px solid '+T.dr+';font-size:12.5px"><b>'+HP_DERS[k].ik+' '+HP_DERS[k].ad+'</b> · '+kz.sira+'. ders: '+esc(kz.konu)+(kz.z?'<div style="color:#475569;font-size:11.5px;margin-top:2px">🎯 '+esc(kz.z)+'</div>':'')+'</div>'; }).join('');
+    return '<details style="margin-top:8px;background:var(--panel2);border:1px solid var(--cizgi);border-radius:12px;padding:8px 10px"><summary style="cursor:pointer;font-weight:900;font-size:13.5px">'+ozGname(gi)+' <span style="color:var(--soluk);font-weight:700;font-size:12px">· '+gunler+'</span></summary>'+satir+'</details>'; }).join('');
+  var yapilan=Object.keys(log).length, toplam=2+prog.reduce(function(a,p){ p.gunler.forEach(function(x){ if(a.indexOf(x)<0) a.push(x); }); return a; },[]).length;
+  return '<div class="oz-adim" style="background:linear-gradient(135deg,rgba(245,158,11,.18),rgba(236,72,153,.18))"><div style="font-size:12px;font-weight:900;letter-spacing:.15em;color:#fde68a">GÖNDERİM HAFTASI '+w+'</div><div style="font-size:17px;font-weight:900;margin-top:2px">📅 '+tf(pz)+' – '+tf(cu)+'</div><div style="font-size:12.5px;color:var(--soluk);margin-top:4px">Bu hafta '+Math.min(yapilan,toplam)+'/'+toplam+' gönderim tamam'+(yapilan>=toplam?' 🎉':'')+'</div></div>'+
+    '<div class="oz-adim"><div style="font-size:14px;font-weight:900">📬 Bu hafta ne göndermeliyim?</div>'+liste+'</div>'+
+    '<div class="oz-adim"><div style="font-size:14px;font-weight:900">📚 Bu hafta sınıflarda ne işleyeceğim?</div><div style="font-size:11.5px;color:var(--soluk);margin-top:2px">Ders planındaki sıradaki (henüz ✅ işlenmemiş) konular. Sınıfa dokun, aç.</div>'+tablo+'</div>'+
+    '<div class="oz-adim" style="border-color:#a78bfa"><div style="font-size:13px;font-weight:900">💡 Haftanın öğretmen ipucu</div><div style="font-size:13px;margin-top:4px;line-height:1.5">'+hpSec(HP_IPUCU,0)+'</div></div>'+
+    '<details style="margin-top:4px"><summary style="cursor:pointer;font-size:12px;color:var(--soluk)">⚙️ Gönderim haftası 1’in başladığı Pazartesi</summary><input type="date" class="key" style="margin-top:6px" value="'+LS.get('dk_hp_bas','2026-09-28')+'" onchange="LS.set(\'dk_hp_bas\',this.value);hpCiz()"></details>'; }
+function hpOnBilgiCiz(){ var on=''; hpSecili().forEach(function(gi){ on+=hpKart(gi,hpSon('onb'+gi,hpOnBilgiMetin(gi)),null,hpSinifDersleri(gi)[0],'onb'+gi); });
+  return '<div class="oz-adim"><div style="font-size:13px;font-weight:800;margin-bottom:6px">🔭 Haftanın ön bilgisi — konular ders planından, dil her hafta farklı</div>'+hpSinifChip()+'</div>'+
+    '<div style="font-size:12.5px;color:var(--soluk)">👀 Veli ve öğrencinin göreceği hâli ('+hpSecili().length+' sınıf):</div><div style="background:#f1f5f9;border-radius:16px;padding:6px 10px 12px">'+on+'</div>'+
+    ekoSureHTML()+'<button class="btn y" style="width:100%;justify-content:center;margin-top:12px;padding:14px;font-size:16px" onclick="hpOnBilgiGonder()">📤 '+hpSecili().length+' sınıfa gönder</button>'+
+    '<button class="fbtn" style="margin-top:8px;width:100%;justify-content:center" onclick="HP.sek=\'asist\';hpCiz()">‹ Haftalık listeye dön</button>'; }
+async function hpOnBilgiGonder(){ var gs=hpSecili().slice(); if(!window.confirm(gs.length+' sınıfa haftanın ön bilgisi gidecek.\n⏳ Süre: '+EKO_SURE_AD[ekoSure()]+'\nGönderilsin mi?')) return;
+  var ok=await ekoDogrudanGonder(gs.map(function(gi){ return {gi:gi, metin:hpSon('onb'+gi,hpOnBilgiMetin(gi))}; })); if(ok){ hpLogSet('onbilgi'); HP.duzen={}; HP.sek='asist'; hpCiz(); } }
 
 var EKO_FB=null;
 async function ekoFb(){ if(EKO_FB) return EKO_FB; var V='https://www.gstatic.com/firebasejs/11.0.1/';
@@ -4663,7 +4753,7 @@ fabYap({id:'hizli',ikon:'🎲',etiket:'Hızlı Sınıf Araçları',bayrak:'dk_hi
 fabYap({id:'oyunm',ikon:'🎮',etiket:'Oyun Merkezi (Hafıza)',bayrak:'dk_oyunm_gizli',tik:()=>hafizaAc()});
 fabYap({id:'ozet',ikon:'📰',etiket:'Haftalık Veli Özeti',bayrak:'dk_ozet_gizli',tik:()=>ozetAc()});
 fabYap({id:'okulgonder',ikon:'📤',etiket:'Okula Gönder (Gönderim Merkezi)',bayrak:'dk_okulgonder_gizli',tik:()=>okulGonderAc()});
-fabYap({id:'hizlipaylas',ikon:'⚡',etiket:'Hızlı Paylaş: etkinlik · haftalık özet · ders günü hatırlatma',bayrak:'dk_hp_gizli',tik:()=>hpAc()});
+fabYap({id:'hizlipaylas',ikon:'⚡',etiket:'Hızlı Paylaş · 🧭 Bu hafta ne göndermeliyim?',bayrak:'dk_hp_gizli',tik:()=>hpAc()});
 renderNeredeKaldim();
 </script>
 </body>
