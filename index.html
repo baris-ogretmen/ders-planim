@@ -527,6 +527,29 @@ input[type=date].key{color-scheme:dark}
 .ss-liste label{display:flex;gap:12px;align-items:center;padding:12px;border:1px solid var(--cizgi);border-radius:12px;margin-top:6px;font-size:15px;background:var(--kart);cursor:pointer}
 .gk-btn[disabled]{opacity:.35;pointer-events:none}
 .sa-onizle{background:#f1f5f9;border-radius:14px;padding:10px;max-height:42vh;overflow:auto}
+
+/* ===== v4.5: 📨 işlendi → veliye bilgi ===== */
+.vb-btnler{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.vb-b{flex:1 1 220px;flex-direction:column;align-items:flex-start;gap:3px;padding:13px 15px;font-size:15.5px;text-align:left;border-radius:14px}
+.vb-b small{font-size:11.5px;font-weight:700;opacity:.85}
+.vb-hep{display:flex;gap:8px;align-items:center;margin-top:12px;font-size:13px;font-weight:800;cursor:pointer}
+.vb-hep input{width:20px;height:20px}
+.vb-not{font-size:11.5px;color:var(--soluk);margin-top:12px;line-height:1.5}
+.vb-satir{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:12px;color:#0f172a}
+.vb-sec{display:flex;gap:8px;align-items:center;font-size:13px;cursor:pointer}
+.vb-sec input{width:20px;height:20px}
+.vb-mini{padding:5px 10px;font-size:11.5px;background:#fff;color:#334155;border-color:#cbd5e1}
+.vb-pasif{opacity:.38;filter:grayscale(.5)}
+.vb-liste{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:6px;font-size:12.5px;background:rgba(255,255,255,.04);border-radius:10px;padding:7px 9px}
+.vb-rozet{background:#f59e0b;color:#1f2937;border-radius:999px;padding:0 7px;font-size:11px;font-weight:900}
+.vb-tercih{margin-top:12px;background:var(--panel2);border:1px solid var(--cizgi);border-radius:12px;padding:8px 10px}
+.vb-tercih summary{cursor:pointer;font-weight:800;font-size:13px}
+.vb-trow{display:flex;align-items:center;gap:10px;margin-top:8px}
+.vb-trow b{min-width:78px;font-size:13px}
+.vb-trow .oz-scroll{padding-bottom:0}
+.vb-kapanis{position:fixed;inset:0;z-index:99999;background:radial-gradient(circle at 50% 40%,#065f46,#020617);display:flex;align-items:center;justify-content:center;text-align:center;color:#fff;padding:20px}
+.vb-kapanis h2{margin:6px 0 4px;font-size:26px}
+.vb-kapanis p{margin:4px 0 12px}
 </style>
 
 </head>
@@ -5001,6 +5024,174 @@ if(typeof renderProgram==='function'){ var _rp43=renderProgram; renderProgram=fu
 /* sürüm + öz-kontrol */
 try{ MODULLER.push(['Ders Saati köprüsü','tahtaPaylasYaz'],['Programı Ders Saati’nden alma','dsProgramEsitle'],['Yapay zekâ metin düzeltmesi (br/nbsp)','inl']);
   APP.yenilikler.unshift('📝 Ders Saati’nde konu özeti + 40 dk akışında her aşamada ne yapacağın; teneffüste sıradaki sınıfın konusu','🌟 Son 5 / son 1 dakika ve zilde sınıf seviyesine uygun, övgü dolu mesajlar','📺 Ders Saati ile bağlantı: tahtada her sınıf girince o sınıfın konusu, 40 dk akışı, anlatım rehberi ve “akılda kalsın” özeti görünür','✅ Ders Saati’nden “işledim” deyince plan da güncellenir; 📘 tek dokunuşla plandaki derse gidilir','🗓️ Ders programı Ders Saati’ndeki tablondan otomatik alınır','🧹 Yapay zekâ metinlerindeki <br> / &nbsp; artığı temizlendi (tablolar düzgün)'); }catch(e){}
+
+
+/* ============================================================
+   SÜRÜM 4.5 — 📨 İŞLENDİ → VELİYE BİLGİ (günlük ya da haftalık)
+   · Planda ya da Ders Saati’nde “✅ İşlendi” deyince renkli veli kartı kendiliğinden hazırlanır
+   · 📤 Şimdi gönder (günlük) → ⚡ Hızlı Paylaş → ✅ Bugün işlenenler → mevcut 📤 Okula Gönder (ekoDogrudanGonder)
+   · 🗓️ Haftalık → “📝 Bu hafta ne yaptık” kartlarına o hafta işlenen konular kendiliğinden girer
+   · Sınıf başına tercih: her seferinde sor · hep günlük · hep haftalık (Ders Saati ile ortak hafıza)
+   · Okul sistemine yeni bir yol açılmadı: gönderim yine ekoDogrudanGonder ile, son onayınla gider
+   ============================================================ */
+/* ---- 📨 Ortak veli bilgisi metni (Ders Saati ve Yıllık Plan'da birebir aynı) ---- */
+var VB_LOG='dk_veli_akis', VB_DUZ='dk_veli_duzen', VB_TER='dk_veli_tercih';
+var VB_AD={robokod:['Robotik-Kodlama','🤖'],satranc:['Satranç','♟️'],yz:['Yapay Zekâ','🧠'],akil:['Akıl-Zekâ Oyunları','🧩'],kocluk:['Eğitim Koçluğu','🎯'],genel:['Dersimiz','📚']};
+var VB_RENK={robokod:['#7c3aed','#22d3ee'],satranc:['#059669','#34d399'],yz:['#0891b2','#22d3ee'],akil:['#db2777','#f472b6'],kocluk:['#b45309','#f59e0b'],genel:['#f59e0b','#ec4899']};
+var VB_KAZ={
+ kocluk:{ana:'hedef koyma ve planlı çalışma alışkanlığı kazanıyor','12':'hedef koyma ve planlı çalışma alışkanlığı kazanıyor','34':'hedef koyma ve planlı çalışma alışkanlığı kazanıyor','56':'hedef koyma, zaman yönetimi ve öz düzenleme becerisini geliştiriyor','78':'LGS yolunda hedef belirleme, zaman yönetimi ve verimli çalışma becerisini güçlendiriyor'},
+ robokod:{ana:'sıralama, yön (ileri-geri-sağ-sol) ve sebep-sonuç ilişkisini oyunla keşfediyor','12':'adım adım düşünmeyi (algoritma) ve basit komut dizileri kurmayı öğreniyor','34':'döngü ve koşul gibi kavramlarla problemi parçalara ayırıp çözmeyi deneyimliyor','56':'tasarla-dene-düzelt döngüsüyle kendi projesini geliştirmeyi ve hatadan öğrenmeyi öğreniyor','78':'gerçek bir problemi analiz edip algoritmik çözüm üretmeyi ve fikrini savunmayı geliştiriyor'},
+ satranc:{ana:'dikkat, sabır ve sıra bekleme becerisini eğlenceli bir hikâyeyle geliştiriyor','12':'taşların hareketleriyle dikkat, kural takibi ve öngörü becerisini geliştiriyor','34':'hamle öncesi düşünmeyi, plan yapmayı ve sonuçları tahmin etmeyi öğreniyor','56':'strateji kurma, alternatifleri karşılaştırma ve karar verme becerisini güçlendiriyor','78':'uzun vadeli plan, analitik düşünme ve doğru karar verme becerisini pekiştiriyor'},
+ yz:{ana:'makinelerin nasıl “öğrendiğini” resimler ve oyunlarla merak ederek keşfediyor','12':'yapay zekânın günlük hayattaki yerini ve güvenli teknoloji kullanımını tanıyor','34':'verinin ne olduğunu, makinenin örneklerle nasıl öğrendiğini deneyerek görüyor','56':'basit modeller eğitip yapay zekânın güçlü ve sınırlı yanlarını sorguluyor','78':'kendi modelini eğitip yapay zekâ etiği, doğruluk ve sorumluluk üzerine tartışıyor'},
+ akil:{ana:'eşleştirme, örüntü ve hafıza oyunlarıyla dikkatini ve görsel algısını geliştiriyor','12':'örüntü bulma, hafıza ve mantık oyunlarıyla düşünme hızını artırıyor','34':'mantık bulmacalarıyla akıl yürütme ve farklı çözüm yolları bulma becerisini geliştiriyor','56':'zorlayıcı bulmacalarla sistemli düşünme ve sabırla çözüme ulaşmayı deneyimliyor','78':'karmaşık problemlerde strateji kurma ve eleştirel düşünme becerisini pekiştiriyor'},
+ genel:{ana:'oyun yoluyla merak, dikkat ve birlikte çalışma becerisini geliştiriyor','12':'oyun ve etkinliklerle dikkat, kural takibi ve düşünme becerisini geliştiriyor','34':'etkinliklerle problem çözme ve iş birliği becerisini geliştiriyor','56':'proje ve oyunlarla planlama, deneme ve kendini ifade etme becerisini güçlendiriyor','78':'proje ve tartışmalarla analitik ve eleştirel düşünme becerisini pekiştiriyor'}};
+var VB_SORU={robokod:'Bugün robotik-kodlamada ne yaptın, bana adım adım anlatır mısın?',satranc:'Bugün satrançta ne öğrendin, bana da gösterir misin?',yz:'Bugün yapay zekâ dersinde ne keşfettin?',akil:'Bugün hangi zekâ oyununu oynadın, birlikte oynayalım mı?',kocluk:'Bu haftaki hedefin ne, nasıl gidiyor?',genel:'Bugün derste ne yaptın, bana anlatır mısın?'};
+var VB_SORU_ANA={robokod:'Bugün robota nasıl yol gösterdin?',satranc:'Bugün satranç taşlarıyla ne oynadın?',yz:'Bugün akıllı makineler hakkında ne öğrendin?',akil:'Bugün hangi oyunu oynadın?'};
+var VB_EK={ana:'diye sormanız çok değerli 💛','12':'diye sorabilirsiniz 😊','34':'diye sorup anlatmasını isteyebilirsiniz 👏','56':'diye sorabilirsiniz; anlatmak öğrenmeyi pekiştirir 🌟','78':'diye sorup fikrini dinleyebilirsiniz 💡'};
+var VB_SATIR_RENK=[[/^📚|^📝|^📅|^🗓️/,'#e0f2fe'],[/^🎯/,'#d1fae5'],[/^🏠/,'#fef3c7'],[/^🧠|^📖/,'#ede9fe'],[/^✨|^✅|^💡|^🎨|^🧩/,'#fae8ff'],[/^📱|^🎒/,'#ffe4e6'],[/^🎈|^🌟/,'#fff7ed']];
+function vbBand(gi){ gi=+gi; return gi<=0?'ana':gi<=2?'12':gi<=4?'34':gi<=6?'56':'78'; }
+function vbKonuSade(k){ return String(k||'').replace(/^Tanışalım:\s*/,'').replace(/\s·\s(Keşfet|Uygula|Üret & Paylaş|Keşfediyoruz|Oynuyoruz|Üretiyoruz)$/,'').trim(); }
+function vbGunKey(d){ d=d||new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function vbAnlatim(a,konu){ var s=String(a||'').replace(/\s*Derste:.*$/,'').replace(/\s+/g,' ').trim(); var k=vbKonuSade(konu); if(k && s.indexOf(k+':')===0) s=s.slice(k.length+1).trim(); return s; }
+/* L: aynı gün aynı sınıfta işlenen dersler [{k,konu,akil}] → veliye gidecek kısa, renkli kart metni */
+function vbMetin(L,sinifAd,gi,tarih){ var sev=vbBand(gi), bugun=(tarih===vbGunKey()), ks=[];
+  var gunAd=['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'][new Date(tarih+'T12:00:00').getDay()];
+  var s=[(bugun?'🌟 Bugün Derste':'🌟 '+gunAd+' Dersimizde')+' · '+sinifAd];
+  L.forEach(function(e){ var A=VB_AD[e.k]||VB_AD.genel, konu=vbKonuSade(e.konu), a=vbAnlatim(e.akil,e.konu);
+    s.push('📚 '+A[1]+' '+A[0]+': '+konu); if(a && a!==konu) s.push('📖 Kısaca: '+a); if(ks.indexOf(e.k)<0) ks.push(e.k); });
+  ks.slice(0,2).forEach(function(k){ var kz=(VB_KAZ[k]||VB_KAZ.genel)[sev]; if(kz) s.push('🎯 '+(ks.length>1?(VB_AD[k]||VB_AD.genel)[0]+' ile ':'Bu çalışmayla ')+'çocuğumuz '+kz+'.'); });
+  var k0=ks[0]||'genel', soru=(sev==='ana'&&VB_SORU_ANA[k0])||VB_SORU[k0]||VB_SORU.genel;
+  s.push('🏠 '+(bugun?'Akşam':'Evde')+' “'+soru+'” '+VB_EK[sev]);
+  s.push('— Barış Öğretmen'); return s.join('\n'); }
+function vbOku(k,d){ try{ var v=localStorage.getItem(k); return v==null?d:(JSON.parse(v)||d); }catch(e){ return d; } }
+function vbYaz(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+function vbGet(){ var a=vbOku(VB_LOG,[]); return Array.isArray(a)?a:[]; }
+function vbSet(a){ var sinir=vbGunKey(new Date(Date.now()-120*864e5)); vbYaz(VB_LOG,a.filter(function(x){ return x&&x.tarih>=sinir; }).slice(-600)); }
+function vbGrup(tarih,gi){ return vbGet().filter(function(x){ return x.tarih===tarih&&x.gi===gi; }).sort(function(a,b){ return a.ts-b.ts; }); }
+/* Aynı gün aynı sınıfın henüz gönderilmemiş dersleri (hepsi gittiyse hepsi) */
+function vbGrupAcik(tarih,gi){ var L=vbGrup(tarih,gi), b=L.filter(function(x){ return !x.gon; }); return b.length?b:L; }
+function vbBul(gi,k,idx){ var a=vbGet().filter(function(x){ return x.gi===gi&&x.k===k&&x.idx===idx; }); return a.length?a[a.length-1]:null; }
+function vbKaydet(o){ var a=vbGet(), id=o.tarih+'|'+o.gi+'|'+o.k+'|'+o.idx, es=a.filter(function(x){ return x.id===id; })[0];
+  var e=Object.assign({tur:'hafta',gon:0,ts:Date.now()},o,{id:id}); if(es){ e.tur=es.tur; e.gon=es.gon; e.ts=es.ts; }
+  a=a.filter(function(x){ return x.id!==id; }); a.push(e); vbSet(a);
+  var gk=o.tarih+'|'+o.gi, dz=vbOku(VB_DUZ,{}); if(dz[gk] && dz[gk].n!==vbGrupAcik(o.tarih,o.gi).length){ delete dz[gk]; vbYaz(VB_DUZ,dz); }
+  return e; }
+function vbSil(gi,k,idx){ vbSet(vbGet().filter(function(x){ return !(x.gi===gi&&x.k===k&&x.idx===idx&&!x.gon); })); }
+function vbTurYap(tarih,gi,tur){ var a=vbGet(); a.forEach(function(x){ if(x.tarih===tarih&&x.gi===gi&&!x.gon) x.tur=tur; }); vbSet(a); }
+function vbTercih(gi){ var t=vbOku(VB_TER,{}); return t[gi]||'sor'; }
+function vbTercihSet(gi,v){ var t=vbOku(VB_TER,{}); if(v==='sor') delete t[gi]; else t[gi]=v; vbYaz(VB_TER,t); }
+function vbGrupMetin(tarih,gi,sinifAd){ var L=vbGrupAcik(tarih,gi), dz=vbOku(VB_DUZ,{})[tarih+'|'+gi]; return (dz&&dz.n===L.length&&dz.t)?dz.t:vbMetin(L,sinifAd,gi,tarih); }
+
+var VBG={sec:{},disari:false};
+function vbEsc(s){ return esc(String(s==null?'':s)).replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function vbSinifAd(gi){ try{ var p=hpProg().filter(function(x){ return x.gi===gi; })[0]; if(p) return p.ad; }catch(e){} return (typeof tahtaSinifAdi==='function')?tahtaSinifAdi(gi):ozGname(gi); }
+function vbGrupAd(L,gi){ var c=(L||[]).filter(function(x){ return x.cls; })[0]; return c?c.cls:vbSinifAd(gi); }
+function vbPlanSe(gi,tid,idx){ try{ return giIle(gi,function(){ return (SEANS[tid]||[])[idx]||null; }); }catch(e){ return null; } }
+function vbPlanAkil(gi,tid,se){ try{ var c=hpAnlGet()[hpAnlKey(gi,tid,uniteAd(se))]; return String(c||hpAnlVars(se)||''); }catch(e){ return ''; } }
+function vbPlanKaydet(gi,tid,idx,tarih){ var se=vbPlanSe(gi,tid,idx); if(!se) return null;
+  return vbKaydet({tarih:tarih||vbGunKey(),gi:gi,k:tid,idx:idx,konu:uniteAd(se),akil:vbPlanAkil(gi,tid,se),kaynak:'plan'}); }
+/* Plandaki “✅ İşlendi” dokunuşundan sonra çağrılır */
+function vbPlanIsle(gi,tid,idx,sessiz){ try{
+  if(!ilrDone(gi,tid,idx)){ vbSil(gi,tid,idx); return; }
+  var e=vbPlanKaydet(gi,tid,idx); if(!e||sessiz||e.gon) return; var t=e.tarih, tr=vbTercih(gi);
+  if(tr==='gunluk'){ vbTurYap(t,gi,'gunluk'); setTimeout(function(){ hpAc('gunluk'); },160); return; }
+  if(tr==='hafta'){ toast('🗓️ '+vbSinifAd(gi)+' · haftalık veli özetine eklendi','ok',3200); return; }
+  setTimeout(function(){ vbSor(gi,t); },140); }catch(err){ try{console.warn('veli bilgisi',err);}catch(_){} } }
+function vbKartHTML(gi,metin,k,gk,n,kilit){ var T=hpTrack(k), ilk=String(metin||'').split('\n')[0];
+  return '<div class="hoz-kart vb-kart" style="--dr:'+T.dr+';--dr2:'+T.dr2+';margin-top:10px"><div class="hoz-ust"><div class="hoz-sinif">'+esc(ilk)+'</div><div class="hoz-hafta">'+(gi===0?'ANA':SINIF_LISTE[gi].g+'. SINIF')+'</div></div>'+
+    '<div class="hp-govde" contenteditable="'+(kilit?'false':'true')+'" spellcheck="false" data-gk="'+vbEsc(gk)+'" data-n="'+n+'" data-ilk="'+vbEsc(ilk)+'" style="outline:none;border-radius:10px" oninput="vbDuzenYaz(this)">'+hpSatirHTML(metin)+'</div>'+
+    '<div class="hoz-alt">Barış Öğretmen · Değişim Koleji'+(kilit?'':' · ✏️ metne dokunup düzeltebilirsin')+'</div></div>'; }
+function vbDuzenYaz(el){ var dz=vbOku(VB_DUZ,{}); dz[el.dataset.gk]={t:el.dataset.ilk+'\n'+String(el.innerText||'').replace(/\n{2,}/g,'\n').trim(),n:+el.dataset.n}; vbYaz(VB_DUZ,dz); }
+/* ---- 📨 Soru penceresi: günlük mü, haftalık mı? ---- */
+function vbSor(gi,tarih){ var L=vbGrupAcik(tarih,gi); if(!L.length) return; var ad=vbGrupAd(L,gi), metin=vbGrupMetin(tarih,gi,ad), son=L[L.length-1], gk=tarih+'|'+gi, T=hpTrack(son.k);
+  var bg=document.getElementById('vbModal'); if(!bg){ bg=document.createElement('div'); bg.className='modal-bg'; bg.id='vbModal'; bg.style.zIndex='9500'; bg.innerHTML='<div class="modal" id="vbModalIc" style="max-width:620px"></div>'; bg.addEventListener('click',function(e){ if(e.target===bg) modalKapat('vbModal'); }); document.body.appendChild(bg); }
+  var isl=L.map(function(x){ var A=VB_AD[x.k]||VB_AD.genel; return A[1]+' '+A[0]+' · “'+esc(vbKonuSade(x.konu))+'”'; }).join('<br>');
+  var gon=L.every(function(x){ return x.gon; });
+  document.getElementById('vbModalIc').innerHTML='<div class="mbas" style="--dr:'+T.dr+';--dr2:'+T.dr2+'"><div class="ik">📨</div><div style="min-width:0"><h3>Veliye bilgi · '+esc(ad)+'</h3><div class="alt">✅ İşlendi olarak kaydedildi:<br>'+isl+'</div></div><div class="kapat" onclick="modalKapat(\'vbModal\')">✕</div></div>'+
+    '<div class="mgov">'+(gon?'<div class="oz-adim" style="border-color:#22c55e;color:#86efac;font-weight:800">✅ Bu bilgi velilere gönderildi.</div>':'')+
+    '<div style="background:#f1f5f9;border-radius:16px;padding:4px 10px 10px">'+vbKartHTML(gi,metin,son.k,gk,L.length,gon)+'</div>'+
+    (gon?'':'<div class="vb-btnler"><button class="btn y vb-b" onclick="vbSorSec('+gi+',\''+tarih+'\',\'gunluk\')">📤 Şimdi gönder<small>günlük · dersten hemen sonra</small></button>'+
+      '<button class="btn p vb-b" onclick="vbSorSec('+gi+',\''+tarih+'\',\'hafta\')">🗓️ Haftalık özete bırak<small>“Bu hafta ne yaptık” kartına kendiliğinden girer</small></button></div>'+
+      '<label class="vb-hep"><input type="checkbox" id="vbHepPlan"> '+esc(ad)+' için hep böyle yap, bir daha sorma</label>')+
+    '<div class="vb-not">🔒 Gönderim mevcut <b>📤 Okula Gönder</b> yolundan ve son onayınla gider. Kart her durumda haftalık özete de eklenir. Tercihleri ⚡ Hızlı Paylaş → ✅ Bugün işlenenler’den değiştirebilirsin.</div></div>';
+  modalAc('vbModal'); }
+function vbSorSec(gi,tarih,tur){ var h=document.getElementById('vbHepPlan'); if(h&&h.checked) vbTercihSet(gi,tur); vbTurYap(tarih,gi,tur); modalKapat('vbModal');
+  if(tur==='gunluk'){ VBG.sec={}; hpAc('gunluk'); } else toast('🗓️ '+vbSinifAd(gi)+' · haftalık veli özetine eklendi','ok',3200); }
+/* ---- ✅ Bugün işlenenler (günlük gönderim) ---- */
+function vbBekleyenGruplar(){ var g={}, out=[]; vbGet().forEach(function(x){ if(x.tur!=='gunluk'||x.gon) return; var k=x.tarih+'|'+x.gi; if(!g[k]){ g[k]={gk:k,tarih:x.tarih,gi:x.gi}; out.push(g[k]); } });
+  return out.sort(function(a,b){ return a.tarih<b.tarih?-1:a.tarih>b.tarih?1:a.gi-b.gi; }); }
+function vbTarihYazi(t){ return t===vbGunKey()?'bugün':new Date(t+'T12:00:00').toLocaleDateString('tr-TR',{weekday:'long',day:'numeric',month:'long'}); }
+function vbHaftayaBirak(gk){ var p=gk.split('|'); vbTurYap(p[0],+p[1],'hafta'); hpCiz(); toast('🗓️ Haftalık özete bırakıldı','ok'); }
+function vbGuneAl(gk){ var p=gk.split('|'); vbTurYap(p[0],+p[1],'gunluk'); VBG.sec[gk]=true; hpCiz(); }
+function vbTercihSec(gi,v){ vbTercihSet(gi,v); hpCiz(); }
+function vbGunlukCiz(){ var bug=vbGunKey(), gr=vbBekleyenGruplar(), tum=vbGet(), h='';
+  h+='<div class="oz-adim" style="border-color:#22c55e;background:rgba(34,197,94,.08)"><div style="font-size:14px;font-weight:900">✅ Bugün işlenenler → veliye günlük bilgi</div><div style="font-size:12px;color:var(--soluk);margin-top:4px;line-height:1.5">Ders Saati’nde ya da planda <b>✅ İşledim</b> deyip <b>📤 Şimdi gönder</b>’i seçtiğin dersler burada renkli kart olarak hazır. Göz at, istersen metne dokunup düzelt, sonra <b>📤 Okula gönder</b>. Gönderim mevcut Okula Gönder yolundan gider.</div></div>';
+  if(!gr.length) h+='<div class="oz-adim" style="text-align:center;color:var(--soluk)">📭 Gönderilmeyi bekleyen günlük bilgi yok.<br><span style="font-size:12px">Bir dersi ✅ işlendi işaretleyince burada belirir.</span></div>';
+  else { h+='<div style="font-size:12.5px;color:var(--soluk)">👀 Veli ve öğrencinin göreceği hâli ('+gr.length+' kart):</div><div style="background:#f1f5f9;border-radius:16px;padding:6px 10px 12px">';
+    gr.forEach(function(g){ var L=vbGrupAcik(g.tarih,g.gi), ad=vbGrupAd(L,g.gi), m=vbGrupMetin(g.tarih,g.gi,ad), sec=VBG.sec[g.gk]!==false;
+      h+='<div class="vb-satir"><label class="vb-sec"><input type="checkbox" '+(sec?'checked':'')+' onchange="VBG.sec[\''+g.gk+'\']=this.checked;hpCiz()"> <b>'+esc(ad)+'</b> · '+vbTarihYazi(g.tarih)+'</label><button class="fbtn vb-mini" onclick="vbHaftayaBirak(\''+g.gk+'\')">🗓️ Haftalığa bırak</button></div>'+
+        '<div class="'+(sec?'':'vb-pasif')+'">'+vbKartHTML(g.gi,m,L[L.length-1].k,g.gk,L.length,false)+'</div>'; });
+    h+='</div>'; }
+  var haf={}; tum.forEach(function(x){ if(x.tarih===bug&&!x.gon&&x.tur!=='gunluk'){ var k=x.tarih+'|'+x.gi; (haf[k]=haf[k]||[]).push(x); } });
+  var hk=Object.keys(haf); if(hk.length) h+='<div class="oz-adim" style="margin-top:12px"><div style="font-size:13px;font-weight:900">🗓️ Bugün işlenip haftalığa bırakılanlar</div>'+hk.map(function(k){ var L=haf[k]; return '<div class="vb-liste"><span><b>'+esc(vbGrupAd(L,L[0].gi))+'</b> · '+L.map(function(x){ var A=VB_AD[x.k]||VB_AD.genel; return A[1]+' '+esc(vbKonuSade(x.konu)); }).join(' · ')+'</span><button class="fbtn vb-mini" onclick="vbGuneAl(\''+k+'\')">📤 Bunu da şimdi gönder</button></div>'; }).join('')+'</div>';
+  var gon=tum.filter(function(x){ return x.tarih===bug&&x.gon; }); if(gon.length) h+='<div class="oz-adim"><div style="font-size:13px;font-weight:900;color:#86efac">✅ Bugün gönderilenler</div>'+gon.map(function(x){ var A=VB_AD[x.k]||VB_AD.genel; return '<div class="vb-liste"><span><b>'+esc(x.cls||vbSinifAd(x.gi))+'</b> · '+A[1]+' '+esc(vbKonuSade(x.konu))+'</span><span style="color:var(--soluk);font-size:12px">'+new Date(x.gon).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})+'</span></div>'; }).join('')+'</div>';
+  if(gr.length){ var n=gr.filter(function(g){ return VBG.sec[g.gk]!==false; }).length; h+=ekoSureHTML(); if(n) h+='<button class="btn y" style="width:100%;justify-content:center;margin-top:12px;padding:14px;font-size:16px" onclick="vbGunlukGonder()">📤 '+n+' sınıfa okula gönder</button>'; }
+  var gs=[]; try{ gs=hpSinifTum(); }catch(e){ gs=SINIF_LISTE.map(function(_,i){ return i; }); }
+  h+='<details class="vb-tercih" '+(VBG.terAcik?'open':'')+' ontoggle="VBG.terAcik=this.open"><summary>⚙️ Sınıf sınıf: “✅ İşledim” deyince ne olsun?</summary>'+gs.map(function(gi){ var t=vbTercih(gi); return '<div class="vb-trow"><b>'+esc(vbSinifAd(gi))+'</b><div class="oz-scroll">'+[['sor','❓ Sor'],['gunluk','📤 Hep günlük'],['hafta','🗓️ Hep haftalık']].map(function(x){ return '<div class="gchip'+(t===x[0]?' akt':'')+'" onclick="vbTercihSec('+gi+',\''+x[0]+'\')">'+x[1]+'</div>'; }).join('')+'</div></div>'; }).join('')+'<div style="font-size:11.5px;color:var(--soluk);margin-top:6px">Ders Saati ile ortak: tahtada değiştirirsen burada da değişir.</div></details>';
+  return h; }
+async function vbGunlukGonder(){ var gr=vbBekleyenGruplar().filter(function(g){ return VBG.sec[g.gk]!==false; }); if(!gr.length){ toast('Gönderilecek kart yok','err'); return; }
+  var parca=[], adlar=[], uyar=[];
+  gr.forEach(function(g){ var L=vbGrupAcik(g.tarih,g.gi), ad=vbGrupAd(L,g.gi), m=vbGrupMetin(g.tarih,g.gi,ad); parca.push({gi:g.gi,metin:m}); adlar.push(ad);
+    try{ var band=SINIF_LISTE[g.gi].d; if(band==='ana'||band==='12'){ var mm=normTR(m), ag=ILERI_TERIM.filter(function(t){ return mm.indexOf(t)>=0; }); if(ag.length) uyar.push(ad+': '+ag.join(', ')); } }catch(e){} });
+  if(!window.confirm(gr.length+' sınıfa günlük veli bilgisi gidecek ('+adlar.join(', ')+').\n⏳ Süre: '+EKO_SURE_AD[ekoSure()]+(uyar.length?'\n\n⚠️ Bu yaş için ağır terim olabilir:\n'+uyar.join('\n'):'')+'\n\nGönderilsin mi?')) return;
+  var ok=await ekoDogrudanGonder(parca); if(!ok) return;
+  var ts=Date.now(), a=vbGet(), dz=vbOku(VB_DUZ,{});
+  gr.forEach(function(g){ a.forEach(function(x){ if(x.tarih===g.tarih&&x.gi===g.gi&&!x.gon) x.gon=ts; }); delete dz[g.gk]; });
+  vbSet(a); vbYaz(VB_DUZ,dz); try{ hpLogSet('gunluk_'+vbGunKey()); }catch(e){} VBG.sec={}; hpCiz();
+  if(VBG.disari&&window.opener&&!window.opener.closed) vbKapanis(adlar); }
+function vbKapanis(adlar){ var o=document.createElement('div'); o.className='vb-kapanis'; o.innerHTML='<div><div style="font-size:64px">✅</div><h2>Velilere gönderildi</h2><p>'+esc(adlar.join(', '))+'</p><p style="opacity:.8">Ders Saati’ne dönülüyor…</p><button class="btn g" onclick="this.closest(\'.vb-kapanis\').remove()">Burada kal</button></div>'; document.body.appendChild(o);
+  var t=setTimeout(function(){ try{ window.opener.focus(); }catch(e){} try{ window.close(); }catch(e){} },2600);
+  o.querySelector('button').addEventListener('click',function(){ clearTimeout(t); VBG.disari=false; }); }
+/* ---- 📝 Haftalık özet: o hafta ✅ işlenen konular kendiliğinden eklenir ---- */
+function vbHaftaAraligi(){ var p=hpPzt(new Date()), s=new Date(p); s.setDate(s.getDate()+7); return [vbGunKey(p),vbGunKey(s)]; }
+function vbHaftaListesi(gi){ var r=vbHaftaAraligi(), gor={}; return vbGet().filter(function(x){ return x.gi===gi&&x.tarih>=r[0]&&x.tarih<r[1]&&ilrDone(x.gi,x.k,x.idx); })
+  .sort(function(a,b){ return a.ts-b.ts; }).filter(function(x){ var k=x.k+'|'+x.idx; if(gor[k]) return false; gor[k]=1; return true; }); }
+var _hpOzetMetinV45=hpOzetMetin;
+hpOzetMetin=function(gi){ var s=_hpOzetMetinV45(gi); try{ if(HP.ai&&HP.ai[hpDuzey(gi)]) return s; var L=vbHaftaListesi(gi); if(!L.length) return s;
+  var blok='✅ Bu hafta işlediğimiz konular:\n'+L.map(function(x){ var A=VB_AD[x.k]||VB_AD.genel; return '📚 '+A[1]+' '+A[0]+': '+vbKonuSade(x.konu); }).join('\n');
+  var parts=String(s).split('\n\n').filter(function(p,i){ if(i<2) return true; var ls=p.split('\n'); return !(ls.length&&ls.every(function(l){ return /^📚 \S+ [^:]+: /.test(l); })); });
+  parts.splice(Math.min(2,parts.length),0,blok); return parts.join('\n\n'); }catch(e){ return s; } };
+/* ---- ⚡ Hızlı Paylaş: yeni sekme + Bu Hafta özeti ---- */
+var _hpCizV45=hpCiz;
+hpCiz=function(){ _hpCizV45.apply(this,arguments); try{ var host=document.getElementById('hpModalIc'); if(!host) return; var mg=host.querySelector('.mgov'); if(!mg) return; var tabs=mg.querySelector('.oz-scroll');
+  if(tabs){ var n=vbBekleyenGruplar().length, c=document.createElement('div'); c.className='gchip'+(HP.sek==='gunluk'?' akt':''); c.innerHTML='✅ Bugün işlenenler'+(n?' <span class="vb-rozet">'+n+'</span>':'');
+    c.onclick=function(){ HP.sek='gunluk'; HP.duzen={}; hpCiz(); }; tabs.insertBefore(c,tabs.children[1]||null); }
+  if(HP.sek==='gunluk'){ var d=document.createElement('div'); d.innerHTML=vbGunlukCiz(); while(d.firstChild) mg.appendChild(d.firstChild); }
+  if(HP.sek==='ozet'){ var top=0; try{ hpSecili().forEach(function(gi){ top+=vbHaftaListesi(gi).length; }); }catch(e){} if(top){ var x=document.createElement('div'); x.className='oz-adim'; x.style.borderColor='#22c55e';
+    x.innerHTML='<div style="font-size:12.5px;line-height:1.5">✅ Bu hafta <b>'+top+' konuyu</b> işlendi olarak işaretledin (Ders Saati + plan). Kartlara <b>“Bu hafta işlediğimiz konular”</b> olarak kendiliğinden eklendi.</div>'; if(tabs&&tabs.nextSibling) mg.insertBefore(x,tabs.nextSibling); else mg.appendChild(x); } }
+} catch(e){ try{console.warn('hpCiz v4.5',e);}catch(_){} } };
+var _hpAsistV45=hpAsistCiz;
+hpAsistCiz=function(){ var s=_hpAsistV45.apply(this,arguments); try{ var n=vbBekleyenGruplar().length, hf=0; hpSinifTum().forEach(function(gi){ hf+=vbHaftaListesi(gi).length; });
+  return '<div class="oz-adim" style="border-color:'+(n?'#f59e0b':'#22c55e')+';display:flex;gap:10px;align-items:center"><div style="font-size:24px">📨</div><div style="flex:1;min-width:0"><div style="font-weight:900;font-size:13.5px">'+(n?n+' sınıfın günlük veli bilgisi onay bekliyor':'Günlük veli bilgisi')+'</div><div style="font-size:12px;color:var(--soluk)">✅ İşledim deyince hazırlanır · bu hafta '+hf+' konu haftalık özete eklendi</div></div><button class="btn '+(n?'y':'g')+'" style="padding:8px 12px" onclick="HP.sek=\'gunluk\';HP.duzen={};hpCiz()">'+(n?'Gönder ›':'Aç ›')+'</button></div>'+s; }catch(e){ return s; } };
+/* ---- Plandaki “✅ İşlendi” dokunuşları ---- */
+var _ilrToggleUIV45=ilrToggleUI; ilrToggleUI=function(tid,i){ var gi=ST.gradeIdx; var r=_ilrToggleUIV45.apply(this,arguments); vbPlanIsle(gi,tid,i); return r; };
+var _ilrToggleUI2V45=ilrToggleUI2; ilrToggleUI2=function(tid,i){ var gi=ST.gradeIdx; var r=_ilrToggleUI2V45.apply(this,arguments); vbPlanIsle(gi,tid,i); return r; };
+var _dsIsleV45=dsIsle; dsIsle=function(tid,i){ var gi=ST.gradeIdx, once=ilrDone(gi,tid,i); var r=_dsIsleV45.apply(this,arguments); if(!once) vbPlanIsle(gi,tid,i); return r; };
+var _dsKaydetV45=dsKaydet; dsKaydet=function(tid,i,veli){ var gi=ST.gradeIdx, once=ilrDone(gi,tid,i); var r=_dsKaydetV45.apply(this,arguments); if(!once) vbPlanIsle(gi,tid,i,!!veli); return r; };
+var _hpIsledimV45=hpIsledim; hpIsledim=function(gi,k){ var se=hpKonuSe(gi,k); var r=_hpIsledimV45.apply(this,arguments); if(se) vbPlanIsle(gi,k,se.idx); return r; };
+var _yarimToggleUIV45=(typeof yarimToggleUI==='function')?yarimToggleUI:null; if(_yarimToggleUIV45) yarimToggleUI=function(tid,i){ var gi=ST.gradeIdx; var r=_yarimToggleUIV45.apply(this,arguments); if(!ilrDone(gi,tid,i)) vbSil(gi,tid,i); return r; };
+var _hpIsaretGeriV45=hpIsaretGeri; hpIsaretGeri=function(){ var s=HP.sonIsaret; var r=_hpIsaretGeriV45.apply(this,arguments); if(s) vbSil(s.gi,s.k,s.idx); return r; };
+var _hpBekleyenIsleV45=hpBekleyenIsle; hpBekleyenIsle=function(id,yap){ var a=hpDefterGet(), bug=hpTarihKey(new Date()); var r=_hpBekleyenIsleV45.apply(this,arguments);
+  if(yap) try{ a.forEach(function(x){ if(id!=='*'&&x.id!==id) return; if(id==='*'&&(x.atla||x.tarih>=bug)) return; if(ilrDone(x.gi,x.k,x.idx)) vbPlanKaydet(x.gi,x.k,x.idx,x.tarih); }); }catch(e){} return r; };
+/* Ders Saati’nden “📤 Şimdi gönder” ile gelindiyse: doğrudan ✅ Bugün işlenenler */
+function vbHashAc(){ var h=decodeURIComponent(location.hash||''); if(!/^#veli=/.test(h)) return; VBG.disari=!!window.opener;
+  setTimeout(function(){ try{ document.querySelectorAll('.modal-bg.acik').forEach(function(m){ if(m.id!=='hpModal') m.classList.remove('acik'); }); VBG.sec={}; hpAc('gunluk'); history.replaceState(null,'',location.pathname+location.search); }catch(e){} },900); }
+vbHashAc(); window.addEventListener('hashchange',vbHashAc);
+window.addEventListener('storage',function(e){ if(e.key!==VB_LOG&&e.key!==VB_TER) return; try{ var m=document.getElementById('hpModal'); if(m&&m.classList.contains('acik')&&(HP.sek==='gunluk'||HP.sek==='asist')){ var ae=document.activeElement; if(ae&&ae.isContentEditable) return; hpCiz(); } }catch(_){} });
+/* sürüm + öz-kontrol */
+try{ APP.onceki={surum:'4.4',satir:5007,kb:583}; APP.surum='4.5'; APP.tarih='07.10.2026'; APP.satir=5198; APP.kb=611;
+  APP.yenilikler.unshift('📨 ✅ İşlendi deyince veliye bilgi: renkli kart kendiliğinden hazır → 📤 Şimdi gönder (günlük) ya da 🗓️ Haftalık özete bırak','⚡ Hızlı Paylaş’ta yeni sekme: ✅ Bugün işlenenler — Ders Saati’nden gelenler de burada; gönderim mevcut 📤 Okula Gönder yolundan, son onayla','📝 “Bu hafta ne yaptık” kartlarına o hafta ✅ işlenen konular kendiliğinden eklenir','👤 Sınıf başına tercih: her seferinde sor · hep günlük · hep haftalık (Ders Saati ile ortak)');
+  MODULLER.push(['Veliye bilgi (işlendi → kart)','vbSor'],['Bugün işlenenler (günlük gönderim)','vbGunlukCiz'],['Ortak veli metni','vbMetin'],['Haftalık özete işlenenler','vbHaftaListesi']); }catch(e){}
 
 </script>
 </body>
