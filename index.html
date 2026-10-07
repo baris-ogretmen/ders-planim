@@ -550,6 +550,13 @@ input[type=date].key{color-scheme:dark}
 .vb-kapanis{position:fixed;inset:0;z-index:99999;background:radial-gradient(circle at 50% 40%,#065f46,#020617);display:flex;align-items:center;justify-content:center;text-align:center;color:#fff;padding:20px}
 .vb-kapanis h2{margin:6px 0 4px;font-size:26px}
 .vb-kapanis p{margin:4px 0 12px}
+/* ===== v4.6: 🎮 çalışma → ders ===== */
+.etk-sec{margin-top:14px;color:#0f172a;font-size:13px}
+.etk-sec .gchip{background:#fff;color:#334155;border-color:#cbd5e1}
+.etk-sec .gchip.akt{background:#fef3c7;color:#92400e;border-color:#f59e0b}
+.etk-sec select.key{background:#fff;color:#0f172a;border-color:#cbd5e1}
+.etk-link{margin-top:8px;background:linear-gradient(90deg,#7c3aed,#c026d3);color:#fff;border-radius:14px;padding:10px 12px;font-weight:900;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.etk-link span{background:#fff;color:#111;border-radius:999px;padding:3px 10px;font-size:12px}
 </style>
 
 </head>
@@ -5189,9 +5196,87 @@ function vbHashAc(){ var h=decodeURIComponent(location.hash||''); if(!/^#veli=/.
 vbHashAc(); window.addEventListener('hashchange',vbHashAc);
 window.addEventListener('storage',function(e){ if(e.key!==VB_LOG&&e.key!==VB_TER) return; try{ var m=document.getElementById('hpModal'); if(m&&m.classList.contains('acik')&&(HP.sek==='gunluk'||HP.sek==='asist')){ var ae=document.activeElement; if(ae&&ae.isContentEditable) return; hpCiz(); } }catch(_){} });
 /* sürüm + öz-kontrol */
-try{ APP.onceki={surum:'4.4',satir:5007,kb:583}; APP.surum='4.5'; APP.tarih='07.10.2026'; APP.satir=5198; APP.kb=611;
+try{ APP.onceki={surum:'4.4',satir:5007,kb:583}; APP.surum='4.5'; APP.tarih='07.10.2026'; APP.satir=5283; APP.kb=624;
   APP.yenilikler.unshift('📨 ✅ İşlendi deyince veliye bilgi: renkli kart kendiliğinden hazır → 📤 Şimdi gönder (günlük) ya da 🗓️ Haftalık özete bırak','⚡ Hızlı Paylaş’ta yeni sekme: ✅ Bugün işlenenler — Ders Saati’nden gelenler de burada; gönderim mevcut 📤 Okula Gönder yolundan, son onayla','📝 “Bu hafta ne yaptık” kartlarına o hafta ✅ işlenen konular kendiliğinden eklenir','👤 Sınıf başına tercih: her seferinde sor · hep günlük · hep haftalık (Ders Saati ile ortak)');
   MODULLER.push(['Veliye bilgi (işlendi → kart)','vbSor'],['Bugün işlenenler (günlük gönderim)','vbGunlukCiz'],['Ortak veli metni','vbMetin'],['Haftalık özete işlenenler','vbHaftaListesi']); }catch(e){}
+
+/* ============================================================
+   SÜRÜM 4.6 — 🎮 SİTEDEKİ ÇALIŞMA → O GÜNÜN DERSİ (amaç · kazanım · gösterge)
+   · Sitendeki mesajı (🌟 Bugün derste *…* + link) yapıştır → her sınıf için uygun ders/konu kendiliğinden seçilir
+     (önce o gün ✅ işlenen ders, yoksa plandaki sıradaki konu; ders ve hafta tek dokunuşla değişir)
+   · Renkli kart: 📚 ders · 🎯 amaç · ✅ kazanım · 🔎 gösterge · 🎮 çalışma düğmesi
+   · 📤 Okula gönder: mevcut ekoDogrudanGonder ile (link düğme olarak gider); istersen konu ✅ işlendi işaretlenir
+   ============================================================ */
+var ETK={ham:'',siniflar:null,sec:{},isle:true,ai:{}};
+try{ HP_SATIR_RENK.push([/^🔎/,'#fef9c3'],[/^🎮/,'#fae8ff']); }catch(e){}
+function etkListe(){ try{ return hpEtkinlikler(ETK.ham); }catch(e){ return []; } }
+function etkVarsayilan(gi,e){ var bug=vbGunKey(), L=vbGet().filter(function(x){ return x.gi===gi&&x.tarih===bug; }), ds=hpSinifDersleri(gi);
+  var k=(e&&e.ders&&e.ders!=='genel'&&ds.indexOf(e.ders)>=0)?e.ders:null;
+  if(L.length){ var m=(k&&L.filter(function(x){ return x.k===k; })[0])||L[L.length-1]; return {k:m.k,idx:m.idx}; }
+  k=k||ds[0]||'robokod'; var idx=giIle(gi,function(){ var n=SEANS[k].length, i=trackSonraki(gi,k,n); return i<0?n-1:i; }); return {k:k,idx:idx}; }
+function etkSec(gi){ var e=etkListe()[0]; return ETK.sec[gi]||etkVarsayilan(gi,e); }
+function etkSiniflar(){ if(ETK.siniflar) return ETK.siniflar; var e=etkListe(), out=[];
+  e.forEach(function(x){ if(x.gi>=0&&out.indexOf(x.gi)<0) out.push(x.gi); });
+  if(!out.length){ var bug=vbGunKey(); vbGet().forEach(function(x){ if(x.tarih===bug&&out.indexOf(x.gi)<0) out.push(x.gi); }); }
+  return out.sort(function(a,b){ return a-b; }); }
+function etkAmac(konu,se,k,band){ var b=String(se.b||'').split(/[·,]/).map(function(x){ return x.trim().toLocaleLowerCase('tr'); }).filter(Boolean);
+  return b.length?('“'+konu+'” konusuyla '+(b.length>1?b.slice(0,-1).join(', ')+' ve '+b[b.length-1]:b[0])+' becerisini geliştirmek.'):('Çocuğumuzun '+String((VB_KAZ[k]||VB_KAZ.genel)[band]||'').replace(/ (geliştiriyor|öğreniyor|keşfediyor|deneyimliyor|tanıyor|görüyor|artırıyor|güçlendiriyor|pekiştiriyor|kazanıyor|sorguluyor|tartışıyor)$/,'')+' becerisini desteklemek.'); }
+function etkGosterge(ad,se){ var z=String(se.z||'').trim().replace(/[.\s]+$/,''); if(!z) return '“'+ad+'” çalışmasını yönergeye uygun biçimde tamamlar.'; return '“'+ad+'” çalışmasında '+z.charAt(0).toLocaleLowerCase('tr')+z.slice(1)+'.'; }
+function etkGk(gi,s,e){ return 'etk|'+gi+'|'+s.k+'|'+s.idx+'|'+strHash(e?e.url:''); }
+function etkMetin(gi){ var L=etkListe(), e=L[0]; if(!e) return ''; var s=etkSec(gi), se=vbPlanSe(gi,s.k,s.idx)||{}, A=VB_AD[s.k]||VB_AD.genel, band=SINIF_LISTE[gi].d, konu=vbKonuSade(uniteAd(se)||se.k), ai=ETK.ai[gi+'|'+s.k+'|'+s.idx]||{};
+  var adlar=L.filter(function(x){ return x.gi<0||x.gi===gi; }).map(function(x){ return '*'+x.ad+'*'; });
+  var t=['🎮 Bugün Derste · '+vbSinifAd(gi),'🌟 Bugün derste '+(adlar.join(' ve ')||'*'+e.ad+'*')+' '+(adlar.length>1?'çalışmalarını':'çalışmasını')+' yaptık.','📚 '+A[1]+' '+A[0]+': '+konu,
+    '🎯 Amaç: '+(ai.amac||etkAmac(konu,se,s.k,band)),'✅ Kazanım: '+(ai.kazanim||String(se.z||'').trim()||konu),'🔎 Gösterge: '+(ai.gosterge||etkGosterge(e.ad,se))];
+  var bug=vbGunKey(); vbGet().filter(function(x){ return x.gi===gi&&x.tarih===bug&&!(x.k===s.k&&x.idx===s.idx); }).forEach(function(x){ var B=VB_AD[x.k]||VB_AD.genel; t.push('📚 '+B[1]+' '+B[0]+': '+vbKonuSade(x.konu)); });
+  t.push('🏠 Evde çocuğunuzla birlikte deneyebilirsiniz; aşağıdaki düğmeye dokunmanız yeterli 👇'); t.push('— Barış Öğretmen');
+  var dz=vbOku(VB_DUZ,{})[etkGk(gi,s,e)]; return (dz&&dz.t)?dz.t:t.join('\n'); }
+function etkDersSec(gi,k){ var idx=giIle(gi,function(){ var n=SEANS[k].length, i=trackSonraki(gi,k,n); return i<0?n-1:i; }); ETK.sec[gi]={k:k,idx:idx}; hpCiz(); }
+function etkHaftaSec(gi,idx){ var s=etkSec(gi); ETK.sec[gi]={k:s.k,idx:+idx}; hpCiz(); }
+function etkSinifTik(gi){ var a=etkSiniflar().slice(), i=a.indexOf(gi); if(i>=0) a.splice(i,1); else a.push(gi); ETK.siniflar=a.sort(function(x,y){ return x-y; }); hpCiz(); }
+async function etkYapistir(){ try{ var t=await navigator.clipboard.readText(); if(t){ ETK.ham=(ETK.ham?ETK.ham+'\n':'')+t; ETK.siniflar=null; ETK.sec={}; hpCiz(); } }catch(e){ toast('Pano okunamadı — kutuya uzun basıp yapıştır','err',3500); } }
+function etkCiz(){ var L=etkListe(), e=L[0], gs=etkSiniflar(), h='';
+  h+='<div class="oz-adim"><div style="font-size:14px;font-weight:900">🎮 Sitendeki çalışmayı o günün dersine bağla</div><div style="font-size:12px;color:var(--soluk);margin:4px 0 8px;line-height:1.5">Sitendeki mesajı olduğu gibi yapıştır. Her sınıf için uygun ders kendiliğinden seçilir (önce o gün ✅ işlediğin ders, yoksa plandaki sıradaki konu). Kartta <b>amaç · kazanım · gösterge</b> ve çalışmanın düğmesi olur; okula doğrudan gider.</div>'+
+    '<textarea class="key" style="min-height:96px" placeholder="🌟 Bugün derste *Beynine Yolculuk* çalışmasını yaptık…\nhttps://baris-ogretmen.github.io/site-1/?ac=projeler:…" oninput="ETK.ham=this.value" onchange="ETK.siniflar=null;ETK.sec={};hpCiz()">'+esc(ETK.ham)+'</textarea>'+
+    '<div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap"><button class="fbtn" onclick="etkYapistir()">📋 Panodan yapıştır</button>'+(ETK.ham?'<button class="fbtn" onclick="ETK.ham=\'\';ETK.siniflar=null;ETK.sec={};ETK.ai={};hpCiz()">✕ Temizle</button>':'')+'</div>'+
+    (ETK.ham?(e?'<div style="font-size:12.5px;color:#86efac;margin-top:8px">✅ Bulundu: '+L.map(function(x){ return '<b>'+esc(x.ad)+'</b>'+(x.gi>=0?' ('+ozGname(x.gi)+' için)':''); }).join(' · ')+'</div>':'<div style="font-size:12.5px;color:#fca5a5;margin-top:8px">Mesajda link bulunamadı.</div>'):'')+'</div>';
+  if(!e) return h;
+  var tum=[]; try{ tum=hpSinifTum(); }catch(_){ tum=SINIF_LISTE.map(function(_,i){ return i; }); }
+  h+='<div class="oz-adim"><div style="font-size:13px;font-weight:800;margin-bottom:6px">Hangi sınıflarda yaptın?</div><div class="oz-scroll" style="flex-wrap:wrap">'+tum.map(function(gi){ return '<div class="gchip'+(gs.indexOf(gi)>=0?' akt':'')+'" onclick="etkSinifTik('+gi+')">'+esc(vbSinifAd(gi))+'</div>'; }).join('')+'</div>'+
+    '<label class="vb-hep" style="margin-top:10px"><input type="checkbox" '+(ETK.isle?'checked':'')+' onchange="ETK.isle=this.checked"> Gönderince bu konuyu ✅ işlendi olarak da işaretle</label></div>';
+  if(!gs.length) return h+'<div class="oz-adim" style="text-align:center;color:var(--soluk)">👆 Önce sınıf seç.</div>';
+  h+='<div style="background:#f1f5f9;border-radius:16px;padding:6px 10px 12px">';
+  gs.forEach(function(gi){ var s=etkSec(gi), ds=hpSinifDersleri(gi), n=giIle(gi,function(){ return SEANS[s.k].length; });
+    var opt=''; for(var i=0;i<n;i++){ var se=vbPlanSe(gi,s.k,i)||{}; opt+='<option value="'+i+'"'+(i===s.idx?' selected':'')+'>'+(ilrDone(gi,s.k,i)?'✅ ':'')+(i+1)+'. ders · '+esc(se.k||'')+'</option>'; }
+    var m=etkMetin(gi), gk=etkGk(gi,s,e);
+    h+='<div class="etk-sec"><b>'+esc(vbSinifAd(gi))+'</b> · hangi derse bağlansın?<div class="oz-scroll" style="flex-wrap:wrap;margin-top:6px">'+ds.map(function(k){ var A=VB_AD[k]||VB_AD.genel; return '<div class="gchip'+(k===s.k?' akt':'')+'" onclick="etkDersSec('+gi+',\''+k+'\')">'+A[1]+' '+A[0]+'</div>'; }).join('')+'</div>'+
+      '<select class="key" style="margin-top:6px" onchange="etkHaftaSec('+gi+',this.value)">'+opt+'</select></div>'+
+      vbKartHTML(gi,m,s.k,gk,1,false)+L.filter(function(x){ return x.gi<0||x.gi===gi; }).map(function(x){ return '<div class="etk-link">🎮 '+esc(x.ad)+'<span>Aç ›</span></div>'; }).join(''); });
+  h+='</div><button class="btn p" style="width:100%;justify-content:center;margin-top:10px" onclick="etkAI()">🤖 Amaç · kazanım · göstergeyi yapay zekâ yazsın (isteğe bağlı)</button>';
+  h+=ekoSureHTML()+'<button class="btn y" style="width:100%;justify-content:center;margin-top:12px;padding:14px;font-size:16px" onclick="etkGonder()">📤 '+gs.length+' sınıfa okula gönder</button>';
+  return h; }
+async function etkAI(){ var e=etkListe()[0], gs=etkSiniflar(); if(!e||!gs.length) return; toast('🤖 Yazılıyor…','info',2500); var ok=0;
+  for(var j=0;j<gs.length;j++){ var gi=gs[j], s=etkSec(gi), se=vbPlanSe(gi,s.k,s.idx)||{}, A=VB_AD[s.k]||VB_AD.genel;
+    try{ var t=await generateText('Ders: '+A[0]+'\nSınıf: '+ozGname(gi)+' ('+(DUZEYLER.filter(function(d){ return d.id===SINIF_LISTE[gi].d; })[0]||{}).yas+')\nKonu: '+uniteAd(se)+'\nPlandaki kazanım: '+(se.z||'')+'\nBeceri: '+(se.b||'')+'\nDerste yapılan çalışma: "'+e.ad+'"\n\nVeliye gidecek kart için SADECE geçerli JSON döndür: {"amac":"…","kazanim":"…","gosterge":"…"}. Kurallar: Türkçe; her biri tek kısa cümle (en fazla 110 karakter); kazanım plandaki kazanıma sadık kalsın; gösterge bu çalışmada gözlenebilir bir davranış olsun ("…yapar/…açıklar" gibi); abartılı ya da bilimsel dayanağı olmayan fayda vaadi yazma; uydurma isim/tarih yok.',{sistem:'Türkiye Yüzyılı Maarif Modeli’ne hâkim, sade yazan bir öğretmensin.'});
+      var js=JSON.parse(String(t).replace(/```json|```/g,'').slice(String(t).replace(/```json|```/g,'').indexOf('{'),String(t).replace(/```json|```/g,'').lastIndexOf('}')+1));
+      if(js&&js.amac){ ETK.ai[gi+'|'+s.k+'|'+s.idx]={amac:String(js.amac).trim(),kazanim:String(js.kazanim||'').trim(),gosterge:String(js.gosterge||'').trim()}; var dz=vbOku(VB_DUZ,{}); delete dz[etkGk(gi,s,e)]; vbYaz(VB_DUZ,dz); ok++; } }catch(err){} }
+  hpCiz(); toast(ok?'✅ Yazıldı — istersen karta dokunup düzelt':'Yapay zekâ yazamadı; plandaki bilgiler kullanılıyor','ok',3500); }
+async function etkGonder(){ var L=etkListe(), e=L[0], gs=etkSiniflar(); if(!e||!gs.length){ toast('Önce mesajı yapıştır ve sınıf seç','err'); return; }
+  var parca=gs.map(function(gi){ return {gi:gi,metin:etkMetin(gi),linkler:L.filter(function(x){ return x.gi<0||x.gi===gi; }).map(function(x){ return {url:x.url,ad:x.ad}; }).slice(0,10)}; });
+  var bilgi=gs.map(function(gi){ var s=etkSec(gi), A=VB_AD[s.k]||VB_AD.genel, se=vbPlanSe(gi,s.k,s.idx)||{}; return vbSinifAd(gi)+' → '+A[0]+': '+vbKonuSade(uniteAd(se)); }).join('\n');
+  if(!window.confirm('“'+e.ad+'” şu derslere bağlanıp gönderilecek:\n'+bilgi+'\n⏳ Süre: '+EKO_SURE_AD[ekoSure()]+'\n\nGönderilsin mi?')) return;
+  var ok=await ekoDogrudanGonder(parca); if(!ok) return; var bug=vbGunKey(), ts=Date.now(), dz=vbOku(VB_DUZ,{});
+  gs.forEach(function(gi){ var s=etkSec(gi); if(ETK.isle&&!ilrDone(gi,s.k,s.idx)) hpIsaretle(gi,s.k,s.idx,true); if(ilrDone(gi,s.k,s.idx)) vbPlanKaydet(gi,s.k,s.idx,bug); delete dz[etkGk(gi,s,e)]; });
+  var a=vbGet(); a.forEach(function(x){ if(x.tarih===bug&&gs.indexOf(x.gi)>=0&&!x.gon){ x.gon=ts; x.tur='gunluk'; } }); vbSet(a); vbYaz(VB_DUZ,dz);
+  try{ hpLogSet('link'); }catch(_){} ETK.ham=''; ETK.siniflar=null; ETK.sec={}; ETK.ai={}; HP.sek='gunluk'; hpCiz(); }
+var _hpCizV46=hpCiz;
+hpCiz=function(){ _hpCizV46.apply(this,arguments); try{ var host=document.getElementById('hpModalIc'); if(!host) return; var mg=host.querySelector('.mgov'); if(!mg) return; var tabs=mg.querySelector('.oz-scroll');
+  if(tabs){ var c=document.createElement('div'); c.className='gchip'+(HP.sek==='etk'?' akt':''); c.textContent='🎮 Çalışma → Ders'; c.onclick=function(){ HP.sek='etk'; HP.duzen={}; hpCiz(); }; tabs.insertBefore(c,tabs.children[2]||null); }
+  if(HP.sek==='etk'){ var d=document.createElement('div'); d.innerHTML=etkCiz(); while(d.firstChild) mg.appendChild(d.firstChild); }
+  if(HP.sek==='gunluk'){ var b=document.createElement('button'); b.className='btn p'; b.style.cssText='width:100%;justify-content:center;margin:0 0 12px'; b.textContent='🎮 Sitendeki bugünkü çalışmayı ekle (amaç · kazanım · gösterge) ›'; b.onclick=function(){ HP.sek='etk'; hpCiz(); }; var ilk=tabs?tabs.nextSibling:null; mg.insertBefore(b,ilk); }
+} catch(e){ try{console.warn('hpCiz v4.6',e);}catch(_){} } };
+try{ APP.onceki={surum:'4.5',satir:5198,kb:611}; APP.surum='4.6'; APP.satir=5283; APP.kb=624;
+  APP.yenilikler.unshift('🎮 Yeni sekme “Çalışma → Ders”: sitendeki çalışma mesajını yapıştır → her sınıfa o günün dersine uygun amaç · kazanım · gösterge kartı + çalışma düğmesi → okula doğrudan');
+  MODULLER.push(['Çalışma → Ders kartı','etkCiz'],['Çalışma gönderimi','etkGonder']); }catch(e){}
 
 </script>
 </body>
