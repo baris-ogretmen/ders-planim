@@ -5519,7 +5519,7 @@ function vbHashAc(){ var h=decodeURIComponent(location.hash||''); if(!/^#veli=/.
 vbHashAc(); window.addEventListener('hashchange',vbHashAc);
 window.addEventListener('storage',function(e){ if(e.key!==VB_LOG&&e.key!==VB_TER) return; try{ var m=document.getElementById('hpModal'); if(m&&m.classList.contains('acik')&&(HP.sek==='gunluk'||HP.sek==='asist')){ var ae=document.activeElement; if(ae&&ae.isContentEditable) return; hpCiz(); } }catch(_){} });
 /* sürüm + öz-kontrol */
-try{ APP.onceki={surum:'4.4',satir:5007,kb:583}; APP.surum='4.5'; APP.tarih='07.10.2026'; APP.satir=6258; APP.kb=810;
+try{ APP.onceki={surum:'4.4',satir:5007,kb:583}; APP.surum='4.5'; APP.tarih='07.10.2026'; APP.satir=6353; APP.kb=823;
   APP.yenilikler.unshift('📨 ✅ İşlendi deyince veliye bilgi: renkli kart kendiliğinden hazır → 📤 Şimdi gönder (günlük) ya da 🗓️ Haftalık özete bırak','⚡ Hızlı Paylaş’ta yeni sekme: ✅ Bugün işlenenler — Ders Saati’nden gelenler de burada; gönderim mevcut 📤 Okula Gönder yolundan, son onayla','📝 “Bu hafta ne yaptık” kartlarına o hafta ✅ işlenen konular kendiliğinden eklenir','👤 Sınıf başına tercih: her seferinde sor · hep günlük · hep haftalık (Ders Saati ile ortak)');
   MODULLER.push(['Veliye bilgi (işlendi → kart)','vbSor'],['Bugün işlenenler (günlük gönderim)','vbGunlukCiz'],['Ortak veli metni','vbMetin'],['Haftalık özete işlenenler','vbHaftaListesi']); }catch(e){}
 
@@ -5621,7 +5621,7 @@ hpCiz=function(){ _hpCizV46.apply(this,arguments); try{ var host=document.getEle
   if(HP.sek==='etk'){ var d=document.createElement('div'); d.innerHTML=etkCiz(); while(d.firstChild) mg.appendChild(d.firstChild); }
   if(HP.sek==='gunluk'){ var b=document.createElement('button'); b.className='btn p'; b.style.cssText='width:100%;justify-content:center;margin:0 0 12px'; b.textContent='🎮 Sitendeki bugünkü çalışmayı ekle · ⚡ derse uygun prompt ›'; b.onclick=function(){ HP.sek='etk'; hpCiz(); }; var ilk=tabs?tabs.nextSibling:null; mg.insertBefore(b,ilk); }
 } catch(e){ try{console.warn('hpCiz v4.6',e);}catch(_){} } };
-try{ APP.onceki={surum:'4.5',satir:5198,kb:611}; APP.surum='4.6'; APP.satir=6258; APP.kb=810;
+try{ APP.onceki={surum:'4.5',satir:5198,kb:611}; APP.surum='4.6'; APP.satir=6353; APP.kb=823;
   APP.yenilikler.unshift('🎮 Yeni sekme “Çalışma → Ders”: sitendeki çalışma mesajını yapıştır → her sınıfa o günün konusuyla bağlanan renkli kart (çalışmanın kısa anlatımı + oyunlaştırmanın katkısı) + çalışma düğmesi → okula doğrudan','⚡ Hızlı ekleme: sınıfın bugünkü konusuna uygun, kaliteli oyun/çalışma prompt’u (7 oyun türü) tek dokunuşla kopyala');
   MODULLER.push(['Çalışma → Ders kartı','etkCiz'],['Çalışma gönderimi','etkGonder'],['Hızlı çalışma prompt’u','etkPromptMetni']); }catch(e){}
 
@@ -5682,7 +5682,7 @@ var _seansAcV47=seansAc;
 seansAc=function(tid,i){ var r=_seansAcV47.apply(this,arguments); try{ if(tid==='kocluk'){ var mg=document.querySelector('#haftaModalIc .mgov'); if(mg&&!mg.querySelector('.vb-film')){ var d=document.createElement('div'); d.innerHTML=vbFilmCiz(); mg.appendChild(d.firstChild); } } }catch(e){} return r; };
 var _hpCizV47=hpCiz;
 hpCiz=function(){ _hpCizV47.apply(this,arguments); try{ if(HP.sek!=='asist') return; var mg=document.querySelector('#hpModalIc .mgov'); if(!mg) return; var d=document.createElement('details'); d.style.marginTop='8px'; d.innerHTML='<summary style="cursor:pointer;font-weight:900;font-size:13px">🎬 8. sınıf koçluk filmleri ('+VB_FILM.length+')</summary>'+vbFilmCiz(); mg.appendChild(d); }catch(e){} };
-try{ APP.onceki={surum:'4.6',satir:5307,kb:630}; APP.surum='4.7'; APP.tarih='11.10.2026'; APP.satir=6258; APP.kb=810;
+try{ APP.onceki={surum:'4.6',satir:5307,kb:630}; APP.surum='4.7'; APP.tarih='11.10.2026'; APP.satir=6353; APP.kb=823;
   APP.yenilikler.unshift('🗓️ Ders Saati’ndeki ders adı her yerde okunur: hatırlatma, ön bilgi, haftalık özet ve “Bu Hafta” o gün/hafta işlenen derse göre (“Satranç ve Akıl-Zekâ”, “Dönüşümlü” dahil)','🎯 8. sınıf: plan ve tüm veli bildirimleri yalnızca Eğitim Koçluğu','🎬 Koçluk film köşesi: 8. sınıfa uygun 12 film, tema + tartışma soruları; her hafta biri veli kartına öneri olarak eklenir','🛡️ Gönderim öncesi seviye denetimi (yaşa uymayan terim, 8. sınıfa başka ders adı vb.)','🎒 Hatırlatmada derse göre getirilecekler: Robotik/YZ → tablet (anaokulu hariç) + varsa robotik set; Satranç → satranç takımı; Akıl-Zekâ → akıl oyunu','🧸 Anaokulu: Salı hep Satranç (bir şey getirmeye gerek yok); Cuma haftaya göre Satranç ↔ Robotik-Kodlama');
   MODULLER.push(['Programa göre ders','vbProgDersleri'],['Seviye denetimi','vbSeviyeUyar'],['Koçluk film köşesi','vbFilmCiz']); }catch(e){}
 /* ---- 🎒 Hatırlatma: ne getirilecek? (o günün dersine ve sınıf seviyesine göre) ----
@@ -5798,7 +5798,7 @@ vbFilmCiz=function(){ var bu=vbFilmHafta(new Date());
   return '<div class="oz-adim" style="border-color:#f472b6"><div style="font-size:14px;font-weight:900">🎬 Eğitim koçluğu film köşesi (8. sınıf)</div><div style="font-size:12px;color:var(--soluk);margin:4px 0 6px;line-height:1.5">Yalnızca aile izleyicisine uygun derecedeki filmler (PG ve eşdeğeri); müstehcen içerikli film yok. Her filmin <b>🛡️ Ebeveyn rehberi</b> bağlantısından sahne sahne içeriğe bakabilirsin. Sınıfta göstermeden önce izlemeni öneririm. Her hafta biri sırayla 8. sınıf veli kartına öneri olarak eklenir; istersen <b>📤 Velilere öner</b> ile ayrıca gönderebilirsin.</div>'+
     VB_FILM.map(function(f,i){ var b=f===bu; return '<div class="vb-film'+(b?' bu':'')+'"><div><b>'+esc(f.ad)+'</b>'+(f.tr?' · '+esc(f.tr):'')+' <span>('+f.yil+' · '+esc(f.der)+')</span>'+(b?' <em>bu hafta</em>':'')+'</div><div class="vf-tema">'+esc(f.tema)+' · <i>'+esc(f.bag)+'</i></div><div class="vf-soru">💬 '+f.soru.map(esc).join('<br>💬 ')+'</div>'+
       '<div class="vf-link"><a class="fbtn" target="_blank" rel="noopener" href="'+vbEsc(vbFilmLink(f,'fragman'))+'">🎞️ Fragman</a><a class="fbtn" target="_blank" rel="noopener" href="'+vbEsc(vbFilmLink(f,'rehber'))+'">🛡️ Ebeveyn rehberi</a><a class="fbtn" target="_blank" rel="noopener" href="'+vbEsc(vbFilmLink(f,'izle'))+'">📺 Nereden izlenir</a><button class="btn y" style="padding:6px 10px;font-size:12px" onclick="vbFilmGonder('+i+')">📤 8. sınıf velilerine öner</button></div></div>'; }).join('')+'</div>'; };
-try{ APP.onceki={surum:'4.7',satir:5449,kb:648}; APP.surum='4.8'; APP.tarih='11.10.2026'; APP.satir=6258; APP.kb=810;
+try{ APP.onceki={surum:'4.7',satir:5449,kb:648}; APP.surum='4.8'; APP.tarih='11.10.2026'; APP.satir=6353; APP.kb=823;
   APP.yenilikler.unshift('📽️ Sunum Merkezi: bir dersi slaytla anlat (öğrenciye dönük dil + 👀 öğretmen notu), bu haftanın planı, sınıf sınıf yıllık plan sunumu (veli toplantısına hazır)','🎬 Filmlerde 🎞️ fragman · 🛡️ ebeveyn rehberi · 📺 nereden izlenir bağlantıları; 📤 tek dokunuşla 8. sınıf velilerine öner');
   MODULLER.push(['Sunum Merkezi','plSunumMerkezi'],['Ders slaytı','plSunumDers'],['Haftanın planı sunumu','plSunumHafta'],['Yıllık plan sunumu','plSunumYil'],['Slayt motoru','vbSunum']); }catch(e){}
 
@@ -5806,7 +5806,7 @@ try{ APP.onceki={surum:'4.7',satir:5449,kb:648}; APP.surum='4.8'; APP.tarih='11.
    SÜRÜM 4.9 — 📋 Yoklama Defteri (Ders Saati’nden, salt okunur rapor)
    + 🏦 baris-kasa · 🔔 bildirim/hatırlatma · 🧰 Araçlar · ℹ️ Hakkında
    ============================================================ */
-var ZSTD_SURUM='4.9.1';
+var ZSTD_SURUM='4.10';
 var KASA_YER='KASA-anahtar-kasada-saklaniyor-00';
 /* ---------- Yoklama kaynağı: Ders Saati hafızası (aynı adres → aynı tarayıcı) ---------- */
 var PYK={t:0,v:null};
@@ -5891,7 +5891,7 @@ try{ planAracCubugu(); }catch(e){}
 var _hpCizV49=typeof hpCiz==='function'?hpCiz:null;
 if(_hpCizV49) hpCiz=function(){ _hpCizV49.apply(this,arguments); try{ var m=document.querySelector('#gonderModalIc .mgov')||document.querySelector('#gonderModalIc'); if(!m||m.querySelector('[data-ykhp]')) return; var b=document.createElement('button'); b.className='fbtn'; b.dataset.ykhp=1; b.style.marginTop='10px'; b.textContent='📋 Yoklama defteri (Ders Saati) · devam raporu · veliye mesaj'; b.onclick=function(){ ykAc({sinif:pykSonSinif()}); }; m.appendChild(b); }catch(e){} };
 /* ---------- Sürüm 4.9 ---------- */
-try{ APP.onceki={surum:'4.8',satir:5609,kb:676}; APP.surum='4.9'; APP.tarih='16.10.2026'; APP.satir=6258; APP.kb=810;
+try{ APP.onceki={surum:'4.8',satir:5609,kb:676}; APP.surum='4.9'; APP.tarih='16.10.2026'; APP.satir=6353; APP.kb=823;
   APP.yenilikler.unshift('📋 Yoklama Defteri: Ders Saati’nde alınan yoklamalar burada da görünür — devam raporu (hafta/ay/dönem/yıl), Excel, yazdırma ve veliye hazır mesaj','🏦 Anahtar kasası (baris-kasa): yapay zekâ anahtarları kasada; ⏰ hatırlatmalar ve 🔔 bildirimler Ayarlar’da','🧰 Sade ekran: yüzen düğmeler Ayarlar → 🧰 Araçlar’a toplandı; istediğini yeniden ekrana alabilirsin');
   MODULLER.push(['Yoklama defteri','ykAc'],['Devam raporu','ykOzet'],['Veliye mesaj','ykMesajAc'],['Araçlar paneli','plAraclarCiz']); }catch(e){}
 window.ZSTD_AYAR={uyg:'robotikplan',surum:ZSTD_SURUM,ad:'Robotik-Kodlama Yıllık Plan',kisaAd:'Ders Planı',ikonEmoji:'🤖',ikonPng:(document.querySelector('link[rel="apple-touch-icon"]')||{}).href||'',kullanici:'Barış Öğretmen',
@@ -6003,6 +6003,101 @@ try{ planAracCubugu(); }catch(e){}
 try{ if(window.ZSTD_AYAR&&ZSTD_AYAR.bolumler) ZSTD_AYAR.bolumler.geri=grAc; }catch(e){}
 try{ APP.onceki={surum:'4.9',satir:6167,kb:796}; APP.surum='4.9.1'; APP.yenilikler.unshift('☁️ İşlenen dersleri geri getir: okula gönderdiğin kartlardan işlenen konular bulunur (ekosisteme yazılmaz); 📲 ilerleme kodu ile tahta ↔ telefon taşıma');
   MODULLER.push(['İşlenenleri geri getir','grAc'],['İlerleme kodu','grKodUret']); }catch(e){}
+
+/* ============================================================
+   SÜRÜM 4.10 — ☁️ BULUT EŞİTLEME (tahta ↔ telefon ↔ ana ekran simgesi)
+   • İşlendi / yarım kaldı / gönderim kayıtları / tatil günleri her cihazda aynı
+   • Ayrı belge: maas_config/robotik_ilerleme_baris (Okula Gönder / pano / ödevlere dokunmaz)
+   • Her işaretin zamanı tutulur: kaldırılan işaret de diğer cihazdan kalkar, yenisi kazanır
+   • 🌧️ Okul kapalı günleri: hatırlatmaya “geçen haftaki tatil nedeniyle aynı konuyla devam” satırı
+   ============================================================ */
+var BS_BELGE='robotik_ilerleme_baris';
+var BS={durum:'bekliyor',son:LS.get('zstd_bs_son',0),hata:'',zm:null,mesgul:false};
+function bsAcik(){ return LS.get('zstd_bs_kapali',false)!==true; }
+function bsYkAcik(){ return LS.get('zstd_bs_yk',false)===true; }
+/* ---- düz harita ↔ iç içe nesne (dk_ilr, dk_yarim: {gi:{tid:{idx:1}}}) ---- */
+function bsDuz(o){ var d={}; Object.keys(o||{}).forEach(function(g){ Object.keys(o[g]||{}).forEach(function(t){ Object.keys(o[g][t]||{}).forEach(function(i){ if(o[g][t][i]) d[g+'|'+t+'|'+i]=1; }); }); }); return d; }
+function bsIc(d){ var o={}; Object.keys(d).forEach(function(k){ var p=k.split('|'); o[p[0]]=o[p[0]]||{}; o[p[0]][p[1]]=o[p[0]][p[1]]||{}; o[p[0]][p[1]][p[2]]=1; }); return o; }
+/* ---- zaman damgalı işaret defteri: değişiklikleri gölge kopyayla yakala ---- */
+var BS_ANAHTAR=[{k:'dk_ilr',tip:'ic'},{k:'dk_yarim',tip:'ic'},{k:'dk_tatil',tip:'liste'}];
+function bsSimdikiDuz(a){ var v=LS.get(a.k,a.tip==='liste'?[]:{}); if(a.tip==='liste'){ var d={}; (v||[]).forEach(function(x){ d[x]=1; }); return d; } return bsDuz(v); }
+function bsYakala(){ var degisti=false; BS_ANAHTAR.forEach(function(a){ var su=bsSimdikiDuz(a), gol=LS.get('zstd_bs_gol_'+a.k,null), ts=LS.get('zstd_bs_ts_'+a.k,{})||{}, t=Date.now();
+    if(gol===null){ Object.keys(su).forEach(function(k){ if(!ts[k]) ts[k]={v:1,t:1}; }); }
+    else { Object.keys(su).forEach(function(k){ if(!gol[k]){ ts[k]={v:1,t:t}; degisti=true; } }); Object.keys(gol).forEach(function(k){ if(!su[k]){ ts[k]={v:0,t:t}; degisti=true; } }); }
+    LS.set('zstd_bs_gol_'+a.k,su); LS.set('zstd_bs_ts_'+a.k,ts); }); return degisti; }
+function bsUygula(a,ts){ var d={}; Object.keys(ts).forEach(function(k){ if(ts[k]&&ts[k].v) d[k]=1; });
+  if(a.tip==='liste') LS.set(a.k,Object.keys(d).sort()); else LS.set(a.k,bsIc(d)); LS.set('zstd_bs_gol_'+a.k,d); LS.set('zstd_bs_ts_'+a.k,ts); }
+function bsBirles(yerel,uzak){ var r=Object.assign({},yerel); Object.keys(uzak||{}).forEach(function(k){ var u=uzak[k]; if(!u) return; if(!r[k]||(u.t||0)>(r[k].t||0)) r[k]={v:u.v?1:0,t:u.t||1}; }); return r; }
+function bsLogBirles(a,b){ var r=JSON.parse(JSON.stringify(a||{})); Object.keys(b||{}).forEach(function(w){ r[w]=r[w]||{}; Object.keys(b[w]||{}).forEach(function(k){ r[w][k]=Math.max(r[w][k]||0,b[w][k]||0); }); }); var ks=Object.keys(r).sort(); while(ks.length>60) delete r[ks.shift()]; return r; }
+/* ---- yoklama (isteğe bağlı): Ders Saati’nin olduğu cihaz yazar, diğerleri okur ---- */
+function bsDsOku(){ try{ return JSON.parse(localStorage.getItem('barisDersSaati.v1')||'null'); }catch(e){ return null; } }
+function bsYkPaket(){ var s=bsDsOku(); if(!s||!s.yk) return null; return {yk:s.yk,rosters:s.rosters||{},t:Date.now()}; }
+/* ---- eşitle ---- */
+async function bsEsitle(elle){ if(BS.mesgul) return; if(!bsAcik()&&!elle) return; if(navigator.onLine===false){ BS.durum='cevrimdisi'; bsRozet(); return; }
+  BS.mesgul=true; BS.durum='esitleniyor'; bsRozet(); var once=grIlrSay();
+  try{ bsYakala(); var fb=await ekoFb(), F=fb.F, ref=F.doc(fb.db,'maas_config',BS_BELGE); var sn=await F.getDoc(ref), u=(sn.exists()&&sn.data())||{};
+    var paket={guncelleme:Date.now(),cihaz:bsCihaz(),surum:APP.surum};
+    BS_ANAHTAR.forEach(function(a){ var yer=LS.get('zstd_bs_ts_'+a.k,{})||{}, bir=bsBirles(yer,(u.ts||{})[a.k]); bsUygula(a,bir); (paket.ts=paket.ts||{})[a.k]=bir; });
+    var log=bsLogBirles(LS.get('dk_hp_log',{}),u.hpLog); LS.set('dk_hp_log',log); paket.hpLog=log;
+    if(bsYkAcik()){ var yp=bsYkPaket(); if(yp&&(!u.yk||(yp.t>(u.yk.t||0)))) paket.yk=yp; else if(u.yk) LS.set('dk_yk_bulut',u.yk); }
+    await F.setDoc(ref,paket,{merge:true});
+    BS.son=Date.now(); LS.set('zstd_bs_son',BS.son); BS.durum='tamam'; BS.hata='';
+    var sonra=grIlrSay(); if(sonra!==once){ grYenile(); toast('☁️ Eşitlendi: '+once+' → '+sonra+' işaretli ders','ok',3500); } else if(elle) toast('☁️ Eşitlendi · '+sonra+' işaretli ders','ok',2500);
+  }catch(e){ BS.durum='hata'; BS.hata=(e&&e.message)||String(e); if(elle) toast('☁️ Buluta ulaşılamadı — internet bağlantısını kontrol et. İşaretlerin bu cihazda güvende.','err',4500); }
+  BS.mesgul=false; bsRozet(); }
+function bsCihaz(){ var u=navigator.userAgent; return /iPhone/.test(u)?'iPhone'+(Z_standalone()?' (ana ekran)':' (Safari)'):/iPad/.test(u)?'iPad':/Android/.test(u)?'Android':/Windows/.test(u)?'Windows (tahta/PC)':'Bilgisayar'; }
+function Z_standalone(){ try{ return matchMedia('(display-mode: standalone)').matches||navigator.standalone===true; }catch(e){ return false; } }
+function bsZamanla(){ clearTimeout(BS.zm); BS.zm=setTimeout(function(){ bsEsitle(false); },2500); }
+/* Değişiklik olunca kısa süre sonra gönder; açılışta, öne gelince ve dakikada bir kontrol et */
+setInterval(function(){ try{ if(bsYakala()) bsZamanla(); }catch(e){} },2000);
+window.addEventListener('storage',function(e){ if(e.key==='dk_ilr'||e.key==='dk_yarim'||e.key==='dk_tatil') bsZamanla(); });
+document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible') bsZamanla(); });
+window.addEventListener('online',bsZamanla);
+setInterval(function(){ if(document.visibilityState==='visible') bsEsitle(false); },60000);
+setTimeout(function(){ bsEsitle(false); },1500);
+/* ---- durum rozeti (araç çubuğu) ---- */
+function bsSaat(t){ if(!t) return 'henüz yok'; var d=new Date(t), n=new Date(); var s=d.toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'}); return (d.toDateString()===n.toDateString())?s:d.toLocaleDateString('tr-TR',{day:'numeric',month:'short'})+' '+s; }
+function bsRozetMetin(){ if(!bsAcik()) return '☁️ Bulut kapalı'; return BS.durum==='esitleniyor'?'☁️ Eşitleniyor…':BS.durum==='hata'?'☁️ ⚠️ Eşitlenemedi':BS.durum==='cevrimdisi'?'☁️ 📴 Çevrimdışı':'☁️ Eşitlendi '+bsSaat(BS.son); }
+function bsRozet(){ document.querySelectorAll('[data-bsroz]').forEach(function(b){ b.textContent=bsRozetMetin(); }); var x=document.getElementById('bsDurum'); if(x) x.innerHTML=bsDurumHTML(); }
+function bsDurumHTML(){ return (bsAcik()?'✅':'⛔')+' Otomatik eşitleme '+(bsAcik()?'açık':'kapalı')+' · son: <b>'+bsSaat(BS.son)+'</b> · bu cihaz: <b>'+esc(bsCihaz())+'</b> · işaretli ders: <b>'+grIlrSay()+'</b>'+(BS.durum==='hata'?'<br>⚠️ Son deneme olmadı (internet?). İşaretler bu cihazda güvende; bağlantı gelince kendiliğinden gönderilir.':''); }
+var _planAracCubuguV51=planAracCubugu;
+planAracCubugu=function(){ _planAracCubuguV51.apply(this,arguments); try{ var f=$('#filtre'); if(!f||f.querySelector('[data-bsroz]')) return; var b=document.createElement('button'); b.className='fbtn'; b.dataset.bsroz=1; b.textContent=bsRozetMetin(); b.title='Bulut eşitleme — dokun: şimdi eşitle'; b.onclick=function(){ grAc(); }; f.insertBefore(b,f.children[1]||null); }catch(e){} };
+try{ planAracCubugu(); }catch(e){}
+/* ---- “Geri getir” penceresine bulut bölümü ---- */
+var _grCizV51=grCiz;
+grCiz=function(){ _grCizV51(); try{ var ic=document.getElementById('grIc'); if(!ic) return; var d=document.createElement('div');
+  d.innerHTML='<h4 style="margin:0 0 6px">☁️ Bulut eşitleme — her cihazda aynı plan</h4><div class="yk-oz" id="bsDurum">'+bsDurumHTML()+'</div>'+
+   '<div class="yk-not" style="margin-top:4px">Nerede işaretlersen (tahta, telefon, ana ekran simgesi) diğerlerinde de görünür. Kaldırdığın işaret de her yerde kalkar. Kayıt okul ekosisteminde <b>ayrı bir belgeye</b> yazılır; Okula Gönder, pano ve ödevlere dokunmaz. <b>Tahtadaki eski işaretler</b>, tahtada bu sürüm ilk açıldığında kendiliğinden buluta çıkar ve telefona gelir.</div>'+
+   '<div class="yk-sat"><button class="yk-b p" data-bs>🔄 Şimdi eşitle</button><label style="display:flex;gap:8px;align-items:center;font-weight:800;font-size:14px"><input type="checkbox" id="bsAc" '+(bsAcik()?'checked':'')+' style="width:22px;height:22px"> Otomatik eşitleme</label>'+
+   '<label style="display:flex;gap:8px;align-items:center;font-weight:800;font-size:14px"><input type="checkbox" id="bsYk" '+(bsYkAcik()?'checked':'')+' style="width:22px;height:22px"> Yoklama defterini de eşitle <small style="font-weight:600;color:#64748b">(öğrenci adları içerir)</small></label></div>'+
+   '<h4 style="margin:16px 0 6px">🌧️ Okul kapalı günleri</h4><div class="yk-not" style="margin-top:0">Bu günlerde dersi olan sınıfların bir sonraki ders hatırlatmasına “tatil nedeniyle aynı konuyla devam ediyoruz” satırı eklenir. İşlenmeyen dersleri işaretlemediğin için sıradaki konu zaten kaldığın yerden devam eder.</div><div class="yk-cip" id="ttListe"></div>'+
+   '<div class="yk-sat yk-ms"><input type="date" id="ttGun" style="flex:0 0 auto"><button class="yk-b" data-tt>➕ Ekle</button></div><hr style="border:0;border-top:1px solid #e2e8f0;margin:16px 0">';
+  ic.insertBefore(d,ic.firstChild);
+  d.querySelector('[data-bs]').onclick=function(){ bsEsitle(true); };
+  d.querySelector('#bsAc').onchange=function(){ LS.set('zstd_bs_kapali',!this.checked); bsRozet(); if(this.checked) bsEsitle(true); };
+  d.querySelector('#bsYk').onchange=function(){ if(this.checked&&!confirm('Yoklama defteri (öğrenci adları ve devamsızlık) okul ekosistemindeki ayrı belgeye de yazılsın mı? Böylece telefonda da görürsün.')){ this.checked=false; return; } LS.set('zstd_bs_yk',this.checked); bsEsitle(true); };
+  ttCiz(); d.querySelector('[data-tt]').onclick=function(){ var v=d.querySelector('#ttGun').value; if(!v) return; var L=LS.get('dk_tatil',[])||[]; if(L.indexOf(v)<0) L.push(v); LS.set('dk_tatil',L.sort()); ttCiz(); bsZamanla(); }; }catch(e){ try{console.warn('bs',e);}catch(_){} } };
+function ttCiz(){ var el=document.getElementById('ttListe'); if(!el) return; var L=LS.get('dk_tatil',[])||[];
+  el.innerHTML=L.length?L.map(function(g){ return '<button data-ts="'+g+'" aria-label="Kaldır">🌧️ '+ykTarihYaz(g,true)+' ✕</button>'; }).join(''):'<span class="yk-not" style="margin:0">Kayıtlı kapalı gün yok.</span>';
+  el.querySelectorAll('[data-ts]').forEach(function(b){ b.onclick=function(){ var L=(LS.get('dk_tatil',[])||[]).filter(function(x){ return x!==b.dataset.ts; }); LS.set('dk_tatil',L); ttCiz(); bsZamanla(); }; }); }
+/* İlk kurulum: söylediğin yağmur tatili (14–16 Ekim 2026) */
+if(!LS.get('zstd_tt_ilk',false)){ var _tt=LS.get('dk_tatil',[])||[]; ['2026-10-14','2026-10-15','2026-10-16'].forEach(function(g){ if(_tt.indexOf(g)<0) _tt.push(g); }); LS.set('dk_tatil',_tt.sort()); LS.set('zstd_tt_ilk',true); }
+/* Hatırlatma: geçen 7 günde bu sınıfın dersi kapalı bir güne denk geldiyse tek satır ekle */
+function ttKacan(gi,d){ var L=LS.get('dk_tatil',[])||[]; if(!L.length) return false; var ref=new Date(d); ref.setHours(12,0,0,0);
+  for(var k=1;k<=7;k++){ var x=new Date(ref); x.setDate(x.getDate()-k); if(L.indexOf(vbGunKey(x))<0) continue; try{ if(vbProgDersleri(gi,x).length) return true; }catch(e){} } return false; }
+var _hpHatMetinV51=hpHatMetin;
+hpHatMetin=function(p,d){ var s=_hpHatMetinV51(p,d); try{ if(ttKacan(p.gi,d)&&s.indexOf('🌧️')<0){ var L=s.split('\n'); L.splice(1,0,'🌧️ Geçen hafta okullar tatil olduğu için işleyemediğimiz konuyla devam ediyoruz.'); s=L.join('\n'); } }catch(e){} return s; };
+/* Yoklama: bu cihazda Ders Saati yoksa buluttan gelen defteri göster */
+(function(){ var _oku=YK.kaynak.oku, _liste=YK.kaynak.liste, _sin=YK.kaynak.siniflar;
+  function bul(){ var s=bsDsOku(); if(s&&s.yk&&Object.keys(s.yk).length) return null; return LS.get('dk_yk_bulut',null); }
+  YK.kaynak.oku=function(){ var b=bul(); return b?(b.yk||{}):_oku(); };
+  YK.kaynak.liste=function(c){ var b=bul(); return b?((b.rosters||{})[c]||[]).filter(Boolean):_liste(c); };
+  YK.kaynak.siniflar=function(){ var b=bul(); return b?Object.keys(b.rosters||{}).filter(function(c){ return (b.rosters[c]||[]).length; }).sort(function(x,y){ return x.localeCompare(y,'tr'); }):_sin(); }; })();
+/* Yedek dosyasında bulut ayarları da olsun */
+try{ if(window.ZSTD_AYAR) ZSTD_AYAR.bolumler.bulut=function(){ grAc(); }; }catch(e){}
+try{ APP.onceki={surum:'4.9.1',satir:6258,kb:809}; APP.surum='4.10'; APP.tarih='18.10.2026';
+  APP.yenilikler.unshift('☁️ Bulut eşitleme: işlendi/yarım işaretleri, gönderim kayıtları ve tatil günleri tahta, telefon ve ana ekran simgesinde aynı (ayrı belge; Okula Gönder’e dokunmaz)','🌧️ Okul kapalı günleri: sonraki ders hatırlatmasına “tatil nedeniyle aynı konuyla devam” satırı');
+  MODULLER.push(['Bulut eşitleme','bsEsitle'],['Okul kapalı günleri','ttKacan']); }catch(e){}
 
 </script>
 <script>
