@@ -5412,6 +5412,100 @@ function ykToast(m,geri){ try{ if(YK.kaynak&&YK.kaynak.toast&&!geri) return YK.k
   t.textContent=m; if(geri){ var b=document.createElement('button'); b.textContent='↩️ Geri al'; b.style.cssText='border:0;border-radius:10px;padding:6px 10px;font-weight:900;cursor:pointer'; b.onclick=function(){ geri(); t.remove(); }; t.appendChild(b); }
   document.body.appendChild(t); setTimeout(function(){ t.remove(); },geri?6000:3000); }
 
+/* ============================================================
+   📋 YOKLAMA v2 — DERS DERS kayıt + 🔄 yeniden al
+   yk[gün][sınıf].dersler[dersSaati] = {y:[gelmeyen], g:[geç], al:1, s:'ders adı', saat:'10:50', t}
+   Günlük alanlar (y, g, n, d, al) derslerden kendiliğinden toplanır → eski raporlar ve
+   Araçlar’daki eski yoklama paneli aynen çalışır. Eski (dersiz) kayıtlar olduğu gibi sayılır.
+   ============================================================ */
+YK.durum.ders=null;
+function ykDersListe(dk,c){ var L=[]; try{ L=((YK.kaynak.dersListe&&YK.kaynak.dersListe(dk,c))||[]).slice(); }catch(e){}
+  var r=ykKayit(dk,c); if(r&&r.dersler) Object.keys(r.dersler).forEach(function(i){ if(!L.some(function(x){ return String(x.i)===String(i); })) L.push({i:+i,saat:r.dersler[i].saat||'',s:r.dersler[i].s||''}); });
+  return L.sort(function(a,b){ return a.i-b.i; }); }
+function ykDersEtiket(x){ return (x.i+1)+'. ders'+(x.saat?' '+x.saat:'')+(x.s?' · '+x.s:''); }
+function ykDersKayit(dk,c,i,olustur){ var r=ykKayit(dk,c,olustur); if(!r) return null; if(!r.dersler){ if(!olustur) return null; r.dersler={}; if(r.al&&((r.y||[]).length||(r.g||[]).length)){ ykDersListe(dk,c).forEach(function(d){ r.dersler[d.i]={y:(r.y||[]).slice(),g:(r.g||[]).slice(),al:1,s:d.s,saat:d.saat,t:r.t||Date.now()}; }); } } var x=r.dersler[i]; if(!x){ if(!olustur) return null; x=r.dersler[i]={y:[],g:[]}; } x.y=x.y||[]; x.g=x.g||[]; return x; }
+function ykGunTopla(dk,c){ var r=ykKayit(dk,c); if(!r||!r.dersler) return; var y=[],g=[],n=0,ad=[];
+  Object.keys(r.dersler).sort(function(a,b){ return a-b; }).forEach(function(i){ var x=r.dersler[i]; if(!x||!x.al) return; n++; x.y.forEach(function(a){ if(y.indexOf(a)<0) y.push(a); }); x.g.forEach(function(a){ if(g.indexOf(a)<0) g.push(a); }); if(x.s&&ad.indexOf(x.s)<0) ad.push(x.s); });
+  r.y=y; r.g=g.filter(function(a){ return y.indexOf(a)<0; }); r.n=n||1; if(ad.length) r.d=ad.join(' · '); r.al=n?1:0; r.t=Date.now(); }
+function ykAktifDers(dk,c){ try{ var a=YK.kaynak.aktifDers&&YK.kaynak.aktifDers(c,dk); if(a!=null) return a; }catch(e){} return null; }
+function ykHedef(dk,c,i){ if(i!=null&&i!=='gun') return [+i]; var L=ykDersListe(dk,c); if(!L.length) return []; var a=ykAktifDers(dk,c); return a!=null&&L.some(function(x){ return x.i===a; })?[a]:L.map(function(x){ return x.i; }); }
+function ykDersBilgiYaz(dk,c,i,x){ var L=ykDersListe(dk,c), d=L.filter(function(z){ return z.i===+i; })[0]; if(d){ x.s=d.s||x.s||''; x.saat=d.saat||x.saat||''; } }
+function ykDurum(dk,c,ad,i){ var x=(i!=null&&i!=='gun')?ykDersKayit(dk,c,i):null, r=x||ykKayit(dk,c); if(!r) return 'var'; if((r.y||[]).indexOf(ad)>=0) return 'yok'; if((r.g||[]).indexOf(ad)>=0) return 'gec'; return 'var'; }
+function ykAyarla(dk,c,ad,durum,i){ if(ykSalt()) return; var H=ykHedef(dk,c,i);
+  if(!H.length){ var r=ykKayit(dk,c,true); r.y=r.y.filter(function(x){ return x!==ad; }); r.g=r.g.filter(function(x){ return x!==ad; }); if(durum==='yok') r.y.push(ad); if(durum==='gec') r.g.push(ad); r.al=1; r.t=Date.now(); ykBilgi(dk,c,r); ykYaz(dk,c); return; }
+  H.forEach(function(h){ var x=ykDersKayit(dk,c,h,true); x.y=x.y.filter(function(z){ return z!==ad; }); x.g=x.g.filter(function(z){ return z!==ad; }); if(durum==='yok') x.y.push(ad); if(durum==='gec') x.g.push(ad); x.al=1; x.t=Date.now(); ykDersBilgiYaz(dk,c,h,x); });
+  ykGunTopla(dk,c); ykYaz(dk,c); }
+function ykHerkes(dk,c,i){ if(ykSalt()) return; var H=ykHedef(dk,c,i);
+  if(!H.length){ var r=ykKayit(dk,c,true); r.y=[]; r.g=[]; r.al=1; r.t=Date.now(); ykBilgi(dk,c,r); ykYaz(dk,c); return; }
+  H.forEach(function(h){ var x=ykDersKayit(dk,c,h,true); x.y=[]; x.g=[]; x.al=1; x.t=Date.now(); ykDersBilgiYaz(dk,c,h,x); }); ykGunTopla(dk,c); ykYaz(dk,c); }
+function ykSil(dk,c,i){ if(ykSalt()) return; var v=ykVeri(), r=v[dk]&&v[dk][c];
+  if(r&&r.dersler&&i!=null&&i!=='gun'){ delete r.dersler[i]; if(Object.keys(r.dersler).length){ ykGunTopla(dk,c); ykYaz(dk,c); return; } }
+  if(v[dk]){ delete v[dk][c]; if(!Object.keys(v[dk]).length) delete v[dk]; } ykYaz(dk,c); }
+function ykAlindiMi(dk,c,i){ if(i!=null&&i!=='gun'){ var x=ykDersKayit(dk,c,i); return !!(x&&x.al); } var r=ykKayit(dk,c); return !!(r&&r.al); }
+function ykBugunAlinmadi(c){ if(!c||!ykListe(c).length) return false; var dk=ykDK(ykSimdi()), a=ykAktifDers(dk,c); return a!=null?!ykAlindiMi(dk,c,a):!ykAlindiMi(dk,c); }
+/* Özet: ders ders sayım (eski kayıtlar: o günün ders sayısı kadar) */
+function ykOzet(c,bas,bit){ var v=ykVeri(), gun=0, ders=0, kisi={}, gunler=[];
+  function K(a){ return kisi[a]||(kisi[a]={ad:a,yok:0,yokDers:0,gec:0,tar:[],eski:true}); }
+  ykListe(c).forEach(function(a){ kisi[a]={ad:a,yok:0,yokDers:0,gec:0,tar:[]}; });
+  Object.keys(v).sort().forEach(function(dk){ if(dk<bas||dk>bit) return; var r=v[dk]&&v[dk][c]; if(!r||!r.al) return; gun++; gunler.push(dk);
+    if(r.dersler&&Object.keys(r.dersler).some(function(i){ return r.dersler[i]&&r.dersler[i].al; })){
+      var D=Object.keys(r.dersler).filter(function(i){ return r.dersler[i]&&r.dersler[i].al; }).sort(function(a,b){ return a-b; }); ders+=D.length; var yk={}, gc={};
+      D.forEach(function(i){ var x=r.dersler[i], et=ykDersEtiket({i:+i,saat:x.saat,s:x.s}); (x.y||[]).forEach(function(a){ (yk[a]=yk[a]||[]).push(et); }); (x.g||[]).forEach(function(a){ (gc[a]=gc[a]||[]).push(et); }); });
+      Object.keys(yk).forEach(function(a){ var k=K(a); k.yok++; k.yokDers+=yk[a].length; k.tar.push({dk:dk,durum:'yok',d:yk[a].join(', ')+(yk[a].length<D.length?' (günün '+D.length+' dersinden '+yk[a].length+')':'')}); });
+      Object.keys(gc).forEach(function(a){ if(yk[a]) return; var k=K(a); k.gec++; k.tar.push({dk:dk,durum:'gec',d:gc[a].join(', ')}); }); }
+    else { var n=r.n||1; ders+=n; (r.y||[]).forEach(function(a){ var k=K(a); k.yok++; k.yokDers+=n; k.tar.push({dk:dk,durum:'yok',d:r.d||''}); }); (r.g||[]).forEach(function(a){ var k=K(a); k.gec++; k.tar.push({dk:dk,durum:'gec',d:r.d||''}); }); } });
+  var ogr=Object.keys(kisi).map(function(a){ var k=kisi[a]; k.devam=gun?Math.round((gun-k.yok)*100/gun):null; return k; }).sort(function(a,b){ return (b.yok-a.yok)||(b.gec-a.gec)||a.ad.localeCompare(b.ad,'tr'); });
+  return {gun:gun,ders:ders,ogr:ogr,gunler:gunler}; }
+/* Veliye mesaj: hangi ders(ler) */
+var _ykMesajGunV2=ykMesajGun;
+ykMesajGun=function(c,ad,dk,durum,i){ var r=ykKayit(dk,c)||{}, L=[];
+  if(r.dersler){ Object.keys(r.dersler).sort(function(a,b){ return a-b; }).forEach(function(k){ var x=r.dersler[k]; if(!x||!x.al) return; if((i==null||i==='gun'||+k===+i)&&((durum==='gec'?x.g:x.y)||[]).indexOf(ad)>=0) L.push(x.s?(+k+1)+'. ders ('+(x.saat||'')+') '+x.s:(+k+1)+'. ders'); }); }
+  var m=_ykMesajGunV2(c,ad,dk,durum); if(!L.length) return m;
+  var ders=L.length===1?L[0]+' dersimize':L.join(' ve ')+' derslerimize';
+  return m.replace(c+' '+ykDersAd(r),c+' '+ders); };
+/* ---------- Görünüm: ders seçimi + 🔄 yeniden al ---------- */
+function ykAc(o){ o=o||{}; ykCss(); var S=ykSiniflar(); YK.durum.sinif=o.sinif||YK.durum.sinif||S.bugun[0]||S.hep[0]||null;
+  if(S.hep.indexOf(YK.durum.sinif)<0&&YK.durum.sinif&&!ykListe(YK.durum.sinif).length&&S.hep.length) YK.durum.sinif=S.hep[0];
+  YK.durum.sekme=o.sekme||(ykSalt()?'rapor':'bugun'); YK.durum.tarih=o.tarih||ykDK(ykSimdi()); YK.durum.ogr=null; YK.durum.ders=(o.ders!=null)?o.ders:null;
+  var ov=document.getElementById('ykOv'); if(!ov){ ov=document.createElement('div'); ov.id='ykOv'; ov.className='yk-ov'; ov.setAttribute('role','dialog'); ov.setAttribute('aria-label','Yoklama defteri');
+    ov.addEventListener('click',function(e){ if(e.target===ov) ykKapat(); }); document.body.appendChild(ov); }
+  ykCiz(); }
+function ykSeciliDers(dk,c){ var L=ykDersListe(dk,c), D=YK.durum; if(!L.length){ D.ders=null; return {L:L,i:null}; }
+  if(D.ders==null||!L.some(function(x){ return x.i===+D.ders; })){ var a=ykAktifDers(dk,c); D.ders=(a!=null&&L.some(function(x){ return x.i===a; }))?a:(L.filter(function(x){ return !ykAlindiMi(dk,c,x.i); })[0]||L[0]).i; }
+  return {L:L,i:+D.ders}; }
+function ykBugunCiz(g,c){ var D=YK.durum, dk=D.tarih, A=ykListe(c), salt=ykSalt(), bug=ykDK(ykSimdi()), SD=ykSeciliDers(dk,c), i=SD.i, x=i!=null?ykDersKayit(dk,c,i):ykKayit(dk,c);
+  var h='<div class="yk-sat"><button class="yk-b s" data-g="-1" aria-label="Önceki gün">◀</button><b style="font-size:17px">🗓️ '+ykTarihYaz(dk)+(dk===bug?' · bugün':'')+'</b><button class="yk-b s" data-g="1" aria-label="Sonraki gün">▶</button>'+(dk!==bug?'<button class="yk-b s" data-g="0">Bugüne dön</button>':'')+'</div>';
+  if(SD.L.length) h+='<div class="yk-cip" aria-label="Dersler">'+SD.L.map(function(d){ var al=ykAlindiMi(dk,c,d.i); return '<button data-ders="'+d.i+'" class="'+(d.i===i?'on':'')+'" style="'+(al&&d.i!==i?'border-color:#22c55e':'')+'">'+(al?'✅ ':'⏳ ')+ykE(ykDersEtiket(d))+'</button>'; }).join('')+'</div>';
+  else h+='<div class="yk-not" style="margin-top:0">Bu gün programda '+ykE(c)+' dersi görünmüyor; yoklama günlük kaydedilir.</div>';
+  if(!A.length){ g.innerHTML=h+'<div class="yk-oz">'+ykE(c)+' için öğrenci listesi yok. '+(salt?'':'<button class="yk-b p" data-liste>📋 Sınıf listesini ekle</button>')+'</div>'; ykBugunBagla(g,c); return; }
+  var yok=x?(x.y||[]).length:0, gec=x?(x.g||[]).length:0;
+  h+=salt?'':'<div class="yk-not" style="margin-top:0">Gelmeyenin adına dokun: <b>✓ geldi → ✕ gelmedi → ⏰ geç</b>. Yanındaki sayı bu yıl kaç gün gelmediğini gösterir.</div>';
+  h+='<div class="yk-grid">'+A.map(function(a){ var d=ykDurum(dk,c,a,i), ys=ykYilSay(c,a); return '<button class="yk-ad '+(d==='var'?'':d)+'" data-a="'+ykE(a)+'" '+(salt?'disabled':'')+' aria-label="'+ykE(a)+': '+(d==='yok'?'gelmedi':d==='gec'?'geç geldi':'geldi')+'"><i>'+(d==='yok'?'✕':d==='gec'?'⏰':'✓')+'</i><span>'+ykE(a)+'</span>'+(ys?'<small title="Bu yıl gelmediği gün">'+ys+'</small>':'')+'</button>'; }).join('')+'</div>';
+  h+='<div class="yk-oz">'+(x&&x.al?'✅ Yoklama alındı':'⏳ Yoklama henüz alınmadı')+(i!=null?' ('+ykE(ykDersEtiket(SD.L.filter(function(z){ return z.i===i; })[0]||{i:i}))+')':'')+' · Gelen <b>'+(A.length-yok)+'</b> · Gelmeyen <b style="color:#b91c1c">'+yok+'</b> · Geç <b style="color:#b45309">'+gec+'</b></div>';
+  if(!salt) h+='<div class="yk-sat"><button class="yk-b y" data-hep>✅ Herkes burada</button><button class="yk-b p" data-tamam>💾 Yoklamayı kaydet</button><button class="yk-b" data-tekrar>🔄 Yoklamayı yeniden al</button>'+(SD.L.length>1?'<button class="yk-b" data-hepsine>📋 Bugünkü diğer derslerine de uygula</button>':'')+'</div>';
+  if(x&&((x.y||[]).length||(x.g||[]).length)){ h+='<h4 style="margin:14px 0 4px">📨 Veliye bilgi</h4>';
+    (x.y||[]).concat(x.g||[]).forEach(function(a){ var d=(x.y||[]).indexOf(a)>=0?'yok':'gec'; h+='<div class="yk-sat2"><b>'+(d==='yok'?'✕ ':'⏰ ')+ykE(a)+'</b><span style="color:#64748b;font-size:13px">'+(d==='yok'?'gelmedi':'geç geldi')+' · bu yıl '+ykYilSay(c,a)+' gün</span><button class="yk-b s p" data-m="'+ykE(a)+'" data-d="'+d+'">📨 Veliye mesaj</button></div>'; }); }
+  g.innerHTML=h; ykBugunBagla(g,c); }
+function ykBugunBagla(g,c){ var D=YK.durum, dk=D.tarih, i=function(){ return D.ders==null?null:+D.ders; };
+  g.querySelectorAll('[data-g]').forEach(function(b){ b.onclick=function(){ var k=+b.dataset.g; if(!k){ D.tarih=ykDK(ykSimdi()); } else { var t=ykTarih(D.tarih); t.setDate(t.getDate()+k); D.tarih=ykDK(t); } D.ders=null; ykCiz(); }; });
+  g.querySelectorAll('[data-ders]').forEach(function(b){ b.onclick=function(){ D.ders=+b.dataset.ders; ykCiz(); }; });
+  g.querySelectorAll('[data-a]').forEach(function(b){ b.onclick=function(){ var a=b.dataset.a, d=ykDurum(D.tarih,c,a,i()); ykAyarla(D.tarih,c,a,d==='var'?'yok':d==='yok'?'gec':'var',i()==null?'gun':i()); ykCiz(); }; });
+  var q=function(s){ return g.querySelector(s); }, x;
+  x=q('[data-hep]'); if(x) x.onclick=function(){ ykHerkes(D.tarih,c,i()==null?'gun':i()); ykCiz(); ykToast('✅ '+c+': herkes burada'); };
+  x=q('[data-tamam]'); if(x) x.onclick=function(){ var k=i(); if(k!=null){ var z=ykDersKayit(D.tarih,c,k,true); z.al=1; z.t=Date.now(); ykDersBilgiYaz(D.tarih,c,k,z); ykGunTopla(D.tarih,c); } else { var r=ykKayit(D.tarih,c,true); r.al=1; r.t=Date.now(); ykBilgi(D.tarih,c,r); } ykYaz(D.tarih,c); ykToast('💾 '+c+' yoklaması kaydedildi'); ykKapat(); };
+  x=q('[data-tekrar]'); if(x) x.onclick=function(){ var k=i(); if(!ykAlindiMi(D.tarih,c,k==null?undefined:k)&&!ykKayit(D.tarih,c)){ ykToast('Bu derste henüz yoklama yok — adlara dokunarak al'); return; } if(!confirm(ykTarihYaz(D.tarih)+' · '+c+(k!=null?' · '+(k+1)+'. ders':'')+' yoklaması silinip baştan alınsın mı?')) return;
+    var r=ykKayit(D.tarih,c), yed=r?JSON.parse(JSON.stringify(r)):null, dk=D.tarih; ykSil(dk,c,k==null?'gun':k); ykCiz(); ykToast('🔄 Yoklama sıfırlandı — yeniden al',function(){ if(!yed) return; var v=ykVeri(); v[dk]=v[dk]||{}; v[dk][c]=yed; ykYaz(dk,c); ykCiz(); }); };
+  x=q('[data-hepsine]'); if(x) x.onclick=function(){ var k=i(), kay=ykDersKayit(D.tarih,c,k,true), L=ykDersListe(D.tarih,c); L.forEach(function(d){ if(d.i===k) return; var z=ykDersKayit(D.tarih,c,d.i,true); z.y=kay.y.slice(); z.g=kay.g.slice(); z.al=1; z.t=Date.now(); ykDersBilgiYaz(D.tarih,c,d.i,z); }); kay.al=1; ykDersBilgiYaz(D.tarih,c,k,kay); ykGunTopla(D.tarih,c); ykYaz(D.tarih,c); ykCiz(); ykToast('📋 '+L.length+' derse uygulandı'); };
+  x=q('[data-liste]'); if(x) x.onclick=function(){ ykKapat(); try{ YK.kaynak.listeAc&&YK.kaynak.listeAc(c); }catch(e){} };
+  g.querySelectorAll('[data-m]').forEach(function(b){ b.onclick=function(){ ykMesajAc(c,b.dataset.m,ykMesajGun(c,b.dataset.m,D.tarih,b.dataset.d,i())); }; }); }
+function ykGunCiz(g,c){ var v=ykVeri(), gunler=Object.keys(v).filter(function(dk){ return v[dk][c]&&v[dk][c].al; }).sort().reverse();
+  var h='<div class="yk-oz">'+ykE(c)+' · yoklama alınan <b>'+gunler.length+'</b> gün (bu cihazdaki kayıt)</div>';
+  h+=gunler.length?gunler.map(function(dk){ var r=v[dk][c], ic='';
+    if(r.dersler) ic=Object.keys(r.dersler).sort(function(a,b){ return a-b; }).filter(function(i){ return r.dersler[i]&&r.dersler[i].al; }).map(function(i){ var x=r.dersler[i]; return '<div style="font-size:13.5px;margin-top:3px">• <b>'+ykE(ykDersEtiket({i:+i,saat:x.saat,s:x.s}))+'</b>: '+((x.y||[]).length?'✕ '+x.y.map(ykE).join(', '):'✅ herkes geldi')+((x.g||[]).length?' · ⏰ '+x.g.map(ykE).join(', '):'')+'</div>'; }).join('');
+    else ic='<div style="font-size:13.5px">'+(r.y.length?'✕ '+r.y.map(ykE).join(', '):'✅ Herkes geldi')+(r.g&&r.g.length?' · ⏰ '+r.g.map(ykE).join(', '):'')+(r.d?' · '+ykE(r.d):'')+'</div>';
+    return '<div class="yk-sat2"><span style="flex:1"><b>'+ykTarihYaz(dk)+'</b>'+(r.n?' · '+r.n+' ders':'')+ic+'</span>'+(ykSalt()?'':'<button class="yk-b s" data-du="'+dk+'">✏️ Düzelt</button>')+'</div>'; }).join(''):'<div class="yk-not">Henüz kayıt yok.</div>';
+  g.innerHTML=h; g.querySelectorAll('[data-du]').forEach(function(b){ b.onclick=function(){ YK.durum.tarih=b.dataset.du; YK.durum.sekme='bugun'; YK.durum.ders=null; ykCiz(); }; }); }
+
 var VBG={sec:{},disari:false};
 function vbEsc(s){ return esc(String(s==null?'':s)).replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 function vbSinifAd(gi){ try{ var p=hpProg().filter(function(x){ return x.gi===gi; })[0]; if(p) return p.ad; }catch(e){} return (typeof tahtaSinifAdi==='function')?tahtaSinifAdi(gi):ozGname(gi); }
@@ -5519,7 +5613,7 @@ function vbHashAc(){ var h=decodeURIComponent(location.hash||''); if(!/^#veli=/.
 vbHashAc(); window.addEventListener('hashchange',vbHashAc);
 window.addEventListener('storage',function(e){ if(e.key!==VB_LOG&&e.key!==VB_TER) return; try{ var m=document.getElementById('hpModal'); if(m&&m.classList.contains('acik')&&(HP.sek==='gunluk'||HP.sek==='asist')){ var ae=document.activeElement; if(ae&&ae.isContentEditable) return; hpCiz(); } }catch(_){} });
 /* sürüm + öz-kontrol */
-try{ APP.onceki={surum:'4.4',satir:5007,kb:583}; APP.surum='4.5'; APP.tarih='07.10.2026'; APP.satir=6777; APP.kb=892;
+try{ APP.onceki={surum:'4.4',satir:5007,kb:583}; APP.surum='4.5'; APP.tarih='07.10.2026'; APP.satir=6872; APP.kb=906;
   APP.yenilikler.unshift('📨 ✅ İşlendi deyince veliye bilgi: renkli kart kendiliğinden hazır → 📤 Şimdi gönder (günlük) ya da 🗓️ Haftalık özete bırak','⚡ Hızlı Paylaş’ta yeni sekme: ✅ Bugün işlenenler — Ders Saati’nden gelenler de burada; gönderim mevcut 📤 Okula Gönder yolundan, son onayla','📝 “Bu hafta ne yaptık” kartlarına o hafta ✅ işlenen konular kendiliğinden eklenir','👤 Sınıf başına tercih: her seferinde sor · hep günlük · hep haftalık (Ders Saati ile ortak)');
   MODULLER.push(['Veliye bilgi (işlendi → kart)','vbSor'],['Bugün işlenenler (günlük gönderim)','vbGunlukCiz'],['Ortak veli metni','vbMetin'],['Haftalık özete işlenenler','vbHaftaListesi']); }catch(e){}
 
@@ -5621,7 +5715,7 @@ hpCiz=function(){ _hpCizV46.apply(this,arguments); try{ var host=document.getEle
   if(HP.sek==='etk'){ var d=document.createElement('div'); d.innerHTML=etkCiz(); while(d.firstChild) mg.appendChild(d.firstChild); }
   if(HP.sek==='gunluk'){ var b=document.createElement('button'); b.className='btn p'; b.style.cssText='width:100%;justify-content:center;margin:0 0 12px'; b.textContent='🎮 Sitendeki bugünkü çalışmayı ekle · ⚡ derse uygun prompt ›'; b.onclick=function(){ HP.sek='etk'; hpCiz(); }; var ilk=tabs?tabs.nextSibling:null; mg.insertBefore(b,ilk); }
 } catch(e){ try{console.warn('hpCiz v4.6',e);}catch(_){} } };
-try{ APP.onceki={surum:'4.5',satir:5198,kb:611}; APP.surum='4.6'; APP.satir=6777; APP.kb=892;
+try{ APP.onceki={surum:'4.5',satir:5198,kb:611}; APP.surum='4.6'; APP.satir=6872; APP.kb=906;
   APP.yenilikler.unshift('🎮 Yeni sekme “Çalışma → Ders”: sitendeki çalışma mesajını yapıştır → her sınıfa o günün konusuyla bağlanan renkli kart (çalışmanın kısa anlatımı + oyunlaştırmanın katkısı) + çalışma düğmesi → okula doğrudan','⚡ Hızlı ekleme: sınıfın bugünkü konusuna uygun, kaliteli oyun/çalışma prompt’u (7 oyun türü) tek dokunuşla kopyala');
   MODULLER.push(['Çalışma → Ders kartı','etkCiz'],['Çalışma gönderimi','etkGonder'],['Hızlı çalışma prompt’u','etkPromptMetni']); }catch(e){}
 
@@ -5682,7 +5776,7 @@ var _seansAcV47=seansAc;
 seansAc=function(tid,i){ var r=_seansAcV47.apply(this,arguments); try{ if(tid==='kocluk'){ var mg=document.querySelector('#haftaModalIc .mgov'); if(mg&&!mg.querySelector('.vb-film')){ var d=document.createElement('div'); d.innerHTML=vbFilmCiz(); mg.appendChild(d.firstChild); } } }catch(e){} return r; };
 var _hpCizV47=hpCiz;
 hpCiz=function(){ _hpCizV47.apply(this,arguments); try{ if(HP.sek!=='asist') return; var mg=document.querySelector('#hpModalIc .mgov'); if(!mg) return; var d=document.createElement('details'); d.style.marginTop='8px'; d.innerHTML='<summary style="cursor:pointer;font-weight:900;font-size:13px">🎬 8. sınıf koçluk filmleri ('+VB_FILM.length+')</summary>'+vbFilmCiz(); mg.appendChild(d); }catch(e){} };
-try{ APP.onceki={surum:'4.6',satir:5307,kb:630}; APP.surum='4.7'; APP.tarih='11.10.2026'; APP.satir=6777; APP.kb=892;
+try{ APP.onceki={surum:'4.6',satir:5307,kb:630}; APP.surum='4.7'; APP.tarih='11.10.2026'; APP.satir=6872; APP.kb=906;
   APP.yenilikler.unshift('🗓️ Ders Saati’ndeki ders adı her yerde okunur: hatırlatma, ön bilgi, haftalık özet ve “Bu Hafta” o gün/hafta işlenen derse göre (“Satranç ve Akıl-Zekâ”, “Dönüşümlü” dahil)','🎯 8. sınıf: plan ve tüm veli bildirimleri yalnızca Eğitim Koçluğu','🎬 Koçluk film köşesi: 8. sınıfa uygun 12 film, tema + tartışma soruları; her hafta biri veli kartına öneri olarak eklenir','🛡️ Gönderim öncesi seviye denetimi (yaşa uymayan terim, 8. sınıfa başka ders adı vb.)','🎒 Hatırlatmada derse göre getirilecekler: Robotik/YZ → tablet (anaokulu hariç) + varsa robotik set; Satranç → satranç takımı; Akıl-Zekâ → akıl oyunu','🧸 Anaokulu: Salı hep Satranç (bir şey getirmeye gerek yok); Cuma haftaya göre Satranç ↔ Robotik-Kodlama');
   MODULLER.push(['Programa göre ders','vbProgDersleri'],['Seviye denetimi','vbSeviyeUyar'],['Koçluk film köşesi','vbFilmCiz']); }catch(e){}
 /* ---- 🎒 Hatırlatma: ne getirilecek? (o günün dersine ve sınıf seviyesine göre) ----
@@ -5798,7 +5892,7 @@ vbFilmCiz=function(){ var bu=vbFilmHafta(new Date());
   return '<div class="oz-adim" style="border-color:#f472b6"><div style="font-size:14px;font-weight:900">🎬 Eğitim koçluğu film köşesi (8. sınıf)</div><div style="font-size:12px;color:var(--soluk);margin:4px 0 6px;line-height:1.5">Yalnızca aile izleyicisine uygun derecedeki filmler (PG ve eşdeğeri); müstehcen içerikli film yok. Her filmin <b>🛡️ Ebeveyn rehberi</b> bağlantısından sahne sahne içeriğe bakabilirsin. Sınıfta göstermeden önce izlemeni öneririm. Her hafta biri sırayla 8. sınıf veli kartına öneri olarak eklenir; istersen <b>📤 Velilere öner</b> ile ayrıca gönderebilirsin.</div>'+
     VB_FILM.map(function(f,i){ var b=f===bu; return '<div class="vb-film'+(b?' bu':'')+'"><div><b>'+esc(f.ad)+'</b>'+(f.tr?' · '+esc(f.tr):'')+' <span>('+f.yil+' · '+esc(f.der)+')</span>'+(b?' <em>bu hafta</em>':'')+'</div><div class="vf-tema">'+esc(f.tema)+' · <i>'+esc(f.bag)+'</i></div><div class="vf-soru">💬 '+f.soru.map(esc).join('<br>💬 ')+'</div>'+
       '<div class="vf-link"><a class="fbtn" target="_blank" rel="noopener" href="'+vbEsc(vbFilmLink(f,'fragman'))+'">🎞️ Fragman</a><a class="fbtn" target="_blank" rel="noopener" href="'+vbEsc(vbFilmLink(f,'rehber'))+'">🛡️ Ebeveyn rehberi</a><a class="fbtn" target="_blank" rel="noopener" href="'+vbEsc(vbFilmLink(f,'izle'))+'">📺 Nereden izlenir</a><button class="btn y" style="padding:6px 10px;font-size:12px" onclick="vbFilmGonder('+i+')">📤 8. sınıf velilerine öner</button></div></div>'; }).join('')+'</div>'; };
-try{ APP.onceki={surum:'4.7',satir:5449,kb:648}; APP.surum='4.8'; APP.tarih='11.10.2026'; APP.satir=6777; APP.kb=892;
+try{ APP.onceki={surum:'4.7',satir:5449,kb:648}; APP.surum='4.8'; APP.tarih='11.10.2026'; APP.satir=6872; APP.kb=906;
   APP.yenilikler.unshift('📽️ Sunum Merkezi: bir dersi slaytla anlat (öğrenciye dönük dil + 👀 öğretmen notu), bu haftanın planı, sınıf sınıf yıllık plan sunumu (veli toplantısına hazır)','🎬 Filmlerde 🎞️ fragman · 🛡️ ebeveyn rehberi · 📺 nereden izlenir bağlantıları; 📤 tek dokunuşla 8. sınıf velilerine öner');
   MODULLER.push(['Sunum Merkezi','plSunumMerkezi'],['Ders slaytı','plSunumDers'],['Haftanın planı sunumu','plSunumHafta'],['Yıllık plan sunumu','plSunumYil'],['Slayt motoru','vbSunum']); }catch(e){}
 
@@ -5806,7 +5900,7 @@ try{ APP.onceki={surum:'4.7',satir:5449,kb:648}; APP.surum='4.8'; APP.tarih='11.
    SÜRÜM 4.9 — 📋 Yoklama Defteri (Ders Saati’nden, salt okunur rapor)
    + 🏦 baris-kasa · 🔔 bildirim/hatırlatma · 🧰 Araçlar · ℹ️ Hakkında
    ============================================================ */
-var ZSTD_SURUM='4.13.1';
+var ZSTD_SURUM='4.14';
 var KASA_YER='KASA-anahtar-kasada-saklaniyor-00';
 /* ---------- Yoklama kaynağı: Ders Saati hafızası (aynı adres → aynı tarayıcı) ---------- */
 var PYK={t:0,v:null};
@@ -5891,7 +5985,7 @@ try{ planAracCubugu(); }catch(e){}
 var _hpCizV49=typeof hpCiz==='function'?hpCiz:null;
 if(_hpCizV49) hpCiz=function(){ _hpCizV49.apply(this,arguments); try{ var m=document.querySelector('#gonderModalIc .mgov')||document.querySelector('#gonderModalIc'); if(!m||m.querySelector('[data-ykhp]')) return; var b=document.createElement('button'); b.className='fbtn'; b.dataset.ykhp=1; b.style.marginTop='10px'; b.textContent='📋 Yoklama defteri (Ders Saati) · devam raporu · veliye mesaj'; b.onclick=function(){ ykAc({sinif:pykSonSinif()}); }; m.appendChild(b); }catch(e){} };
 /* ---------- Sürüm 4.9 ---------- */
-try{ APP.onceki={surum:'4.8',satir:5609,kb:676}; APP.surum='4.9'; APP.tarih='16.10.2026'; APP.satir=6777; APP.kb=892;
+try{ APP.onceki={surum:'4.8',satir:5609,kb:676}; APP.surum='4.9'; APP.tarih='16.10.2026'; APP.satir=6872; APP.kb=906;
   APP.yenilikler.unshift('📋 Yoklama Defteri: Ders Saati’nde alınan yoklamalar burada da görünür — devam raporu (hafta/ay/dönem/yıl), Excel, yazdırma ve veliye hazır mesaj','🏦 Anahtar kasası (baris-kasa): yapay zekâ anahtarları kasada; ⏰ hatırlatmalar ve 🔔 bildirimler Ayarlar’da','🧰 Sade ekran: yüzen düğmeler Ayarlar → 🧰 Araçlar’a toplandı; istediğini yeniden ekrana alabilirsin');
   MODULLER.push(['Yoklama defteri','ykAc'],['Devam raporu','ykOzet'],['Veliye mesaj','ykMesajAc'],['Araçlar paneli','plAraclarCiz']); }catch(e){}
 window.ZSTD_AYAR={uyg:'robotikplan',surum:ZSTD_SURUM,ad:'Robotik-Kodlama Yıllık Plan',kisaAd:'Ders Planı',ikonEmoji:'🤖',ikonPng:(document.querySelector('link[rel="apple-touch-icon"]')||{}).href||'',kullanici:'Barış Öğretmen',
@@ -6522,6 +6616,7 @@ hpCiz=function(){ _hpCizV55.apply(this,arguments); try{ var mg=document.querySel
   if(HP.sek==='gunluk'&&!mg.querySelector('[data-vsgun]')){ var b=document.createElement('button'); b.className='btn'; b.dataset.vsgun=1; b.style.cssText='width:100%;justify-content:center;margin:0 0 12px;background:linear-gradient(135deg,#be185d,#7c3aed);color:#fff'; b.textContent='🎬 Bugün işlediğin dersin videosunu hazırla ›'; b.onclick=function(){ vsAc(); }; var t2=mg.querySelector('.oz-scroll'); if(t2&&t2.nextSibling) mg.insertBefore(b,t2.nextSibling); else mg.insertBefore(b,mg.firstChild); }
   }catch(e){ try{console.warn('v4.13.1 hp',e);}catch(_){} } };
 try{ APP.onceki={surum:'4.13',satir:6761,kb:888}; APP.surum='4.13.1'; APP.yenilikler.unshift('🎬 Ders videosu Hızlı Paylaş’ta: “🎬 Ders Videosu” sekmesi, Bu Hafta’da ⚡ tek dokunuş kartı, Bugün işlenenler’de video düğmesi'); }catch(e){}
+try{ APP.onceki={surum:'4.13.1',satir:6777,kb:891}; APP.surum='4.14'; APP.yenilikler.unshift('📋 Yoklama raporu ders ders: hangi gün, hangi derste (saat ve ders adı) gelmediği görünür'); }catch(e){}
 
 </script>
 <script>
