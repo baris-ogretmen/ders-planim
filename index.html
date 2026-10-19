@@ -5519,7 +5519,7 @@ function vbHashAc(){ var h=decodeURIComponent(location.hash||''); if(!/^#veli=/.
 vbHashAc(); window.addEventListener('hashchange',vbHashAc);
 window.addEventListener('storage',function(e){ if(e.key!==VB_LOG&&e.key!==VB_TER) return; try{ var m=document.getElementById('hpModal'); if(m&&m.classList.contains('acik')&&(HP.sek==='gunluk'||HP.sek==='asist')){ var ae=document.activeElement; if(ae&&ae.isContentEditable) return; hpCiz(); } }catch(_){} });
 /* sürüm + öz-kontrol */
-try{ APP.onceki={surum:'4.4',satir:5007,kb:583}; APP.surum='4.5'; APP.tarih='07.10.2026'; APP.satir=6353; APP.kb=823;
+try{ APP.onceki={surum:'4.4',satir:5007,kb:583}; APP.surum='4.5'; APP.tarih='07.10.2026'; APP.satir=6761; APP.kb=889;
   APP.yenilikler.unshift('📨 ✅ İşlendi deyince veliye bilgi: renkli kart kendiliğinden hazır → 📤 Şimdi gönder (günlük) ya da 🗓️ Haftalık özete bırak','⚡ Hızlı Paylaş’ta yeni sekme: ✅ Bugün işlenenler — Ders Saati’nden gelenler de burada; gönderim mevcut 📤 Okula Gönder yolundan, son onayla','📝 “Bu hafta ne yaptık” kartlarına o hafta ✅ işlenen konular kendiliğinden eklenir','👤 Sınıf başına tercih: her seferinde sor · hep günlük · hep haftalık (Ders Saati ile ortak)');
   MODULLER.push(['Veliye bilgi (işlendi → kart)','vbSor'],['Bugün işlenenler (günlük gönderim)','vbGunlukCiz'],['Ortak veli metni','vbMetin'],['Haftalık özete işlenenler','vbHaftaListesi']); }catch(e){}
 
@@ -5621,7 +5621,7 @@ hpCiz=function(){ _hpCizV46.apply(this,arguments); try{ var host=document.getEle
   if(HP.sek==='etk'){ var d=document.createElement('div'); d.innerHTML=etkCiz(); while(d.firstChild) mg.appendChild(d.firstChild); }
   if(HP.sek==='gunluk'){ var b=document.createElement('button'); b.className='btn p'; b.style.cssText='width:100%;justify-content:center;margin:0 0 12px'; b.textContent='🎮 Sitendeki bugünkü çalışmayı ekle · ⚡ derse uygun prompt ›'; b.onclick=function(){ HP.sek='etk'; hpCiz(); }; var ilk=tabs?tabs.nextSibling:null; mg.insertBefore(b,ilk); }
 } catch(e){ try{console.warn('hpCiz v4.6',e);}catch(_){} } };
-try{ APP.onceki={surum:'4.5',satir:5198,kb:611}; APP.surum='4.6'; APP.satir=6353; APP.kb=823;
+try{ APP.onceki={surum:'4.5',satir:5198,kb:611}; APP.surum='4.6'; APP.satir=6761; APP.kb=889;
   APP.yenilikler.unshift('🎮 Yeni sekme “Çalışma → Ders”: sitendeki çalışma mesajını yapıştır → her sınıfa o günün konusuyla bağlanan renkli kart (çalışmanın kısa anlatımı + oyunlaştırmanın katkısı) + çalışma düğmesi → okula doğrudan','⚡ Hızlı ekleme: sınıfın bugünkü konusuna uygun, kaliteli oyun/çalışma prompt’u (7 oyun türü) tek dokunuşla kopyala');
   MODULLER.push(['Çalışma → Ders kartı','etkCiz'],['Çalışma gönderimi','etkGonder'],['Hızlı çalışma prompt’u','etkPromptMetni']); }catch(e){}
 
@@ -5682,7 +5682,7 @@ var _seansAcV47=seansAc;
 seansAc=function(tid,i){ var r=_seansAcV47.apply(this,arguments); try{ if(tid==='kocluk'){ var mg=document.querySelector('#haftaModalIc .mgov'); if(mg&&!mg.querySelector('.vb-film')){ var d=document.createElement('div'); d.innerHTML=vbFilmCiz(); mg.appendChild(d.firstChild); } } }catch(e){} return r; };
 var _hpCizV47=hpCiz;
 hpCiz=function(){ _hpCizV47.apply(this,arguments); try{ if(HP.sek!=='asist') return; var mg=document.querySelector('#hpModalIc .mgov'); if(!mg) return; var d=document.createElement('details'); d.style.marginTop='8px'; d.innerHTML='<summary style="cursor:pointer;font-weight:900;font-size:13px">🎬 8. sınıf koçluk filmleri ('+VB_FILM.length+')</summary>'+vbFilmCiz(); mg.appendChild(d); }catch(e){} };
-try{ APP.onceki={surum:'4.6',satir:5307,kb:630}; APP.surum='4.7'; APP.tarih='11.10.2026'; APP.satir=6353; APP.kb=823;
+try{ APP.onceki={surum:'4.6',satir:5307,kb:630}; APP.surum='4.7'; APP.tarih='11.10.2026'; APP.satir=6761; APP.kb=889;
   APP.yenilikler.unshift('🗓️ Ders Saati’ndeki ders adı her yerde okunur: hatırlatma, ön bilgi, haftalık özet ve “Bu Hafta” o gün/hafta işlenen derse göre (“Satranç ve Akıl-Zekâ”, “Dönüşümlü” dahil)','🎯 8. sınıf: plan ve tüm veli bildirimleri yalnızca Eğitim Koçluğu','🎬 Koçluk film köşesi: 8. sınıfa uygun 12 film, tema + tartışma soruları; her hafta biri veli kartına öneri olarak eklenir','🛡️ Gönderim öncesi seviye denetimi (yaşa uymayan terim, 8. sınıfa başka ders adı vb.)','🎒 Hatırlatmada derse göre getirilecekler: Robotik/YZ → tablet (anaokulu hariç) + varsa robotik set; Satranç → satranç takımı; Akıl-Zekâ → akıl oyunu','🧸 Anaokulu: Salı hep Satranç (bir şey getirmeye gerek yok); Cuma haftaya göre Satranç ↔ Robotik-Kodlama');
   MODULLER.push(['Programa göre ders','vbProgDersleri'],['Seviye denetimi','vbSeviyeUyar'],['Koçluk film köşesi','vbFilmCiz']); }catch(e){}
 /* ---- 🎒 Hatırlatma: ne getirilecek? (o günün dersine ve sınıf seviyesine göre) ----
@@ -5798,7 +5798,7 @@ vbFilmCiz=function(){ var bu=vbFilmHafta(new Date());
   return '<div class="oz-adim" style="border-color:#f472b6"><div style="font-size:14px;font-weight:900">🎬 Eğitim koçluğu film köşesi (8. sınıf)</div><div style="font-size:12px;color:var(--soluk);margin:4px 0 6px;line-height:1.5">Yalnızca aile izleyicisine uygun derecedeki filmler (PG ve eşdeğeri); müstehcen içerikli film yok. Her filmin <b>🛡️ Ebeveyn rehberi</b> bağlantısından sahne sahne içeriğe bakabilirsin. Sınıfta göstermeden önce izlemeni öneririm. Her hafta biri sırayla 8. sınıf veli kartına öneri olarak eklenir; istersen <b>📤 Velilere öner</b> ile ayrıca gönderebilirsin.</div>'+
     VB_FILM.map(function(f,i){ var b=f===bu; return '<div class="vb-film'+(b?' bu':'')+'"><div><b>'+esc(f.ad)+'</b>'+(f.tr?' · '+esc(f.tr):'')+' <span>('+f.yil+' · '+esc(f.der)+')</span>'+(b?' <em>bu hafta</em>':'')+'</div><div class="vf-tema">'+esc(f.tema)+' · <i>'+esc(f.bag)+'</i></div><div class="vf-soru">💬 '+f.soru.map(esc).join('<br>💬 ')+'</div>'+
       '<div class="vf-link"><a class="fbtn" target="_blank" rel="noopener" href="'+vbEsc(vbFilmLink(f,'fragman'))+'">🎞️ Fragman</a><a class="fbtn" target="_blank" rel="noopener" href="'+vbEsc(vbFilmLink(f,'rehber'))+'">🛡️ Ebeveyn rehberi</a><a class="fbtn" target="_blank" rel="noopener" href="'+vbEsc(vbFilmLink(f,'izle'))+'">📺 Nereden izlenir</a><button class="btn y" style="padding:6px 10px;font-size:12px" onclick="vbFilmGonder('+i+')">📤 8. sınıf velilerine öner</button></div></div>'; }).join('')+'</div>'; };
-try{ APP.onceki={surum:'4.7',satir:5449,kb:648}; APP.surum='4.8'; APP.tarih='11.10.2026'; APP.satir=6353; APP.kb=823;
+try{ APP.onceki={surum:'4.7',satir:5449,kb:648}; APP.surum='4.8'; APP.tarih='11.10.2026'; APP.satir=6761; APP.kb=889;
   APP.yenilikler.unshift('📽️ Sunum Merkezi: bir dersi slaytla anlat (öğrenciye dönük dil + 👀 öğretmen notu), bu haftanın planı, sınıf sınıf yıllık plan sunumu (veli toplantısına hazır)','🎬 Filmlerde 🎞️ fragman · 🛡️ ebeveyn rehberi · 📺 nereden izlenir bağlantıları; 📤 tek dokunuşla 8. sınıf velilerine öner');
   MODULLER.push(['Sunum Merkezi','plSunumMerkezi'],['Ders slaytı','plSunumDers'],['Haftanın planı sunumu','plSunumHafta'],['Yıllık plan sunumu','plSunumYil'],['Slayt motoru','vbSunum']); }catch(e){}
 
@@ -5806,7 +5806,7 @@ try{ APP.onceki={surum:'4.7',satir:5449,kb:648}; APP.surum='4.8'; APP.tarih='11.
    SÜRÜM 4.9 — 📋 Yoklama Defteri (Ders Saati’nden, salt okunur rapor)
    + 🏦 baris-kasa · 🔔 bildirim/hatırlatma · 🧰 Araçlar · ℹ️ Hakkında
    ============================================================ */
-var ZSTD_SURUM='4.10';
+var ZSTD_SURUM='4.13';
 var KASA_YER='KASA-anahtar-kasada-saklaniyor-00';
 /* ---------- Yoklama kaynağı: Ders Saati hafızası (aynı adres → aynı tarayıcı) ---------- */
 var PYK={t:0,v:null};
@@ -5891,7 +5891,7 @@ try{ planAracCubugu(); }catch(e){}
 var _hpCizV49=typeof hpCiz==='function'?hpCiz:null;
 if(_hpCizV49) hpCiz=function(){ _hpCizV49.apply(this,arguments); try{ var m=document.querySelector('#gonderModalIc .mgov')||document.querySelector('#gonderModalIc'); if(!m||m.querySelector('[data-ykhp]')) return; var b=document.createElement('button'); b.className='fbtn'; b.dataset.ykhp=1; b.style.marginTop='10px'; b.textContent='📋 Yoklama defteri (Ders Saati) · devam raporu · veliye mesaj'; b.onclick=function(){ ykAc({sinif:pykSonSinif()}); }; m.appendChild(b); }catch(e){} };
 /* ---------- Sürüm 4.9 ---------- */
-try{ APP.onceki={surum:'4.8',satir:5609,kb:676}; APP.surum='4.9'; APP.tarih='16.10.2026'; APP.satir=6353; APP.kb=823;
+try{ APP.onceki={surum:'4.8',satir:5609,kb:676}; APP.surum='4.9'; APP.tarih='16.10.2026'; APP.satir=6761; APP.kb=889;
   APP.yenilikler.unshift('📋 Yoklama Defteri: Ders Saati’nde alınan yoklamalar burada da görünür — devam raporu (hafta/ay/dönem/yıl), Excel, yazdırma ve veliye hazır mesaj','🏦 Anahtar kasası (baris-kasa): yapay zekâ anahtarları kasada; ⏰ hatırlatmalar ve 🔔 bildirimler Ayarlar’da','🧰 Sade ekran: yüzen düğmeler Ayarlar → 🧰 Araçlar’a toplandı; istediğini yeniden ekrana alabilirsin');
   MODULLER.push(['Yoklama defteri','ykAc'],['Devam raporu','ykOzet'],['Veliye mesaj','ykMesajAc'],['Araçlar paneli','plAraclarCiz']); }catch(e){}
 window.ZSTD_AYAR={uyg:'robotikplan',surum:ZSTD_SURUM,ad:'Robotik-Kodlama Yıllık Plan',kisaAd:'Ders Planı',ikonEmoji:'🤖',ikonPng:(document.querySelector('link[rel="apple-touch-icon"]')||{}).href||'',kullanici:'Barış Öğretmen',
@@ -6098,6 +6098,414 @@ try{ if(window.ZSTD_AYAR) ZSTD_AYAR.bolumler.bulut=function(){ grAc(); }; }catch
 try{ APP.onceki={surum:'4.9.1',satir:6258,kb:809}; APP.surum='4.10'; APP.tarih='18.10.2026';
   APP.yenilikler.unshift('☁️ Bulut eşitleme: işlendi/yarım işaretleri, gönderim kayıtları ve tatil günleri tahta, telefon ve ana ekran simgesinde aynı (ayrı belge; Okula Gönder’e dokunmaz)','🌧️ Okul kapalı günleri: sonraki ders hatırlatmasına “tatil nedeniyle aynı konuyla devam” satırı');
   MODULLER.push(['Bulut eşitleme','bsEsitle'],['Okul kapalı günleri','ttKacan']); }catch(e){}
+
+/* ============================================================
+   SÜRÜM 4.11 — 🎬 SÖZÜN ÖZÜ · Ders Videosu Stüdyosu
+   Plandan (ya da yapay zekâyla) kısa veli metni → hareketli sahneler
+   → 🎙️ yapay zekâ sesi (Gemini TTS “Charon”, baris-kasa) → video (mp4/webm)
+   → ⬇️ indir · 📲 paylaş · 📤 Okula Gönder (mevcut video ekleme yolu)
+   + 📓 NotebookLM için hazır kaynak ve istem
+   ============================================================ */
+var VS={gi:null,tid:null,idx:null,baslik:'',sahneler:[],ses:'charon',fmt:'dikey',sesler:null,blob:null,mime:'',sure:0,url:'',calisiyor:false,iptal:false};
+var VS_BANT={ana:'anaokulu (4-6 yaş)','12':'1-2. sınıf','34':'3-4. sınıf','56':'5-6. sınıf','78':'7-8. sınıf'};
+function vsSonDers(){ try{ var a=vbGet().slice().sort(function(x,y){ return (y.tarih||'').localeCompare(x.tarih||'')||(y.ts||0)-(x.ts||0); }); if(a[0]&&a[0].k&&vbPlanSe(a[0].gi,a[0].k,a[0].idx)) return {gi:a[0].gi,tid:a[0].k,idx:a[0].idx}; }catch(e){}
+  var gi=(typeof ST!=='undefined'&&ST.gradeIdx!=null)?ST.gradeIdx:4, tr=gorunenTracks(gi)[0]||{id:'robokod'}, n=giIle(gi,function(){ return (SEANS[tr.id]||[]).length; }), s=trackSonraki(gi,tr.id,n); return {gi:gi,tid:tr.id,idx:Math.max(0,s<0?n-1:s-1)}; }
+function vsBilgi(){ var se=vbPlanSe(VS.gi,VS.tid,VS.idx)||{}, A=VB_AD[VS.tid]||VB_AD.genel, band=vbBand(VS.gi);
+  return {sinif:vbSinifAd(VS.gi),ders:A[0],ikon:A[1],konu:vbKonuSade(uniteAd(se)),baslik:se.k||'',z:se.z||'',e:se.e||'',akil:vbAnlatim(vbPlanAkil(VS.gi,VS.tid,se),uniteAd(se)),band:band,
+    kaz:((VB_KAZ[VS.tid]||VB_KAZ.genel)||{})[band]||'',soru:(band==='ana'&&VB_SORU_ANA&&VB_SORU_ANA[VS.tid])||VB_SORU[VS.tid]||VB_SORU.genel,renk:VB_RENK[VS.tid]||VB_RENK.genel}; }
+function vsKucukHarf(s){ s=String(s||'').trim().replace(/[.\s]+$/,''); return s?s.charAt(0).toLocaleLowerCase('tr')+s.slice(1):''; }
+/* Plandan hızlı metin (yapay zekâ olmadan) */
+function vsSablon(){ var b=vsBilgi(), et=String(b.e||'').split(';').map(function(x){ return x.trim().replace(/[.\s]+$/,''); }).filter(Boolean);
+  return {baslik:b.konu,sahneler:[
+    {ikon:b.ikon,ust:'Bu hafta derste',vurgu:b.konu,metin:'Sevgili velilerimiz, '+b.sinif+' '+b.ders+' dersimizde “'+b.konu+'” konusunu işledik.'},
+    {ikon:'🎯',ust:'Ne öğrendik?',vurgu:String(b.akil||'').replace(/[.\s]+$/,'').slice(0,70),metin:'Bu derste: '+vsKucukHarf(b.akil||b.z||'konunun temel fikirlerini birlikte keşfettik')+'.'},
+    {ikon:'🛠️',ust:'Derste ne yaptık?',metin:et.length?('Derste yaptıklarımız: '+et.slice(0,3).map(function(x){ return '“'+x.replace(/[“”"]/g,'')+'”'; }).join(', ')+'.'):'Konuyu etkinliklerle, deneyerek ve konuşarak çalıştık.'},
+    {ikon:'🌱',ust:'Bu neden önemli?',metin:b.kaz?('Bu çalışmalarla çocuklarımız '+String(b.kaz).replace(/[.\s]+$/,'')+'.'):'Bu çalışmalar düşünme ve birlikte çalışma becerilerini destekler.'},
+    {ikon:'🏠',ust:'Sözün özü',metin:'Sözün özü: '+b.konu+' konusunu birlikte keşfettik. Evde “'+b.soru+'” diye sorabilirsiniz.'}]}; }
+/* Yapay zekâyla metin */
+async function vsAIYaz(){ var b=vsBilgi();
+  var p='Bir öğretmenin VELİLERE göndereceği kısa ders videosunun seslendirme metnini yaz.\nSınıf: '+b.sinif+' ('+VS_BANT[b.band]+'). Ders: '+b.ders+'. Konu: '+b.konu+' ('+b.baslik+').\nHedef: '+b.z+'\nDerste yapılan: '+b.e+'\nKısaca: '+b.akil+'\n'+
+    'KURALLAR: Türkçe; sıcak, sade, saygılı; velilere hitap yalnız ilk sahnede bir kez. Tam 5 sahne. Her sahnenin metni en fazla 28 kelime; toplam 110-140 kelime. Abartı, kanıtsız fayda vaadi, “dahi olur, zekâsı artar” gibi iddialar YOK; yalnız derste gerçekten yapılanı anlat. Öğrenci adı yok. Sınıf seviyesine uygun örnek ver.\n'+
+    'Sahneler: 1) Bu hafta ne işledik 2) Ne öğrendik 3) Derste nasıl yaptık 4) Bu neden önemli (ölçülü) 5) “Sözün özü:” ile başlayan tek cümle + velinin evde sorabileceği tek soru.\n'+
+    'YALNIZCA şu JSON’u döndür: {"baslik":"kısa başlık","sahneler":[{"ikon":"tek emoji","ust":"en fazla 4 kelime başlık","vurgu":"ekranda yeşil yazılacak en fazla 8 kelimelik öz cümle ya da boş","metin":"seslendirme metni"}]}';
+  var t=await generateText(p,{}); var m=String(t||'').match(/\{[\s\S]*\}/); if(!m) throw new Error('Cevap anlaşılamadı'); var o=JSON.parse(m[0]);
+  if(!o.sahneler||!o.sahneler.length) throw new Error('Sahne çıkmadı'); o.sahneler=o.sahneler.slice(0,7).map(function(s){ return {ikon:String(s.ikon||'✨').slice(0,4),ust:String(s.ust||'').slice(0,40),vurgu:String(s.vurgu||'').slice(0,80),metin:String(s.metin||'').slice(0,320)}; }); return o; }
+/* ---------- 🎙️ Ses: Gemini TTS (Charon) baris-kasa üzerinden ---------- */
+var VS_AC=null; function vsAC(){ if(!VS_AC){ var C=window.AudioContext||window.webkitAudioContext; VS_AC=new C(); } if(VS_AC.state==='suspended') VS_AC.resume(); return VS_AC; }
+async function vsTTS(metin){ var k=(keyler()[0]||''), url='https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key='+encodeURIComponent(k);
+  var body={contents:[{parts:[{text:'Sıcak, samimi ve sakin bir öğretmen sesiyle, anlaşılır bir tempoda Türkçe oku: '+metin}]}],generationConfig:{responseModalities:['AUDIO'],speechConfig:{voiceConfig:{prebuiltVoiceConfig:{voiceName:'Charon'}}}}};
+  var son='';
+  for(var d=0;d<3;d++){ try{ var r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}); if(!r.ok){ son='Ses servisi şu an yoğun ('+r.status+')'; await new Promise(function(ok){ setTimeout(ok,1500*(d+1)); }); continue; }
+      var j=await r.json(), part=((((j.candidates||[])[0]||{}).content||{}).parts||[]).filter(function(x){ return x.inlineData; })[0]; if(!part) { son='Ses gelmedi'; continue; }
+      var mm=/rate=(\d+)/.exec(part.inlineData.mimeType||''), hz=mm?+mm[1]:24000, bin=atob(part.inlineData.data), n=bin.length>>1, ac=vsAC(), buf=ac.createBuffer(1,n,hz), ch=buf.getChannelData(0);
+      for(var i=0;i<n;i++){ var v=bin.charCodeAt(2*i)|(bin.charCodeAt(2*i+1)<<8); if(v>=32768) v-=65536; ch[i]=v/32768; } return buf; }catch(e){ son='İnternet ya da ses servisi hatası'; } }
+  throw new Error(son||'Ses üretilemedi'); }
+/* ---------- Zaman çizelgesi ---------- */
+function vsKelime(s){ return String(s||'').trim().split(/\s+/).filter(Boolean).length; }
+function vsCizelge(){ var L=[], t=0; L.push({tip:'giris',bas:0,son:2.8}); t=2.8;
+  VS.sahneler.forEach(function(s,i){ var a=VS.sesler&&VS.sesler[i], d=a?a.duration+0.9:Math.max(3.8,vsKelime(s.metin)/2.3+1.2); L.push({tip:'sahne',i:i,bas:t,son:t+d,ses:a||null}); t+=d; });
+  L.push({tip:'kapanis',bas:t,son:t+2.8}); t+=2.8; return {L:L,toplam:t}; }
+/* ---------- Çizim ---------- */
+function vsHex(h,a){ var n=parseInt(String(h).slice(1),16); return 'rgba('+(n>>16&255)+','+(n>>8&255)+','+(n&255)+','+a+')'; }
+function vsEase(x){ x=Math.max(0,Math.min(1,x)); return 1-Math.pow(1-x,3); }
+function vsBack(x){ x=Math.max(0,Math.min(1,x)); var c=1.70158; return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2); }
+function vsSar(c,s,max){ var w=String(s||'').split(/\s+/), L=[], cur=''; w.forEach(function(k){ var d=cur?cur+' '+k:k; if(c.measureText(d).width>max&&cur){ L.push(cur); cur=k; } else cur=d; }); if(cur) L.push(cur); return L; }
+var VS_PAR=null;
+function vsDesen(c,W,H,t,tid,R){ c.save(); c.globalAlpha=.10; c.strokeStyle='#fff'; c.fillStyle='#fff'; var u=Math.min(W,H)/9, kay=(t*12)%(u*2);
+  if(tid==='satranc'){ for(var y=-u*2;y<H+u*2;y+=u) for(var x=-u*2;x<W+u*2;x+=u){ if(((x/u|0)+(y/u|0))%2===0) c.fillRect(x+kay,y+kay*.5,u,u); } }
+  else if(tid==='robokod'){ c.lineWidth=2; for(var x2=-u;x2<W+u;x2+=u){ c.beginPath(); c.moveTo(x2+kay%u,0); c.lineTo(x2+kay%u,H); c.stroke(); } for(var y2=0;y2<H;y2+=u){ c.beginPath(); c.moveTo(0,y2); c.lineTo(W,y2); c.stroke(); } }
+  else if(tid==='yz'){ for(var i=0;i<26;i++){ var px=(Math.sin(i*12.9+t*.2)*.5+.5)*W, py=(Math.cos(i*7.3+t*.15)*.5+.5)*H; c.beginPath(); c.arc(px,py,4,0,7); c.fill(); var j=(i*7)%26, qx=(Math.sin(j*12.9+t*.2)*.5+.5)*W, qy=(Math.cos(j*7.3+t*.15)*.5+.5)*H; c.beginPath(); c.moveTo(px,py); c.lineTo(qx,qy); c.stroke(); } }
+  else if(tid==='akil'){ c.lineWidth=3; for(var a=0;a<14;a++){ var ax=((a*137)%W+kay)%W, ay=((a*251)%H+kay*.7)%H; c.strokeRect(ax,ay,u*.7,u*.7); c.beginPath(); c.arc(ax+u*.35,ay,u*.14,0,7); c.stroke(); } }
+  else { c.lineWidth=3; for(var r=u;r<Math.max(W,H);r+=u){ c.beginPath(); c.arc(W/2,H*.42,r+kay%u,0,7); c.stroke(); } }
+  c.restore(); }
+function vsCiz(c,W,H,t,Z){ var b=Z.b, R=b.renk, dik=H>W, sc=Math.min(W,H)/720;
+  var g=c.createLinearGradient(0,0,W,H); g.addColorStop(0,'#0b1022'); g.addColorStop(.55,vsHex(R[0],1)); g.addColorStop(1,vsHex(R[1],1)); c.fillStyle=g; c.fillRect(0,0,W,H);
+  c.fillStyle='rgba(5,9,26,.38)'; c.fillRect(0,0,W,H); vsDesen(c,W,H,t,VS.tid,R);
+  if(!VS_PAR){ VS_PAR=[]; for(var i=0;i<34;i++) VS_PAR.push({x:Math.random(),y:Math.random(),r:2+Math.random()*5,h:.02+Math.random()*.05}); }
+  c.save(); VS_PAR.forEach(function(p){ var y=((p.y-t*p.h)%1+1)%1; c.globalAlpha=.25; c.fillStyle='#fff'; c.beginPath(); c.arc(p.x*W,y*H,p.r*sc,0,7); c.fill(); }); c.restore();
+  var seg=null; for(var k=0;k<Z.L.length;k++){ if(t>=Z.L[k].bas&&t<Z.L[k].son){ seg=Z.L[k]; break; } } if(!seg) seg=Z.L[Z.L.length-1];
+  var lt=t-seg.bas, dur=seg.son-seg.bas, giris=vsEase(lt/0.6), cikis=1-vsEase((lt-(dur-0.45))/0.45); var al=Math.min(giris,cikis);
+  c.textAlign='center'; c.textBaseline='middle';
+  /* üst şerit */
+  c.globalAlpha=1; c.font='800 '+(26*sc)+'px Nunito, system-ui, sans-serif'; var ust='✨ Sözün Özü · '+b.sinif+' · '+b.ders; var uw=c.measureText(ust).width+48*sc;
+  c.fillStyle='rgba(255,255,255,.14)'; vsYuvarlak(c,(W-uw)/2,(dik?70:34)*sc,uw,52*sc,26*sc); c.fill(); c.fillStyle='#fff'; c.fillText(ust,W/2,(dik?96:60)*sc);
+  c.globalAlpha=al;
+  if(seg.tip==='giris'||seg.tip==='kapanis'){ var s=vsBack(lt/0.9), cy=H*(dik?.4:.42); c.save(); c.translate(W/2,cy); c.scale(s,s); c.font=(dik?200:150)*sc+'px system-ui, "Apple Color Emoji","Segoe UI Emoji"'; c.fillText(seg.tip==='giris'?b.ikon:'💛',0,0); c.restore();
+    c.fillStyle='#fff'; c.font='900 '+(dik?60:52)*sc+'px Nunito, system-ui, sans-serif'; var ba=seg.tip==='giris'?(VS.baslik||b.konu):'Teşekkürler!'; vsSar(c,ba,W*.84).slice(0,3).forEach(function(l,i){ c.fillText(l,W/2,cy+(dik?200:150)*sc+i*(dik?70:60)*sc); });
+    c.font='700 '+(dik?32:28)*sc+'px Nunito, system-ui, sans-serif'; c.fillStyle='rgba(255,255,255,.85)'; c.fillText(seg.tip==='giris'?(b.sinif+' · '+b.ders+' dersi'):'Barış Öğretmen · '+b.sinif,W/2,cy+(dik?430:330)*sc); }
+  else { var sh=VS.sahneler[seg.i]||{}, cy2=H*(dik?.30:.33), fl=Math.sin(t*2.2)*8*sc, s2=vsBack(lt/0.8);
+    c.save(); c.translate(W/2,cy2+fl); c.scale(s2,s2); c.font=(dik?170:120)*sc+'px system-ui, "Apple Color Emoji","Segoe UI Emoji"'; c.fillText(sh.ikon||'✨',0,0); c.restore();
+    c.fillStyle='#fde68a'; c.font='900 '+(dik?52:44)*sc+'px Nunito, system-ui, sans-serif'; c.fillText(sh.ust||'',W/2,cy2+(dik?150:105)*sc+(1-giris)*30*sc);
+    /* altyazı: sözcük sözcük */
+    var fs=(dik?40:34)*sc; c.font='800 '+fs+'px Nunito, system-ui, sans-serif'; var satir=vsSar(c,sh.metin||'',W*(dik?.84:.8)), kel=vsKelime(sh.metin), oran=Math.min(1,lt/Math.max(1,(dur-0.9)*0.92)), gor=Math.ceil(kel*oran), say=0;
+    var kutuH=satir.length*fs*1.4+50*sc, ky=cy2+(dik?220:150)*sc; c.fillStyle='rgba(5,9,26,.55)'; vsYuvarlak(c,W*.05,ky,W*.9,kutuH,28*sc); c.fill();
+    c.textAlign='left'; satir.forEach(function(l,li){ var x=W/2-c.measureText(l).width/2, y=ky+25*sc+fs*.7+li*fs*1.4; l.split(' ').forEach(function(w){ say++; c.fillStyle=say<=gor?'#ffffff':'rgba(255,255,255,.32)'; if(say===gor) c.fillStyle='#fde68a'; c.fillText(w,x,y); x+=c.measureText(w+' ').width; }); }); c.textAlign='center';
+    /* ilerleme noktaları */
+    var n=VS.sahneler.length; for(var d=0;d<n;d++){ c.fillStyle=d===seg.i?'#fde68a':'rgba(255,255,255,.35)'; c.beginPath(); c.arc(W/2+(d-(n-1)/2)*30*sc,H-(dik?120:60)*sc,(d===seg.i?9:6)*sc,0,7); c.fill(); } }
+  c.globalAlpha=1; c.fillStyle='rgba(255,255,255,.7)'; c.font='700 '+(22*sc)+'px Nunito, system-ui, sans-serif'; c.fillText('Barış Öğretmen',W/2,H-(dik?60:24)*sc); }
+function vsYuvarlak(c,x,y,w,h,r){ c.beginPath(); c.moveTo(x+r,y); c.arcTo(x+w,y,x+w,y+h,r); c.arcTo(x+w,y+h,x,y+h,r); c.arcTo(x,y+h,x,y,r); c.arcTo(x,y,x+w,y,r); c.closePath(); }
+/* ---------- Oynat / kaydet ---------- */
+function vsBoyut(){ return VS.fmt==='yatay'?[1280,720]:[720,1280]; }
+function vsMime(){ var L=['video/mp4;codecs=avc1.42E01E,mp4a.40.2','video/mp4;codecs=avc1,mp4a','video/mp4','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm']; if(!window.MediaRecorder) return ''; for(var i=0;i<L.length;i++){ try{ if(MediaRecorder.isTypeSupported(L[i])) return L[i]; }catch(e){} } return ''; }
+async function vsSesHazirla(dur){ VS.sesler=null; if(VS.ses!=='charon') return; var L=[]; for(var i=0;i<VS.sahneler.length;i++){ if(VS.iptal) throw new Error('İptal edildi'); dur('🎙️ Ses hazırlanıyor… '+(i+1)+'/'+VS.sahneler.length); L.push(await vsTTS(VS.sahneler[i].metin)); } VS.sesler=L; }
+async function vsOynat(kaydet){ if(VS.calisiyor) return; var cv=document.getElementById('vsCv'), dur=function(m){ var e=document.getElementById('vsDur'); if(e) e.textContent=m; };
+  if(!VS.sahneler.length){ toast('Önce metni hazırla','err'); return; } VS.calisiyor=true; VS.iptal=false; vsDugmeler();
+  try{ var bo=vsBoyut(); cv.width=bo[0]; cv.height=bo[1]; var c=cv.getContext('2d'), b=vsBilgi(); var ac=vsAC();
+    if(VS.ses==='charon'&&(!VS.sesler||VS.sesler.length!==VS.sahneler.length||VS._imza!==vsImza())){ try{ await vsSesHazirla(dur); VS._imza=vsImza(); }catch(e){ if(VS.iptal) throw e; if(!confirm('Yapay zekâ sesi şu an alınamadı ('+e.message+').\nVideo sessiz (altyazılı) hazırlansın mı?')) throw e; VS.sesler=null; } }
+    var Z=vsCizelge(); Z.b=b; if(kaydet&&Z.toplam>ZVID_MAX_SN-3) toast('⚠️ Video '+Math.round(Z.toplam)+' sn; okula gönderim sınırı 3 dk. Metni kısaltman iyi olur.','err',5000);
+    var hedef=ac.createMediaStreamDestination(), rec=null, parca=[], mime=vsMime();
+    if(kaydet){ if(!mime||!cv.captureStream){ throw new Error('Bu tarayıcı videoyu kaydedemiyor. Chrome ile (tahtada) dene.'); }
+      var st=cv.captureStream(30); hedef.stream.getAudioTracks().forEach(function(tr){ st.addTrack(tr); });
+      rec=new MediaRecorder(st,{mimeType:mime,videoBitsPerSecond:1400000,audioBitsPerSecond:96000}); rec.ondataavailable=function(e){ if(e.data&&e.data.size) parca.push(e.data); }; rec.start(1000); }
+    var t0=ac.currentTime+0.25; if(VS.sesler) Z.L.forEach(function(sg){ if(sg.ses){ var s=ac.createBufferSource(); s.buffer=sg.ses; s.connect(hedef); s.connect(ac.destination); s.start(t0+sg.bas+0.35); VS._kaynaklar=(VS._kaynaklar||[]).concat([s]); } });
+    else { var sus=ac.createOscillator(), gn=ac.createGain(); gn.gain.value=0; sus.connect(gn); gn.connect(hedef); sus.start(); VS._kaynaklar=[sus]; }
+    dur(kaydet?'⏺️ Kaydediliyor… bu sekmede kal':'▶️ Önizleme');
+    await new Promise(function(bitti){ (function kare(){ var t=ac.currentTime-t0; if(VS.iptal||t>=Z.toplam){ bitti(); return; } vsCiz(c,cv.width,cv.height,Math.max(0,t),Z); var y=document.getElementById('vsYz'); if(y) y.style.width=Math.min(100,t/Z.toplam*100)+'%'; requestAnimationFrame(kare); })(); });
+    (VS._kaynaklar||[]).forEach(function(s){ try{ s.stop(); }catch(e){} }); VS._kaynaklar=[];
+    if(rec){ await new Promise(function(ok){ rec.onstop=ok; rec.stop(); }); if(VS.iptal) throw new Error('İptal edildi');
+      VS.blob=new Blob(parca,{type:mime.split(';')[0]}); VS.mime=mime.split(';')[0]; VS.sure=Z.toplam; if(VS.url) URL.revokeObjectURL(VS.url); VS.url=URL.createObjectURL(VS.blob);
+      dur('✅ Video hazır · '+Math.round(Z.toplam)+' sn · '+(VS.blob.size/1048576).toFixed(1)+' MB · '+(VS.mime.indexOf('mp4')>0?'MP4':'WebM')); vsSonucCiz(); }
+    else dur('⏹️ Önizleme bitti'); }
+  catch(e){ dur('⚠️ '+(e.message||e)); }
+  VS.calisiyor=false; vsDugmeler(); }
+function vsImza(){ return JSON.stringify(VS.sahneler.map(function(s){ return s.metin; })); }
+/* ---------- Okula gönder (mevcut video ekleme yolu: EK.video → ekoDogrudanGonder) ---------- */
+function vsVeliMetin(){ var b=vsBilgi(), ilk=String((VS.sahneler[1]||VS.sahneler[0]||{}).metin||'').replace(/^Bu derste:\s*/,'').replace(/^./,function(c){ return c.toLocaleUpperCase('tr'); });
+  return '🎬 Sözün Özü · '+b.sinif+'\n'+b.ikon+' '+b.ders+': '+(VS.baslik||b.konu)+'\n📖 '+ilk+'\n▶️ Dersimizin kısa özetini videoda izleyebilirsiniz.\n🏠 Evde: “'+b.soru+'”\n— Barış Öğretmen'; }
+async function vsOkulaGonder(blob,mime,sure,link){ var m=document.getElementById('vsMetin'); var metin=(m&&m.value.trim())||vsVeliMetin();
+  if(blob&&sure>ZVID_MAX_SN+2){ toast('Video 3 dakikadan uzun — okula video olarak gönderilemez. YouTube/Drive bağlantısı olarak ekle.','err',5000); return; }
+  if(!confirm(vbSinifAd(VS.gi)+' velilerine gönderilsin mi?\n\n'+metin+(blob?'\n\n🎬 Video: '+Math.round(sure)+' sn · '+(blob.size/1048576).toFixed(1)+' MB':'')+(link?'\n🔗 '+link:''))) return;
+  var yedek={gorsel:EK.gorsel,linkler:EK.linkler,video:EK.video}; EK.gorsel=''; EK.linkler=[{url:'',ad:''}]; EK.video=blob?{blob:blob,mime:mime||'video/mp4',sure:sure}:null;
+  var ok=false; try{ ok=await ekoDogrudanGonder([{gi:VS.gi,metin:metin,linkler:link?[{url:link,ad:'🎬 Ders videosu'}]:undefined}]); }catch(e){}
+  if(!ok){ EK.gorsel=yedek.gorsel; EK.linkler=yedek.linkler; EK.video=yedek.video; } else { try{ vbPlanKaydet(VS.gi,VS.tid,VS.idx); }catch(e){} toast('📤 Video okula gönderildi','ok',4000); } }
+/* ---------- NotebookLM ---------- */
+function vsNbKaynak(){ var b=vsBilgi(); return 'DERS ÖZETİ — '+b.sinif+' · '+b.ders+'\nKonu: '+b.konu+' ('+b.baslik+')\nSınıf seviyesi: '+VS_BANT[b.band]+'\nDersin hedefi: '+b.z+'\nDerste yapılanlar: '+b.e+'\nKısaca: '+b.akil+'\nBu çalışmanın katkısı (ölçülü): '+b.kaz+'\nEvde sorulabilecek soru: '+b.soru+'\n\nVideo metni:\n'+VS.sahneler.map(function(s,i){ return (i+1)+') '+s.ust+': '+s.metin; }).join('\n'); }
+function vsNbIstem(){ var b=vsBilgi(); return 'Bu kaynaktan VELİLER için Türkçe, 2-3 dakikayı geçmeyen kısa bir video özeti hazırla. Hedef kitle: '+b.sinif+' ('+VS_BANT[b.band]+') öğrencilerinin velileri. Sıcak ve sade bir dil kullan; yalnızca kaynaktaki bilgileri anlat, abartılı ya da kanıtsız fayda iddiasında bulunma, öğrenci adı kullanma. Sırasıyla: bu hafta ne işledik, ne öğrendik, derste ne yaptık, bu neden önemli (ölçülü), sözün özü ve velinin evde sorabileceği tek bir soru.'; }
+/* ---------- Arayüz ---------- */
+function vsAc(gi,tid,idx){ ykCss(); var d=(gi!=null&&tid)?{gi:+gi,tid:tid,idx:+idx||0}:vsSonDers(); VS.gi=d.gi; VS.tid=d.tid; VS.idx=d.idx; VS.sahneler=[]; VS.sesler=null; VS.blob=null; VS.baslik='';
+  var o=document.getElementById('vsOv'); if(o) o.remove(); o=document.createElement('div'); o.id='vsOv'; o.className='yk-ov';
+  o.innerHTML='<div class="yk-k" style="width:min(1100px,100%)"><div class="yk-bas" style="background:linear-gradient(135deg,#be185d,#7c3aed)"><span style="font-size:28px">🎬</span><h3>Sözün Özü · Ders Videosu</h3><button class="yk-x" data-x aria-label="Kapat">✕</button></div><div class="yk-ic" id="vsIc"></div></div>';
+  document.body.appendChild(o); o.querySelector('[data-x]').onclick=vsKapat; vsCizUI(); }
+function vsKapat(){ VS.iptal=true; var o=document.getElementById('vsOv'); if(o) o.remove(); }
+function vsCizUI(){ var ic=document.getElementById('vsIc'); if(!ic) return; var trs=gorunenTracks(VS.gi), se=giIle(VS.gi,function(){ return (SEANS[VS.tid]||[]).slice(); });
+  var h='<div style="display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:16px" id="vsIzgara"><div>'+
+   '<div class="yk-cip">'+SINIF_LISTE.map(function(s,i){ return '<button data-g="'+i+'" class="'+(i===VS.gi?'on':'')+'">'+(s.g==='Ana'?'Ana':s.g)+'</button>'; }).join('')+'</div>'+
+   '<div class="yk-cip">'+trs.map(function(t){ return '<button data-t="'+t.id+'" class="'+(t.id===VS.tid?'on':'')+'">'+t.ik+' '+esc((VB_AD[t.id]||[t.ad])[0])+'</button>'; }).join('')+'</div>'+
+   '<select id="vsDers" style="width:100%;border:2px solid #cbd5e1;border-radius:12px;padding:10px;font-size:16px">'+se.map(function(s,i){ return '<option value="'+i+'" '+(i===VS.idx?'selected':'')+'>'+(ilrDone(VS.gi,VS.tid,i)?'✅ ':'')+(i+1)+'. '+esc(s.k)+'</option>'; }).join('')+'</select>'+
+   '<div class="yk-sat" style="margin-top:10px"><button class="yk-b p" data-ai>🤖 Yapay zekâyla yaz</button><button class="yk-b" data-sab>📋 Plandan hızlı metin</button></div>'+
+   '<div id="vsSahne"></div></div>'+
+   '<div><div style="background:#0b1022;border-radius:18px;padding:10px;text-align:center"><canvas id="vsCv" width="720" height="1280" style="max-width:100%;max-height:52vh;border-radius:12px;background:#111"></canvas><div style="height:6px;background:#1e293b;border-radius:9px;margin-top:8px;overflow:hidden"><i id="vsYz" style="display:block;height:100%;width:0;background:#f472b6"></i></div></div>'+
+   '<div class="yk-sat"><label style="font-weight:800;font-size:14px">🎙️ Ses <select id="vsSes" style="border:2px solid #cbd5e1;border-radius:10px;padding:6px"><option value="charon">Yapay zekâ sesi (Charon)</option><option value="yok">Sessiz · altyazılı</option></select></label><label style="font-weight:800;font-size:14px">📐 <select id="vsFmt" style="border:2px solid #cbd5e1;border-radius:10px;padding:6px"><option value="dikey">Dikey 9:16 (WhatsApp)</option><option value="yatay">Yatay 16:9 (tahta)</option></select></label></div>'+
+   '<div class="yk-sat"><button class="yk-b" data-on>▶️ Önizle</button><button class="yk-b y" data-kay>🎬 Videoyu oluştur</button><button class="yk-b s k" data-ip>⏹️ Durdur</button></div><div class="yk-oz" id="vsDur" role="status">Metni hazırla, sonra önizle ya da videoyu oluştur.</div><div id="vsSonuc"></div>'+
+   '<details class="yk-sat2" style="display:block;margin-top:10px"><summary style="cursor:pointer;font-weight:900">📓 NotebookLM ile hazırla</summary><div class="yk-not">NotebookLM’de yeni not defteri aç → <b>kaynak olarak</b> aşağıdaki özeti yapıştır → <b>Video Özeti</b>’nde “özelleştir” kutusuna istemi yapıştır. Çıkan videoyu indirip aşağıdan yükleyerek okula gönderebilirsin.</div>'+
+   '<div class="yk-sat"><button class="yk-b s" data-nbk>📋 Kaynağı kopyala</button><button class="yk-b s" data-nbi>📋 İstemi kopyala</button><a class="yk-b s" href="https://notebooklm.google.com/" target="_blank" rel="noopener" style="text-decoration:none">🔗 NotebookLM’i aç</a></div>'+
+   '<div class="yk-sat"><label class="yk-b s" style="cursor:pointer">📥 Hazır videoyu yükle<input type="file" accept="video/*" id="vsDosya" hidden></label><input id="vsLink" placeholder="ya da YouTube/Drive bağlantısı" style="flex:1;min-width:140px;border:2px solid #cbd5e1;border-radius:10px;padding:8px;font-size:15px"><button class="yk-b s" data-lnk>📤 Bağlantıyı gönder</button></div></details>'+
+   '</div></div>';
+  ic.innerHTML=h; var q=function(s){ return ic.querySelector(s); };
+  ic.querySelectorAll('[data-g]').forEach(function(b){ b.onclick=function(){ VS.gi=+b.dataset.g; var t=gorunenTracks(VS.gi); if(!t.some(function(x){ return x.id===VS.tid; })) VS.tid=(t[0]||{}).id; VS.idx=Math.max(0,trackSonraki(VS.gi,VS.tid,giIle(VS.gi,function(){ return SEANS[VS.tid].length; }))-1); VS.sahneler=[]; vsCizUI(); }; });
+  ic.querySelectorAll('[data-t]').forEach(function(b){ b.onclick=function(){ VS.tid=b.dataset.t; VS.idx=Math.max(0,trackSonraki(VS.gi,VS.tid,giIle(VS.gi,function(){ return SEANS[VS.tid].length; }))-1); VS.sahneler=[]; vsCizUI(); }; });
+  q('#vsDers').onchange=function(){ VS.idx=+this.value; VS.sahneler=[]; vsSahneCiz(); };
+  q('[data-sab]').onclick=function(){ var o=vsSablon(); VS.baslik=o.baslik; VS.sahneler=o.sahneler; vsSahneCiz(); vsKare(); };
+  q('[data-ai]').onclick=async function(){ var b=this; b.disabled=true; b.textContent='⏳ Yazıyor…'; try{ var o=await vsAIYaz(); VS.baslik=o.baslik||''; VS.sahneler=o.sahneler; vsSahneCiz(); vsKare(); }catch(e){ toast('Yapay zekâ şu an yoğun — plandan hızlı metin hazırlandı','err',3500); var s=vsSablon(); VS.baslik=s.baslik; VS.sahneler=s.sahneler; vsSahneCiz(); vsKare(); } b.disabled=false; b.textContent='🤖 Yapay zekâyla yaz'; };
+  q('#vsSes').value=VS.ses; q('#vsSes').onchange=function(){ VS.ses=this.value; }; q('#vsFmt').value=VS.fmt; q('#vsFmt').onchange=function(){ VS.fmt=this.value; vsKare(); };
+  q('[data-on]').onclick=function(){ vsOynat(false); }; q('[data-kay]').onclick=function(){ vsOynat(true); }; q('[data-ip]').onclick=function(){ VS.iptal=true; };
+  q('[data-nbk]').onclick=function(){ if(!VS.sahneler.length){ var s=vsSablon(); VS.baslik=s.baslik; VS.sahneler=s.sahneler; vsSahneCiz(); } ykKopya(vsNbKaynak()); };
+  q('[data-nbi]').onclick=function(){ ykKopya(vsNbIstem()); };
+  q('#vsDosya').onchange=function(e){ var f=e.target.files[0]; e.target.value=''; if(!f) return; var v=document.createElement('video'); v.preload='metadata'; v.onloadedmetadata=function(){ var s=v.duration||0; URL.revokeObjectURL(v.src); if(s>ZVID_MAX_SN+2||f.size>34*1048576){ toast('Bu video '+Math.round(s)+' sn / '+(f.size/1048576).toFixed(0)+' MB — okula video olarak sığmaz. YouTube/Drive bağlantısı olarak gönder.','err',6000); return; } vsOkulaGonder(f,f.type||'video/mp4',s,null); }; v.onerror=function(){ toast('Video açılamadı','err'); }; v.src=URL.createObjectURL(f); };
+  q('[data-lnk]').onclick=function(){ var l=q('#vsLink').value.trim(); if(!/^https?:\/\//.test(l)){ toast('Geçerli bir bağlantı yapıştır','err'); return; } vsOkulaGonder(null,'',0,l); };
+  if(innerWidth<760) q('#vsIzgara').style.gridTemplateColumns='1fr';
+  vsSahneCiz(); vsKare(); vsDugmeler(); }
+function vsSahneCiz(){ var el=document.getElementById('vsSahne'); if(!el) return; if(!VS.sahneler.length){ el.innerHTML='<div class="yk-not">🤖 Yapay zekâ ya da 📋 plandan hızlı metinle 5 sahnelik kısa bir veli özeti hazırla; her satırı istediğin gibi düzeltebilirsin.</div>'; return; }
+  var top=VS.sahneler.reduce(function(a,s){ return a+vsKelime(s.metin); },0);
+  el.innerHTML='<div class="yk-sat" style="margin-top:10px"><b>📝 Başlık</b><input id="vsBas" value="'+esc(VS.baslik)+'" style="flex:1;border:2px solid #cbd5e1;border-radius:10px;padding:8px;font-size:15px"></div>'+
+   VS.sahneler.map(function(s,i){ return '<div class="yk-sat2" style="display:block"><div class="yk-sat" style="margin:0 0 6px"><input data-f="ikon" data-i="'+i+'" value="'+esc(s.ikon)+'" style="width:56px;text-align:center;font-size:22px;border:2px solid #cbd5e1;border-radius:10px;padding:4px"><input data-f="ust" data-i="'+i+'" value="'+esc(s.ust)+'" style="flex:1;border:2px solid #cbd5e1;border-radius:10px;padding:8px;font-weight:800;font-size:15px"><button class="yk-b s k" data-sil="'+i+'" aria-label="Sahneyi sil">🗑️</button></div><textarea data-f="metin" data-i="'+i+'" style="width:100%;min-height:64px;border:2px solid #cbd5e1;border-radius:10px;padding:8px;font:inherit;font-size:15px;box-sizing:border-box">'+esc(s.metin)+'</textarea></div>'; }).join('')+
+   '<div class="yk-sat"><button class="yk-b s" data-ek>➕ Sahne ekle</button><span class="yk-not" style="margin:0">'+VS.sahneler.length+' sahne · ~'+top+' kelime · tahmini '+Math.round(top/2.3+5.6+VS.sahneler.length*1.1)+' sn</span></div>'+
+   '<div class="yk-sat yk-ms"><b style="font-size:14px">📨 Velilere gidecek kısa yazı</b><textarea id="vsMetin" style="min-height:120px">'+esc(vsVeliMetin())+'</textarea></div>';
+  el.querySelector('#vsBas').oninput=function(){ VS.baslik=this.value; };
+  el.querySelectorAll('[data-f]').forEach(function(x){ x.oninput=function(){ VS.sahneler[+x.dataset.i][x.dataset.f]=x.value; }; });
+  el.querySelectorAll('[data-sil]').forEach(function(b){ b.onclick=function(){ VS.sahneler.splice(+b.dataset.sil,1); vsSahneCiz(); }; });
+  el.querySelector('[data-ek]').onclick=function(){ VS.sahneler.push({ikon:'✨',ust:'Yeni sahne',metin:''}); vsSahneCiz(); }; }
+function vsKare(){ var cv=document.getElementById('vsCv'); if(!cv) return; var bo=vsBoyut(); cv.width=bo[0]; cv.height=bo[1]; var Z=vsCizelge(); Z.b=vsBilgi(); var sg=Z.L[VS.sahneler.length?1:0]; vsCiz(cv.getContext('2d'),cv.width,cv.height,sg.bas+1.5,Z); }
+function vsDugmeler(){ var ic=document.getElementById('vsIc'); if(!ic) return; ['[data-on]','[data-kay]','[data-ai]','[data-sab]'].forEach(function(s){ var b=ic.querySelector(s); if(b) b.disabled=VS.calisiyor; }); var p=ic.querySelector('[data-ip]'); if(p) p.style.display=VS.calisiyor?'':'none'; }
+function vsSonucCiz(){ var el=document.getElementById('vsSonuc'); if(!el||!VS.blob) return; var ad='sozun-ozu-'+vbSinifAd(VS.gi).replace(/\s+/g,'')+'-'+vbGunKey()+(VS.mime.indexOf('mp4')>0?'.mp4':'.webm');
+  el.innerHTML='<video src="'+VS.url+'" controls playsinline style="width:100%;max-height:40vh;border-radius:12px;background:#000;margin-top:8px"></video><div class="yk-sat"><a class="yk-b" href="'+VS.url+'" download="'+ad+'" style="text-decoration:none">⬇️ İndir</a>'+(navigator.canShare?'<button class="yk-b" data-pay>📲 Paylaş</button>':'')+'<button class="yk-b p" data-gon>📤 Okula gönder (video + yazı)</button></div>'+(VS.mime.indexOf('webm')>0?'<div class="yk-not">ℹ️ Bu tarayıcı WebM üretti; bazı iPhone’larda açılmayabilir. Tahtadaki Chrome genelde MP4 üretir.</div>':'');
+  var p=el.querySelector('[data-pay]'); if(p) p.onclick=function(){ var f=new File([VS.blob],ad,{type:VS.mime}); if(navigator.canShare({files:[f]})) navigator.share({files:[f],text:vsVeliMetin()}).catch(function(){}); else toast('Bu cihaz video paylaşımını desteklemiyor — İndir’i kullan','err'); };
+  el.querySelector('[data-gon]').onclick=function(){ vsOkulaGonder(VS.blob,VS.mime,VS.sure,null); }; }
+/* ---------- Girişler ---------- */
+try{ PL_ARAC.splice(1,0,['video','🎬','Sözün Özü · ders videosu (veliye)',function(){ vsAc(); },true]); }catch(e){}
+var _planAracCubuguV52=planAracCubugu;
+planAracCubugu=function(){ _planAracCubuguV52.apply(this,arguments); try{ var f=$('#filtre'); if(!f||f.querySelector('[data-zs="4"]')) return; var b=document.createElement('button'); b.className='fbtn'; b.dataset.zs=4; b.textContent='🎬 Ders Videosu'; b.onclick=function(){ vsAc(); }; f.insertBefore(b,f.children[1]||null); }catch(e){} };
+try{ planAracCubugu(); }catch(e){}
+var _seansAcV52=seansAc;
+seansAc=function(tid,i){ var r=_seansAcV52.apply(this,arguments); try{ var m=document.getElementById('haftaModalIc'); if(m&&!m.querySelector('[data-vsd]')){ var gi=ST.gradeIdx, b=document.createElement('button'); b.className='btn'; b.dataset.vsd=1; b.style.cssText='margin:10px 0;background:linear-gradient(135deg,#be185d,#7c3aed);color:#fff;width:100%'; b.textContent='🎬 Bu dersin “Sözün Özü” videosu (veliye)'; b.onclick=function(){ vsAc(gi,tid,i); }; var ref=m.querySelector('.mgov')||m; ref.insertBefore(b,ref.firstChild); } }catch(e){} return r; };
+function vsHash(){ var h=decodeURIComponent((location.hash||'').slice(1)); var m=/^video(?:=(\d+)\|(\w+)\|(\d+))?$/.exec(h); if(!m) return; setTimeout(function(){ if(m[1]!=null) vsAc(+m[1],m[2],+m[3]); else vsAc(); },600); }
+window.addEventListener('hashchange',vsHash); setTimeout(vsHash,900);
+try{ APP.onceki={surum:'4.10',satir:6353,kb:822}; APP.surum='4.11'; APP.tarih='19.10.2026';
+  APP.yenilikler.unshift('🎬 Sözün Özü · Ders Videosu: plandan ya da yapay zekâyla kısa veli metni → hareketli sahneler + Charon sesi → MP4; indir, paylaş ya da tek dokunuşla okula gönder; 📓 NotebookLM için hazır kaynak ve istem');
+  MODULLER.push(['Ders videosu stüdyosu','vsAc'],['Video çizimi','vsCiz'],['Yapay zekâ sesi','vsTTS']); }catch(e){}
+
+/* ============================================================
+   SÜRÜM 4.12 — 🎬 Sözün Özü: “Kareli defter” görünümü (Barış Öğretmen video stili)
+   Krem kareli defter · spiral halkalar · kırmızı kenar · sarı fosforlu site adresi + geri sayım
+   · harf harf yazılan el yazısı başlık · yeşil öz cümle · çizgi çizgi beliren el çizimi
+   · karaoke altyazı kutusu · sarı yapışkan not · güneşli kapanış kartı
+   🎤 Her sahneyi kendi sesinle kaydet (yoksa Charon) · rüzgâr ambiyansı + geçiş sesi · en fazla 90 sn
+   ============================================================ */
+var VS_SITE=LS.get('dk_vs_site','baris-ogretmen.github.io/site-1');
+var VS_SOZ={robokod:'Adım adım düşün, birlikte üret.',satranc:'Önce düşün, sonra hamle yap.',yz:'Merak et, sorgula, öğren.',akil:'Dene, yanıl, yeniden dene.',kocluk:'Küçük adımlar, büyük hedefler.',genel:'Birlikte öğreniyoruz.'};
+VS.kendi=VS.kendi||{}; VS.fmt='dikey';
+var VS_K={krem:'#f3f0e8',lac:'#2b3a67',kah:'#8a4b23',yes:'#2f7d32',sari:'#ffe25a',gun:'#f4c430',kir:'#e3a3a3',izg:'rgba(120,140,170,.18)'};
+/* Yazı tipleri (Kalam, Patrick Hand) — yüklenemezse el yazısına benzer yedek */
+var VS_FONT=false; function vsFontYukle(){ if(VS_FONT) return Promise.resolve(); VS_FONT=true; try{ var l=document.createElement('link'); l.rel='stylesheet'; l.href='https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Patrick+Hand&display=swap'; document.head.appendChild(l); }catch(e){}
+  return Promise.race([Promise.all([document.fonts.load('700 60px Kalam'),document.fonts.load('46px "Patrick Hand"')]).catch(function(){}),new Promise(function(ok){ setTimeout(ok,2500); })]); }
+var F_BAS='700 {s}px Kalam, "Comic Sans MS", "Segoe Print", cursive', F_ALT='{s}px "Patrick Hand", "Comic Sans MS", "Segoe Print", cursive';
+function vsF(t,px){ return t.replace('{s}',Math.round(px)); }
+function vsBoyut(){ return [1080,1920]; }
+/* ---------- El çizimi: çizgiler (600×400 kutu) ---------- */
+function vsDogru(a,b,c,d){ return [[a,b],[c,d]]; }
+function vsCember(cx,cy,r,n,b,e){ n=n||28; b=b||0; e=e==null?Math.PI*2:e; var p=[]; for(var i=0;i<=n;i++){ var t=b+(e-b)*i/n; p.push([cx+Math.cos(t)*r,cy+Math.sin(t)*r]); } return p; }
+function vsDikd(x,y,w,h){ return [[x,y],[x+w,y],[x+w,y+h],[x,y+h],[x,y]]; }
+function vsC(pts,renk,kal,dol){ return {p:pts,r:renk||VS_K.lac,k:kal||5,d:dol||null}; }
+function vsInsan(x,y,s){ s=s||1; return [vsC(vsCember(x,y,13*s,18),VS_K.lac,4),vsC([[x-16*s,y+70*s],[x,y+14*s],[x+16*s,y+70*s],[x-16*s,y+70*s]],VS_K.lac,4,'rgba(43,58,103,.06)'),vsC(vsDogru(x-5*s,y-2,x-5*s,y+1),VS_K.lac,4),vsC(vsDogru(x+5*s,y-2,x+5*s,y+1),VS_K.lac,4)]; }
+var VS_CIZIM={
+  robokod:function(){ return [vsC(vsDikd(230,110,140,110),VS_K.lac,6,'rgba(34,211,238,.12)'),vsC(vsCember(275,160,14),VS_K.lac,5),vsC(vsCember(325,160,14),VS_K.lac,5),vsC(vsDogru(280,195,320,195),VS_K.lac,5),vsC(vsDogru(300,110,300,75),VS_K.lac,5),vsC(vsCember(300,66,9),VS_K.kah,5,'rgba(244,196,48,.6)'),
+    vsC(vsDikd(245,225,110,95),VS_K.lac,6,'rgba(124,58,237,.10)'),vsC(vsDogru(245,250,200,285),VS_K.lac,5),vsC(vsDogru(355,250,400,285),VS_K.lac,5),vsC(vsDogru(270,320,270,360),VS_K.lac,5),vsC(vsDogru(330,320,330,360),VS_K.lac,5),
+    vsC([[420,330],[470,330],[470,290],[520,290]],VS_K.kah,4),vsC([[508,280],[522,290],[508,300]],VS_K.kah,4)]; },
+  satranc:function(){ var L=[]; for(var i=0;i<4;i++) for(var j=0;j<4;j++) L.push(vsC(vsDikd(170+i*65,110+j*62,65,62),VS_K.lac,3,(i+j)%2?'rgba(43,58,103,.22)':null));
+    return L.concat([vsC(vsCember(300,150,20),VS_K.kah,5,'rgba(138,75,35,.35)'),vsC([[278,235],[288,172],[312,172],[322,235],[278,235]],VS_K.kah,5,'rgba(138,75,35,.35)'),vsC(vsDogru(270,240,330,240),VS_K.kah,6)]); },
+  yz:function(){ var N=[[150,120],[150,220],[150,320],[300,90],[300,190],[300,290],[450,160],[450,260]], L=[]; [[0,3],[0,4],[1,3],[1,4],[1,5],[2,4],[2,5],[3,6],[4,6],[4,7],[5,7]].forEach(function(e){ L.push(vsC(vsDogru(N[e[0]][0],N[e[0]][1],N[e[1]][0],N[e[1]][1]),'rgba(43,58,103,.55)',3)); });
+    N.forEach(function(n,i){ L.push(vsC(vsCember(n[0],n[1],20,16),VS_K.lac,5,i>5?'rgba(244,196,48,.55)':'rgba(34,211,238,.18)')); }); return L; },
+  akil:function(){ return [vsC([[150,120],[230,120],[230,150],[248,150],[248,180],[230,180],[230,210],[150,210],[150,120]],VS_K.lac,5,'rgba(219,39,119,.15)'),vsC([[262,120],[342,120],[342,210],[262,210],[262,180],[244,180]],VS_K.lac,5,'rgba(244,196,48,.25)'),
+    vsC([[380,320],[470,320],[425,230],[380,320]],VS_K.kah,5,'rgba(47,125,50,.18)'),vsC(vsDikd(150,250,90,90),VS_K.lac,5,'rgba(34,211,238,.15)'),vsC([[260,340],[350,340],[305,280],[260,340]],VS_K.lac,5)]; },
+  kocluk:function(){ return [vsC(vsCember(300,200,120,36),VS_K.lac,5),vsC(vsCember(300,200,80,30),VS_K.kah,5),vsC(vsCember(300,200,40,24),VS_K.lac,5,'rgba(244,196,48,.6)'),vsC(vsDogru(460,60,315,190),VS_K.kah,6),vsC([[300,180],[318,192],[300,200]],VS_K.kah,5)]; },
+  ampul:function(){ var L=[vsC(vsCember(300,160,72,32,Math.PI*0.75,Math.PI*2.25),VS_K.lac,6,'rgba(244,196,48,.35)'),vsC([[250,212],[265,265],[335,265],[350,212]],VS_K.lac,6),vsC(vsDogru(270,282,330,282),VS_K.lac,6),vsC(vsDogru(278,298,322,298),VS_K.lac,6),vsC([[285,190],[300,225],[315,190]],VS_K.kah,4)];
+    for(var i=0;i<7;i++){ var a=Math.PI*(1.05+i*0.15); L.push(vsC(vsDogru(300+Math.cos(a)*100,160+Math.sin(a)*100,300+Math.cos(a)*135,160+Math.sin(a)*135),VS_K.gun,6)); } return L; },
+  tahta:function(){ return [vsC(vsDikd(150,60,300,160),'#6b4423',10,'#2f5d3a')].concat(vsInsan(200,270,1.1),vsInsan(300,270,1.1),vsInsan(400,270,1.1)); },
+  fidan:function(){ return [vsC([[245,290],[355,290],[340,360],[260,360],[245,290]],VS_K.kah,6,'rgba(138,75,35,.3)'),vsC([[300,290],[302,240],[296,190],[300,140]],VS_K.yes,6),vsC([[300,230],[250,205],[230,175],[275,185],[300,230]],VS_K.yes,5,'rgba(47,125,50,.3)'),vsC([[300,190],[350,160],[375,130],[325,140],[300,190]],VS_K.yes,5,'rgba(47,125,50,.3)'),vsC(vsCember(470,90,30,22),VS_K.gun,5,'rgba(244,196,48,.45)')]; },
+  ev:function(){ return [vsC(vsDikd(170,180,170,150),VS_K.lac,6,'rgba(244,196,48,.15)'),vsC([[150,185],[255,95],[360,185]],VS_K.kah,7),vsC(vsDikd(235,250,45,80),VS_K.kah,5),vsC(vsDikd(190,205,35,32),VS_K.lac,4,'rgba(34,211,238,.25)'),
+    vsC([[390,90],[520,90],[520,170],[450,170],[425,200],[430,170],[390,170],[390,90]],VS_K.lac,5,'#fff'),vsC([[440,115],[455,105],[470,115],[470,128],[455,138],[455,148]],VS_K.kah,5),vsC(vsCember(455,160,3,8),VS_K.kah,5)]; },
+  soru:function(){ return [vsC([[255,150],[260,105],[300,85],[340,105],[345,150],[300,185],[300,230]],VS_K.kah,9),vsC(vsCember(300,262,6,10),VS_K.kah,9),vsC([[300,318],[170,305],[175,360],[300,372],[300,318]],VS_K.lac,4,'rgba(255,255,255,.7)'),vsC([[300,318],[430,305],[425,360],[300,372]],VS_K.lac,4,'rgba(255,255,255,.7)'),vsC(vsDogru(190,322,285,330),'rgba(43,58,103,.4)',3),vsC(vsDogru(315,330,410,322),'rgba(43,58,103,.4)',3)]; }
+};
+function vsSahneCizim(i){ var sh=VS.sahneler[i]||{}, u=normTR(sh.ust||''); if(i===0) return VS_CIZIM[VS.tid]||VS_CIZIM.robokod;
+  if(/öğren|ogren/.test(u)) return VS_CIZIM.ampul; if(/yapt|derste|nasıl/.test(u)) return VS_CIZIM.tahta; if(/önem|onem|neden|katk/.test(u)) return VS_CIZIM.fidan; if(/öz|evde|ev /.test(u)) return VS_CIZIM.ev;
+  return [VS_CIZIM.ampul,VS_CIZIM.tahta,VS_CIZIM.fidan,VS_CIZIM.ev][(i-1)%4]; }
+function vsTitre(x,y,k){ return Math.sin(x*0.137+y*0.071+k*1.7)*1.6; }
+function vsCizimCiz(c,liste,p,ox,oy,s){ var top=0; liste.forEach(function(st){ st._u=0; for(var i=1;i<st.p.length;i++){ st._u+=Math.hypot(st.p[i][0]-st.p[i-1][0],st.p[i][1]-st.p[i-1][1]); } top+=st._u; });
+  var kalan=top*Math.max(0,Math.min(1,p)); c.lineCap='round'; c.lineJoin='round';
+  liste.forEach(function(st){ if(kalan<=0&&!(p>=1)) return; var ciz=Math.min(st._u,kalan); kalan-=st._u; var tam=ciz>=st._u-0.5;
+    if(st.d&&tam){ c.save(); c.globalAlpha=Math.min(1,(kalan+st._u)/(top*0.15+1)); c.fillStyle=st.d; c.beginPath(); st.p.forEach(function(q,i){ var X=ox+q[0]*s, Y=oy+q[1]*s; if(i) c.lineTo(X,Y); else c.moveTo(X,Y); }); c.fill(); c.restore(); }
+    for(var gec=0;gec<2;gec++){ c.strokeStyle=st.r; c.globalAlpha=gec?0.45:0.92; c.lineWidth=st.k*s*(gec?0.6:1); c.beginPath(); var yol=0;
+      for(var i=0;i<st.p.length;i++){ var q=st.p[i], X=ox+(q[0]+vsTitre(q[0],q[1],gec))*s, Y=oy+(q[1]+vsTitre(q[1],q[0],gec+2))*s;
+        if(i===0){ c.moveTo(X,Y); continue; } var pq=st.p[i-1], sl=Math.hypot(q[0]-pq[0],q[1]-pq[1]); if(yol+sl>ciz){ var r=(ciz-yol)/sl; c.lineTo(ox+(pq[0]+(q[0]-pq[0])*r)*s,oy+(pq[1]+(q[1]-pq[1])*r)*s); break; } c.lineTo(X,Y); yol+=sl; }
+      c.stroke(); } c.globalAlpha=1; }); }
+/* ---------- Defter zemini ---------- */
+var VS_ZEMIN=null;
+function vsZemin(W,H,kapanis){ var cv=document.createElement('canvas'); cv.width=W; cv.height=H; var c=cv.getContext('2d'); c.fillStyle=VS_K.krem; c.fillRect(0,0,W,H);
+  var rd=c.createImageData(W,H); for(var i=0;i<rd.data.length;i+=4){ var n=(Math.random()*14)|0; rd.data[i]=243-n; rd.data[i+1]=240-n; rd.data[i+2]=232-n; rd.data[i+3]=255; } c.putImageData(rd,0,0);
+  if(!kapanis){ c.strokeStyle=VS_K.izg; c.lineWidth=1.5; for(var x=0;x<W;x+=54){ c.beginPath(); c.moveTo(x,0); c.lineTo(x,H); c.stroke(); } for(var y=0;y<H;y+=54){ c.beginPath(); c.moveTo(0,y); c.lineTo(W,y); c.stroke(); }
+    c.strokeStyle=VS_K.kir; c.lineWidth=3; c.beginPath(); c.moveTo(64,0); c.lineTo(64,H); c.stroke();
+    var gg=c.createLinearGradient(0,0,0,90); gg.addColorStop(0,'rgba(0,0,0,.22)'); gg.addColorStop(1,'rgba(0,0,0,0)'); c.fillStyle=gg; c.fillRect(0,0,W,90);
+    for(var h=0;h<21;h++){ var hx=30+h*(W-60)/20; c.fillStyle='#d9d4c7'; c.beginPath(); c.arc(hx,34,13,0,7); c.fill(); c.strokeStyle='#3b3b3b'; c.lineWidth=5; c.beginPath(); c.arc(hx,22,12,Math.PI*0.15,Math.PI*0.95,true); c.stroke(); } }
+  var vg=c.createRadialGradient(W/2,H/2,H*0.35,W/2,H/2,H*0.75); vg.addColorStop(0,'rgba(0,0,0,0)'); vg.addColorStop(1,'rgba(60,40,10,.16)'); c.fillStyle=vg; c.fillRect(0,0,W,H); return cv; }
+function vsSarK(c,s,max){ return vsSar(c,s,max); }
+function vsYaz(c,metin,x,y,font,renk,karSn,lt,hiz,max,satirAra){ c.font=font; var tam=String(metin||''), n=Math.max(0,Math.min(tam.length,Math.floor((lt)*(hiz||38)))); var L=vsSar(c,tam,max), say=0;
+  L.forEach(function(l,i){ var g=Math.max(0,Math.min(l.length,n-say)); say+=l.length+1; if(g>0){ c.fillStyle=renk; c.fillText(l.slice(0,g),x,y+i*satirAra); } }); return L.length; }
+/* ---------- Kare çizimi ---------- */
+function vsCiz(c,W,H,t,Z){ var b=Z.b; if(!VS_ZEMIN||VS_ZEMIN.width!==W){ VS_ZEMIN={width:W,a:vsZemin(W,H,false),k:vsZemin(W,H,true)}; }
+  var seg=null; for(var k=0;k<Z.L.length;k++){ if(t>=Z.L[k].bas&&t<Z.L[k].son){ seg=Z.L[k]; break; } } if(!seg) seg=Z.L[Z.L.length-1]; var lt=t-seg.bas, dur=seg.son-seg.bas;
+  c.textAlign='center'; c.textBaseline='alphabetic';
+  if(seg.tip==='kapanis'){ c.drawImage(VS_ZEMIN.k,0,0); var cx=W/2, cy=760, a=t*0.6; c.save(); c.translate(cx,cy); c.rotate(a); c.strokeStyle=VS_K.gun; c.lineWidth=9; c.lineCap='round';
+      for(var r=0;r<12;r++){ var q=r*Math.PI/6; c.beginPath(); c.moveTo(Math.cos(q)*125,Math.sin(q)*125); c.lineTo(Math.cos(q)*175,Math.sin(q)*175); c.stroke(); } c.restore();
+    c.fillStyle='#ffd84a'; c.beginPath(); c.arc(cx,cy,100,0,7); c.fill(); c.strokeStyle='#e8b923'; c.lineWidth=6; c.stroke();
+    vsYaz(c,VS.soz||VS_SOZ[VS.tid]||VS_SOZ.genel,W/2,1080,vsF(F_BAS,78),VS_K.lac,0,lt,30,W*0.84,92);
+    c.font=vsF(F_BAS,40); var pw=c.measureText(VS_SITE).width+80; c.fillStyle=VS_K.lac; vsYuvarlak(c,(W-pw)/2,1260,pw,84,42); c.fill(); c.fillStyle='#fff'; c.fillText(VS_SITE,W/2,1316);
+    c.font=vsF(F_BAS,38); c.fillStyle=VS_K.kah; c.fillText('Paylaş — belki bir veliye ilham olur.',W/2,1440); c.fillText('Barış Öğretmen · '+b.sinif,W/2,1500); return; }
+  c.drawImage(VS_ZEMIN.a,0,0);
+  /* sol üst fosforlu site adresi + sağ üst geri sayım */
+  c.font=vsF(F_BAS,34); var sw=c.measureText('● '+VS_SITE).width+36; c.save(); c.globalAlpha=.85; c.fillStyle=VS_K.sari; c.beginPath(); c.moveTo(72,92); c.lineTo(72+sw,88); c.lineTo(76+sw,138); c.lineTo(70,142); c.closePath(); c.fill(); c.restore();
+  c.textAlign='left'; c.fillStyle=VS_K.lac; c.fillText('● '+VS_SITE,88,128); c.textAlign='right'; var kal=Math.max(0,Math.ceil(Z.toplam-t)); c.fillText(Math.floor(kal/60)+':'+String(kal%60).padStart(2,'0'),W-60,128); c.textAlign='center';
+  /* yapışkan not */
+  var not=seg.tip==='giris'?(b.sinif+' · '+b.ders):(b.sinif+' · '+(VS.idx+1)+'. ders'); c.save(); c.translate(W-230,232); c.rotate(-0.06); c.font=vsF(F_BAS,34); var nw=Math.max(220,c.measureText(not).width+50);
+  c.fillStyle='rgba(0,0,0,.12)'; c.fillRect(-nw/2+6,-34+8,nw,76); c.fillStyle='#fde047'; c.fillRect(-nw/2,-34,nw,76); c.fillStyle='rgba(255,255,255,.45)'; c.fillRect(-30,-46,60,22); c.fillStyle=VS_K.lac; c.fillText(not,0,16); c.restore();
+  /* zemin çizgisi */
+  c.strokeStyle=VS_K.kah; c.lineWidth=4; c.beginPath(); for(var gx=60;gx<=W-60;gx+=20){ var gy=1282+Math.sin(gx*0.05)*2; if(gx===60) c.moveTo(gx,gy); else c.lineTo(gx,gy); } c.stroke();
+  if(seg.tip==='giris'){ var soru='Bu hafta '+b.sinif+' derste ne yaptı?'; var sat=vsYaz(c,soru,W/2,420,vsF(F_BAS,92),VS_K.lac,0,lt,26,W*0.82,110);
+      if(lt>1.2){ c.save(); c.globalAlpha=Math.min(1,(lt-1.2)/0.5); var y=420+sat*110+20; c.font=vsF(F_BAS,62); var tw=c.measureText(b.konu).width; c.fillStyle='rgba(255,226,90,.75)'; c.fillRect(W/2-tw/2-14,y-54,tw+28,74); c.fillStyle=VS_K.kah; c.fillText(b.konu,W/2,y); c.restore(); }
+      vsCizimCiz(c,VS_CIZIM.soru(),Math.min(1,lt/2.4),540-300*1.4,755,1.4); return; }
+  var sh=VS.sahneler[seg.i]||{}, n=vsYaz(c,sh.ust||'',W/2,330,vsF(F_BAS,70),VS_K.lac,0,lt,38,W*0.8,84);
+  if(sh.vurgu&&lt>0.6){ vsYaz(c,'“'+sh.vurgu+'”',W/2,330+n*84+30,vsF(F_BAS,52),VS_K.yes,0,lt-0.6,32,W*0.8,64); }
+  var ciz=seg._ciz||(seg._ciz=vsSahneCizim(seg.i)()); vsCizimCiz(c,ciz,Math.min(1,lt/Math.min(2.6,dur*0.55)),540-300*1.45,780,1.45);
+  /* parıltı yıldızları */
+  c.fillStyle=VS_K.gun; for(var y2=0;y2<3;y2++){ var al=(Math.sin(t*3+y2*2.1)+1)/2; c.globalAlpha=al*.8; var sx=[170,900,820][y2], sy=[760,700,1180][y2]; c.font=vsF(F_BAS,40); c.fillText('+',sx,sy); } c.globalAlpha=1;
+  /* altyazı kutusu: karaoke */
+  c.font=vsF(F_ALT,50); var satir=vsSar(c,sh.metin||'',W*0.78), kel=vsKelime(sh.metin), konus=Math.max(1,(seg.ses?seg.ses.duration:dur-0.7)), oran=Math.min(1,Math.max(0,(lt-0.3)/konus)), gor=Math.ceil(kel*oran), say=0;
+  var bh=satir.length*62+44, by=1415; c.fillStyle='rgba(0,0,0,.10)'; vsYuvarlak(c,W*0.08+6,by+8,W*0.84,bh,22); c.fill(); c.fillStyle='#fff'; vsYuvarlak(c,W*0.08,by,W*0.84,bh,22); c.fill(); c.strokeStyle=VS_K.lac; c.lineWidth=4; c.stroke();
+  c.textAlign='left'; satir.forEach(function(l,li){ var x=W/2-c.measureText(l).width/2, y=by+22+46+li*62; l.split(' ').forEach(function(w){ say++; c.fillStyle=say<=gor?VS_K.lac:'rgba(43,58,103,.32)'; c.fillText(w,x,y); x+=c.measureText(w+' ').width; }); }); c.textAlign='center';
+  c.font=vsF(F_ALT,34); c.fillStyle='rgba(43,58,103,.4)'; c.fillText(VS_SITE,W/2,by+bh+64); }
+/* ---------- Zaman çizelgesi: sessiz kanca 2,8 sn · sahneler sesin gerçek süresi · kapanış 3 sn ---------- */
+function vsCizelge(){ var L=[], t=0; L.push({tip:'giris',bas:0,son:2.8}); t=2.8;
+  VS.sahneler.forEach(function(s,i){ var a=(VS.kendi&&VS.kendi[i])||(VS.sesler&&VS.sesler[i]), d=a?a.duration+0.8:Math.max(3.8,vsKelime(s.metin)/2.3+1.2); L.push({tip:'sahne',i:i,bas:t,son:t+d,ses:a||null}); t+=d; });
+  L.push({tip:'kapanis',bas:t,son:t+3}); t+=3; return {L:L,toplam:t}; }
+/* ---------- Ses: kendi sesin varsa o, yoksa Charon ---------- */
+vsSesHazirla=async function(dur){ VS.sesler=null; if(VS.ses!=='charon'){ return; } var L=[]; for(var i=0;i<VS.sahneler.length;i++){ if(VS.iptal) throw new Error('İptal edildi'); if(VS.kendi[i]){ L.push(null); continue; } dur('🎙️ Ses hazırlanıyor… '+(i+1)+'/'+VS.sahneler.length); L.push(await vsTTS(VS.sahneler[i].metin)); } VS.sesler=L; };
+function vsAmbiyans(ac,hedef,t0,toplam,Z){ try{ var n=ac.sampleRate*4, bf=ac.createBuffer(1,n,ac.sampleRate), d=bf.getChannelData(0), son=0; for(var i=0;i<n;i++){ var w=Math.random()*2-1; son=(son+0.02*w)/1.02; d[i]=son*3.5; }
+    var src=ac.createBufferSource(); src.buffer=bf; src.loop=true; var bp=ac.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=420; bp.Q.value=0.6; var g=ac.createGain(); g.gain.value=0.012;
+    var lfo=ac.createOscillator(), lg=ac.createGain(); lfo.frequency.value=0.13; lg.gain.value=0.005; lfo.connect(lg); lg.connect(g.gain); src.connect(bp); bp.connect(g); g.connect(hedef); g.connect(ac.destination); src.start(t0); lfo.start(t0); src.stop(t0+toplam); lfo.stop(t0+toplam);
+    Z.L.forEach(function(sg,ix){ if(!ix) return; var w=ac.createBufferSource(); w.buffer=bf; var f=ac.createBiquadFilter(); f.type='bandpass'; f.Q.value=1.2; f.frequency.setValueAtTime(300,t0+sg.bas-0.3); f.frequency.exponentialRampToValueAtTime(2400,t0+sg.bas+0.15);
+      var wg=ac.createGain(); wg.gain.setValueAtTime(0.0001,t0+sg.bas-0.3); wg.gain.exponentialRampToValueAtTime(0.03,t0+sg.bas); wg.gain.exponentialRampToValueAtTime(0.0001,t0+sg.bas+0.35); w.connect(f); f.connect(wg); wg.connect(hedef); wg.connect(ac.destination); w.start(t0+sg.bas-0.3,Math.random()); w.stop(t0+sg.bas+0.4); });
+    return [src,lfo]; }catch(e){ return []; } }
+vsOynat=async function(kaydet){ if(VS.calisiyor) return; var cv=document.getElementById('vsCv'), dur=function(m){ var e=document.getElementById('vsDur'); if(e) e.textContent=m; };
+  if(!VS.sahneler.length){ toast('Önce metni hazırla','err'); return; } VS.calisiyor=true; VS.iptal=false; vsDugmeler(); await vsFontYukle(); VS_ZEMIN=null;
+  try{ cv.width=1080; cv.height=1920; var c=cv.getContext('2d'), b=vsBilgi(), ac=vsAC();
+    var eksik=VS.sahneler.some(function(_,i){ return !VS.kendi[i]; });
+    if(VS.ses==='charon'&&eksik&&(!VS.sesler||VS.sesler.length!==VS.sahneler.length||VS._imza!==vsImza())){ try{ await vsSesHazirla(dur); VS._imza=vsImza(); }catch(e){ if(VS.iptal) throw e; if(!confirm('Yapay zekâ sesi şu an alınamadı ('+e.message+').\nKaydettiğin sesler dışında sahneler sessiz (altyazılı) olsun mu?')) throw e; VS.sesler=null; } }
+    var Z=vsCizelge(); Z.b=b; if(Z.toplam>90.5) toast('⚠️ Video '+Math.round(Z.toplam)+' sn — WhatsApp durumu için en fazla 90 sn. Bir sahneyi kısaltman iyi olur.','err',6000);
+    var hedef=ac.createMediaStreamDestination(), rec=null, parca=[], mime=vsMime();
+    if(kaydet){ if(!mime||!cv.captureStream) throw new Error('Bu tarayıcı videoyu kaydedemiyor. Tahtadaki Chrome ile dene.');
+      var st=cv.captureStream(30); hedef.stream.getAudioTracks().forEach(function(tr){ st.addTrack(tr); });
+      rec=new MediaRecorder(st,{mimeType:mime,videoBitsPerSecond:2200000,audioBitsPerSecond:128000}); rec.ondataavailable=function(e){ if(e.data&&e.data.size) parca.push(e.data); }; rec.start(1000); }
+    var t0=ac.currentTime+0.3; VS._kaynaklar=vsAmbiyans(ac,hedef,t0,Z.toplam,Z);
+    Z.L.forEach(function(sg){ if(sg.ses){ var s=ac.createBufferSource(); s.buffer=sg.ses; var g=ac.createGain(); g.gain.value=1; s.connect(g); g.connect(hedef); g.connect(ac.destination); s.start(t0+sg.bas+0.3); VS._kaynaklar.push(s); } });
+    dur(kaydet?'⏺️ Kaydediliyor… bu sekmede kal':'▶️ Önizleme');
+    await new Promise(function(bitti){ (function kare(){ var t=ac.currentTime-t0; if(VS.iptal||t>=Z.toplam){ bitti(); return; } vsCiz(c,1080,1920,Math.max(0,t),Z); var y=document.getElementById('vsYz'); if(y) y.style.width=Math.min(100,t/Z.toplam*100)+'%'; requestAnimationFrame(kare); })(); });
+    (VS._kaynaklar||[]).forEach(function(s){ try{ s.stop(); }catch(e){} }); VS._kaynaklar=[];
+    if(rec){ await new Promise(function(ok){ rec.onstop=ok; rec.stop(); }); if(VS.iptal) throw new Error('İptal edildi');
+      VS.blob=new Blob(parca,{type:mime.split(';')[0]}); VS.mime=mime.split(';')[0]; VS.sure=Z.toplam; if(VS.url) URL.revokeObjectURL(VS.url); VS.url=URL.createObjectURL(VS.blob);
+      dur('✅ Video hazır · '+Math.round(Z.toplam)+' sn · '+(VS.blob.size/1048576).toFixed(1)+' MB · '+(VS.mime.indexOf('mp4')>0?'MP4':'WebM')+' · 1080×1920'+(mime.indexOf('avc1')<0&&VS.mime.indexOf('mp4')>0?' · ⚠️ H.264 değil, bazı iPhone’larda açılmayabilir':'')); vsSonucCiz(); }
+    else dur('⏹️ Önizleme bitti'); }
+  catch(e){ dur('⚠️ '+(e.message||e)); }
+  VS.calisiyor=false; vsDugmeler(); };
+vsKare=function(){ var cv=document.getElementById('vsCv'); if(!cv) return; cv.width=1080; cv.height=1920; vsFontYukle().then(function(){ VS_ZEMIN=null; var Z=vsCizelge(); Z.b=vsBilgi(); var sg=Z.L[VS.sahneler.length?1:0]; vsCiz(cv.getContext('2d'),1080,1920,sg.bas+3,Z); }); };
+/* ---------- 🎤 Sahne sahne kendi sesin ---------- */
+var VS_MIK=null;
+async function vsKayitBas(i,btn){ if(VS_MIK){ VS_MIK.stop(); return; }
+  try{ var st=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}}); var mt=['audio/mp4','audio/webm;codecs=opus','audio/webm'].filter(function(m){ try{ return MediaRecorder.isTypeSupported(m); }catch(e){ return false; } })[0];
+    var rec=new MediaRecorder(st,mt?{mimeType:mt}:undefined), P=[]; VS_MIK=rec; btn.textContent='⏹️ Bitir'; btn.style.background='#dc2626'; btn.style.color='#fff';
+    rec.ondataavailable=function(e){ if(e.data.size) P.push(e.data); };
+    rec.onstop=async function(){ st.getTracks().forEach(function(t){ t.stop(); }); VS_MIK=null; try{ var ab=await new Blob(P).arrayBuffer(), buf=await vsAC().decodeAudioData(ab); VS.kendi[i]=vsKirp(buf); toast('🎤 Sahne '+(i+1)+' kaydedildi ('+VS.kendi[i].duration.toFixed(1)+' sn)','ok'); }catch(e){ toast('Kayıt okunamadı','err'); } vsSahneCiz(); };
+    rec.start(); }catch(e){ VS_MIK=null; toast('Mikrofon açılamadı — izin ver ya da https adresinden aç','err',4000); } }
+function vsKirp(buf){ var d=buf.getChannelData(0), n=d.length, e=0.02, a=0, z=n-1; while(a<n&&Math.abs(d[a])<e) a++; while(z>a&&Math.abs(d[z])<e) z--; a=Math.max(0,a-Math.round(buf.sampleRate*0.08)); z=Math.min(n-1,z+Math.round(buf.sampleRate*0.15));
+  var ac=vsAC(), out=ac.createBuffer(1,Math.max(1,z-a),buf.sampleRate), o=out.getChannelData(0), tepe=0; for(var i=a;i<z;i++) tepe=Math.max(tepe,Math.abs(d[i])); var k=tepe>0?Math.min(4,0.85/tepe):1; for(var j=0;j<z-a;j++) o[j]=d[a+j]*k; return out; }
+var _vsSahneCizV53=vsSahneCiz;
+vsSahneCiz=function(){ _vsSahneCizV53(); try{ var el=document.getElementById('vsSahne'); if(!el||!VS.sahneler.length) return; var top=vsCizelge().toplam;
+  el.querySelectorAll('textarea[data-f="metin"]').forEach(function(ta){ var i=+ta.dataset.i, kut=ta.parentNode; var v=document.createElement('input'); v.value=VS.sahneler[i].vurgu||''; v.placeholder='🟢 Ekranda yeşil öz cümle (isteğe bağlı)'; v.style.cssText='width:100%;margin-top:6px;border:2px solid #bbf7d0;border-radius:10px;padding:7px;font:inherit;font-size:14px;box-sizing:border-box'; v.oninput=function(){ VS.sahneler[i].vurgu=v.value; }; kut.appendChild(v);
+    var s=document.createElement('div'); s.className='yk-sat'; s.style.margin='6px 0 0'; var k=VS.kendi[i];
+    s.innerHTML='<button class="yk-b s" data-mik>'+(k?'🎤 Yeniden kaydet':'🎤 Kendi sesimle kaydet')+'</button>'+(k?'<span style="font-size:13px;font-weight:800;color:#16a34a">✅ Senin sesin · '+k.duration.toFixed(1)+' sn</span><button class="yk-b s" data-din>▶️</button><button class="yk-b s k" data-kal aria-label="Kaydı sil">✕</button>':'<span class="yk-not" style="margin:0">kayıt yoksa Charon okur</span>'); kut.appendChild(s);
+    s.querySelector('[data-mik]').onclick=function(){ vsKayitBas(i,this); };
+    var dn=s.querySelector('[data-din]'); if(dn) dn.onclick=function(){ var ac=vsAC(), so=ac.createBufferSource(); so.buffer=VS.kendi[i]; so.connect(ac.destination); so.start(); };
+    var kl=s.querySelector('[data-kal]'); if(kl) kl.onclick=function(){ delete VS.kendi[i]; vsSahneCiz(); }; });
+  var bil=document.createElement('div'); bil.className='yk-oz'; bil.style.marginTop='8px'; bil.innerHTML='⏱️ Tahmini süre: <b>'+Math.round(top)+' sn</b> '+(top>90?'<span style="color:#b91c1c">— 90 sn’yi aşıyor, kısalt</span>':'(WhatsApp durumu için en fazla 90 sn)')+'<br><span style="font-size:13px">Kapanış sözü: </span><input id="vsSoz" value="'+esc(VS.soz||VS_SOZ[VS.tid]||'')+'" style="border:2px solid #cbd5e1;border-radius:10px;padding:6px;font:inherit;font-size:14px;width:60%"> <span style="font-size:13px">Site: </span><input id="vsSite" value="'+esc(VS_SITE)+'" style="border:2px solid #cbd5e1;border-radius:10px;padding:6px;font:inherit;font-size:14px;width:60%">';
+  el.appendChild(bil); bil.querySelector('#vsSoz').oninput=function(){ VS.soz=this.value; }; bil.querySelector('#vsSite').onchange=function(){ VS_SITE=this.value.trim()||'baris-ogretmen.github.io/site-1'; LS.set('dk_vs_site',VS_SITE); vsKare(); };
+  el.querySelectorAll('[data-sil],[data-ek]').forEach(function(b){ b.addEventListener('click',function(){ VS.kendi={}; }); }); }catch(e){ try{console.warn('vs53',e);}catch(_){} } };
+var _vsCizUIV53=vsCizUI;
+vsCizUI=function(){ _vsCizUIV53(); try{ var f=document.getElementById('vsFmt'); if(f&&f.parentNode) f.parentNode.style.display='none'; var cv=document.getElementById('vsCv'); if(cv){ cv.style.maxHeight='56vh'; cv.style.background=VS_K.krem; } }catch(e){} };
+var _vsAcV53=vsAc; vsAc=function(){ VS.kendi={}; VS.soz=''; return _vsAcV53.apply(this,arguments); };
+try{ APP.onceki={surum:'4.11',satir:6538,kb:853}; APP.surum='4.12'; APP.yenilikler.unshift('🎬 Sözün Özü artık kareli defter görünümünde (1080×1920): harf harf el yazısı başlık, çizgi çizgi beliren çizim, karaoke altyazı, yapışkan not, güneşli kapanış; 🎤 her sahneyi kendi sesinle kaydedebilirsin; en fazla 90 sn');
+  MODULLER.push(['Defter görünümü','vsZemin'],['El çizimleri','vsCizimCiz'],['Kendi ses kaydı','vsKayitBas']); }catch(e){}
+
+/* ============================================================
+   SÜRÜM 4.13 — 🎬 Sözün Özü: ⚡ tek dokunuşla video · sessiz an yok
+   • Giriş ve kapanış da seslendirilir (Charon — ağırbaşlı erkek sesi)
+   • Altta hafif ritimli fon müziği (konuşurken kendiliğinden kısılır); kapatılabilir
+   • ⚡ Tek dokunuş: ders seçili → metin (yapay zekâ, olmazsa plandan) → ses → video
+   Hiçbir kayıt/işaret değişmez; yalnız video stüdyosu güncellendi.
+   ============================================================ */
+VS.muzik=LS.get('dk_vs_muzik',true)!==false;
+vsTTS=async function(metin){ var k=(keyler()[0]||''), url='https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key='+encodeURIComponent(k);
+  var body={contents:[{parts:[{text:'Ağırbaşlı, sıcak ve sakin bir erkek öğretmen sesiyle; net, anlaşılır ve akıcı bir tempoda Türkçe oku: '+metin}]}],generationConfig:{responseModalities:['AUDIO'],speechConfig:{voiceConfig:{prebuiltVoiceConfig:{voiceName:'Charon'}}}}};
+  var son='';
+  for(var d=0;d<3;d++){ try{ var r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}); if(!r.ok){ son='Ses servisi şu an yoğun'; await new Promise(function(ok){ setTimeout(ok,1500*(d+1)); }); continue; }
+      var j=await r.json(), part=((((j.candidates||[])[0]||{}).content||{}).parts||[]).filter(function(x){ return x.inlineData; })[0]; if(!part){ son='Ses gelmedi'; continue; }
+      var mm=/rate=(\d+)/.exec(part.inlineData.mimeType||''), hz=mm?+mm[1]:24000, bin=atob(part.inlineData.data), n=bin.length>>1, ac=vsAC(), buf=ac.createBuffer(1,n,hz), ch=buf.getChannelData(0);
+      for(var i=0;i<n;i++){ var v=bin.charCodeAt(2*i)|(bin.charCodeAt(2*i+1)<<8); if(v>=32768) v-=65536; ch[i]=v/32768; } return buf; }catch(e){ son='İnternet ya da ses servisi hatası'; } }
+  throw new Error(son||'Ses üretilemedi'); };
+function vsGirisMetin(){ var b=vsBilgi(); return 'Bu hafta '+b.sinif+' derste ne yaptı? '+(VS.baslik||b.konu)+'.'; }
+function vsKapanisMetin(){ return (VS.soz||VS_SOZ[VS.tid]||VS_SOZ.genel)+' Barış Öğretmen.'; }
+vsImza=function(){ return JSON.stringify([vsGirisMetin(),vsKapanisMetin()].concat(VS.sahneler.map(function(s){ return s.metin; }))); };
+vsSesHazirla=async function(dur){ VS.sesler=null; VS.girisSes=null; VS.kapanisSes=null; if(VS.ses!=='charon') return; var top=VS.sahneler.length+2, n=0;
+  function adim(){ n++; dur('🎙️ Charon sesi hazırlanıyor… '+n+'/'+top); }
+  adim(); try{ VS.girisSes=await vsTTS(vsGirisMetin()); }catch(e){ VS.girisSes=null; }
+  var L=[]; for(var i=0;i<VS.sahneler.length;i++){ if(VS.iptal) throw new Error('İptal edildi'); adim(); if(VS.kendi[i]){ L.push(null); continue; } L.push(await vsTTS(VS.sahneler[i].metin)); } VS.sesler=L;
+  adim(); try{ VS.kapanisSes=await vsTTS(vsKapanisMetin()); }catch(e){ VS.kapanisSes=null; } };
+/* Zaman çizelgesi: giriş/kapanış sesin süresi kadar; sahneler arası kısa nefes */
+vsCizelge=function(){ var L=[], t=0, g=VS.girisSes, gd=g?Math.max(2.8,g.duration+0.7):2.8; L.push({tip:'giris',bas:0,son:gd,ses:g||null}); t=gd;
+  VS.sahneler.forEach(function(s,i){ var a=(VS.kendi&&VS.kendi[i])||(VS.sesler&&VS.sesler[i]), d=a?a.duration+0.55:Math.max(3.8,vsKelime(s.metin)/2.3+1.2); L.push({tip:'sahne',i:i,bas:t,son:t+d,ses:a||null}); t+=d; });
+  var k=VS.kapanisSes, kd=k?Math.max(3,k.duration+1.2):3; L.push({tip:'kapanis',bas:t,son:t+kd,ses:k||null}); t+=kd; return {L:L,toplam:t}; };
+/* 🎵 Hafif ritimli fon müziği (telifsiz, tarayıcıda üretilir) + geçiş sesi; konuşmada kısılır */
+vsAmbiyans=function(ac,hedef,t0,toplam,Z){ var K=[]; try{
+  var ana=ac.createGain(); ana.gain.value=1; ana.connect(hedef); ana.connect(ac.destination);
+  var mz=ac.createGain(); mz.connect(ana); var taban=VS.muzik?0.16:0.0001, kis=VS.muzik?0.075:0.0001; mz.gain.setValueAtTime(0.0001,t0); mz.gain.linearRampToValueAtTime(taban,t0+1.2);
+  Z.L.forEach(function(sg){ if(!sg.ses) return; var a=t0+sg.bas+0.3, b=a+sg.ses.duration; mz.gain.setTargetAtTime(kis,a-0.25,0.12); mz.gain.setTargetAtTime(taban,b+0.05,0.25); });
+  mz.gain.setTargetAtTime(0.0001,t0+toplam-1.2,0.35);
+  var bpm=92, vur=60/bpm, n=Math.ceil(toplam/vur)+2, gurul=ac.createBuffer(1,ac.sampleRate*0.25,ac.sampleRate), gd=gurul.getChannelData(0); for(var i=0;i<gd.length;i++) gd[i]=Math.random()*2-1;
+  var AK=[[220,261.63,329.63],[174.61,220,261.63],[130.81,196,261.63],[196,246.94,293.66]], KOK=[110,87.31,65.41,98];
+  var lp=ac.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=1800; lp.connect(mz);
+  for(var v=0;v<n;v++){ var t=t0+v*vur, olcu=Math.floor(v/4)%4, tk=v%4; if(t>t0+toplam) break;
+    if(tk===0||tk===2){ var o=ac.createOscillator(), g=ac.createGain(); o.type='sine'; o.frequency.setValueAtTime(110,t); o.frequency.exponentialRampToValueAtTime(42,t+0.18); g.gain.setValueAtTime(0.55,t); g.gain.exponentialRampToValueAtTime(0.001,t+0.28); o.connect(g); g.connect(mz); o.start(t); o.stop(t+0.3); K.push(o); }
+    var h=ac.createBufferSource(), hf=ac.createBiquadFilter(), hg=ac.createGain(); h.buffer=gurul; hf.type='highpass'; hf.frequency.value=7000; hg.gain.setValueAtTime(tk%2?0.10:0.05,t+vur/2); hg.gain.exponentialRampToValueAtTime(0.001,t+vur/2+0.06); h.connect(hf); hf.connect(hg); hg.connect(mz); h.start(t+vur/2); h.stop(t+vur/2+0.08); K.push(h);
+    if(tk===0){ AK[olcu].forEach(function(f){ var p=ac.createOscillator(), pg=ac.createGain(); p.type='triangle'; p.frequency.value=f; pg.gain.setValueAtTime(0.0001,t); pg.gain.linearRampToValueAtTime(0.06,t+0.4); pg.gain.linearRampToValueAtTime(0.0001,t+vur*4); p.connect(pg); pg.connect(lp); p.start(t); p.stop(t+vur*4+0.05); K.push(p); });
+      var bs=ac.createOscillator(), bg=ac.createGain(); bs.type='sine'; bs.frequency.value=KOK[olcu]; bg.gain.setValueAtTime(0.0001,t); bg.gain.linearRampToValueAtTime(0.22,t+0.05); bg.gain.exponentialRampToValueAtTime(0.01,t+vur*3.6); bs.connect(bg); bg.connect(mz); bs.start(t); bs.stop(t+vur*4); K.push(bs); }
+    var nota=AK[olcu][(v*2)%3]*2, pl=ac.createOscillator(), plg=ac.createGain(); pl.type='sine'; pl.frequency.value=nota; plg.gain.setValueAtTime(0.0001,t+vur/2); plg.gain.linearRampToValueAtTime(0.045,t+vur/2+0.01); plg.gain.exponentialRampToValueAtTime(0.001,t+vur/2+0.35); pl.connect(plg); plg.connect(lp); pl.start(t+vur/2); pl.stop(t+vur/2+0.4); K.push(pl); }
+  Z.L.forEach(function(sg,ix){ if(!ix) return; var w=ac.createBufferSource(); w.buffer=gurul; w.loop=true; var f=ac.createBiquadFilter(); f.type='bandpass'; f.Q.value=1.2; f.frequency.setValueAtTime(300,t0+sg.bas-0.3); f.frequency.exponentialRampToValueAtTime(2400,t0+sg.bas+0.15);
+    var wg=ac.createGain(); wg.gain.setValueAtTime(0.0001,t0+sg.bas-0.3); wg.gain.exponentialRampToValueAtTime(0.05,t0+sg.bas); wg.gain.exponentialRampToValueAtTime(0.0001,t0+sg.bas+0.35); w.connect(f); f.connect(wg); wg.connect(ana); w.start(t0+sg.bas-0.3); w.stop(t0+sg.bas+0.4); K.push(w); });
+  }catch(e){} return K; };
+/* ⚡ Tek dokunuşla: metin → ses → video */
+async function vsHizli(){ if(VS.calisiyor) return; var d=document.getElementById('vsDur'); if(d) d.textContent='⚡ Metin yazılıyor…';
+  try{ var o=await vsAIYaz(); VS.baslik=o.baslik||''; VS.sahneler=o.sahneler; }catch(e){ var s=vsSablon(); VS.baslik=s.baslik; VS.sahneler=s.sahneler; }
+  VS.kendi={}; VS.ses='charon'; var ss=document.getElementById('vsSes'); if(ss) ss.value='charon'; vsSahneCiz(); await vsOynat(true); }
+function vsHizliAc(gi,tid,idx){ vsAc(gi,tid,idx); setTimeout(vsHizli,350); }
+var _vsCizUIV54=vsCizUI;
+vsCizUI=function(){ _vsCizUIV54(); try{ var ic=document.getElementById('vsIc'); if(!ic||ic.querySelector('[data-hizli]')) return;
+  var b=document.createElement('button'); b.className='yk-b'; b.dataset.hizli=1; b.style.cssText='width:100%;margin:0 0 12px;padding:14px;font-size:17px;background:linear-gradient(135deg,#be185d,#7c3aed);color:#fff'; b.textContent='⚡ Tek dokunuşla video — metni yazsın, Charon okusun, müzikli hazırlasın'; b.onclick=vsHizli; ic.insertBefore(b,ic.firstChild);
+  var ses=document.getElementById('vsSes'); if(ses&&ses.parentNode&&!document.getElementById('vsMuz')){ var l=document.createElement('label'); l.style.cssText='font-weight:800;font-size:14px;display:flex;gap:6px;align-items:center'; l.innerHTML='<input type="checkbox" id="vsMuz" '+(VS.muzik?'checked':'')+' style="width:20px;height:20px"> 🎵 Fon müziği'; ses.parentNode.parentNode.appendChild(l); l.querySelector('input').onchange=function(){ VS.muzik=this.checked; LS.set('dk_vs_muzik',VS.muzik); }; } }catch(e){} };
+var _vsDugmelerV54=vsDugmeler; vsDugmeler=function(){ _vsDugmelerV54(); var b=document.querySelector('#vsIc [data-hizli]'); if(b) b.disabled=VS.calisiyor; };
+/* Ders penceresine ve araç çubuğuna ⚡ hızlı video */
+var _seansAcV54=seansAc;
+seansAc=function(tid,i){ var r=_seansAcV54.apply(this,arguments); try{ var m=document.getElementById('haftaModalIc'); var ilk=m&&m.querySelector('[data-vsd]'); if(ilk&&!m.querySelector('[data-vsh]')){ var gi=ST.gradeIdx, b=document.createElement('button'); b.className='btn'; b.dataset.vsh=1; b.style.cssText='margin:0 0 10px;background:#be185d;color:#fff;width:100%'; b.textContent='⚡ Bu dersin videosunu tek dokunuşla hazırla'; b.onclick=function(){ vsHizliAc(gi,tid,i); }; ilk.parentNode.insertBefore(b,ilk.nextSibling); } }catch(e){} return r; };
+function vsHash54(){ var h=decodeURIComponent((location.hash||'').slice(1)); var m=/^hizlivideo=(\d+)\|(\w+)\|(\d+)$/.exec(h); if(m) setTimeout(function(){ vsHizliAc(+m[1],m[2],+m[3]); },700); }
+window.addEventListener('hashchange',vsHash54); setTimeout(vsHash54,1000);
+try{ APP.onceki={surum:'4.12',satir:6697,kb:879}; APP.surum='4.13'; APP.yenilikler.unshift('⚡ Tek dokunuşla ders videosu: metni yapay zekâ yazar, Charon (ağırbaşlı erkek sesi) baştan sona okur, hafif ritimli fon müziği eklenir — sessiz an kalmaz');
+  MODULLER.push(['Tek dokunuş video','vsHizli'],['Fon müziği','vsAmbiyans']); }catch(e){}
 
 </script>
 <script>
