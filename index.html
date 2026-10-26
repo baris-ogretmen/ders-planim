@@ -5900,7 +5900,7 @@ try{ APP.onceki={surum:'4.7',satir:5449,kb:648}; APP.surum='4.8'; APP.tarih='11.
    SÜRÜM 4.9 — 📋 Yoklama Defteri (Ders Saati’nden, salt okunur rapor)
    + 🏦 baris-kasa · 🔔 bildirim/hatırlatma · 🧰 Araçlar · ℹ️ Hakkında
    ============================================================ */
-var ZSTD_SURUM='4.15';
+var ZSTD_SURUM='4.16';
 var KASA_YER='KASA-anahtar-kasada-saklaniyor-00';
 /* ---------- Yoklama kaynağı: Ders Saati hafızası (aynı adres → aynı tarayıcı) ---------- */
 var PYK={t:0,v:null};
@@ -6658,6 +6658,35 @@ var _hpHatGonderV56=hpHatGonder;
 hpHatGonder=async function(){ var d=hpHedefTarih(); hatSecimHazirla(hpTarihKey(d)); var orj=hpGunSiniflari; hpGunSiniflari=function(x){ return orj(x).filter(function(p){ return HP.hatHaric.indexOf(p.ad)<0; }); };
   try{ if(!hpGunSiniflari(d).length){ toast('Hiç sınıf seçili değil','err'); return; } return await _hpHatGonderV56.apply(this,arguments); } finally { hpGunSiniflari=orj; } };
 try{ APP.onceki={surum:'4.14',satir:6872,kb:906}; APP.surum='4.15'; APP.yenilikler.unshift('⏰ Ders günü hatırlatması: sınıfları tek tek seç/çıkar (ör. 7A’ya gitmesin) ve her sınıfta hangi derslerin yazılacağını seç'); MODULLER.push(['Hatırlatma sınıf/ders seçimi','hatSinifToggle']); }catch(e){}
+
+/* ============================================================
+   SÜRÜM 4.16 — 💛 Veli dostu hatırlatma ibareleri
+   • Tablet getirmek zorunlu değil (evde ekran süresi/ödev zorluğu varsa göndermeyebilir)
+   • Yaşa göre ekran süresi bilgisi (DSÖ, AAP, Kanada 24 Saat Hareket Rehberi)
+   • Gönderilen oyunların hepsini yapma zorunluluğu yok; vakit uygunsa birini seçmesi yeterli
+   Yalnız EKLEME: önceki tüm davranışlar aynen korunur.
+   ============================================================ */
+var VB16={
+  tablet:'💛 Tablet getirmek zorunlu değildir. Evde ekran süresi artıyor ya da ödevlerini yapmakta zorlanıyorsa tableti göndermeyebilirsiniz; çocuğumuz derse yine katılır.',
+  ekranAna:'📏 Ekran süresi: Bu yaşta günde en fazla 1 saat, kaliteli içerikle ve bir yetişkin eşliğinde önerilir (Dünya Sağlık Örgütü, Amerikan Pediatri Akademisi).',
+  ekranOkul:'📏 Ekran süresi: Ders ve ödev dışında, eğlence amaçlı ekranın günde 2 saati geçmemesi; uyku, hareket ve aile zamanının önce gelmesi önerilir (Kanada 24 Saat Hareket Rehberi, 5–17 yaş). Yatmadan önceki saatte ekranı kapatmak uykuyu destekler.',
+  oyun:'🎮 Gönderdiğim oyun ve çalışmaların hepsini yapma zorunluluğu yok. Diğer ödevleri bittiyse ve vakti uygunsa birini seçip yapması yeterli; yapamazsa da hiç sorun değil 😊'
+};
+try{ HP_SATIR_RENK.unshift([/^💛/,'#fef3c7'],[/^📏/,'#dcfce7']); }catch(e){}
+function vb16SonaEkle(s,satir){ s=String(s||''); if(s.indexOf(satir.slice(0,12))>=0) return s; var i=s.lastIndexOf('\n— Barış Öğretmen'); return i>=0?s.slice(0,i)+'\n\n'+satir+s.slice(i):s+'\n\n'+satir; }
+var _hpHatMetinV57=hpHatMetin;
+hpHatMetin=function(p,d){ var s=_hpHatMetinV57(p,d); try{ var ds=hpHatDersleri(p.gi); if(ds.length===1&&ds[0]==='kocluk') return s;
+  var L=s.split('\n'), ekran=ds.indexOf('robokod')>=0||ds.indexOf('yz')>=0, t=-1;
+  L.forEach(function(x,i){ if(x.indexOf('📱 Tabletini')===0) t=i; });
+  var ek=[]; if(t>=0&&s.indexOf('💛 Tablet')<0) ek.push(VB16.tablet); if(ekran&&s.indexOf('📏 Ekran')<0) ek.push(p.gi===0?VB16.ekranAna:VB16.ekranOkul);
+  if(ek.length){ var at=t>=0?t:L.length-1; L.splice.apply(L,[at+1,0].concat(ek)); }
+  if(s.indexOf('🎮 Gönderdiğim')<0) L.push(VB16.oyun); return L.join('\n'); }catch(e){ return s; } };
+var _hpLinkMetinV57=hpLinkMetin; hpLinkMetin=function(gi,etk){ return vb16SonaEkle(_hpLinkMetinV57(gi,etk),VB16.oyun); };
+var _etkMetinV57=etkMetin; etkMetin=function(gi){ var s=_etkMetinV57(gi); return s?vb16SonaEkle(s,VB16.oyun):s; };
+var _hpOzetMetinV57=hpOzetMetin; hpOzetMetin=function(gi){ var s=_hpOzetMetinV57(gi); return (s.indexOf('👇')>=0)?vb16SonaEkle(s,VB16.oyun):s; };
+try{ APP.onceki={surum:'4.15',satir:6912,kb:912}; APP.surum='4.16'; APP.tarih='26.10.2026';
+  APP.yenilikler.unshift('💛 Hatırlatmalarda “tablet getirmek zorunlu değil” ibaresi; 📏 yaşa göre bilimsel ekran süresi bilgisi; 🎮 gönderilen oyunların hepsini yapma zorunluluğu yok — vakit uygunsa birini seçmesi yeterli');
+  MODULLER.push(['Veli dostu ibareler','vb16SonaEkle']); }catch(e){}
 
 </script>
 <script>
