@@ -5900,7 +5900,7 @@ try{ APP.onceki={surum:'4.7',satir:5449,kb:648}; APP.surum='4.8'; APP.tarih='11.
    SÜRÜM 4.9 — 📋 Yoklama Defteri (Ders Saati’nden, salt okunur rapor)
    + 🏦 baris-kasa · 🔔 bildirim/hatırlatma · 🧰 Araçlar · ℹ️ Hakkında
    ============================================================ */
-var ZSTD_SURUM='4.19';
+var ZSTD_SURUM='4.20';
 var KASA_YER='KASA-anahtar-kasada-saklaniyor-00';
 /* ---------- Yoklama kaynağı: Ders Saati hafızası (aynı adres → aynı tarayıcı) ---------- */
 var PYK={t:0,v:null};
@@ -7227,5 +7227,21 @@ try{ APP.onceki={surum:'4.18',satir:7090,kb:928}; APP.surum='4.19'; APP.tarih='1
   MODULLER.push(['Canlı Konu Anlatımı','kaAc']); }catch(e){}
 </script>
 
+<script>
+/* ============================================================
+   SÜRÜM 4.20 — ⏰ Hatırlatmada konunun AŞAMASI da yazılır
+   Önce: “Piyon” (üç hafta üst üste aynı görünüyordu)
+   Şimdi: “Piyon · Keşfediyoruz” → “Piyon · Oynuyoruz” → “Piyon · Üretiyoruz”
+   Yalnız veliye giden ders günü hatırlatmasındaki “Sıradaki konu” satırı değişir.
+   Sıra, “işlendi” işaretleri, kayıtlı anlatımlar ve konu defteri AYNEN korunur; hata olursa eski yazım kullanılır.
+   ============================================================ */
+var _hpKonuV419=hpKonu;
+function hpKonuAsamali(se){ var ad=String((se&&(se.k||se.u))||'').replace(/^Tanışalım:\s*/,'').trim(); return ad||uniteAd(se); }
+hpKonu=function(gi,id,sonIslenen){ if(sonIslenen) return _hpKonuV419(gi,id,sonIslenen);
+  try{ var r=giIle(gi,function(){ var l=SEANS[id]||[], n=l.length; if(!n) return ''; var i=trackSonraki(gi,id,n); if(i<0) i=n-1; return hpKonuAsamali(l[i]); }); return r||_hpKonuV419(gi,id,sonIslenen); }
+  catch(e){ return _hpKonuV419(gi,id,sonIslenen); } };
+try{ APP.onceki={surum:'4.19',satir:7230,kb:948}; APP.surum='4.20'; APP.tarih='12.11.2026'; APP.satir=7247; APP.kb=950;
+  APP.yenilikler.unshift('⏰ Ders günü hatırlatmasında konunun aşaması da yazılır: “Piyon · Keşfediyoruz”, “Piyon · Oynuyoruz”, “Piyon · Üretiyoruz” — veli her hafta farklı dersi görür'); }catch(e){}
+</script>
 </body>
 </html>
