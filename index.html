@@ -1839,7 +1839,7 @@ ${i>0?gecenOzet(tid,i):''}
         <button onclick="seansFark()">🧑‍🏫 Farklılaştır (zorlanan/ileri)</button>
       </div></div>
       <div class="blok"><div class="bh">🎬 Bu dersin videoları & saati</div><div class="ai-hizli">
-        <button onclick="seansKonuVideo()">🎬 Konu Anlatımı</button>
+        <button onclick="seansKonuVideo()">🎬 Canlı Konu Anlatımı</button>
         <button onclick="seansIlhamVideo()">🏆 İlham (TR)</button>
         <button onclick="seansIlhamVideoW()">🌍 İlham (Dünya)</button>
         <button onclick="dersSaatAc(true)">⏱️ 40 dk Ders Saati</button>
@@ -5900,7 +5900,7 @@ try{ APP.onceki={surum:'4.7',satir:5449,kb:648}; APP.surum='4.8'; APP.tarih='11.
    SÜRÜM 4.9 — 📋 Yoklama Defteri (Ders Saati’nden, salt okunur rapor)
    + 🏦 baris-kasa · 🔔 bildirim/hatırlatma · 🧰 Araçlar · ℹ️ Hakkında
    ============================================================ */
-var ZSTD_SURUM='4.18';
+var ZSTD_SURUM='4.19';
 var KASA_YER='KASA-anahtar-kasada-saklaniyor-00';
 /* ---------- Yoklama kaynağı: Ders Saati hafızası (aynı adres → aynı tarayıcı) ---------- */
 var PYK={t:0,v:null};
@@ -7085,6 +7085,146 @@ function basla(){ goc();
 window.DP_KOPRU={surum:'1.0',esitle:yokla,durum:function(){ return {hazir:K.hazir,dinliyor:K.dinliyor,uzakT:K.uzakT,meta:metaOku()}; }};
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',basla); else basla();
 })();
+</script>
+
+<style id="kaCss">
+#kaSahne{position:fixed;inset:0;z-index:2147480000;display:none;flex-direction:column;color:#fff;font-family:Nunito,system-ui,-apple-system,sans-serif;background:radial-gradient(120% 90% at 15% 0%,var(--ka1,#7c3aed) 0%,#0b1220 55%),#0b1220;overflow:hidden}
+#kaSahne.acik{display:flex}
+#kaSahne .kaBalon{position:absolute;border-radius:50%;background:var(--ka2,#22d3ee);opacity:.13;filter:blur(2px);animation:kaYuz 14s ease-in-out infinite alternate;pointer-events:none}
+#kaSahne .kaBalon:nth-child(1){width:38vmin;height:38vmin;right:-8vmin;top:-10vmin}
+#kaSahne .kaBalon:nth-child(2){width:22vmin;height:22vmin;left:6vw;bottom:14vh;animation-duration:18s;background:var(--ka1,#7c3aed);opacity:.22}
+#kaSahne .kaBalon:nth-child(3){width:12vmin;height:12vmin;right:18vw;bottom:24vh;animation-duration:11s}
+@keyframes kaYuz{from{transform:translate(0,0) scale(1)}to{transform:translate(-4vmin,5vmin) scale(1.18)}}
+.kaUst{position:relative;display:flex;align-items:center;gap:10px;padding:max(10px,env(safe-area-inset-top)) 14px 6px;z-index:2}
+.kaUst b{flex:1;min-width:0;font-size:clamp(13px,1.9vmin,20px);font-weight:800;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kaD{font:800 clamp(13px,1.8vmin,18px) Nunito,system-ui,sans-serif;color:#fff;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:8px 13px;cursor:pointer;flex:none}
+.kaD.akt{background:#fff;color:#0b1220}.kaD.yeni{background:#facc15;color:#1f2937;animation:kaNabiz 1.2s ease-in-out infinite}
+@keyframes kaNabiz{50%{transform:scale(1.06)}}
+.kaNokta{position:relative;display:flex;gap:6px;padding:4px 16px;z-index:2}.kaNokta i{flex:1;height:5px;border-radius:9px;background:rgba(255,255,255,.2);transition:background .3s}.kaNokta i.g{background:#fff}
+.kaOrta{position:relative;flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:1vh 6vw;overflow:auto;z-index:1}
+.kaIk{font-size:clamp(54px,13vmin,150px);line-height:1;animation:kaZipla .7s cubic-bezier(.2,1.5,.4,1) both;filter:drop-shadow(0 10px 22px rgba(0,0,0,.35))}
+@keyframes kaZipla{from{transform:scale(.2) rotate(-18deg);opacity:0}to{transform:none;opacity:1}}
+.kaEt{margin-top:1.4vh;font-size:clamp(13px,2.2vmin,24px);font-weight:900;letter-spacing:.08em;text-transform:uppercase;background:rgba(255,255,255,.16);padding:5px 14px;border-radius:999px;animation:kaGel .5s .15s both}
+.kaVur{margin:1.8vh 0 0;font-size:clamp(26px,6.2vmin,78px);font-weight:900;line-height:1.12;max-width:22ch;text-wrap:balance}
+.kaVur span{display:inline-block;opacity:0;animation:kaKelime .45s cubic-bezier(.2,1.3,.4,1) forwards}
+@keyframes kaKelime{from{opacity:0;transform:translateY(.5em) scale(.9)}to{opacity:1;transform:none}}
+.kaMet{margin:1.8vh 0 0;font-size:clamp(16px,3vmin,34px);font-weight:700;line-height:1.4;max-width:34ch;opacity:.93;animation:kaGel .6s .5s both;text-wrap:pretty}
+@keyframes kaGel{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.kaLis{list-style:none;margin:2vh 0 0;padding:0;display:grid;gap:1.2vh;width:min(100%,46rem);text-align:left}
+.kaLis li{display:flex;gap:12px;align-items:center;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.18);border-radius:18px;padding:1.3vh 16px;font-size:clamp(15px,2.7vmin,30px);font-weight:800;opacity:0;animation:kaGel .5s forwards}
+.kaLis li em{font-style:normal;flex:none;width:1.9em;height:1.9em;border-radius:50%;display:grid;place-items:center;background:var(--ka2,#22d3ee);color:#0b1220;font-weight:900}
+.kaSec{display:grid;gap:1.3vh;width:min(100%,44rem);margin-top:2.2vh}
+.kaSec button{font:900 clamp(16px,2.9vmin,32px) Nunito,system-ui,sans-serif;color:#0b1220;background:#fff;border:0;border-radius:18px;padding:1.6vh 16px;cursor:pointer;opacity:0;animation:kaGel .5s forwards;transition:transform .15s}
+.kaSec button:active{transform:scale(.97)}.kaSec button.d{background:#22c55e;color:#fff;animation:kaGel .5s forwards,kaNabiz .5s 2}.kaSec button.y{background:#fb7185;color:#fff;opacity:.7!important}
+.kaAlt{position:relative;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 14px max(12px,env(safe-area-inset-bottom));z-index:2}
+.kaOk{font:900 clamp(16px,2.4vmin,24px) Nunito,system-ui,sans-serif;border:0;border-radius:999px;padding:13px 24px;cursor:pointer;color:#0b1220;background:#fff}.kaOk.s{background:rgba(255,255,255,.16);color:#fff}.kaOk:disabled{opacity:.3}
+.kaKon{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:3}.kaKon i{position:absolute;top:-4vh;font-style:normal;font-size:clamp(18px,3.5vmin,38px);animation:kaDus 1.6s ease-in forwards}
+@keyframes kaDus{to{transform:translateY(110vh) rotate(540deg);opacity:.2}}
+.kaBil{font-size:clamp(12px,1.6vmin,16px);font-weight:700;opacity:.7}
+@media (prefers-reduced-motion:reduce){#kaSahne *{animation-duration:.01s!important;animation-delay:0s!important}}
+</style>
+<script>
+/* ============================================================
+   SÜRÜM 4.19 — 🎬 CANLI KONU ANLATIMI
+   “Konu Anlatımı”, “Strateji & Tarih” ve “Kültür & Değer” artık yalnız YouTube araması açmaz:
+   akıllı tahtada tam ekran, hareketli, sahne sahne bir anlatım oynar (kanca → merak sorusu → ana fikir →
+   örnek → adım adım → sık yapılan yanlış → mini soru → akılda kalsın).
+   • Plandan anında açılır (anahtar gerekmez) • anahtar/kasa varsa yapay zekâ iki kısa parçada zenginleştirir (kesilmez)
+   • 🔊 yalnız erkek ses (Gemini “Charon”); ses alınamazsa sessiz oynar • ▶ YouTube düğmesi sahnede durur
+   ============================================================ */
+var KA={S:[],i:0,ses:false,tur:'konu',c:null,src:null,buf:{},yeni:null,no:0};
+var KA_TIP={giris:'Bugünün konusu',merak:'Merak sorusu',fikir:'Ana fikir',ornek:'Örnek',adim:'Adım adım',yanilgi:'Dikkat!',soru:'Sıra sizde',ozet:'Akılda kalsın',kopru:'Köprü',hikaye:'Hikâye'};
+function kaKirp(s,n){ s=String(s==null?'':s).replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim(); return s.length>n?s.slice(0,n-1).replace(/\s+\S*$/,'')+'…':s; }
+function kaBag(){ var c=seansPromptKonu(); if(!c) return null; var se=(SEANS[c.tid]||[])[c.idx]||{}, tr=TRACKS.filter(function(x){ return x.id===c.tid; })[0]||{};
+  var band=(typeof vbBand==='function')?vbBand(ST.gradeIdx):'34', konu=(typeof vbKonuSade==='function'&&typeof uniteAd==='function')?vbKonuSade(uniteAd(se)):String(se.k||'');
+  return {konu:konu||c.konu,tam:se.k||c.konu,z:se.z||'',e:se.e||'',tid:c.tid,idx:c.idx,ders:c.dersAd,ik:tr.ik||'📚',r1:tr.dr||'#7c3aed',r2:tr.dr2||'#22d3ee',kademe:c.kademe,band:band,
+    yas:{ana:'anaokulu (4-6 yaş)','12':'1-2. sınıf','34':'3-4. sınıf','56':'5-6. sınıf','78':'7-8. sınıf'}[band]||c.kademe,
+    soru:((typeof VB_SORU!=='undefined'&&VB_SORU[c.tid])||'Bugün ne öğrendik?'),anahtar:ST.gradeIdx+'|'+c.tid+'|'+c.idx}; }
+/* Plandan anında anlatım (yapay zekâ olmadan) */
+function kaSablon(b){ var et=String(b.e||'').split(/[;•]/).map(function(x){ return kaKirp(x,90).replace(/[.\s]+$/,''); }).filter(Boolean).slice(0,4), z=kaKirp(b.z,150).replace(/[.\s]+$/,'');
+  var S=[{tip:'giris',ikon:b.ik,ust:b.ders,vurgu:b.konu,metin:'Bugün “'+b.konu+'” konusunu birlikte keşfediyoruz. Hazır mısınız?'},
+    {tip:'merak',ikon:'🤔',vurgu:'“'+b.konu+'” deyince aklınıza ilk ne geliyor?',metin:'Önce tahmin edelim: herkes bir fikir söylesin, sonra birlikte bakalım.'}];
+  if(z) S.push({tip:'fikir',ikon:'💡',vurgu:'Bu dersin sonunda',metin:z+'.'});
+  if(et.length) S.push({tip:'adim',ikon:'🧩',vurgu:'Bugün neler yapacağız?',maddeler:et});
+  S.push({tip:'soru',ikon:'🙋',vurgu:'Bu konuyu en iyi nasıl öğreniriz?',secenekler:['Deneyerek ve yaparak','Yalnızca izleyerek','Hiç soru sormadan'],dogru:0,metin:'Yanılmak öğrenmenin parçasıdır; denedikçe ustalaşırız.'});
+  S.push({tip:'ozet',ikon:'⭐',vurgu:'Akılda kalsın',maddeler:[b.konu+' konusunu keşfettik'].concat(z?[kaKirp(z,80)]:[]).concat(['Evde anlat: '+kaKirp(b.soru,80)])});
+  return S; }
+function kaTemiz(o,max){ var L=(o&&o.sahneler)||[]; if(!Array.isArray(L)) return [];
+  return L.slice(0,max||5).map(function(s){ s=s||{}; var t=String(s.tip||'fikir'); if(!KA_TIP[t]) t='fikir';
+    var y={tip:t,ikon:String(s.ikon||'✨').slice(0,4),ust:kaKirp(s.ust,40),vurgu:kaKirp(s.vurgu,90),metin:kaKirp(s.metin,260)};
+    if(Array.isArray(s.maddeler)) y.maddeler=s.maddeler.slice(0,4).map(function(m){ return kaKirp(m,95); }).filter(Boolean);
+    if(Array.isArray(s.secenekler)&&s.secenekler.length>=2){ y.secenekler=s.secenekler.slice(0,3).map(function(m){ return kaKirp(m,70); }); y.dogru=Math.max(0,Math.min(y.secenekler.length-1,parseInt(s.dogru,10)||0)); }
+    return y; }).filter(function(s){ return s.vurgu||s.metin||(s.maddeler&&s.maddeler.length); }); }
+/* Cevap yarıda kalsa bile kurtar: tam biten son sahneye kadar al */
+function kaJson(t){ t=String(t||'').replace(/```json|```/g,''); var a=t.indexOf('{'); if(a<0) throw new Error('Cevap anlaşılamadı'); t=t.slice(a);
+  try{ return JSON.parse(t.slice(0,t.lastIndexOf('}')+1)); }catch(e){}
+  for(var k=t.lastIndexOf('}'); k>0; k=t.lastIndexOf('}',k-1)){ try{ return JSON.parse(t.slice(0,k+1)+']}'); }catch(e){} }
+  throw new Error('Cevap anlaşılamadı'); }
+async function kaParca(istem,max){ var son=null, en=null; for(var d=0; d<2; d++){ try{ var S=kaTemiz(kaJson(await generateText(istem,{})),max); if(!en||S.length>en.length) en=S; if(S.length>=max) return S; son=new Error('Eksik cevap'); }catch(e){ son=e; } } if(en&&en.length>=2) return en; throw son||new Error('Cevap alınamadı'); }
+var KA_BICIM='YALNIZCA şu JSON’u döndür, başka hiçbir şey yazma: {"sahneler":[{"tip":"…","ikon":"tek emoji","vurgu":"ekranda büyük yazılacak en fazla 9 kelime","metin":"öğretmenin sesli söyleyeceği en fazla 30 kelime","maddeler":["en fazla 10 kelime"],"secenekler":["…","…","…"],"dogru":0}]} — “maddeler” yalnız adim/ozet sahnesinde, “secenekler” ve “dogru” yalnız soru sahnesinde olsun.';
+var KA_KURAL='KURALLAR: Türkçe; sıcak, canlı, öğrenciye “siz” diye seslenen bir öğretmen dili; yaşa uygun kelimeler ve günlük hayattan somut örnekler; bilgi DOĞRU olsun, emin olmadığın isim, tarih ve sayı verme; abartı ve kanıtsız iddia yok; öğrenci adı yok.';
+async function kaAI(b,tur){
+  var bag='Ders: '+b.ders+'. Konu: “'+b.tam+'”. Sınıf düzeyi: '+b.yas+'. Kazanım: '+b.z+'. Derste yapılacaklar: '+b.e+'.\n';
+  if(tur!=='konu'){ var ne=tur==='kultur'?'KÜLTÜR ve DEĞERLER (kültürümüz, sabır, emek, adalet, yardımlaşma gibi değerler)':'STRATEJİ ve TARİH (tarihten ya da bilim tarihinden gerçek ve iyi bilinen bir olay)';
+    return await kaParca('Bir öğretmenin akıllı tahtada göstereceği 5 sahnelik “farklı bakış” anlatımını yaz: bu dersin konusunu '+ne+' ile NEDEN–SONUÇ ilişkisi kurarak bağla.\n'+bag+KA_KURAL+'\nSahneler sırayla: 1) tip "kopru": konuyla bağı kuran çarpıcı tek fikir 2) tip "hikaye": kısa, gerçek ve iyi bilinen bir örnek 3) tip "fikir": bundan çıkan ders 4) tip "soru": 3 seçenekli düşündürücü soru 5) tip "ozet": 3 maddelik akılda kalsın.\n'+KA_BICIM,5); }
+  var p1=await kaParca('Bir öğretmenin akıllı tahtada göstereceği canlı konu anlatımının İLK 4 sahnesini yaz.\n'+bag+KA_KURAL+'\nSahneler sırayla: 1) tip "giris": günlük hayattan merak uyandıran bir kanca 2) tip "merak": sınıfa sorulacak tek tahmin sorusu 3) tip "fikir": konunun ana fikri, basit bir benzetmeyle 4) tip "ornek": yaşa uygun somut bir örnek.\n'+KA_BICIM,4);
+  var p2=null; try{ p2=await kaParca('Bir öğretmenin akıllı tahtada göstereceği canlı konu anlatımının SON 4 sahnesini yaz. İlk sahnelerde şunlar anlatıldı: '+p1.map(function(s){ return s.vurgu; }).join(' | ')+'.\n'+bag+KA_KURAL+'\nSahneler sırayla: 5) tip "adim": konuyu adım adım gösteren 3-4 madde 6) tip "yanilgi": öğrencilerin sık yaptığı bir yanlış ve doğrusu 7) tip "soru": 3 seçenekli, tek doğru cevaplı mini soru 8) tip "ozet": 3 maddelik akılda kalsın + “metin”de tek cümlelik kapanış.\n'+KA_BICIM,4); }catch(e){}
+  return p1.concat(p2||kaSablon(b).slice(-2)); }
+function kaOnbellek(k,v){ try{ var o=LS.get('dk_ka_anlatim',{})||{}; if(v===undefined) return (o[k]&&o[k].S)||null; o[k]={S:v,t:Date.now()}; var K=Object.keys(o); if(K.length>40){ K.sort(function(a,b_){ return (o[a].t||0)-(o[b_].t||0); }).slice(0,K.length-40).forEach(function(x){ delete o[x]; }); } LS.set('dk_ka_anlatim',o); }catch(e){} return null; }
+function kaAnahtarVar(){ try{ return keyler().length>0; }catch(e){ return false; } }
+function kaSesDur(){ try{ if(KA.src){ KA.src.onended=null; KA.src.stop(); } }catch(e){} KA.src=null; }
+async function kaOku(){ kaSesDur(); if(!KA.ses) return; var s=KA.S[KA.i], no=KA.no; if(!s) return; var m=[s.vurgu,s.metin].concat(s.tip==='soru'?[]:(s.maddeler||[])).filter(Boolean).join('. ');
+  try{ var k=KA.tur+'|'+KA.i+'|'+m.length; if(!KA.buf[k]) KA.buf[k]=vsTTS(m); var buf=await KA.buf[k]; if(no!==KA.no||!KA.ses) return; var ac=vsAC(), src=ac.createBufferSource(); src.buffer=buf; src.connect(ac.destination); src.start(); KA.src=src; }
+  catch(e){ KA.buf={}; KA.ses=false; var d=document.getElementById('kaSesB'); if(d){ d.classList.remove('akt'); d.textContent='🔇 Ses'; } toast('Ses şu an alınamadı — anlatım sessiz devam ediyor','info'); } }
+function kaKonfeti(){ var k=document.querySelector('#kaSahne .kaKon'); if(!k) return; var E=['⭐','🎉','✨','💫','🌟']; for(var i=0;i<26;i++){ var e=document.createElement('i'); e.textContent=E[i%E.length]; e.style.left=(Math.random()*100)+'%'; e.style.animationDelay=(Math.random()*.5)+'s'; k.appendChild(e); } setTimeout(function(){ k.innerHTML=''; },2400); }
+function kaCiz(){ var w=document.getElementById('kaSahne'); if(!w) return; KA.no++; var s=KA.S[KA.i]||{}, o=w.querySelector('.kaOrta'), E=function(t,c,x){ var e=document.createElement(t); if(c) e.className=c; if(x!=null) e.textContent=x; return e; };
+  o.innerHTML=''; o.scrollTop=0;
+  o.appendChild(E('div','kaIk',s.ikon||'✨')); o.appendChild(E('div','kaEt',s.ust||KA_TIP[s.tip]||''));
+  if(s.vurgu){ var h=E('h2','kaVur'); String(s.vurgu).split(/\s+/).forEach(function(k,i){ var sp=E('span','',k); sp.style.animationDelay=(.25+i*.09)+'s'; h.appendChild(sp); h.appendChild(document.createTextNode(' ')); }); o.appendChild(h); }
+  if(s.metin&&s.tip!=='soru') o.appendChild(E('p','kaMet',s.metin));
+  if(s.maddeler&&s.maddeler.length){ var ul=E('ul','kaLis'); s.maddeler.forEach(function(m,i){ var li=E('li'); li.style.animationDelay=(.6+i*.35)+'s'; li.appendChild(E('em','',s.tip==='ozet'?'✓':String(i+1))); li.appendChild(E('span','',m)); ul.appendChild(li); }); o.appendChild(ul); }
+  if(s.secenekler&&s.secenekler.length){ var g=E('div','kaSec'), ac=E('p','kaMet',''); ac.style.display='none'; s.secenekler.forEach(function(m,i){ var b=E('button','',['A','B','C'][i]+')  '+m); b.style.animationDelay=(.6+i*.25)+'s';
+      b.onclick=function(){ if(i===s.dogru){ b.classList.add('d'); kaKonfeti(); ac.textContent='👏 Doğru! '+(s.metin||''); ac.style.display=''; } else { b.classList.add('y'); ac.textContent='Bir daha düşünelim…'; ac.style.display=''; } }; g.appendChild(b); }); o.appendChild(g); o.appendChild(ac); }
+  var n=w.querySelector('.kaNokta'); n.innerHTML=''; KA.S.forEach(function(_,i){ var d=document.createElement('i'); if(i<=KA.i) d.className='g'; n.appendChild(d); });
+  w.querySelector('#kaGeri').disabled=KA.i<=0; w.querySelector('#kaIleri').textContent=KA.i>=KA.S.length-1?'✓ Bitir':'İleri ▶';
+  w.querySelector('.kaBil').textContent=(KA.i+1)+' / '+KA.S.length; kaOku(); }
+function kaGit(d){ var y=KA.i+d; if(y<0) return; if(y>=KA.S.length){ kaKapat(); return; } KA.i=y; kaCiz(); }
+function kaKapat(){ kaSesDur(); KA.no++; var w=document.getElementById('kaSahne'); if(w) w.classList.remove('acik'); document.removeEventListener('keydown',kaTus); }
+function kaTus(e){ if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){ e.preventDefault(); kaGit(1); } else if(e.key==='ArrowLeft'||e.key==='PageUp'){ e.preventDefault(); kaGit(-1); } else if(e.key==='Escape'){ kaKapat(); } }
+function kaYT(){ var b=KA.c; if(!b) return; if(KA.tur==='konu') openYT(b.tam+' '+b.kademe+' konu anlatımı eğitici çocuklar için'); else { var m=BAGLANTI[b.tid]||BAGLANTI.akil; openYT(m[KA.tur]||m.kultur); } }
+function kaYeniGoster(){ if(!KA.yeni) return; KA.S=KA.yeni; KA.yeni=null; KA.i=0; KA.buf={}; var d=document.getElementById('kaAIB'); if(d){ d.classList.remove('yeni'); d.textContent='🔄 Yeniden üret'; } kaCiz(); }
+async function kaZengin(zorla){ var b=KA.c, tur=KA.tur, d=document.getElementById('kaAIB'); if(!b) return;
+  if(KA.yeni&&!zorla){ kaYeniGoster(); return; }
+  if(!kaAnahtarVar()){ toast('Yapay zekâ anahtarı yok — Ayarlar → 🏦 Kasa ya da Anahtarlar. Anlatım plandan devam ediyor.','info',4500); return; }
+  if(KA.calisiyor) return; KA.calisiyor=true; if(d){ d.classList.remove('yeni'); d.textContent='⏳ Hazırlanıyor…'; }
+  try{ var S=await kaAI(b,tur); kaOnbellek(tur+'|'+b.anahtar,S); if(KA.c!==b||KA.tur!==tur) return;
+    KA.ai=true; if(KA.i===0||zorla){ KA.S=S; KA.i=0; KA.buf={}; kaCiz(); if(d) d.textContent='🔄 Yeniden üret'; toast('✨ Zenginleştirilmiş anlatım hazır','ok'); }
+    else { KA.yeni=S; if(d){ d.classList.add('yeni'); d.textContent='✨ Yeni anlatım hazır · göster'; } } }
+  catch(e){ if(d) d.textContent='✨ Zenginleştir'; if(tur!=='konu'&&KA.S.length<=1){ kaKapat(); kaYT(); } else toast('Yapay zekâ şu an cevap vermedi — anlatım plandan devam ediyor','info',4000); }
+  finally{ KA.calisiyor=false; } }
+function kaAc(tur){ tur=tur||'konu'; var b=kaBag(); if(!b){ return; }
+  if(tur!=='konu'&&!kaAnahtarVar()&&!kaOnbellek(tur+'|'+b.anahtar)){ KA.c=b; KA.tur=tur; kaYT(); return; }
+  var w=document.getElementById('kaSahne'); if(!w){ w=document.createElement('div'); w.id='kaSahne';
+    w.innerHTML='<div class="kaBalon"></div><div class="kaBalon"></div><div class="kaBalon"></div><div class="kaKon"></div>'+
+      '<div class="kaUst"><b id="kaBas"></b><button class="kaD" id="kaSesB">🔇 Ses</button><button class="kaD" id="kaAIB">✨ Zenginleştir</button><button class="kaD" id="kaYTB">▶ YouTube</button><button class="kaD" id="kaKapB" aria-label="Kapat">✕</button></div>'+
+      '<div class="kaNokta"></div><div class="kaOrta"></div><div class="kaAlt"><button class="kaOk s" id="kaGeri">◀ Geri</button><span class="kaBil"></span><button class="kaOk" id="kaIleri">İleri ▶</button></div>';
+    document.body.appendChild(w);
+    w.querySelector('#kaKapB').onclick=kaKapat; w.querySelector('#kaGeri').onclick=function(){ kaGit(-1); }; w.querySelector('#kaIleri').onclick=function(){ kaGit(1); };
+    w.querySelector('#kaYTB').onclick=kaYT; w.querySelector('#kaAIB').onclick=function(){ kaZengin(!KA.yeni&&KA.S.length>0&&KA.ai); };
+    w.querySelector('#kaSesB').onclick=function(){ if(!KA.ses&&!kaAnahtarVar()){ toast('Sesli anlatım için yapay zekâ anahtarı gerekir (Ayarlar → 🏦 Kasa)','info',4000); return; } KA.ses=!KA.ses; this.classList.toggle('akt',KA.ses); this.textContent=KA.ses?'🔊 Ses':'🔇 Ses'; try{ LS.set('dk_ka_ses',KA.ses); }catch(e){} if(KA.ses){ try{ vsAC(); }catch(e){} kaOku(); } else kaSesDur(); }; }
+  KA.c=b; KA.tur=tur; KA.i=0; KA.buf={}; KA.yeni=null; KA.calisiyor=false; w.style.setProperty('--ka1',b.r1); w.style.setProperty('--ka2',b.r2);
+  w.querySelector('#kaBas').textContent=(tur==='konu'?'🎬 ':tur==='kultur'?'🕌 Kültür & Değer · ':'🏛️ Strateji & Tarih · ')+b.ders+' · '+b.konu;
+  KA.ses=!!LS.get('dk_ka_ses',false)&&kaAnahtarVar(); var sb=w.querySelector('#kaSesB'); sb.classList.toggle('akt',KA.ses); sb.textContent=KA.ses?'🔊 Ses':'🔇 Ses'; if(KA.ses){ try{ vsAC(); }catch(e){} }
+  var kayit=kaOnbellek(tur+'|'+b.anahtar), ab=w.querySelector('#kaAIB'); ab.classList.remove('yeni'); KA.ai=!!kayit;
+  KA.S=kayit||(tur==='konu'?kaSablon(b):[{tip:'kopru',ikon:tur==='kultur'?'🕌':'🏛️',vurgu:b.konu,metin:'Bu konunun '+(tur==='kultur'?'kültürümüz ve değerlerimizle':'tarih ve stratejiyle')+' bağını hazırlıyorum…'}]);
+  ab.textContent=kayit?'🔄 Yeniden üret':'✨ Zenginleştir';
+  w.classList.add('acik'); document.addEventListener('keydown',kaTus); kaCiz();
+  if(!kayit&&kaAnahtarVar()){ KA.ai=true; kaZengin(false); } }
+seansKonuVideo=function(){ kaAc('konu'); };
+seansBaglantiVideo=function(tur){ kaAc(tur==='strateji'?'strateji':'kultur'); };
+try{ APP.onceki={surum:'4.18',satir:7090,kb:928}; APP.surum='4.19'; APP.tarih='12.11.2026'; APP.satir=7231; APP.kb=948;
+  APP.yenilikler.unshift('🎬 Canlı Konu Anlatımı: “Konu Anlatımı”, “Strateji & Tarih” ve “Kültür & Değer” artık akıllı tahtada tam ekran, hareketli sahnelerle oynar — kanca, merak sorusu, ana fikir, örnek, adım adım, mini soru ve akılda kalsın','✨ Yapay zekâ anlatımı iki kısa parçada üretir; cevap yarıda kesilmez, kesilirse plandaki anlatım devam eder','🔊 İsteğe bağlı sesli anlatım (yalnız erkek ses) · ▶ YouTube düğmesi sahnede durur');
+  MODULLER.push(['Canlı Konu Anlatımı','kaAc']); }catch(e){}
 </script>
 
 </body>
