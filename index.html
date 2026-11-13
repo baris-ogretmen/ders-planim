@@ -5900,7 +5900,7 @@ try{ APP.onceki={surum:'4.7',satir:5449,kb:648}; APP.surum='4.8'; APP.tarih='11.
    SÜRÜM 4.9 — 📋 Yoklama Defteri (Ders Saati’nden, salt okunur rapor)
    + 🏦 baris-kasa · 🔔 bildirim/hatırlatma · 🧰 Araçlar · ℹ️ Hakkında
    ============================================================ */
-var ZSTD_SURUM='4.24';
+var ZSTD_SURUM='4.26';
 var KASA_YER='KASA-anahtar-kasada-saklaniyor-00';
 /* ---------- Yoklama kaynağı: Ders Saati hafızası (aynı adres → aynı tarayıcı) ---------- */
 var PYK={t:0,v:null};
@@ -7650,9 +7650,133 @@ ndRaporCiz=function(){ var o=document.getElementById('ndRapor'); if(!o) return; 
       d.innerHTML='<div class="gchip'+(NDO.mod==='sinif'?' akt':'')+'" onclick="NDO.mod=\'sinif\';ndRaporCiz()">🏫 Sınıf raporu</div><div class="gchip'+(NDO.mod==='ogr'?' akt':'')+'" onclick="NDO.mod=\'ogr\';ndRaporCiz()">👤 Öğrenci raporu</div>'; ic.insertBefore(d,bas.nextSibling); } }catch(e){} };
 /* Gönderdiklerim listesinde kişiye özel kayıtlarda öğrenci adı da görünsün */
 if(typeof otoGonOku==='function'){ var _otoGonOkuV423=otoGonOku; otoGonOku=async function(){ var L=await _otoGonOkuV423.apply(this,arguments); try{ L.forEach(function(x){ if(x.obj&&x.obj.tur==='birey'&&x.obj.ogrenciAd&&String(x.sinif).indexOf(x.obj.ogrenciAd)<0) x.sinif=x.sinif+' · '+x.obj.ogrenciAd; }); }catch(e){} return L; }; }
-try{ APP.onceki={surum:'4.23',satir:7593,kb:1004}; APP.surum='4.24'; APP.tarih='13.11.2026';
+try{ APP.onceki={surum:'4.23',satir:7593,kb:1004}; APP.surum='4.24'; APP.tarih='13.11.2026'; APP.satir=7658; APP.kb=1015;
   APP.yenilikler.unshift('👤 Öğrenci bazında dönem raporu: “okudum / yaptım” kayıtlarına göre kişiye özel özet — yalnız o öğrencinin velisi görür; önizle, seç, onayla','🌱 “Niçin öğreniyoruz” satırı ders günü hatırlatmasında da açık (🤖 kartından kapatılabilir)');
   MODULLER.push(['Öğrenci raporu','ndoMetin']); }catch(e){}
+</script>
+<script>
+/* ============================================================
+   SÜRÜM 4.25 — 🎬 AİLECE İZLENEBİLİR FİLM ÖNERİLERİ (yalnız SENİN onayladıkların) + Ders Saati için plan adresi
+   • Liste yalnız yaş sınırı “Genel İzleyici (G)” ya da “Ebeveyn Rehberliği (PG)” olan filmlerden oluşur; +13 / +18 film YOKTUR
+   • Hiçbir film sen “onaylıyorum” demeden veliye gitmez (🤖 kartı → 🎬 Film önerileri). Her filmde yaş sınırı gerekçesi ve uyarı yazar
+   • Onayladığın film: dönem / tatil raporunda ve ayda bir haftalık özette, sınıf düzeyine ve derse uygunsa görünür
+   • Veliye giden satırda “öneridir, önce siz göz atın; uygun bulmadığınız bir şey olursa bana bildirin” notu vardır
+   • Plan adresi buluta yazılır: telefondaki Ders Saati planı kendiliğinden bulur (tahta ile aynı konuyu gösterir)
+   Yalnız EKLEME: önceki tüm davranışlar aynen durur.
+   ============================================================ */
+var FILMLER=[
+  {id:'sbf',ad:'Masum Hamleler (Searching for Bobby Fischer)',yil:1993,ders:['satranc'],yas:'PG',ger:'tematik ögeler',min:3,oz:'7 yaşında satranca başlayan bir çocuğun ve yarışırken çocuk kalmasını isteyen ailesinin gerçek hikâyesi.',uyari:''},
+  {id:'bc',ad:'Brooklyn Castle (belgesel)',yil:2012,ders:['satranc'],yas:'PG',ger:'hafif argo',min:4,oz:'Bir ortaokul satranç takımının emekle gelen başarılarını anlatan gerçek hikâye.',uyari:'Belgesel; İngilizce. Türkçe altyazı bulunup bulunmadığını kontrol et.'},
+  {id:'qk',ad:'Queen of Katwe',yil:2016,ders:['satranc'],yas:'PG',ger:'tematik ögeler, bir kaza sahnesi ve kısa imalı içerik',min:5,oz:'Uganda’da yoksul bir mahalleden çıkıp satranç şampiyonu olan Phiona’nın gerçek hikâyesi.',uyari:'DİKKAT: yaş sınırı gerekçesinde “kısa imalı içerik” ve bir kaza sahnesi geçiyor; yoksulluk teması ağır. Onaylamadan önce kendin izlemeni öneririm.'},
+  {id:'wle',ad:'WALL·E',yil:2008,ders:['robokod','yz'],yas:'G',ger:'genel izleyici',min:0,oz:'Dünyayı temizleyen küçük bir robotun merak ve dostluk hikâyesi.',uyari:''},
+  {id:'ig',ad:'The Iron Giant',yil:1999,ders:['robokod','yz'],yas:'PG',ger:'aksiyon sahneleri',min:1,oz:'Bir çocukla uzaydan gelen dev bir robotun dostluğu; “kim olacağına sen karar verirsin” mesajı.',uyari:''},
+  {id:'bh6',ad:'Big Hero 6',yil:2014,ders:['robokod','yz'],yas:'PG',ger:'aksiyon ve tehlike, biraz kaba mizah, tematik ögeler',min:2,oz:'Robot tasarlayan bir çocuk ve sağlık robotu Baymax’in macerası.',uyari:'Bir aile üyesinin kaybı işleniyor; küçük çocukları üzebilir.'},
+  {id:'wr',ad:'The Wild Robot',yil:2024,ders:['robokod','yz'],yas:'PG',ger:'aksiyon/tehlike ve tematik ögeler',min:3,oz:'Issız bir adaya düşen robotun doğaya uyum sağlaması ve bir yavruya annelik etmesi.',uyari:'Doğadaki yaşam–ölüm döngüsü işleniyor; duygusal sahneler var.'}
+];
+function filmOnay(){ return LS.get('dk_film_onay',{})||{}; }
+function filmUygun(gi,dersler){ var o=filmOnay(), sn=SINIF_LISTE[gi]||{}, d=sn.g==='Ana'?0:(parseInt(sn.g,10)||0); return FILMLER.filter(function(f){ return o[f.id]&&d>=f.min&&f.ders.some(function(k){ return dersler.indexOf(k)>=0; }); }); }
+function filmSatir(f){ return '• '+f.ad+' ('+f.yil+') — '+f.oz+' Yaş sınırı: '+(f.yas==='G'?'Genel İzleyici (G)':'Ebeveyn Rehberliği (PG — '+f.ger+')')+'.'; }
+function filmBlok(L){ if(!L.length) return ''; return '🎬 Ailece izlemek isterseniz\n'+L.map(filmSatir).join('\n')+'\nBu yalnızca bir öneridir; lütfen çocuğunuzla izlemeden önce siz de göz atın. Uygun bulmadığınız bir sahne ya da film olursa bana mutlaka bildirin.'; }
+function filmEkle(s,blok){ if(!blok||s.indexOf('🎬 Ailece izlemek isterseniz')>=0) return s; var i=s.lastIndexOf('\n— Barış Öğretmen'); return i>=0?(s.slice(0,i).replace(/\s+$/,'')+'\n\n'+blok+s.slice(i)):(s+'\n\n'+blok); }
+/* Haftalık özet: ayda bir, tek film (sırayla) */
+var _hpOzetMetinV424=hpOzetMetin;
+hpOzetMetin=function(gi){ var s=_hpOzetMetinV424.apply(this,arguments); try{ var w=ndHaftaSira(); if(((w+gi)%4)!==0) return s; var L=filmUygun(gi,hpOzetDersleri(gi)); if(!L.length) return s; return filmEkle(s,filmBlok([L[Math.floor(w/4)%L.length]])); }catch(e){ return s; } };
+/* Dönem / tatil raporu: uygun onaylı filmler (en çok 3) */
+var _ndRaporMetinV424=ndRaporMetin;
+ndRaporMetin=function(gi){ var s=_ndRaporMetinV424.apply(this,arguments); try{ if(!s) return s; var ds=(typeof _hpSinifDersleriAsil==='function'?_hpSinifDersleriAsil(gi):hpSinifDersleri(gi)); return filmEkle(s,filmBlok(filmUygun(gi,ds).slice(0,3))); }catch(e){ return s; } };
+function filmKapat(){ var o=document.getElementById('filmEkr'); if(o) o.remove(); }
+function filmDegis(id){ var o=filmOnay(); if(o[id]) delete o[id]; else o[id]=Date.now(); LS.set('dk_film_onay',o); HP.duzen={}; filmCiz(); try{ otoKartYenile(); }catch(e){} }
+function filmCiz(){ var o=document.getElementById('filmEkr'); if(!o) return; var on=filmOnay();
+  o.firstChild.innerHTML='<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><div style="font-size:26px">🎬</div><div style="flex:1;font-size:18px;font-weight:900">Film önerileri</div><button class="fbtn" onclick="filmKapat()" aria-label="Kapat">✕</button></div>'+
+    '<div style="font-size:12px;color:var(--soluk);margin-bottom:8px">Listede yalnız yaş sınırı <b>G</b> (genel izleyici) ya da <b>PG</b> (ebeveyn rehberliği) olan filmler var; +13 ve +18 film yok. <b>Sen onaylamadığın hiçbir film veliye gitmez.</b> Onayladıkların dönem/tatil raporunda ve ayda bir haftalık özette, sınıfına ve dersine uygunsa görünür.</div>'+
+    FILMLER.map(function(f){ var a=!!on[f.id]; return '<div class="oz-adim" style="'+(a?'border-color:#34d399':'')+'"><div style="display:flex;gap:10px;align-items:flex-start;cursor:pointer" onclick="filmDegis(\''+f.id+'\')"><div style="font-size:20px">'+(a?'✅':'⬜')+'</div><div style="flex:1;min-width:0"><div style="font-weight:900;font-size:14px">'+esc(f.ad)+' <span style="font-weight:700;color:var(--soluk)">('+f.yil+')</span></div>'+
+      '<div style="font-size:12.5px;line-height:1.45;margin-top:2px">'+esc(f.oz)+'</div><div style="font-size:11.5px;color:var(--soluk);margin-top:3px">Yaş sınırı: <b>'+f.yas+'</b> — '+esc(f.ger)+' · '+f.ders.map(function(k){ return HP_DERS[k].ik; }).join(' ')+' · '+(f.min===0?'anaokulundan itibaren':f.min+'. sınıftan itibaren (benim önerim)')+'</div>'+
+      (f.uyari?'<div style="font-size:11.5px;color:#fde68a;margin-top:3px">⚠️ '+esc(f.uyari)+'</div>':'')+'</div></div></div>'; }).join('')+
+    '<div style="font-size:11.5px;color:var(--soluk)">Yaş sınırları filmlerin resmî ABD (MPA) sınıflandırmasıdır. Filmlerin Türkiye’de hangi platformda, dublajlı mı altyazılı mı bulunduğunu bilmiyorum; önermeden önce bakmanı öneririm.</div>'; }
+function filmAc(){ var o=document.getElementById('filmEkr'); if(!o){ o=document.createElement('div'); o.id='filmEkr'; o.style.cssText='position:fixed;inset:0;z-index:9430;background:rgba(4,8,18,.86);overflow:auto;-webkit-overflow-scrolling:touch;padding:14px';
+    o.innerHTML='<div style="max-width:620px;margin:0 auto;background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--cizgi);border-radius:22px;padding:16px;color:#fff"></div>'; o.addEventListener('click',function(e){ if(e.target===o) filmKapat(); }); document.body.appendChild(o); } filmCiz(); }
+if(typeof otoKartHTML==='function'){ var _otoKartHTMLV424=otoKartHTML; otoKartHTML=function(){ var n=Object.keys(filmOnay()).length; return _otoKartHTMLV424.apply(this,arguments)+'<button class="fbtn" style="width:100%;justify-content:center;margin-top:8px" onclick="filmAc()">🎬 Film önerileri ('+(n?n+' onaylı':'hiçbiri onaylı değil')+')</button>'; }; }
+/* Ders Saati başka cihazda (ör. telefonda ana ekran uygulaması) planı bulabilsin diye adres buluta yazılır */
+setTimeout(function(){ (async function(){ try{ var u=location.href.split('#')[0].split('?')[0]; if(!/^https:\/\//.test(u)||window.self!==window.top||localStorage.getItem('dk_plan_adres_yazildi')===u) return;
+    var fb=await ekoFb(), F=fb.F; await F.setDoc(F.doc(fb.db,'maas_config','ders_plani_adres_baris'),{url:u,t:Date.now()},{merge:true}); localStorage.setItem('dk_plan_adres_yazildi',u); }catch(e){} })(); },9000);
+try{ APP.onceki={surum:'4.24',satir:7658,kb:1015}; APP.surum='4.25'; APP.tarih='13.11.2026'; APP.satir=7707; APP.kb=1023;
+  APP.yenilikler.unshift('🎬 Ailece izlenebilir film önerileri: yalnız G / PG filmler, yalnız senin onayladıkların; dönem-tatil raporunda ve ayda bir haftalık özette','📱 Telefondaki Ders Saati artık planı kendiliğinden bulur; tahta ile aynı konuyu gösterir');
+  MODULLER.push(['Film önerileri','filmBlok']); }catch(e){}
+</script>
+<script>
+/* ============================================================
+   SÜRÜM 4.26 — ▶️ KONU VİDEOSU (senin seçtiğin YouTube bağlantısı) + 🎬 kendi filmini ekle
+   • Her konuya (ör. Satranç · Piyon) BİR KEZ kendi izleyip beğendiğin YouTube videosunu bağlarsın: “🔎 YouTube’da ara” seni aramaya götürür,
+     beğendiğin videonun bağlantısını yapıştırırsın. Otomatik arama sonucu ASLA veliye gitmez; yalnız senin yapıştırdığın bağlantı gider.
+   • Bağlı video: o konunun ders günü hatırlatmasında “🔗 Aç ›” düğmesi olarak, haftalık özette bağlantı düğmesi olarak veliye ulaşır
+   • 🎬 Film önerilerine kendi izlediğin filmi ekleyebilirsin (eklediğin an onaylı sayılır; ✕ ile kaldırılır) · Eğitim Koçluğu için film bölümü
+   • Videolar buluta da yazılır: telefonda bağladığın video tahtadaki planda da görünür
+   Yalnız EKLEME: önceki tüm davranışlar aynen durur.
+   ============================================================ */
+function kvAnahtar(tid,unite){ return tid+'|'+ekoNorm(ndKonuSade(unite)); }
+function kvHepsi(){ return LS.get('dk_konu_video',{})||{}; }
+function kvAl(tid,unite){ var v=kvHepsi()[kvAnahtar(tid,unite)]; return (v&&v.url)?v:null; }
+function kvGecerli(u){ return /^https:\/\/(www\.|m\.)?(youtube\.com\/(watch\?v=|shorts\/|live\/)|youtu\.be\/)[\w\-?=&%.\/]+$/.test(String(u||'').trim()); }
+function kvYaz(tid,unite,url){ var a=kvHepsi(), k=kvAnahtar(tid,unite), v={url:String(url||'').trim(),ad:ndKonuSade(unite),t:Date.now()}; a[k]=v; LS.set('dk_konu_video',a); HP.duzen={};
+  (async function(){ try{ var fb=await ekoFb(), F=fb.F, o={}; o[k]=v; await F.setDoc(F.doc(fb.db,'maas_config',BS_BELGE),{konuVideo:o},{merge:true}); }catch(e){} })(); }
+async function kvBulutAl(){ try{ var fb=await ekoFb(), F=fb.F, sn=await F.getDoc(F.doc(fb.db,'maas_config',BS_BELGE)), u=(sn.exists()&&sn.data().konuVideo)||{}, a=kvHepsi(), deg=false; Object.keys(u).forEach(function(k){ if(u[k]&&(!a[k]||(u[k].t||0)>(a[k].t||0))){ a[k]=u[k]; deg=true; } }); if(deg) LS.set('dk_konu_video',a); return deg; }catch(e){ return false; } }
+/* Ekran: sınıfların sıradaki ve son işlenen konuları */
+function kvSatirlar(){ var m={}, sira=[]; try{ hpSinifTum().forEach(function(gi){ (typeof _hpSinifDersleriAsil==='function'?_hpSinifDersleriAsil(gi):hpSinifDersleri(gi)).forEach(function(k){ if(!ND_YEDEK[k]) return;
+      [hpKonu(gi,k,false),hpKonu(gi,k,true)].forEach(function(kn,j){ var u=ndKonuSade(kn); if(!u) return; var key=kvAnahtar(k,u); if(!m[key]){ m[key]={tid:k,unite:u,sinif:[],sonraki:false}; sira.push(key); } var ad=ozGname(gi); if(m[key].sinif.indexOf(ad)<0) m[key].sinif.push(ad); if(j===0) m[key].sonraki=true; }); }); }); }catch(e){}
+  return sira.map(function(k){ return m[k]; }).sort(function(a,b){ return (b.sonraki-a.sonraki)||HP_DERS[a.tid].ad.localeCompare(HP_DERS[b.tid].ad,'tr')||a.unite.localeCompare(b.unite,'tr'); }); }
+var KV={liste:[]};
+function kvKapat(){ var o=document.getElementById('kvEkr'); if(o) o.remove(); }
+function kvAra(i){ var x=KV.liste[i]; if(x) openYT(x.unite+' '+HP_DERS[x.tid].ad+' çocuklar için'); }
+function kvKaydet(i){ var x=KV.liste[i], inp=document.getElementById('kvIn'+i); if(!x||!inp) return; var u=inp.value.trim(); if(!kvGecerli(u)){ toast('Yalnız YouTube video bağlantısı yapıştır (https://youtu.be/… ya da youtube.com/watch?v=…)','err',4500); return; } kvYaz(x.tid,x.unite,u); toast('▶️ Video bağlandı: '+x.unite,'ok',3000); kvCiz(); try{ otoKartYenile(); }catch(e){} }
+function kvSil(i){ var x=KV.liste[i]; if(!x) return; kvYaz(x.tid,x.unite,''); toast('Video bağlantısı kaldırıldı','ok',2500); kvCiz(); try{ otoKartYenile(); }catch(e){} }
+function kvCiz(){ var o=document.getElementById('kvEkr'); if(!o) return; KV.liste=kvSatirlar();
+  o.firstChild.innerHTML='<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><div style="font-size:26px">▶️</div><div style="flex:1;font-size:18px;font-weight:900">Konu videoları</div><button class="fbtn" onclick="kvKapat()" aria-label="Kapat">✕</button></div>'+
+    '<div style="font-size:12px;color:var(--soluk);margin-bottom:8px">Her konuya <b>kendi izleyip beğendiğin</b> bir YouTube videosu bağla. “🔎 Ara” seni YouTube’a götürür; videoyu izle, bağlantısını kopyala, buraya yapıştır. <b>Arama sonucu veliye gitmez; yalnız senin yapıştırdığın bağlantı gider</b> — o konunun hatırlatmasında ve haftalık özetinde düğme olarak.</div>'+
+    (KV.liste.length?KV.liste.map(function(x,i){ var v=kvAl(x.tid,x.unite), D=HP_DERS[x.tid];
+      return '<div class="oz-adim" style="'+(v?'border-color:#34d399':'')+'"><div style="font-weight:900;font-size:14px">'+D.ik+' '+esc(x.unite)+(x.sonraki?' <span style="font-size:11px;font-weight:800;color:#fde68a">· sıradaki</span>':'')+'</div><div style="font-size:11.5px;color:var(--soluk);margin-bottom:6px">'+esc(D.ad)+' · '+esc(x.sinif.join(', '))+'</div>'+
+        (v?'<div style="display:flex;gap:8px;align-items:center"><div style="flex:1;min-width:0;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">✅ '+esc(v.url)+'</div><button class="fbtn" onclick="window.open(\''+esc(v.url)+'\',\'_blank\',\'noopener\')">▶ Aç</button><button class="fbtn" style="color:#fca5a5" onclick="kvSil('+i+')">✕</button></div>'
+          :'<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button class="fbtn" onclick="kvAra('+i+')">🔎 YouTube’da ara</button><input class="key" id="kvIn'+i+'" type="url" inputmode="url" placeholder="beğendiğin videonun bağlantısı" style="flex:1;min-width:160px;font-family:inherit"><button class="btn y" style="padding:8px 12px" onclick="kvKaydet('+i+')">Bağla</button></div>')+'</div>'; }).join(''):'<div class="oz-adim">Konu listesi okunamadı.</div>'); }
+function kvAc(){ var o=document.getElementById('kvEkr'); if(!o){ o=document.createElement('div'); o.id='kvEkr'; o.style.cssText='position:fixed;inset:0;z-index:9430;background:rgba(4,8,18,.86);overflow:auto;-webkit-overflow-scrolling:touch;padding:14px';
+    o.innerHTML='<div style="max-width:620px;margin:0 auto;background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--cizgi);border-radius:22px;padding:16px;color:#fff"></div>'; o.addEventListener('click',function(e){ if(e.target===o) kvKapat(); }); document.body.appendChild(o); } kvCiz(); kvBulutAl().then(function(d){ if(d) kvCiz(); }); }
+/* Hatırlatma gidince: o konunun bağlı videosu kaydın “bağlantı” alanına işlenir (veli ekranında 🔗 Aç › düğmesi) */
+async function kvHatLinkle(t0,ls){ if(!Object.keys(kvHepsi()).length||!ls.length) return 0; var fb=await ekoFb(), F=fb.F, okulS=[];
+  try{ var sn=await F.getDoc(F.doc(fb.db,'maas_config','k12_ogrenciler')); ((sn.exists()&&sn.data().liste)||[]).forEach(function(o){ if(o&&o.sinif&&okulS.indexOf(o.sinif)<0) okulS.push(o.sinif); }); }catch(e){}
+  var ref=F.doc(fb.db,'maas_config','k12_odevler'), s2=await F.getDoc(ref), L=(s2.exists()&&s2.data().liste)||[], eski=[], yeni=[];
+  L.forEach(function(e){ if(!e||!e.robotik||e.konu!=='Ders günü hatırlatması'||(e.tarih||0)<t0-3000||e.link) return; var p=ls.filter(function(q){ return ekoSinifEsle(q.gi,okulS).indexOf(e.sinif)>=0; })[0]; if(!p) return; var url='';
+    (typeof _hpSinifDersleriAsil==='function'?_hpSinifDersleriAsil(p.gi):hpSinifDersleri(p.gi)).forEach(function(k){ if(url||!ND_YEDEK[k]) return; var u=ndKonuSade(hpKonu(p.gi,k,false)), v=u&&kvAl(k,u); if(v&&String(e.detay||'').indexOf(u)>=0) url=v.url; });
+    if(url){ eski.push(e); yeni.push(Object.assign({},e,{link:url})); } });
+  if(!yeni.length) return 0; await F.setDoc(ref,{liste:F.arrayUnion.apply(null,yeni),guncelleme:Date.now()},{merge:true}); await F.setDoc(ref,{liste:F.arrayRemove.apply(null,eski)},{merge:true}); return yeni.length; }
+var _hpHatGonderV425=hpHatGonder;
+hpHatGonder=async function(){ var t0=Date.now(), ls=[]; try{ ls=hpGunSiniflari(hpHedefTarih()); }catch(e){} var r=await _hpHatGonderV425.apply(this,arguments); try{ var n=await kvHatLinkle(t0,ls); if(n) toast('▶️ '+n+' hatırlatmaya konu videosu eklendi','ok',3000); }catch(e){} return r; };
+/* Haftalık özet gidince: o hafta işlenen konuların bağlı videoları bağlantı düğmesi olur (en çok 3) */
+var _ekoDogrudanGonderV425=ekoDogrudanGonder;
+ekoDogrudanGonder=async function(parca){ try{ (parca||[]).forEach(function(p){ if(!p||!/^📰 Bu Haftanın Özeti/.test(String(p.metin||''))) return; var lk=(p.linkler||[]).slice(), n=0;
+      hpOzetDersleri(p.gi).forEach(function(k){ if(n>=3||!ND_YEDEK[k]) return; var u=ndKonuSade(hpKonu(p.gi,k,true)), v=u&&kvAl(k,u); if(v&&!lk.some(function(l){ return l.url===v.url; })){ lk.push({url:v.url,ad:('▶️ '+u+' videosu').slice(0,60)}); n++; } });
+      if(n) p.linkler=lk; }); }catch(e){} return _ekoDogrudanGonderV425.apply(this,arguments); };
+/* ---- 🎬 kendi filmin + Eğitim Koçluğu ---- */
+FILMLER.push({id:'ab',ad:'Akeelah and the Bee',yil:2006,ders:['kocluk','akil'],yas:'PG',ger:'biraz kaba dil',min:5,oz:'Yoksul bir mahallede büyüyen 11 yaşındaki Akeelah’nın çalışarak ulusal heceleme yarışmasına uzanan hikâyesi; azim ve öz güven.',uyari:'DİKKAT: iki çocuk arasında kısa bir öpücük sahnesi geçiyor. Onaylamadan önce kendin izlemeni öneririm.'});
+(function(){ try{ (LS.get('dk_film_ozel',[])||[]).forEach(function(f){ if(f&&f.id&&f.ad&&!FILMLER.some(function(x){ return x.id===f.id; })) FILMLER.push(f); }); }catch(e){} })();
+var _filmSatirV425=filmSatir;
+filmSatir=function(f){ return f.ozel?('• '+f.ad+(f.yil?' ('+f.yil+')':'')+(f.oz?' — '+f.oz:'')+' Öğretmenimizin izleyip önerdiği film.'):_filmSatirV425(f); };
+var _filmUygunV425=filmUygun;
+filmUygun=function(gi,dersler){ var sn=SINIF_LISTE[gi]||{}; return _filmUygunV425(gi,sn.g==='8'?(dersler||[]).concat(['kocluk']):dersler); };
+function filmOzelEkle(){ var ad=(document.getElementById('foAd').value||'').trim(), oz=(document.getElementById('foOz').value||'').trim(), min=+document.getElementById('foMin').value||0, ds=[].slice.call(document.querySelectorAll('#filmEkr [data-fod].akt')).map(function(e){ return e.dataset.fod; });
+  if(ad.length<2){ toast('Filmin adını yaz','err',2500); return; } if(!ds.length){ toast('En az bir ders seç','err',2500); return; }
+  var f={id:'oz'+Date.now().toString(36),ad:ad.slice(0,70),yil:0,ders:ds,yas:'—',ger:'kendi izlediğin film',min:min,oz:oz.slice(0,160),uyari:'',ozel:true}; var L=LS.get('dk_film_ozel',[])||[]; L.push(f); LS.set('dk_film_ozel',L); FILMLER.push(f); var o=filmOnay(); o[f.id]=Date.now(); LS.set('dk_film_onay',o); HP.duzen={}; toast('🎬 Eklendi ve onaylandı: '+f.ad,'ok',3000); filmCiz(); try{ otoKartYenile(); }catch(e){} }
+function filmOzelSil(id){ LS.set('dk_film_ozel',(LS.get('dk_film_ozel',[])||[]).filter(function(f){ return f.id!==id; })); for(var i=FILMLER.length-1;i>=0;i--){ if(FILMLER[i].id===id) FILMLER.splice(i,1); } var o=filmOnay(); delete o[id]; LS.set('dk_film_onay',o); HP.duzen={}; filmCiz(); try{ otoKartYenile(); }catch(e){} }
+var _filmCizV425=filmCiz;
+filmCiz=function(){ _filmCizV425(); var o=document.getElementById('filmEkr'); if(!o) return; try{ var ic=o.firstChild;
+    FILMLER.filter(function(f){ return f.ozel; }).forEach(function(f){ var k=[].slice.call(ic.querySelectorAll('.oz-adim')).filter(function(e){ return e.textContent.indexOf(f.ad)>=0; })[0]; if(k&&!k.querySelector('[data-fosil]')){ var b=document.createElement('button'); b.className='fbtn'; b.dataset.fosil=1; b.style.cssText='margin-top:6px;color:#fca5a5'; b.textContent='✕ Bu filmi listeden kaldır'; b.onclick=function(e){ e.stopPropagation(); filmOzelSil(f.id); }; k.appendChild(b); } });
+    var d=document.createElement('div'); d.className='oz-adim'; d.style.borderStyle='dashed';
+    d.innerHTML='<div style="font-weight:900;font-size:14px;margin-bottom:6px">➕ Kendi izlediğin filmi ekle</div><input class="key" id="foAd" placeholder="Filmin adı" style="font-family:inherit;margin-bottom:6px"><input class="key" id="foOz" placeholder="Veliye tek cümle: neyi anlatıyor?" style="font-family:inherit;margin-bottom:6px">'+
+      '<div class="oz-scroll" style="flex-wrap:wrap;margin-bottom:6px">'+['satranc','robokod','yz','akil'].map(function(k){ return '<div class="gchip" data-fod="'+k+'" onclick="this.classList.toggle(\'akt\')">'+HP_DERS[k].ik+' '+esc(HP_DERS[k].ad)+'</div>'; }).join('')+'<div class="gchip" data-fod="kocluk" onclick="this.classList.toggle(\'akt\')">🎯 Eğitim Koçluğu</div></div>'+
+      '<div style="display:flex;gap:8px;align-items:center"><select class="key" id="foMin" style="flex:1;font-family:inherit"><option value="0">Anaokulundan itibaren</option>'+[1,2,3,4,5,6,7,8].map(function(n){ return '<option value="'+n+'">'+n+'. sınıftan itibaren</option>'; }).join('')+'</select><button class="btn y" style="padding:9px 14px" onclick="filmOzelEkle()">Ekle</button></div><div style="font-size:11.5px;color:var(--soluk);margin-top:6px">Eklediğin film onaylı sayılır; veliye “Öğretmenimizin izleyip önerdiği film” notuyla gider.</div>';
+    ic.insertBefore(d,ic.lastChild); }catch(e){} };
+if(typeof otoKartHTML==='function'){ var _otoKartHTMLV425=otoKartHTML; otoKartHTML=function(){ var n=Object.keys(kvHepsi()).filter(function(k){ return kvHepsi()[k]&&kvHepsi()[k].url; }).length; return _otoKartHTMLV425.apply(this,arguments)+'<button class="fbtn" style="width:100%;justify-content:center;margin-top:8px" onclick="kvAc()">▶️ Konu videoları ('+(n?n+' konuya bağlı':'henüz bağlı video yok')+')</button>'; }; }
+setTimeout(function(){ kvBulutAl(); },6500);
+try{ APP.onceki={surum:'4.25',satir:7707,kb:1023}; APP.surum='4.26'; APP.tarih='13.11.2026'; APP.satir=7782; APP.kb=1037;
+  APP.yenilikler.unshift('▶️ Konu videosu: her konuya kendi beğendiğin YouTube videosunu bağla — o konunun hatırlatmasında ve haftalık özetinde veliye düğme olarak gider (arama sonucu asla gitmez)','🎬 Film önerilerine kendi izlediğin filmi ekleyebilirsin · Eğitim Koçluğu için film bölümü');
+  MODULLER.push(['Konu videoları','kvAc']); }catch(e){}
 </script>
 </body>
 </html>
