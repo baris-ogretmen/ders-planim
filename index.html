@@ -5900,7 +5900,7 @@ try{ APP.onceki={surum:'4.7',satir:5449,kb:648}; APP.surum='4.8'; APP.tarih='11.
    SÜRÜM 4.9 — 📋 Yoklama Defteri (Ders Saati’nden, salt okunur rapor)
    + 🏦 baris-kasa · 🔔 bildirim/hatırlatma · 🧰 Araçlar · ℹ️ Hakkında
    ============================================================ */
-var ZSTD_SURUM='4.22';
+var ZSTD_SURUM='4.24';
 var KASA_YER='KASA-anahtar-kasada-saklaniyor-00';
 /* ---------- Yoklama kaynağı: Ders Saati hafızası (aynı adres → aynı tarayıcı) ---------- */
 var PYK={t:0,v:null};
@@ -7498,6 +7498,161 @@ hpCiz=function(){ var r=_hpCizV420.apply(this,arguments); otoKartYenile(); retur
 try{ APP.onceki={surum:'4.20',satir:7247,kb:950}; APP.surum='4.22'; APP.tarih='12.11.2026';
   APP.yenilikler.unshift('🤖 Otomatik Pilot (onaylı): ders günü hatırlatması ve haftalık özeti hazırlar, “şu sınıflara şunu göndereceğim” diye sana sorar — sen onaylamadan hiçbir şey gitmez','☀️ Sabah brifingi: günün ilk açılışında bugünkü dersler ve konular','📤 Gönderdiklerim: okula giden hatırlatma ve özetleri sil, süresini değiştir, son gönderimi geri al');
   MODULLER.push(['Otomatik Pilot (onaylı)','otoKontrol']); }catch(e){}
+</script>
+<script>
+/* ============================================================
+   SÜRÜM 4.23 — 🌱 NİÇİN ÖĞRENİYORUZ? + 📑 DÖNEM / TATİL RAPORU
+   • Haftalık özete “🌱 Niçin öğreniyoruz?” bölümü: işlenen konunun çocuğa ne kazandırdığı + bir araştırma bulgusu (kaynağıyla)
+   • İstersen ders günü hatırlatmasına da tek satır eklenir (varsayılan kapalı; ⚡ Hızlı Paylaş’taki 🤖 kartından açılır)
+   • 📑 Dönem / tatil raporu: her sınıfa “bu dönem neler öğrendik, bunlar ne kazandırır, kaynaklar” — önizle, onayla, gönder ya da kopyala
+   • Araştırma cümleleri gerçek yayınlara dayanır ve abartısızdır: etkinin “orta düzey” olduğu, kesinleşmediği yerde bu da yazılır.
+     Konu satırları (ör. “Piyon → …”) o derste çalışılan becerinin tarifidir; araştırma iddiası değildir.
+   • Site/yönetici paneli için: tüm sınıfların konu listesi bu cihazda paylaşılır (yalnız okuma; planı değiştirmez)
+   Yalnız EKLEME: önceki tüm davranışlar aynen durur; bölüm, gönderimden önce önizlemede hep görünür.
+   ============================================================ */
+var ND_ARASTIRMA={
+  satranc:[{m:'Okulda satranç eğitimini inceleyen 24 çalışmanın ortak analizinde matematik ve düşünme becerilerinde orta düzeyde olumlu etki görülmüştür; araştırmacılar, bu sonucun kesinleşmesi için daha güçlü çalışmalara ihtiyaç olduğunu da belirtir.',k:'Sala & Gobet (2016), Educational Research Review, 18, 46–57'}],
+  robokod:[{m:'105 çalışmanın ortak analizine göre kodlama öğrenen öğrenciler yalnız kodlamada değil; yaratıcı düşünme, akıl yürütme ve matematik gibi alanlarda da öğrenmeyenlerden daha iyi sonuç almıştır.',k:'Scherer, Siddiq & Sánchez Viveros (2019), Journal of Educational Psychology, 111(5), 764–792'},
+    {m:'Çocuklarla yapılan deneysel çalışmaların analizinde kodlama öğretiminin en çok problem çözmeyi, ardından planlama becerisini geliştirdiği bulunmuştur.',k:'Montuori, Gambarota, Altoé & Arfé (2024), Computers & Education'},
+    {m:'Eğitsel robotlarla yapılan rastgele kontrollü çalışmaların analizinde öğrenme çıktılarında orta düzeyde olumlu etki saptanmıştır.',k:'Sustainability (2023), 15(5), 4637'}],
+  yz:[{m:'UNESCO’nun öğrenciler için yapay zekâ yeterlilik çerçevesi; çocukların yapay zekâyı anlamasını, etik ve sorumlu kullanmasını ve onunla üretmesini temel hedefler olarak tanımlar.',k:'UNESCO (2024), AI competency framework for students'}],
+  akil:[{m:'7–12 yaş çocuklarla yapılan rastgele kontrollü bir çalışma, düzenli oynanan kutu ve kart oyunlarının yürütücü işlevleri (bilgiyi güncelleme, dürtü kontrolü, zihinsel esneklik) desteklediğine işaret eder.',k:'Moya-Higueras ve ark. (2023), Children, 10(9), 1492'}]
+};
+var ND_BECERI={
+  satranc:[[/piyon/,'küçük adımların değerini ve geri alınamayan bir hamleden önce düşünmeyi öğrenir'],[/kale/,'düz hatlarda ileriyi görmeyi ve açık yolları fark etmeyi öğrenir'],[/fil/,'çapraz düşünmeyi ve uzaktaki hedefi fark etmeyi öğrenir'],[/\bat\b|at tasi|atin/,'alışılmadık yolları denemeyi ve engeli aşacak çözümü bulmayı öğrenir'],[/vezir/,'güçlü bir imkânı zamanında ve dikkatle kullanmayı öğrenir'],[/rok/,'önce güvenliği sağlayıp sonra harekete geçmeyi öğrenir'],[/sah|mat/,'tehlikeyi önceden fark etmeyi ve bir hedefe adım adım ulaşmayı öğrenir'],[/acilis/,'bir işe planlı başlamayı öğrenir'],[/tahta|kare|dizil|tanis|kural/,'kurallara uymayı, sıra beklemeyi ve düzenli çalışmayı öğrenir']],
+  robokod:[[/hata|ayikla/,'hatayı sakin biçimde bulup düzeltmeyi, yanılmaktan korkmamayı öğrenir'],[/dongu|tekrar/,'tekrar eden işleri fark edip kısa yoldan çözmeyi öğrenir'],[/kosul|eger|karar/,'“eğer… ise” diye düşünerek karar vermeyi öğrenir'],[/degisken/,'bilgiyi adlandırıp düzenli saklamayı öğrenir'],[/fonksiyon|blok/,'büyük bir işi yeniden kullanılabilir parçalara ayırmayı öğrenir'],[/sensor|motor/,'çevreden bilgi alıp ona göre davranan bir sistem kurmayı öğrenir'],[/proje|tasar|uret/,'bir fikri planlayıp deneyerek ürüne dönüştürmeyi öğrenir'],[/algoritma|adim|sira|komut|yon|kodlama/,'bir işi küçük adımlara bölmeyi ve doğru sıraya koymayı öğrenir'],[/robot|makine/,'çevresindeki teknolojinin nasıl çalıştığını merak edip sorgulamayı öğrenir']],
+  yz:[[/etik|guven|mahrem|sorumlu/,'teknolojiyi sorumlu ve güvenli kullanmayı öğrenir'],[/veri/,'bilginin nereden geldiğini sorgulamayı öğrenir'],[/sinif|ogren|model|egit|tani/,'örneklerden kural çıkarmayı ve makinenin nasıl “öğrendiğini” anlamayı öğrenir'],[/sohbet|uret|istem|soru/,'yapay zekâya doğru soru sormayı ve cevabını sorgulamayı öğrenir']],
+  akil:[[/dikkat|fark/,'ayrıntıyı fark etmeyi ve dikkatini sürdürmeyi öğrenir'],[/hafiza|bellek/,'bilgiyi akılda tutmayı ve geri çağırmayı öğrenir'],[/oruntu|dizi/,'düzeni fark edip sıradakini tahmin etmeyi öğrenir'],[/strateji|plan/,'birkaç adım sonrasını düşünerek plan yapmayı öğrenir'],[/sudoku|mantik|bulmaca/,'ipuçlarından sonuç çıkarmayı ve sabırla denemeyi öğrenir'],[/tangram|sekil|uzam|gorsel/,'şekilleri zihninde döndürmeyi ve parçadan bütüne gitmeyi öğrenir']]
+};
+var ND_YEDEK={satranc:'hamleden önce düşünmeyi, sabretmeyi ve kararının sonucunu üstlenmeyi öğrenir',robokod:'problemi parçalara ayırmayı ve adım adım çözmeyi öğrenir',yz:'yapay zekânın ne olduğunu, neyi yapıp neyi yapamadığını ayırt etmeyi öğrenir',akil:'dikkat, hafıza ve esnek düşünme becerilerini geliştirir'};
+function ndAyar(){ var a=LS.get('dk_neden',null)||{}; return {ozet:a.ozet!==false,hat:a.hat===true}; }
+function ndAyarDegis(k){ var a=ndAyar(); a[k]=!a[k]; LS.set('dk_neden',a); HP.duzen={}; try{ hpCiz(); }catch(e){} try{ toast('🌱 Niçin öğreniyoruz · '+(k==='ozet'?'haftalık özet':'hatırlatma')+': '+(a[k]?'açık':'kapalı'),'ok',2500); }catch(e){} }
+function ndBeceri(tid,konu){ var k=ekoNorm(konu), L=ND_BECERI[tid]||[]; for(var i=0;i<L.length;i++){ if(L[i][0].test(k)) return L[i][1]; } return ND_YEDEK[tid]||''; }
+function ndArastir(tid,sira){ var L=ND_ARASTIRMA[tid]||[]; return L.length?L[Math.abs(sira||0)%L.length]:null; }
+function ndKonuSade(s){ return String(s||'').split(' · ')[0].trim(); }
+function ndHaftaSira(){ try{ return hpHafta(); }catch(e){ return 0; } }
+/* Haftalık özet için bölüm */
+function ndOzetBlok(gi){ var ds=[]; try{ ds=hpOzetDersleri(gi).filter(function(k){ return !!ND_YEDEK[k]; }); }catch(e){} if(!ds.length) return '';
+  var s='🌱 Niçin öğreniyoruz?'; ds.forEach(function(k){ var kn=''; try{ kn=ndKonuSade(hpKonu(gi,k,true)); }catch(e){} var D=HP_DERS[k]||{ik:'📚',ad:k}, b=ndBeceri(k,kn); if(b) s+='\n'+D.ik+' '+(kn||D.ad)+' → çocuğumuz '+b+'.'; });
+  var w=ndHaftaSira(), k0=ds[(w+gi)%ds.length], A=ndArastir(k0,w); if(A) s+='\n🔬 Araştırma ne diyor? '+A.m+' ('+A.k+')'; return s; }
+var _hpOzetMetinV422=hpOzetMetin;
+hpOzetMetin=function(gi){ var s=_hpOzetMetinV422.apply(this,arguments); try{ if(!ndAyar().ozet||s.indexOf('🌱 Niçin öğreniyoruz?')>=0) return s; var b=ndOzetBlok(gi); if(!b) return s; var i=s.lastIndexOf('\n— Barış Öğretmen'); return i>=0?(s.slice(0,i).replace(/\s+$/,'')+'\n\n'+b+s.slice(i)):(s+'\n\n'+b); }catch(e){ return s; } };
+var _hpHatMetinV422=hpHatMetin;
+hpHatMetin=function(p,d){ var s=_hpHatMetinV422.apply(this,arguments); try{ if(!ndAyar().hat||s.indexOf('🌱')>=0) return s; var ds=hpHatDersleri(p.gi).filter(function(k){ return !!ND_YEDEK[k]; }); if(!ds.length) return s; var k=ds[0], kn=ndKonuSade(hpKonu(p.gi,k,false)), b=ndBeceri(k,kn); if(b) s+='\n🌱 '+(kn||HP_DERS[k].ad)+' → çocuğumuz '+b+'.'; }catch(e){} return s; };
+/* ---- 📑 Dönem / tatil raporu ---- */
+var NDR={bas:'',sec:null,mesgul:false};
+function ndDonemBas(){ return NDR.bas||LS.get('dk_nd_bas','')||LS.get('dk_donem_bas','')||'2026-09-14'; }
+function ndIslenenler(gi,k,basMs){ var ts=LS.get('zstd_bs_ts_dk_ilr',{})||{}; try{ return giIle(gi,function(){ var out=[]; (SEANS[k]||[]).forEach(function(se,i){ if(!ilrDone(gi,k,i)) return; var z=ts[gi+'|'+k+'|'+i], t=(z&&z.t>1)?z.t:0; if(t&&t<basMs) return; out.push(uniteAd(se)); }); return out; }); }catch(e){ return []; } }
+function ndRaporMetin(gi){ var bas=ndDonemBas(), basMs=new Date(bas+'T00:00:00').getTime(), ds=[]; try{ ds=(typeof _hpSinifDersleriAsil==='function'?_hpSinifDersleriAsil(gi):hpSinifDersleri(gi)).filter(function(k){ return !!ND_YEDEK[k]; }); }catch(e){}
+  var dolu=[]; ds.forEach(function(k){ var L=ndIslenenler(gi,k,basMs); if(!L.length) return; var tek=[]; L.forEach(function(u){ if(u&&tek.indexOf(u)<0) tek.push(u); }); dolu.push({k:k,n:L.length,tek:tek}); }); if(!dolu.length) return '';
+  var tf=function(d){ return new Date(d).toLocaleDateString('tr-TR',{day:'numeric',month:'long'}); };
+  var s='📑 Dönem Raporu · '+ozGname(gi)+'\n'+tf(bas+'T12:00:00')+' – '+tf(new Date())+'\n\n📚 Bu dönem neler öğrendik?';
+  dolu.forEach(function(x){ var D=HP_DERS[x.k]; s+='\n'+D.ik+' '+D.ad+' ('+x.n+' ders): '+x.tek.slice(0,10).join(', ')+(x.tek.length>10?' ve '+(x.tek.length-10)+' konu daha':''); });
+  s+='\n\n🌱 Bu çalışmalar çocuğumuza ne kazandırır?'; var kay=[];
+  dolu.forEach(function(x){ var D=HP_DERS[x.k], A=ndArastir(x.k,0); s+='\n'+D.ik+' '+D.ad+': çocuğumuz '+ND_YEDEK[x.k]+'.'+(A?' '+A.m:''); if(A&&kay.indexOf(A.k)<0) kay.push(A.k); });
+  if(kay.length) s+='\n\n📖 Kaynaklar\n'+kay.map(function(k){ return '• '+k; }).join('\n');
+  s+='\n\n🏠 Tatilde: çocuğunuzdan öğrendiği bir oyunu ya da konuyu size anlatmasını isteyin; anlatmak, öğrenileni kalıcı kılar.\n— Barış Öğretmen'; return s; }
+function ndRaporKapat(){ var o=document.getElementById('ndRapor'); if(o) o.remove(); }
+function ndRaporCiz(){ var o=document.getElementById('ndRapor'); if(!o) return; var gis=hpSinifTum(), mt={}; gis.forEach(function(gi){ mt[gi]=ndRaporMetin(gi); }); var dolu=gis.filter(function(gi){ return mt[gi]; });
+  if(!NDR.sec){ NDR.sec={}; dolu.forEach(function(gi){ NDR.sec[gi]=true; }); } var secili=dolu.filter(function(gi){ return NDR.sec[gi]; });
+  var h='<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><div style="font-size:26px">📑</div><div style="flex:1;font-size:18px;font-weight:900">Dönem / tatil raporu</div><button class="fbtn" onclick="ndRaporKapat()" aria-label="Kapat">✕</button></div>'+
+    '<div style="font-size:12px;color:var(--soluk);margin-bottom:8px">Her sınıfa: bu dönem “işlendi” dediğin konular, bunların çocuğa ne kazandırdığı ve dayandığı kaynaklar. Sen onaylamadan gitmez.</div>'+
+    '<div class="oz-adim"><div style="font-size:12.5px;font-weight:800;margin-bottom:6px">Hangi tarihten bugüne?</div><input type="date" class="key" style="font-family:inherit" value="'+esc(ndDonemBas())+'" onchange="NDR.bas=this.value;LS.set(\'dk_nd_bas\',this.value);NDR.sec=null;ndRaporCiz()"></div>';
+  if(!dolu.length) h+='<div class="oz-adim">Bu tarihten sonra “işlendi” işaretli konu yok. Tarihi geriye al ya da derslerini işaretle.</div>';
+  else { h+='<div class="oz-adim"><div style="font-size:13px;font-weight:900;margin-bottom:6px">Hangi sınıflara?</div><div class="oz-scroll" style="flex-wrap:wrap">'+dolu.map(function(gi){ var on=!!NDR.sec[gi]; return '<div class="gchip'+(on?' akt':'')+'" onclick="NDR.sec['+gi+']=!NDR.sec['+gi+'];ndRaporCiz()">'+(on?'✅ ':'⬜ ')+esc(ozGname(gi))+'</div>'; }).join('')+'</div>'+
+      secili.map(function(gi,i){ return '<details style="margin-top:6px;background:#f1f5f9;color:#0f172a;border-radius:12px;padding:8px 10px"'+(i===0?' open':'')+'><summary style="cursor:pointer;font-weight:900;font-size:13px">👀 '+esc(ozGname(gi))+' — gidecek rapor</summary><div style="white-space:pre-wrap;font-size:13px;line-height:1.5;margin-top:6px">'+esc(mt[gi])+'</div></details>'; }).join('')+'</div>'+
+      '<button class="btn y" id="ndRaporBtn" style="width:100%;justify-content:center;padding:14px;font-size:16px"'+(secili.length?'':' disabled')+' onclick="ndRaporGonder()">✅ Onayla ve gönder ('+secili.length+' sınıf)</button>'+
+      '<button class="fbtn" style="width:100%;justify-content:center;margin-top:8px" onclick="ndRaporKopyala()">📋 Seçili raporları kopyala</button><div style="font-size:11.5px;color:var(--soluk);margin-top:8px">Rapor okul sisteminde “📰 Özetler”de 1 ay durur; ⚡ Hızlı Paylaş → 📤 Gönderdiklerim’den silebilir ya da süresini değiştirebilirsin.</div>'; }
+  o.firstChild.innerHTML=h; }
+function ndRaporAc(){ var o=document.getElementById('ndRapor'); if(!o){ o=document.createElement('div'); o.id='ndRapor'; o.style.cssText='position:fixed;inset:0;z-index:9420;background:rgba(4,8,18,.86);overflow:auto;-webkit-overflow-scrolling:touch;padding:14px';
+    o.innerHTML='<div style="max-width:620px;margin:0 auto;background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--cizgi);border-radius:22px;padding:16px;color:#fff"></div>'; o.addEventListener('click',function(e){ if(e.target===o) ndRaporKapat(); }); document.body.appendChild(o); }
+  NDR.sec=null; ndRaporCiz(); }
+function ndSecili(){ return hpSinifTum().filter(function(gi){ return NDR.sec&&NDR.sec[gi]; }).map(function(gi){ return {gi:gi,metin:ndRaporMetin(gi)}; }).filter(function(p){ return p.metin; }); }
+function ndRaporKopyala(){ var P=ndSecili(); if(!P.length) return; kopyala(P.map(function(p){ return p.metin; }).join('\n\n———\n\n'),'📋 '+P.length+' rapor kopyalandı'); }
+async function ndRaporGonder(){ if(NDR.mesgul) return; var P=ndSecili(); if(!P.length) return; NDR.mesgul=true; var btn=document.getElementById('ndRaporBtn'); if(btn){ btn.disabled=true; btn.textContent='📤 Gönderiliyor…'; }
+  var _a=window.alert, hata='', ok=false, eskiSure=LS.get('dk_eko_sure',null), ekSak={gorsel:EK.gorsel,linkler:EK.linkler,acik:EK.acik,video:EK.video,vh:EK.vh,vIler:EK.vIler,vHata:EK.vHata};
+  try{ EK.gorsel=''; EK.linkler=[{url:'',ad:''}]; EK.video=null; LS.set('dk_eko_sure','30'); window.alert=function(x){ hata=String(x||'hata'); }; ok=await ekoDogrudanGonder(P); }
+  catch(e){ hata=String((e&&e.message)||e); }
+  finally{ window.alert=_a; for(var k in ekSak) EK[k]=ekSak[k]; if(eskiSure==null){ try{ localStorage.removeItem('dk_eko_sure'); }catch(e){} } else LS.set('dk_eko_sure',eskiSure); NDR.mesgul=false; }
+  if(ok){ try{ toast('✅ Dönem raporu gönderildi → '+P.map(function(p){ return ozGname(p.gi); }).join(', '),'ok',6000); }catch(e){} ndRaporKapat(); }
+  else { try{ toast('⚠️ Gönderilemedi — internet bağlantısını kontrol edip tekrar dene','err',5000); }catch(e){} ndRaporCiz(); } }
+/* ---- 🤖 kartına düğme ve anahtarlar ---- */
+if(typeof otoKartHTML==='function'){ var _otoKartHTMLV422=otoKartHTML;
+  otoKartHTML=function(){ var a=ndAyar(); return _otoKartHTMLV422.apply(this,arguments)+'<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--cizgi)"><div style="font-size:12.5px;font-weight:800;margin-bottom:6px">🌱 “Niçin öğreniyoruz?” bölümü</div><div class="oz-scroll" style="flex-wrap:wrap"><div class="gchip'+(a.ozet?' akt':'')+'" onclick="ndAyarDegis(\'ozet\')">'+(a.ozet?'✅':'⬜')+' Haftalık özette</div><div class="gchip'+(a.hat?' akt':'')+'" onclick="ndAyarDegis(\'hat\')">'+(a.hat?'✅':'⬜')+' Hatırlatmada (tek satır)</div></div><button class="fbtn" style="width:100%;justify-content:center;margin-top:8px" onclick="ndRaporAc()">📑 Dönem / tatil raporu hazırla</button></div>'; }; }
+/* ---- 🌐 Site / yönetici paneli için konu listesi (bu cihazda, yalnız okuma) ---- */
+function mufredatYaz(){ try{ var out={v:1,t:Date.now(),surum:APP.surum,siniflar:[]};
+    SINIF_LISTE.forEach(function(sn,gi){ var ds=(typeof _hpSinifDersleriAsil==='function'?_hpSinifDersleriAsil(gi):hpSinifDersleri(gi)).filter(function(k){ return !!ND_YEDEK[k]; }); if(!ds.length) return;
+      out.siniflar.push({gi:gi,ad:ozGname(gi),g:sn.g,dersler:ds.map(function(k){ var D=HP_DERS[k]||{ad:k,ik:'📚'}; return {tid:k,ad:D.ad,ik:D.ik,konular:giIle(gi,function(){ return (SEANS[k]||[]).map(function(se){ return String(se.k||se.u||'').replace(/^Tanışalım:\s*/,''); }); })}; })}); });
+    localStorage.setItem('dk_mufredat_ozet',JSON.stringify(out)); return out; }catch(e){ return null; } }
+setTimeout(mufredatYaz,3500);
+try{ APP.onceki={surum:'4.22',satir:7503,kb:987}; APP.surum='4.23'; APP.tarih='13.11.2026';
+  APP.yenilikler.unshift('🌱 Niçin öğreniyoruz? — haftalık özette işlenen konunun çocuğa ne kazandırdığı ve bir araştırma bulgusu (kaynağıyla); istersen hatırlatmada da tek satır','📑 Dönem / tatil raporu: her sınıfa “neler öğrendik, ne kazandırır, kaynaklar” — önizle, onayla, gönder ya da kopyala');
+  MODULLER.push(['Niçin öğreniyoruz + dönem raporu','ndRaporMetin']); }catch(e){}
+</script>
+<script>
+/* ============================================================
+   SÜRÜM 4.24 — 👤 ÖĞRENCİ BAZINDA DÖNEM RAPORU + hatırlatmada “niçin” satırı varsayılan açık
+   • 📑 Dönem / tatil raporu ekranına “👤 Öğrenci raporu”: okul sistemindeki “okudum / yaptım” kayıtlarına göre
+     her öğrenci için kısa katılım özeti + sınıfın “neler öğrendik, ne kazandırır, kaynaklar” bölümü
+   • Yalnız o öğrencinin velisi ve kendisi görür (okul sisteminde kişiye özel bilgilendirme); önizle, seç, onayla → gider
+   • Sayılar yalnız sistemde işaretlenenleri gösterir; raporda bu açıkça yazar, kimse kıyaslanmaz
+   • “🌱 Niçin öğreniyoruz” satırı ders günü hatırlatmasında da varsayılan açık (🤖 kartından tek dokunuşla kapanır)
+   Yalnız EKLEME: önceki tüm davranışlar aynen durur.
+   ============================================================ */
+ndAyar=function(){ var a=LS.get('dk_neden',null)||{}; return {ozet:a.ozet!==false,hat:a.hat!==false}; };
+var NDO={mod:'sinif',gi:null,veri:null,sec:{},yuk:false,hata:''};
+function ndoBenim(o){ return !!(o&&(o.robotik===true||/bar[ıi]ş/i.test(String(o.ekleyen||'')))); }
+async function ndoYukle(gi){ NDO.yuk=true; NDO.hata=''; NDO.veri=null; ndRaporCiz();
+  try{ var fb=await ekoFb(), F=fb.F, oku=async function(ad){ var s=await F.getDoc(F.doc(fb.db,'maas_config',ad)); return (s.exists()&&s.data().liste)||[]; };
+    var ogr=await oku('k12_ogrenciler'), tes=await oku('k12_teslim'), odv=await oku('k12_odevler');
+    var okulS=[]; ogr.forEach(function(o){ if(o&&o.sinif&&okulS.indexOf(o.sinif)<0) okulS.push(o.sinif); }); var hedef=ekoSinifEsle(gi,okulS);
+    var basMs=new Date(ndDonemBas()+'T00:00:00').getTime(), odevMap={}; odv.forEach(function(o){ if(o&&o.id) odevMap[o.id]=o; });
+    var hatGun={}; (LS.get('dk_hp_defter',[])||[]).forEach(function(x){ if(x&&x.gi===gi&&new Date(x.tarih+'T12:00:00').getTime()>=basMs) hatGun[x.tarih]=1; });
+    var L=ogr.filter(function(o){ return o&&o.id&&hedef.indexOf(o.sinif)>=0; }).map(function(o){ var ok=0, yap=0;
+        tes.forEach(function(t){ if(!t||t.ogrenciId!==o.id||(t.tarih||0)<basMs) return; var od=odevMap[t.odevId], benim=/^rh/.test(String(t.odevId||''))||ndoBenim(od); if(!benim) return; if(t.durum==='yapildi') yap++; else ok++; });
+        var verilen=odv.filter(function(x){ return x&&!x.bilgi&&ndoBenim(x)&&x.sinif===o.sinif&&(x.tarih||0)>=basMs&&(x.tur==='sinif'||!x.tur||x.ogrenciId===o.id); }).length;
+        return {id:o.id,ad:String(o.ad||'Öğrenci'),sinif:o.sinif,okundu:ok,yapildi:yap,verilen:verilen}; }).sort(function(a,b){ return a.ad.localeCompare(b.ad,'tr'); });
+    NDO.veri={gi:gi,liste:L,hatSay:Object.keys(hatGun).length}; NDO.sec={}; L.forEach(function(x){ NDO.sec[x.id]=true; });
+  }catch(e){ NDO.hata='Okul sistemine ulaşılamadı; internet bağlantısını kontrol edip tekrar dene.'; }
+  NDO.yuk=false; ndRaporCiz(); }
+function ndoMetin(x){ var V=NDO.veri, gi=V.gi, sinifM=ndRaporMetin(gi), ad=x.ad.split(' ')[0], tf=function(d){ return new Date(d).toLocaleDateString('tr-TR',{day:'numeric',month:'long'}); };
+  var s='👤 '+x.ad+' · Dönem Raporu\n'+tf(ndDonemBas()+'T12:00:00')+' – '+tf(new Date())+'\n\n📬 Bu dönem sistemdeki katılımı';
+  s+='\n• Ders günü hatırlatmaları: '+x.okundu+(V.hatSay?' / '+Math.max(V.hatSay,x.okundu):'')+' tanesinde “okudum” dedi.';
+  if(x.verilen||x.yapildi) s+='\n• Verilen çalışmalar: '+x.yapildi+(x.verilen?' / '+Math.max(x.verilen,x.yapildi):'')+' tanesini “yaptım” diye işaretledi.';
+  s+='\nℹ️ Bu sayılar yalnız sistemde işaretlenenleri gösterir; işaretlenmemiş olması yapılmadığı anlamına gelmez.';
+  s+='\n\n'+((x.okundu+x.yapildi)>0?('💛 Dersleri '+ad+' ile birlikte evde takip ettiğiniz için teşekkür ederim. Düzenli takip, derste öğrenilenin evde pekişmesini kolaylaştırır.'):('💛 İsterseniz önümüzdeki dönem hatırlatmaları '+ad+' ile birlikte açıp “okudum” diyebilirsiniz; derse hazırlıklı gelmesine yardımcı olur.'));
+  if(sinifM){ var i=sinifM.indexOf('📚 Bu dönem neler öğrendik?'); s+='\n\n'+(i>=0?sinifM.slice(i):sinifM); } else s+='\n— Barış Öğretmen';
+  return s; }
+function ndoSecili(){ return (NDO.veri?NDO.veri.liste:[]).filter(function(x){ return NDO.sec[x.id]; }); }
+function ndoKopyala(){ var L=ndoSecili(); if(!L.length) return; kopyala(L.map(ndoMetin).join('\n\n———\n\n'),'📋 '+L.length+' öğrenci raporu kopyalandı'); }
+async function ndoGonder(){ if(NDR.mesgul) return; var L=ndoSecili(); if(!L.length) return;
+  if(!window.confirm(L.length+' öğrencinin velisine kişiye özel dönem raporu gidecek ('+ozGname(NDO.veri.gi)+').\nGönderilsin mi?')) return;
+  NDR.mesgul=true; var btn=document.getElementById('ndoBtn'); if(btn){ btn.disabled=true; btn.textContent='📤 Gönderiliyor…'; }
+  try{ var fb=await ekoFb(), F=fb.F, ts=Date.now(), bit=ts+30*864e5;
+    var yeni=L.map(function(x,i){ return {id:'rd'+ts.toString(36)+i, tur:'birey', sinif:x.sinif, ogrenciId:x.id, ogrenciAd:x.ad, ders:'Robotik · Satranç · Yapay Zekâ · Akıl-Zekâ', konu:'Dönem raporu', detay:ndoMetin(x), ekleyen:'Barış Öğretmen', sonTeslim:'', link:'', resimVar:false, resimTur:'', tarih:ts-i, bilgi:true, bitis:bit, robotik:true}; });
+    for(var i=0;i<yeni.length;i+=40) await F.setDoc(F.doc(fb.db,'maas_config','k12_odevler'),{liste:F.arrayUnion.apply(null,yeni.slice(i,i+40)),guncelleme:Date.now()},{merge:true});
+    toast('✅ '+yeni.length+' öğrenciye dönem raporu gönderildi · yalnız kendi velisi görür · 1 ay durur','ok',6500); ndRaporKapat();
+  }catch(e){ toast('⚠️ Gönderilemedi — internet bağlantısını kontrol edip tekrar dene','err',5000); }
+  NDR.mesgul=false; }
+function ndoHTML(){ var gis=hpSinifTum().filter(function(gi){ return !!ndRaporMetin(gi); });
+  var h='<div class="oz-adim"><div style="font-size:13px;font-weight:900;margin-bottom:6px">Hangi sınıf?</div><div class="oz-scroll" style="flex-wrap:wrap">'+(gis.length?gis.map(function(gi){ return '<div class="gchip'+(NDO.gi===gi?' akt':'')+'" onclick="NDO.gi='+gi+';ndoYukle('+gi+')">'+esc(ozGname(gi))+'</div>'; }).join(''):'<span style="font-size:12.5px;color:var(--soluk)">Bu tarihten sonra “işlendi” işaretli konusu olan sınıf yok.</span>')+'</div></div>';
+  if(NDO.yuk) return h+'<div class="oz-adim">Okul sisteminden okunuyor…</div>'; if(NDO.hata) return h+'<div class="oz-adim" style="border-color:#f59e0b">⚠️ '+esc(NDO.hata)+'</div>';
+  if(!NDO.veri||NDO.veri.gi!==NDO.gi) return h+'<div class="oz-adim">Sınıf seçince öğrenciler ve katılım sayıları gelir.</div>';
+  var L=NDO.veri.liste, sec=ndoSecili(); if(!L.length) return h+'<div class="oz-adim">Okul sisteminde bu sınıfa kayıtlı öğrenci bulunamadı.</div>';
+  h+='<div class="oz-adim"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><div style="flex:1;font-size:13px;font-weight:900">Öğrenciler ('+sec.length+'/'+L.length+' seçili)</div><button class="fbtn" onclick="var t='+(sec.length===L.length?'false':'true')+';NDO.veri.liste.forEach(function(x){NDO.sec[x.id]=t;});ndRaporCiz()">'+(sec.length===L.length?'Hiçbiri':'Tümü')+'</button></div>'+
+    L.map(function(x,i){ var on=!!NDO.sec[x.id]; return '<div style="display:flex;gap:8px;align-items:center;padding:7px 0;border-top:1px solid var(--cizgi);cursor:pointer" onclick="NDO.sec[NDO.veri.liste['+i+'].id]=!NDO.sec[NDO.veri.liste['+i+'].id];ndRaporCiz()"><div style="font-size:16px">'+(on?'✅':'⬜')+'</div><div style="flex:1;min-width:0;font-size:13.5px"><b>'+esc(x.ad)+'</b><div style="font-size:11.5px;color:var(--soluk)">👍 '+x.okundu+' okudum · ✅ '+x.yapildi+' yaptım</div></div></div>'; }).join('')+'</div>';
+  if(sec.length) h+='<details style="background:#f1f5f9;color:#0f172a;border-radius:12px;padding:8px 10px" open><summary style="cursor:pointer;font-weight:900;font-size:13px">👀 '+esc(sec[0].ad)+' — velisine gidecek rapor (örnek)</summary><div style="white-space:pre-wrap;font-size:13px;line-height:1.5;margin-top:6px">'+esc(ndoMetin(sec[0]))+'</div></details>';
+  return h+'<button class="btn y" id="ndoBtn" style="width:100%;justify-content:center;padding:14px;font-size:16px;margin-top:10px"'+(sec.length?'':' disabled')+' onclick="ndoGonder()">✅ Onayla ve gönder ('+sec.length+' öğrenci)</button><button class="fbtn" style="width:100%;justify-content:center;margin-top:8px" onclick="ndoKopyala()">📋 Seçili raporları kopyala</button>'+
+    '<div style="font-size:11.5px;color:var(--soluk);margin-top:8px">Her rapor yalnız o öğrencinin velisine ve kendisine görünür; okul sisteminde “🎒 Getir / Unutma!” kutusunda 1 ay durur. ⚡ Hızlı Paylaş → 📤 Gönderdiklerim’den silebilirsin.</div>'; }
+var _ndRaporCizV423=ndRaporCiz;
+ndRaporCiz=function(){ var o=document.getElementById('ndRapor'); if(!o) return; if(NDO.mod==='sinif') _ndRaporCizV423(); else o.firstChild.innerHTML='<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><div style="font-size:26px">📑</div><div style="flex:1;font-size:18px;font-weight:900">Dönem / tatil raporu</div><button class="fbtn" onclick="ndRaporKapat()" aria-label="Kapat">✕</button></div><div class="oz-adim"><div style="font-size:12.5px;font-weight:800;margin-bottom:6px">Hangi tarihten bugüne?</div><input type="date" class="key" style="font-family:inherit" value="'+esc(ndDonemBas())+'" onchange="NDR.bas=this.value;LS.set(\'dk_nd_bas\',this.value);NDO.veri=null;ndRaporCiz()"></div>'+ndoHTML();
+  try{ var ic=o.firstChild, bas=ic.children[0]; if(bas&&!ic.querySelector('[data-ndmod]')){ var d=document.createElement('div'); d.dataset.ndmod=1; d.className='oz-scroll'; d.style.marginBottom='10px';
+      d.innerHTML='<div class="gchip'+(NDO.mod==='sinif'?' akt':'')+'" onclick="NDO.mod=\'sinif\';ndRaporCiz()">🏫 Sınıf raporu</div><div class="gchip'+(NDO.mod==='ogr'?' akt':'')+'" onclick="NDO.mod=\'ogr\';ndRaporCiz()">👤 Öğrenci raporu</div>'; ic.insertBefore(d,bas.nextSibling); } }catch(e){} };
+/* Gönderdiklerim listesinde kişiye özel kayıtlarda öğrenci adı da görünsün */
+if(typeof otoGonOku==='function'){ var _otoGonOkuV423=otoGonOku; otoGonOku=async function(){ var L=await _otoGonOkuV423.apply(this,arguments); try{ L.forEach(function(x){ if(x.obj&&x.obj.tur==='birey'&&x.obj.ogrenciAd&&String(x.sinif).indexOf(x.obj.ogrenciAd)<0) x.sinif=x.sinif+' · '+x.obj.ogrenciAd; }); }catch(e){} return L; }; }
+try{ APP.onceki={surum:'4.23',satir:7593,kb:1004}; APP.surum='4.24'; APP.tarih='13.11.2026';
+  APP.yenilikler.unshift('👤 Öğrenci bazında dönem raporu: “okudum / yaptım” kayıtlarına göre kişiye özel özet — yalnız o öğrencinin velisi görür; önizle, seç, onayla','🌱 “Niçin öğreniyoruz” satırı ders günü hatırlatmasında da açık (🤖 kartından kapatılabilir)');
+  MODULLER.push(['Öğrenci raporu','ndoMetin']); }catch(e){}
 </script>
 </body>
 </html>
