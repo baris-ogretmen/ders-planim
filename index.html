@@ -5900,7 +5900,7 @@ try{ APP.onceki={surum:'4.7',satir:5449,kb:648}; APP.surum='4.8'; APP.tarih='11.
    SÜRÜM 4.9 — 📋 Yoklama Defteri (Ders Saati’nden, salt okunur rapor)
    + 🏦 baris-kasa · 🔔 bildirim/hatırlatma · 🧰 Araçlar · ℹ️ Hakkında
    ============================================================ */
-var ZSTD_SURUM='4.20';
+var ZSTD_SURUM='4.22';
 var KASA_YER='KASA-anahtar-kasada-saklaniyor-00';
 /* ---------- Yoklama kaynağı: Ders Saati hafızası (aynı adres → aynı tarayıcı) ---------- */
 var PYK={t:0,v:null};
@@ -7242,6 +7242,262 @@ hpKonu=function(gi,id,sonIslenen){ if(sonIslenen) return _hpKonuV419(gi,id,sonIs
   catch(e){ return _hpKonuV419(gi,id,sonIslenen); } };
 try{ APP.onceki={surum:'4.19',satir:7230,kb:948}; APP.surum='4.20'; APP.tarih='12.11.2026'; APP.satir=7247; APP.kb=950;
   APP.yenilikler.unshift('⏰ Ders günü hatırlatmasında konunun aşaması da yazılır: “Piyon · Keşfediyoruz”, “Piyon · Oynuyoruz”, “Piyon · Üretiyoruz” — veli her hafta farklı dersi görür'); }catch(e){}
+</script>
+<script>
+/* ============================================================
+   SÜRÜM 4.22 — 🤖 OTOMATİK PİLOT (ONAYLI): hazırlar, SANA sorar, tek dokunuşla gönderir
+   HİÇBİR ŞEY kendiliğinden gitmez. Pilot yalnız hazırlar ve onayına sunar:
+   • ⏰ Ders günü hatırlatması — günün son dersi bitince sıradaki ders günü için (Cuma bitince Pazartesi)
+   • 📝 Haftalık özet — Cuma son dersten sonra / hafta sonu
+   • ☀️ Sabah brifingi — günün ilk açılışında: bugünkü sınıflar, saatler, sıradaki konular
+   Onay kartında: hangi sınıfa NE gideceği birebir görünür · sınıf çıkarılabilir · “✅ Onayla ve gönder”
+   · “✏️ Düzenle” (Hızlı Paylaş’ta açar) · “🚫 Bu sefer gönderme” (tatil vb. — bir daha sormaz)
+   • Akıllı tahtadaki Ders Saati planı arka planda açtığında telefona “onayını bekliyor” bildirimi gider
+   • 📤 Gönderdiklerim: okula giden hatırlatma/özetleri sil, süresini değiştir, son gönderimi geri al
+   • Aynı güne iki kez önermez: haftalık liste işareti + okul sistemindeki kayıt kontrol edilir
+   Yalnız EKLEME: elle gönderme, önizleme, sınıf/ders seçimi ve tüm eski davranışlar aynen durur.
+   ============================================================ */
+var OTO={mesgul:false,son:'',bek:[],sec:{},okulS:[],cerceve:(function(){ try{ return window.self!==window.top; }catch(e){ return true; } })(),pilot:/#oto-pilot/.test(location.hash)};
+function otoAyar(){ var a=LS.get('dk_oto_hat',null); return (a&&typeof a==='object')?a:null; }
+function otoAyarYaz(a){ a.t=Date.now(); LS.set('dk_oto_hat',a); otoBulutYaz(); }
+function otoAcikMi(){ var a=otoAyar(); return !!(a&&a.acik); }
+function otoHaric(){ var a=otoAyar(); return (a&&Array.isArray(a.haric))?a.haric:[]; }
+function otoAtlandi(id){ var a=otoAyar(); return !!(a&&a.atla&&a.atla[id]); }
+function otoAtla(id){ var a=otoAyar()||{acik:true,haric:[]}; a.atla=a.atla||{}; a.atla[id]=Date.now(); var ks=Object.keys(a.atla).sort(function(x,y){ return a.atla[x]-a.atla[y]; }); while(ks.length>30) delete a.atla[ks.shift()]; otoAyarYaz(a); }
+function otoDs(){ try{ var o=JSON.parse(localStorage.getItem('barisDersSaati.v1')||'null'); return (o&&Array.isArray(o.grid))?o:null; }catch(e){ return null; } }
+function otoDk(s){ var m=/^(\d{1,2})[:.](\d{2})/.exec(String(s||'')); return m?(+m[1])*60+(+m[2]):-1; }
+/* O günün dolu ders saatleri — Ders Saati tablosu + o güne özel değişiklik */
+function otoGunHucreleri(d){ var o=otoDs(), wd=d.getDay()-1; if(!o||wd<0||wd>4) return []; var gov=(o.ov||{})[hpTarihKey(d)], n=(o.periods&&o.periods.length)||0, out=[];
+  for(var i=0;i<n;i++){ var c=(gov&&gov[i]!==undefined)?((gov[i]&&gov[i].empty)?null:gov[i]):((o.grid[wd]||[])[i]); if(!c||!c.c) continue; var p=o.periods[i]||[]; out.push({c:c.c,s:c.s||'',bas:String(p[0]||''),bit:String(p[1]||''),b:otoDk(p[0]),e:otoDk(p[1])}); }
+  return out; }
+function otoGunSaatleri(d){ return otoGunHucreleri(d).filter(function(x){ return x.b>=0&&x.e>=0; }).map(function(x){ return [x.b,x.e]; }); }
+function otoKapali(d){ var L=LS.get('dk_tatil',[])||[]; return L.indexOf(hpTarihKey(d))>=0; }
+function otoSiniflar(d){ if(otoKapali(d)) return []; var h=otoHaric(); try{ return hpGunSiniflari(d).filter(function(p){ return h.indexOf(p.ad)<0; }); }catch(e){ return []; } }
+function otoGonderildi(key){ try{ var a=LS.get('dk_hp_log',{})||{}; for(var w in a){ if(a[w]&&a[w]['hat_'+key]) return true; } }catch(e){} var g=LS.get('dk_oto_hat_log',{})||{}; return !!g[key]; }
+function otoIsaretle(key,d){ try{ var a=LS.get('dk_hp_log',{})||{}, w='w'+hpTarihKey(hpPzt(d)); a[w]=a[w]||{}; a[w]['hat_'+key]=a[w]['hat_'+key]||Date.now(); LS.set('dk_hp_log',a); }catch(e){}
+  var g=LS.get('dk_oto_hat_log',{})||{}; g[key]=Date.now(); var ks=Object.keys(g).sort(); while(ks.length>40) delete g[ks.shift()]; LS.set('dk_oto_hat_log',g); }
+function otoBugunBitti(n){ var dk=n.getHours()*60+n.getMinutes(), bugun=new Date(n); bugun.setHours(12,0,0,0); var bs=otoKapali(bugun)?[]:otoGunSaatleri(bugun), dersVar=otoSiniflar(bugun).length>0;
+  return bs.length?dk>=Math.max.apply(null,bs.map(function(x){ return x[1]; })):(dersVar?dk>=16*60:dk>=15*60); }
+/* Şu an hangi günün hatırlatması hazırlanmalı? (yoksa null) */
+function otoHedef(simdi){ var n=simdi||new Date(), dk=n.getHours()*60+n.getMinutes(); var bugun=new Date(n); bugun.setHours(12,0,0,0);
+  var bs=otoKapali(bugun)?[]:otoGunSaatleri(bugun), bk=hpTarihKey(bugun);
+  /* 1) Sabah telafisi: bugünün hatırlatması gitmemişse — en geç 08:30 ve ilk derse 30+ dk varken (çocuk evden çıkmadan) */
+  if(otoSiniflar(bugun).length&&!otoGonderildi(bk)&&!otoAtlandi('hat_'+bk)){ var ilk=bs.length?Math.min.apply(null,bs.map(function(x){ return x[0]; })):9*60+30; if(dk<=Math.min(ilk-30,8*60+30)) return {d:bugun,key:bk,bugun:true}; }
+  /* 2) Sıradaki ders günü: bugünün dersleri bittiyse (ders yoksa 15:00’ten sonra) */
+  if(!otoBugunBitti(n)) return null;
+  var ara=false; for(var i=1;i<=4;i++){ var d=new Date(bugun); d.setDate(d.getDate()+i); if(!otoSiniflar(d).length){ var g=d.getDay(); if(g>=1&&g<=5&&!otoKapali(d)) ara=true; continue; } if(ara) return null; /* arada okul günü var: bir gün önce hazırlanır */ var k=hpTarihKey(d); return (otoGonderildi(k)||otoAtlandi('hat_'+k))?null:{d:d,key:k,bugun:false}; }
+  return null; }
+/* Haftalık özet zamanı mı? Cuma (dersler bitince) · Cumartesi · Pazar */
+function otoOzetHedef(simdi){ var n=simdi||new Date(), g=n.getDay(); if(!(g===6||g===0||(g===5&&otoBugunBitti(n)))) return null;
+  var pz=hpPzt(n), key=hpTarihKey(pz); if(otoAtlandi('ozet_'+key)) return null;
+  try{ var a=LS.get('dk_hp_log',{})||{}; if(a['w'+key]&&a['w'+key].ozet) return null; }catch(e){} if((LS.get('dk_oto_ozet_log',{})||{})[key]) return null;
+  var dersli=false; for(var i=0;i<5;i++){ var d=new Date(pz); d.setHours(12,0,0,0); d.setDate(d.getDate()+i); if(otoSiniflar(d).length){ dersli=true; break; } } if(!dersli) return null; /* hafta boyu tatil */
+  var h=otoHaric(), gis=[]; try{ hpProg().forEach(function(p){ if(h.indexOf(p.ad)<0&&gis.indexOf(p.gi)<0) gis.push(p.gi); }); }catch(e){} gis.sort(function(x,y){ return x-y; });
+  return gis.length?{key:key,pz:pz,gis:gis}:null; }
+function otoOzetIsaretle(key){ try{ var a=LS.get('dk_hp_log',{})||{}; a['w'+key]=a['w'+key]||{}; a['w'+key].ozet=a['w'+key].ozet||Date.now(); LS.set('dk_hp_log',a); }catch(e){} var g=LS.get('dk_oto_ozet_log',{})||{}; g[key]=Date.now(); var ks=Object.keys(g).sort(); while(ks.length>40) delete g[ks.shift()]; LS.set('dk_oto_ozet_log',g); }
+function otoGunYazi(d){ return d.toLocaleDateString('tr-TR',{weekday:'long',day:'numeric',month:'long'}); }
+/* HP durumunu geçici değiştir → iş bitince AYNEN geri koy (elle yaptığın seçimler bozulmasın) */
+async function otoHPile(tmp,fn){ var sak={}, k; for(k in tmp){ sak[k]=HP[k]; HP[k]=tmp[k]; } try{ return await fn(); } finally{ for(k in sak) HP[k]=sak[k]; } }
+/* ---- bulut: aç/kapat ayarı tüm cihazlarda aynı olsun ---- */
+async function otoBulutOku(){ try{ var fb=await ekoFb(), F=fb.F, ref=F.doc(fb.db,'maas_config',BS_BELGE), sn=await F.getDoc(ref), u=(sn.exists()&&sn.data())||{};
+    var uz=u.otoHat, ye=otoAyar(); if(uz&&typeof uz==='object'&&(!ye||(uz.t||0)>(ye.t||0))) LS.set('dk_oto_hat',uz); else if(ye&&(!uz||(ye.t||0)>(uz.t||0))) await F.setDoc(ref,{otoHat:ye},{merge:true});
+    try{ if(u.hpLog) LS.set('dk_hp_log',bsLogBirles(LS.get('dk_hp_log',{}),u.hpLog)); }catch(e){} LS.set('dk_oto_hat_bakildi',Date.now()); return true; }catch(e){ return false; } }
+function otoBulutYaz(){ (async function(){ try{ var fb=await ekoFb(), F=fb.F; await F.setDoc(F.doc(fb.db,'maas_config',BS_BELGE),{otoHat:otoAyar()},{merge:true}); }catch(e){} })(); }
+async function otoOkulSiniflari(F,fb){ var out=[]; try{ var sn=await F.getDoc(F.doc(fb.db,'maas_config','k12_ogrenciler')); ((sn.exists()&&sn.data().liste)||[]).forEach(function(o){ if(o&&o.sinif&&out.indexOf(o.sinif)<0) out.push(o.sinif); }); }catch(e){} OTO.okulS=out; return out; }
+/* ---- okul sisteminde bu gün için zaten hatırlatması olan sınıflar ---- */
+async function otoZatenGiden(d){ var out={okulS:[],giden:{}}; var fb=await ekoFb(), F=fb.F; out.okulS=await otoOkulSiniflari(F,fb);
+  var s2=await F.getDoc(F.doc(fb.db,'maas_config','k12_odevler')); var L=(s2.exists()&&s2.data().liste)||[];
+  var tarihK='('+new Date(d).toLocaleDateString('tr-TR',{day:'numeric',month:'long'})+')', esik=Date.now()-6*864e5, hk=hpTarihKey(d);
+  L.forEach(function(e){ if(!e||e.konu!=='Ders günü hatırlatması'||!e.robotik||(e.tarih||0)<esik) return; var m=String(e.detay||'');
+    if(m.indexOf(tarihK)>=0||(m.indexOf('Bugün (')>=0&&hpTarihKey(new Date(e.tarih))===hk)) out.giden[e.sinif]=1; });
+  return out; }
+/* ---- okul sisteminde bu haftanın özeti zaten gitmiş sınıflar ---- */
+async function otoOzetGiden(o){ var out={okulS:[],giden:{}}; var fb=await ekoFb(), F=fb.F; out.okulS=OTO.okulS.length?OTO.okulS:await otoOkulSiniflari(F,fb);
+  var sn=await F.getDoc(F.doc(fb.db,'maas_config','k12_pano')); var L=(sn.exists()&&sn.data().liste)||[], esik=o.pz.getTime()+3*864e5;
+  L.forEach(function(e){ if(e&&e.robotik&&(e.ts||0)>=esik&&/^📰 Bu Haftanın Özeti/.test(String(e.metin||''))) out.giden[e.sinif]=1; }); return out; }
+function otoPush(baslik,govde){ try{ var u=''; try{ u=localStorage.getItem('zkasa_url')||''; }catch(e){} u=String(u||'https://baris-kasa.barilkay466.workers.dev').replace(/^"|"$/g,'').replace(/\/+$/,'');
+    fetch(u+'/olay',{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({hedef:{uyg:'robotikplan',rol:['kullanici']},veri:{baslik:baslik,govde:govde,url:location.origin+location.pathname+'#oto',etiket:'otohat'+Date.now()}})}).catch(function(){}); }catch(e){} }
+function otoGunluk(k){ var g=LS.get('dk_oto_hat_gunluk',[])||[]; g.unshift(k); LS.set('dk_oto_hat_gunluk',g.slice(0,12)); }
+/* ---- HAZIRLA: onayına sunulacakların listesi (hiçbir şey göndermez) ---- */
+async function otoHazirla(){ var out=[];
+  var h=otoHedef(); if(h){ var ls=otoSiniflar(h.d); if(ls.length){ var z=await otoZatenGiden(h.d);
+      var kalan=ls.filter(function(p){ var okul=ekoSinifEsle(p.gi,z.okulS); return !(okul.length&&okul.every(function(s){ return z.giden[s]; })); });
+      if(!kalan.length){ otoIsaretle(h.key,h.d); try{ bsZamanla(); }catch(e){} }
+      else { var mt=await otoHPile({hatTarih:h.key,hatSecDk:h.key,hatHaric:[],hatSinifDers:{},duzen:{},hatNot:'',hatDersler:[]},function(){ return kalan.map(function(p){ var m=''; try{ m=hpHatMetin(p,h.d); }catch(e){} return {ad:p.ad,gi:p.gi,metin:m}; }); });
+        out.push({tur:'hat',id:'hat_'+h.key,key:h.key,d:h.d,bugun:h.bugun,sinif:mt}); } } }
+  var o=otoOzetHedef(); if(o){ var gz=await otoOzetGiden(o);
+    var kg=o.gis.filter(function(gi){ var okul=ekoSinifEsle(gi,gz.okulS); return !(okul.length&&okul.every(function(s){ return gz.giden[s]; })); });
+    if(!kg.length){ otoOzetIsaretle(o.key); try{ bsZamanla(); }catch(e){} }
+    else { var mo=await otoHPile({not:'',ai:{},dersler:[],duzen:{}},function(){ return kg.map(function(gi){ var m=''; try{ m=hpOzetMetin(gi); }catch(e){} return {ad:ozGname(gi),gi:gi,metin:m}; }); });
+      out.push({tur:'ozet',id:'ozet_'+o.key,key:o.key,pz:o.pz,sinif:mo.filter(function(x){ return x.metin; })}); } }
+  out=out.filter(function(b){ return b.sinif.length; });
+  out.forEach(function(b){ if(!OTO.sec[b.id]){ OTO.sec[b.id]={}; b.sinif.forEach(function(s){ OTO.sec[b.id][s.ad]=true; }); } });
+  OTO.bek=out; return out; }
+function otoBaslik(b){ if(b.tur==='ozet') return '📝 Haftalık özet · '+b.pz.toLocaleDateString('tr-TR',{day:'numeric',month:'long'})+' haftası'; return '⏰ '+(b.bugun?'Bugün':otoGunYazi(b.d))+' · ders günü hatırlatması'; }
+function otoHpModalHazir(){ if(!document.getElementById('hpModal')){ var bg=document.createElement('div'); bg.className='modal-bg'; bg.id='hpModal'; bg.style.zIndex='8990'; bg.innerHTML='<div class="modal" id="hpModalIc" style="max-width:640px"></div>'; bg.addEventListener('click',function(e){ if(e.target===bg) modalKapat('hpModal'); }); document.body.appendChild(bg); } }
+/* ---- GÖNDER (yalnız sen onaylayınca): elle gönderimle AYNI yol ---- */
+async function otoHatGonder(b,adlar){ otoHpModalHazir(); var tum=hpGunSiniflari(b.d), gitmeyecek=tum.filter(function(p){ return adlar.indexOf(p.ad)<0; }).map(function(p){ return p.ad; });
+  var _c=window.confirm, _a=window.alert, hata='', t0=Date.now();
+  var logOku=function(){ try{ return ((LS.get('dk_hp_log',{})||{})[hpLogKey()]||{})['hat_'+b.key]||0; }catch(e){ return 0; } }, once=logOku();
+  try{ await otoHPile({hatTarih:b.key,hatSecDk:b.key,hatHaric:gitmeyecek,hatSinifDers:{},duzen:{},hatNot:'',hatSure:'gun',hatDersler:[]},async function(){
+      window.confirm=function(){ return true; }; window.alert=function(x){ hata=String(x||'hata'); }; await hpHatGonder(); }); }
+  finally{ window.confirm=_c; window.alert=_a; }
+  if(hata||logOku()===once) return 'hata:'+(hata||'gönderilemedi');
+  otoIsaretle(b.key,b.d); otoGunluk({tur:'hat',t:Date.now(),t0:t0,key:b.key,gun:b.bugun?'Bugün':otoGunYazi(b.d),sinif:adlar}); try{ bsZamanla(); }catch(e){} return 'gonderildi'; }
+async function otoOzetGonder(b,adlar){ var sec=b.sinif.filter(function(s){ return adlar.indexOf(s.ad)>=0; }); if(!sec.length) return 'hata:sınıf seçili değil';
+  var parca=sec.map(function(s){ return {gi:s.gi,metin:s.metin}; }), _a=window.alert, hata='', t0=Date.now(), ok=false;
+  var ekSak={gorsel:EK.gorsel,linkler:EK.linkler,acik:EK.acik,video:EK.video,vh:EK.vh,vIler:EK.vIler,vHata:EK.vHata};
+  try{ EK.gorsel=''; EK.linkler=[{url:'',ad:''}]; EK.video=null; window.alert=function(x){ hata=String(x||'hata'); }; ok=await ekoDogrudanGonder(parca); }
+  catch(e){ hata=String((e&&e.message)||e); }
+  finally{ window.alert=_a; for(var k in ekSak) EK[k]=ekSak[k]; }
+  if(!ok) return 'hata:'+(hata||'gönderilemedi');
+  otoOzetIsaretle(b.key); otoGunluk({tur:'ozet',t:Date.now(),t0:t0,key:b.key,gun:'Haftalık özet',sinif:adlar}); try{ bsZamanla(); }catch(e){} return 'gonderildi'; }
+/* ---- ☀️ brifing: bugünkü dersler ---- */
+function otoBrifingHTML(){ var n=new Date(), bugun=new Date(n); bugun.setHours(12,0,0,0); var bas='☀️ Bugün · '+otoGunYazi(bugun);
+  if(otoKapali(bugun)) return '<div class="oz-adim"><div style="font-weight:900;font-size:14px">'+bas+'</div><div style="font-size:12.5px;color:var(--soluk);margin-top:4px">🌧️ Bugün “okul kapalı” işaretli.</div></div>';
+  var hs=otoGunHucreleri(bugun); if(!hs.length) return '<div class="oz-adim"><div style="font-weight:900;font-size:14px">'+bas+'</div><div style="font-size:12.5px;color:var(--soluk);margin-top:4px">Bugün programında ders görünmüyor.</div></div>';
+  var prog=[]; try{ prog=hpProg(); }catch(e){}
+  var sat=hs.map(function(x){ var gi=-1; var p=prog.filter(function(q){ return q.ad===x.c; })[0]; if(p) gi=p.gi; else { try{ gi=dsSinifGi(x.c); }catch(e){} }
+    var tid='robokod', konu=''; try{ tid=dsDersTid(x.s); if(gi>=0&&tid!=='kocluk') konu=hpKonu(gi,tid,false)||''; }catch(e){}
+    return '<div style="display:flex;gap:8px;align-items:flex-start;padding:7px 0;border-top:1px solid var(--cizgi)"><div style="min-width:86px;font-size:12px;color:var(--soluk);font-weight:800">'+esc(x.bas)+'–'+esc(x.bit)+'</div><div style="flex:1;min-width:0"><b>'+esc(x.c)+'</b> · '+esc(x.s||'Ders')+(konu?'<div style="font-size:12px;color:var(--soluk)">📚 '+esc(konu)+'</div>':'')+'</div></div>'; }).join('');
+  return '<div class="oz-adim"><div style="font-weight:900;font-size:14px">'+bas+' <span style="font-weight:700;font-size:12px;color:var(--soluk)">· '+hs.length+' ders</span></div><div style="margin-top:6px">'+sat+'</div></div>'; }
+/* ---- ONAY KARTI ---- */
+function otoKartKapat(){ var o=document.getElementById('otoKart'); if(o) o.remove(); }
+function otoKartCiz(){ var o=document.getElementById('otoKart'); if(!o) return; var son=(LS.get('dk_oto_hat_gunluk',[])||[])[0];
+  var h='<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><div style="font-size:30px">🤖</div><div style="flex:1;min-width:0"><div style="font-size:18px;font-weight:900">'+(OTO.bek.length?'Barış, onayını bekleyen '+OTO.bek.length+' gönderim var':'Bugünün özeti')+'</div><div style="font-size:12px;color:var(--soluk)">Sen onaylamadan hiçbir şey gitmez.</div></div><button class="fbtn" onclick="otoKartKapat()" aria-label="Kapat">✕</button></div>';
+  OTO.bek.forEach(function(b){ var sec=OTO.sec[b.id]||{}, n=b.sinif.filter(function(s){ return sec[s.ad]; }).length, q="'"+b.id+"'";
+    h+='<div class="oz-adim" style="border-color:#f59e0b"><div style="font-weight:900;font-size:14.5px">'+esc(otoBaslik(b))+'</div><div style="font-size:12px;color:var(--soluk);margin:3px 0 8px">Şu sınıflara aşağıdaki metin gidecek. Gitmesin istediğin sınıfa dokun, çıkar.</div>'+
+      '<div class="oz-scroll" style="flex-wrap:wrap">'+b.sinif.map(function(s){ var on=!!sec[s.ad]; return '<div class="gchip'+(on?' akt':'')+'" onclick="otoSecToggle('+q+',\''+esc(s.ad).replace(/'/g,"\\'")+'\')">'+(on?'✅ ':'⬜ ')+esc(s.ad)+'</div>'; }).join('')+'</div>'+
+      b.sinif.filter(function(s){ return sec[s.ad]; }).map(function(s,i){ return '<details style="margin-top:6px;background:#f1f5f9;color:#0f172a;border-radius:12px;padding:8px 10px"'+(i===0?' open':'')+'><summary style="cursor:pointer;font-weight:900;font-size:13px">👀 '+esc(s.ad)+' — gidecek metin</summary><div style="white-space:pre-wrap;font-size:13px;line-height:1.5;margin-top:6px">'+esc(s.metin)+'</div></details>'; }).join('')+
+      '<button class="btn y" id="otoBtn_'+b.id+'" style="width:100%;justify-content:center;margin-top:12px;padding:14px;font-size:16px"'+(n?'':' disabled')+' onclick="otoOnayla('+q+')">✅ Onayla ve gönder ('+n+' sınıf)</button>'+
+      '<div style="display:flex;gap:8px;margin-top:8px"><button class="fbtn" style="flex:1;justify-content:center" onclick="otoDuzenle('+q+')">✏️ Düzenle</button><button class="fbtn" style="flex:1;justify-content:center" onclick="otoVazgec('+q+')">🚫 Bu sefer gönderme</button></div></div>'; });
+  h+=otoBrifingHTML();
+  if(son&&Date.now()-son.t<36*3600000) h+='<div class="oz-adim"><div style="font-size:12.5px">Son gönderim: <b>'+esc(son.gun)+'</b> → '+esc((son.sinif||[]).join(', '))+'</div><button class="fbtn" style="margin-top:6px" onclick="otoGeriAl()">↩️ Bu gönderimi geri al</button></div>';
+  h+='<button class="fbtn" style="width:100%;justify-content:center;margin-top:4px" onclick="otoGonAc()">📤 Gönderdiklerim — sil / süreyi değiştir</button>';
+  o.firstChild.innerHTML=h; }
+function otoKartAc(){ if(OTO.cerceve) return; var o=document.getElementById('otoKart');
+  if(!o){ o=document.createElement('div'); o.id='otoKart'; o.style.cssText='position:fixed;inset:0;z-index:9400;background:rgba(4,8,18,.8);overflow:auto;-webkit-overflow-scrolling:touch;padding:14px';
+    o.innerHTML='<div style="max-width:620px;margin:0 auto;background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--cizgi);border-radius:22px;padding:16px;color:#fff"></div>'; o.addEventListener('click',function(e){ if(e.target===o) otoKartKapat(); }); document.body.appendChild(o); }
+  otoKartCiz(); }
+function otoBul(id){ return OTO.bek.filter(function(b){ return b.id===id; })[0]; }
+function otoSecToggle(id,ad){ OTO.sec[id]=OTO.sec[id]||{}; OTO.sec[id][ad]=!OTO.sec[id][ad]; otoKartCiz(); }
+async function otoOnayla(id){ var b=otoBul(id); if(!b||OTO.gonderiyor) return; var sec=OTO.sec[id]||{}, adlar=b.sinif.filter(function(s){ return sec[s.ad]; }).map(function(s){ return s.ad; }); if(!adlar.length) return;
+  OTO.gonderiyor=true; var btn=document.getElementById('otoBtn_'+id); if(btn){ btn.disabled=true; btn.textContent='📤 Gönderiliyor…'; }
+  var r='hata'; try{
+    if(b.tur==='hat'){ /* son anda bir kez daha bak: bu arada başka cihazdan gitmiş olabilir */ var z=await otoZatenGiden(b.d); adlar=adlar.filter(function(ad){ var p=b.sinif.filter(function(s){ return s.ad===ad; })[0], okul=ekoSinifEsle(p.gi,z.okulS); return !(okul.length&&okul.every(function(s){ return z.giden[s]; })); }); }
+    if(!adlar.length){ if(b.tur==='hat') otoIsaretle(b.key,b.d); OTO.bek=OTO.bek.filter(function(x){ return x.id!==id; }); OTO.gonderiyor=false; try{ toast('Bu hatırlatma zaten gönderilmiş — tekrar göndermedim','info',4500); }catch(e){} otoKartCiz(); otoKartYenile(); return; }
+    r=await (b.tur==='hat'?otoHatGonder(b,adlar):otoOzetGonder(b,adlar)); }catch(e){ r='hata:'+((e&&e.message)||e); } OTO.gonderiyor=false;
+  if(r==='gonderildi'){ OTO.bek=OTO.bek.filter(function(x){ return x.id!==id; }); delete OTO.sec[id]; try{ toast('✅ Gönderildi → '+adlar.join(', ')+' · beğenmezsen “↩️ geri al”','ok',6000); }catch(e){} }
+  else { try{ toast('⚠️ Gönderilemedi — internet bağlantısını kontrol edip tekrar dene','err',5000); }catch(e){} }
+  otoKartCiz(); otoKartYenile(); }
+function otoVazgec(id){ var b=otoBul(id); if(!b) return; otoAtla(id); OTO.bek=OTO.bek.filter(function(x){ return x.id!==id; }); try{ toast('Tamam, bu sefer göndermiyorum. İstersen ⚡ Hızlı Paylaş’tan elle gönderebilirsin.','info',5000); }catch(e){} otoKartCiz(); otoKartYenile(); }
+function otoDuzenle(id){ var b=otoBul(id); if(!b) return; otoKartKapat(); try{ if(b.tur==='hat'){ HP.sek='hat'; HP.hatTarih=b.key; HP.duzen={}; hpAc(); } else { HP.duzen={}; hpAc('ozet'); } }catch(e){} }
+/* ---- 📤 GÖNDERDİKLERİM: sil · süreyi değiştir · son gönderimi geri al ---- */
+var OTOG={liste:[]};
+async function otoGonOku(){ var fb=await ekoFb(), F=fb.F, L=[];
+  var s1=await F.getDoc(F.doc(fb.db,'maas_config','k12_odevler')); ((s1.exists()&&s1.data().liste)||[]).forEach(function(e){ if(e&&e.robotik===true&&e.bilgi===true&&e.ekleyen==='Barış Öğretmen') L.push({belge:'k12_odevler',obj:e,t:e.tarih||0,sinif:e.sinif||'',bas:(e.konu||'Hatırlatma')+' — '+String(e.detay||'').split('\n')[0],bitis:e.bitis||0}); });
+  var s2=await F.getDoc(F.doc(fb.db,'maas_config','k12_pano')); ((s2.exists()&&s2.data().liste)||[]).forEach(function(e){ if(e&&e.robotik===true&&e.ogretmen==='Barış Öğretmen') L.push({belge:'k12_pano',obj:e,t:e.ts||0,sinif:e.sinif||'',bas:String(e.metin||'').split('\n')[0],bitis:e.bitis||0}); });
+  L.sort(function(a,b){ return b.t-a.t; }); OTOG.liste=L.slice(0,80); return OTOG.liste; }
+function otoKalan(b){ if(!b) return '📌 kalıcı'; var f=b-Date.now(); if(f<=0) return '⌛ süresi doldu'; var s=Math.round(f/3600000); return '⏳ '+(s<48?s+' saat':Math.round(s/24)+' gün')+' kaldı'; }
+function otoGonCiz(durum){ var o=document.getElementById('otoGon'); if(!o) return; var L=OTOG.liste;
+  var h='<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><div style="font-size:26px">📤</div><div style="flex:1;font-size:18px;font-weight:900">Gönderdiklerim'+(L.length?' <span style="font-size:12px;color:var(--soluk)">('+L.length+')</span>':'')+'</div><button class="fbtn" onclick="otoGonKapat()" aria-label="Kapat">✕</button></div>'+
+    '<div style="font-size:12px;color:var(--soluk);margin-bottom:8px">Okul sisteminde veli ve öğrencinin gördüğü, buradan gönderdiğin hatırlatma ve özetler. Sildiğin an onların ekranından da kalkar.</div>';
+  if(durum) h+='<div class="oz-adim">'+durum+'</div>';
+  else if(!L.length) h+='<div class="oz-adim">Okul sisteminde senden gitmiş hatırlatma ya da özet yok.</div>';
+  else h+=L.map(function(x,i){ var d=new Date(x.t); return '<div class="oz-adim" style="padding:10px"><div style="font-size:13px"><b>'+esc(x.sinif)+'</b> · '+(x.belge==='k12_odevler'?'⏰':'📰')+' '+esc(String(x.bas).slice(0,90))+'</div><div style="font-size:11.5px;color:var(--soluk);margin-top:2px">'+d.toLocaleDateString('tr-TR',{day:'numeric',month:'short'})+' '+d.toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})+' · '+otoKalan(x.bitis)+'</div>'+
+      '<div style="display:flex;gap:8px;margin-top:8px"><select class="key" style="flex:1;padding:8px;font-family:inherit" onchange="otoGonSure('+i+',this.value)"><option value="">⏳ Süreyi değiştir…</option><option value="bugun">Bugün akşama kadar</option><option value="yarin">Yarın akşama kadar</option><option value="7">1 hafta</option><option value="30">1 ay</option></select><button class="fbtn" style="color:#fca5a5" onclick="otoGonSil('+i+')">🗑️ Sil</button></div></div>'; }).join('');
+  o.firstChild.innerHTML=h; }
+function otoGonKapat(){ var o=document.getElementById('otoGon'); if(o) o.remove(); }
+async function otoGonAc(){ var o=document.getElementById('otoGon');
+  if(!o){ o=document.createElement('div'); o.id='otoGon'; o.style.cssText='position:fixed;inset:0;z-index:9450;background:rgba(4,8,18,.86);overflow:auto;-webkit-overflow-scrolling:touch;padding:14px';
+    o.innerHTML='<div style="max-width:620px;margin:0 auto;background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--cizgi);border-radius:22px;padding:16px;color:#fff"></div>'; o.addEventListener('click',function(e){ if(e.target===o) otoGonKapat(); }); document.body.appendChild(o); }
+  otoGonCiz('Okul sisteminden yükleniyor…'); try{ await otoGonOku(); otoGonCiz(); }catch(e){ otoGonCiz('⚠️ Okul sistemine ulaşılamadı; internet bağlantısını kontrol edip tekrar dene.'); } }
+/* Silme: listeyi baştan yazmaz; yalnız o kaydı çıkarır (başka öğretmenlerin o anda eklediği ödevler etkilenmez) */
+async function otoKayitSil(belge,objeler){ if(!objeler.length) return; var fb=await ekoFb(), F=fb.F, ref=F.doc(fb.db,'maas_config',belge);
+  await F.setDoc(ref,{liste:F.arrayRemove.apply(null,objeler.slice(0,150)),guncelleme:Date.now()},{merge:true});
+  try{ var vids=[]; objeler.forEach(function(o){ if(o.videoId&&vids.indexOf(o.videoId)<0) vids.push(o.videoId); }); if(vids.length){ var sn=await F.getDoc(ref), kalan=(sn.exists()&&sn.data().liste)||[];
+      for(var i=0;i<vids.length;i++){ if(!kalan.some(function(y){ return y&&y.videoId===vids[i]; })) await zVideoBosalt(ekoVidOku(fb),ekoVidYaz(fb),vids[i]); } } }catch(e){} }
+async function otoGonSil(i){ var x=OTOG.liste[i]; if(!x) return; if(!window.confirm(x.sinif+' · bu gönderi okul sisteminden (veli ve öğrenci ekranından) silinsin mi?')) return;
+  try{ await otoKayitSil(x.belge,[x.obj]); OTOG.liste.splice(i,1); toast('🗑️ Silindi · veli ve öğrenci ekranından da kalktı','ok',3500); otoGonCiz(); }catch(e){ toast('Silinemedi; internet bağlantısını kontrol et','err',3500); } }
+async function otoGonSure(i,v){ var x=OTOG.liste[i]; if(!x||!v) return;
+  try{ var fb=await ekoFb(), F=fb.F, ref=F.doc(fb.db,'maas_config',x.belge), yeni=Object.assign({},x.obj,{bitis:ekoBitis(v)});
+    await F.setDoc(ref,{liste:F.arrayUnion(yeni),guncelleme:Date.now()},{merge:true}); await F.setDoc(ref,{liste:F.arrayRemove(x.obj)},{merge:true});
+    x.obj=yeni; x.bitis=yeni.bitis; toast('⏳ Süre değişti','ok',2500); otoGonCiz(); }catch(e){ toast('Süre değiştirilemedi; internet bağlantısını kontrol et','err',3500); } }
+async function otoGeriAl(){ var g=(LS.get('dk_oto_hat_gunluk',[])||[])[0]; if(!g) return; if(!window.confirm('Son gönderim ('+g.gun+' → '+(g.sinif||[]).join(', ')+') okul sisteminden geri alınsın mı?\nVeli ve öğrenci ekranından kalkar.')) return;
+  try{ var L=await otoGonOku(), a=(g.t0||g.t)-3000, b=g.t+3000, belge=g.tur==='ozet'?'k12_pano':'k12_odevler';
+    var es=L.filter(function(x){ return x.belge===belge&&x.t>=a&&x.t<=b&&(g.tur==='ozet'||x.obj.konu==='Ders günü hatırlatması'); }).map(function(x){ return x.obj; });
+    if(!es.length){ toast('Geri alınacak kayıt bulunamadı (zaten silinmiş olabilir)','info',4000); return; }
+    await otoKayitSil(belge,es); var gl=LS.get('dk_oto_hat_gunluk',[])||[]; gl.shift(); LS.set('dk_oto_hat_gunluk',gl);
+    toast('↩️ Geri alındı · '+es.length+' kayıt silindi. Tekrar göndermek istersen ⚡ Hızlı Paylaş’tan elle gönderebilirsin.','ok',6000); otoKartCiz(); otoKartYenile(); if(document.getElementById('otoGon')) otoGonCiz(); }
+  catch(e){ toast('Geri alınamadı; internet bağlantısını kontrol et','err',3500); } }
+/* ---- kontrol döngüsü: hazırla → (telefon/bilgisayar) kartı göster · (tahta arka planı) bildirim gönder ---- */
+async function otoKontrol(zorlaAc){ if(OTO.mesgul) return 'mesgul'; if(navigator.onLine===false) return 'cevrimdisi'; OTO.mesgul=true;
+  try{ await otoBulutOku(); if(!otoAcikMi()){ OTO.bek=[]; return 'kapali'; }
+    var L=await otoHazirla();
+    if(OTO.cerceve){ var sor=LS.get('dk_oto_sor',{})||{}, yeni=L.filter(function(b){ return !sor[b.id]; });
+      if(yeni.length){ yeni.forEach(function(b){ sor[b.id]=Date.now(); }); var ks=Object.keys(sor).sort(function(x,y){ return sor[x]-sor[y]; }); while(ks.length>40) delete sor[ks.shift()]; LS.set('dk_oto_sor',sor);
+        otoPush('🤖 Onayını bekliyor',yeni.map(function(b){ return otoBaslik(b)+' → '+b.sinif.map(function(s){ return s.ad; }).join(', '); }).join(' · ')+' — dokun, bak, tek dokunuşla gönder.'); }
+      return L.length?'var':'bekle'; }
+    var modalAcik=false; try{ var m=document.getElementById('hpModal'); modalAcik=!!(m&&m.classList.contains('acik')); }catch(e){}
+    var gos=LS.get('dk_oto_goster',{})||{}, yeniG=L.filter(function(b){ return !gos[b.id]; }), bk=hpTarihKey(new Date());
+    var brif=(new Date().getHours()<12&&LS.get('dk_oto_brif','')!==bk&&otoGunHucreleri(new Date()).length>0);
+    if(document.getElementById('otoKart')) otoKartCiz();
+    else if(zorlaAc||((yeniG.length||brif)&&!modalAcik&&!document.getElementById('otoGon')&&!document.getElementById('otoTanit'))){
+      yeniG.forEach(function(b){ gos[b.id]=Date.now(); }); var k2=Object.keys(gos).sort(function(x,y){ return gos[x]-gos[y]; }); while(k2.length>40) delete gos[k2.shift()]; LS.set('dk_oto_goster',gos); LS.set('dk_oto_brif',bk); otoKartAc(); }
+    return L.length?'var':'bekle';
+  }catch(e){ return 'hata:'+((e&&e.message)||e); }
+  finally{ OTO.mesgul=false; } }
+function otoDene(zorlaAc){ otoKontrol(zorlaAc).then(function(r){ OTO.son=r; try{ otoKartYenile(); }catch(e){} if(r==='kapali'&&!otoAyar()) otoTanit(); else if(zorlaAc&&r!=='var'&&!document.getElementById('otoKart')) otoKartAc(); }).catch(function(){}); }
+/* ---- ilk açılışta bir kez sor ---- */
+function otoTanit(){ if(OTO.cerceve||otoAyar()||document.getElementById('otoTanit')) return;
+  var o=document.createElement('div'); o.id='otoTanit'; o.style.cssText='position:fixed;inset:0;z-index:9500;background:rgba(2,6,23,.72);display:flex;align-items:center;justify-content:center;padding:18px';
+  o.innerHTML='<div style="max-width:440px;width:100%;background:#0f172a;color:#fff;border:2px solid #34d399;border-radius:22px;padding:22px;font-family:inherit;box-shadow:0 20px 60px rgba(0,0,0,.5)">'+
+    '<div style="font-size:42px;text-align:center">🤖</div><h3 style="margin:6px 0 8px;text-align:center;font-size:20px">Otomatik Pilot</h3>'+
+    '<div style="font-size:14.5px;line-height:1.55;opacity:.92">Ders günü hatırlatmasını ve haftalık özeti <b>ben hazırlayayım, sen yalnız onayla</b>.<br><br>• Dersler bitince “şu sınıflara şunu göndereceğim” diye sana sorarım<br>• “✅ Onayla”ya basarsan gider; basmazsan <b>hiçbir şey gitmez</b><br>• Tatilse “🚫 Bu sefer gönderme” dersin, bir daha sormam<br>• Gönderdiğini sonradan geri alabilirsin</div>'+
+    '<button id="otoTanitAc" style="width:100%;margin-top:16px;padding:14px;border:0;border-radius:14px;background:#34d399;color:#052e1b;font:900 16px inherit;cursor:pointer">✅ Aç — hazırla, bana sor</button>'+
+    '<button id="otoTanitHayir" style="width:100%;margin-top:8px;padding:12px;border:1px solid #475569;border-radius:14px;background:transparent;color:#cbd5e1;font:800 14px inherit;cursor:pointer">Şimdilik kapalı kalsın</button></div>';
+  document.body.appendChild(o);
+  document.getElementById('otoTanitAc').onclick=function(){ o.remove(); otoAc(true); };
+  document.getElementById('otoTanitHayir').onclick=function(){ o.remove(); otoAyarYaz({acik:false,haric:[]}); try{ toast('Otomatik Pilot kapalı · ⚡ Hızlı Paylaş’tan açabilirsin','info',5000); }catch(e){} }; }
+function otoAc(on){ var a=otoAyar()||{haric:[]}; a.acik=!!on; otoAyarYaz(a); try{ toast(on?'🤖 Otomatik Pilot açık — hazırlayıp onayına sunacağım':'Otomatik Pilot kapatıldı','ok',4000); }catch(e){} otoKartYenile(); if(on) setTimeout(function(){ otoDene(false); },1200); else { OTO.bek=[]; otoKartKapat(); } }
+function otoHaricToggle(ad){ var a=otoAyar()||{acik:false,haric:[]}; a.haric=Array.isArray(a.haric)?a.haric:[]; var i=a.haric.indexOf(ad); if(i<0) a.haric.push(ad); else a.haric.splice(i,1); otoAyarYaz(a); otoKartYenile(); }
+/* ---- Hızlı Paylaş’ta küçük durum kartı ---- */
+function otoKartHTML(){ var on=otoAcikMi(), h=otoHaric(), tum=[]; try{ tum=hpProg().map(function(p){ return p.ad; }); }catch(e){}
+  return '<div style="display:flex;gap:10px;align-items:center"><div style="font-size:26px">🤖</div><div style="flex:1;min-width:0"><div style="font-weight:900;font-size:14px">Otomatik Pilot: '+(on?'<span style="color:#86efac">AÇIK</span>':'<span style="color:#fca5a5">KAPALI</span>')+'</div>'+
+    '<div style="font-size:11.5px;color:var(--soluk);line-height:1.45">'+(on?'Hatırlatma ve haftalık özeti hazırlar, onayına sunar. Sen onaylamadan hiçbir şey gitmez.':'Açarsan hatırlatma ve haftalık özeti hazırlayıp onayına sunarım.')+'</div></div>'+
+    '<button class="btn '+(on?'g':'y')+'" style="padding:8px 12px" onclick="otoAc('+(on?'false':'true')+')">'+(on?'Kapat':'Aç')+'</button></div>'+
+    '<div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">'+(on?'<button class="fbtn" style="flex:1;justify-content:center'+(OTO.bek.length?';border-color:#f59e0b;color:#fde68a':'')+'" onclick="otoDene(true)">'+(OTO.bek.length?'📬 Onay bekleyen: '+OTO.bek.length:'☀️ Bugün / onay bekleyenler')+'</button>':'')+'<button class="fbtn" style="flex:1;justify-content:center" onclick="otoGonAc()">📤 Gönderdiklerim</button></div>'+
+    (on&&tum.length?'<details style="margin-top:8px"><summary style="cursor:pointer;font-size:12.5px;font-weight:800">Hiç sorulmasın istediğin sınıf var mı?'+(h.length?' ('+h.length+' sınıf atlanıyor)':'')+'</summary><div class="oz-scroll" style="flex-wrap:wrap;margin-top:6px">'+
+      tum.map(function(ad){ var at=h.indexOf(ad)>=0; return '<div class="gchip'+(at?'':' akt')+'" onclick="otoHaricToggle(\''+esc(ad).replace(/'/g,"\\'")+'\')">'+(at?'⛔ ':'✅ ')+esc(ad)+'</div>'; }).join('')+'</div></details>':''); }
+function otoKartYenile(){ try{ var mg=document.querySelector('#hpModalIc .mgov'); if(!mg||(HP.sek!=='hat'&&HP.sek!=='asist')) return; var k=mg.querySelector('[data-otokart]');
+    if(!k){ k=document.createElement('div'); k.className='oz-adim'; k.dataset.otokart=1; k.style.borderColor='#34d399'; var ilk=mg.children[0]; if(ilk&&ilk.nextSibling) mg.insertBefore(k,ilk.nextSibling); else mg.appendChild(k); }
+    var acik=k.querySelector('details'); var eskiAcik=!!(acik&&acik.open); k.innerHTML=otoKartHTML(); if(eskiAcik){ var d2=k.querySelector('details'); if(d2) d2.open=true; } }catch(e){} }
+var _hpCizV420=hpCiz;
+hpCiz=function(){ var r=_hpCizV420.apply(this,arguments); otoKartYenile(); return r; };
+/* ---- çalıştırma ---- */
+(function(){ try{
+  if(OTO.cerceve&&!OTO.pilot){
+    /* Akıllı tahta: Ders Saati planı 10 sn’liğine arka planda açar → sorulacak yeni bir şey varsa 100 sn’lik ayrı bir görünmez pencere iste */
+    setTimeout(function(){ try{ var a=otoAyar(); if(a&&!a.acik) return; if(!a&&Date.now()-(+(LS.get('dk_oto_hat_bakildi',0)||0))<6*3600000) return;
+        if(a){ var sor=LS.get('dk_oto_sor',{})||{}, h=otoHedef(), o=otoOzetHedef(); if(!((h&&!sor['hat_'+h.key])||(o&&!sor['ozet_'+o.key]))) return; }
+        var son=+(LS.get('dk_oto_hat_deneme',0)||0); if(Date.now()-son<20*60000) return;
+        var pd=window.parent.document; if(pd.getElementById('dsOtoIf')) return; LS.set('dk_oto_hat_deneme',Date.now());
+        var f=pd.createElement('iframe'); f.id='dsOtoIf'; f.setAttribute('sandbox','allow-scripts allow-same-origin'); f.setAttribute('aria-hidden','true'); f.tabIndex=-1;
+        f.style.cssText='position:fixed;left:-10000px;top:0;width:900px;height:700px;opacity:0;pointer-events:none;border:0';
+        f.src=location.href.split('#')[0]+'#oto-pilot'; pd.body.appendChild(f); window.parent.setTimeout(function(){ try{ f.remove(); }catch(e){} },100000); }catch(e){} },1200);
+    return; }
+  var hashOto=function(){ return /^#oto(?![-\w])/.test(location.hash||''); };
+  setTimeout(function(){ otoDene(hashOto()); },OTO.pilot?4000:7000);
+  if(OTO.pilot){ setTimeout(function(){ otoDene(false); },40000); return; }
+  setInterval(function(){ if(document.visibilityState==='visible') otoDene(false); },5*60000);
+  document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible') setTimeout(function(){ otoDene(false); },3000); });
+  window.addEventListener('hashchange',function(){ if(hashOto()) otoDene(true); });
+  try{ var Z=window.ZSTD_AYAR; if(Z){ Z.bolumler=Z.bolumler||{}; Z.bolumler.oto=function(){ otoDene(true); };
+      if(Array.isArray(Z.hatirlatmaOneri)) Z.hatirlatmaOneri.unshift({etiket:'Sabah brifingi',saat:'07:45',gunler:[1,2,3,4,5],baslik:'☀️ Günaydın Barış Öğretmen',govde:'Bugünkü derslerin, konuların ve onayını bekleyenler hazır. Dokun, bak.',url:'#oto'}); } }catch(e){}
+}catch(e){} })();
+try{ APP.onceki={surum:'4.20',satir:7247,kb:950}; APP.surum='4.22'; APP.tarih='12.11.2026';
+  APP.yenilikler.unshift('🤖 Otomatik Pilot (onaylı): ders günü hatırlatması ve haftalık özeti hazırlar, “şu sınıflara şunu göndereceğim” diye sana sorar — sen onaylamadan hiçbir şey gitmez','☀️ Sabah brifingi: günün ilk açılışında bugünkü dersler ve konular','📤 Gönderdiklerim: okula giden hatırlatma ve özetleri sil, süresini değiştir, son gönderimi geri al');
+  MODULLER.push(['Otomatik Pilot (onaylı)','otoKontrol']); }catch(e){}
 </script>
 </body>
 </html>
