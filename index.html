@@ -5152,7 +5152,7 @@ function vbDagitimHesap(grid,genelMi){ var sl={}, out={};
   Object.keys(sl).forEach(function(cls){ var L=sl[cls]; if(genelMi&&!L.every(function(x){ return genelMi(grid[x.d][x.i].s); })) return;
     if(vbSinifGi(cls)===8){ L.forEach(function(x){ out[x.d+'|'+x.i]=VB_DAG_ET.K; }); return; }
     /* Anaokulu: Salı hep Satranç; Cuma haftaya göre Satranç ↔ Robotik-Kodlama */
-    if(vbSinifGi(cls)===0){ L.forEach(function(x){ out[x.d+'|'+x.i]=(x.d===1)?VB_DAG_ET.S:VB_DAG_ET.SR; }); return; }
+    if(vbSinifGi(cls)===0){ L.forEach(function(x){ var _c=grid[x.d]&&grid[x.d][x.i], _sb=_c&&_c.sb; out[x.d+'|'+x.i]=(_sb==='B'||(!_sb&&x.d===1))?VB_DAG_ET.S:VB_DAG_ET.SR; }); return; }   /* v13.8: B şubesi = yalnız Satranç · A şubesi = Satranç ↔ Robotik-Kodlama (gün değişse de şube belirler) */
     var sira=vbDagSira(L.length), tek=['R','Y','RY'], qT=sira.filter(function(k){ return tek.indexOf(k)>=0; }), qO=sira.filter(function(k){ return tek.indexOf(k)<0; });
     var blok=L.filter(function(x){ return L.some(function(y){ return y.d===x.d&&Math.abs(y.i-x.i)===1; }); }), tekil=L.filter(function(x){ return blok.indexOf(x)<0; });
     blok.forEach(function(x){ out[x.d+'|'+x.i]=VB_DAG_ET[qT.length?qT.shift():qO.shift()]; });
@@ -7027,6 +7027,34 @@ function goc(){ var bayrak=null; try{ bayrak=localStorage.getItem(GOC); }catch(e
     metaYaz({t:degisti?Math.max(GOC_T,((m&&m.t)||0)+1):Math.max(GOC_T,(m&&m.t)||0),imza:imza(yerel()||yeni)}); }
   try{ localStorage.setItem(GOC,'1'); }catch(e){} }
 
+/* ---- 19.11.2026: YENİ PROGRAM — 5 günün tamamı (bir kez; ders adları korunur, Ana Sınıfı A/B şube etiketi) ----
+   Değişenler: Pzt 6. ders +2A · Salı 6. ders Ana Sınıfı B · Prş 6. ders 2A kalktı · Cuma 2. ders Ana Sınıfı A · Cuma 6. ders 2A kalktı
+   Eski tek seferlik geçişler (26.10 / 27.10) bu cihazda bir daha çalışmasın diye kapatılır. */
+var GOC2='dk_prog_goc_20261119', GOC2_T=Date.UTC(2026,10,19,11,30,0);   /* 19.11.2026 14:30 (Türkiye) */
+var YENI2=[
+  ['','4A','','6A','2A','2A','1A','1A'],
+  ['','','5A','2A','3A','Ana Sınıfı B','5A','5A'],
+  ['','4A','4A','3A','3A','','7A','7A'],
+  ['','','','','','','6A','6A'],
+  ['','Ana Sınıfı A','8A','8A','','','','1A']];
+var VARS_SAAT=[['09:10','09:50'],['10:00','10:40'],['10:50','11:30'],['11:40','12:20'],['12:50','13:30'],['13:40','14:20'],['14:30','15:10'],['15:20','16:00']];
+function sbAyir(ad){ var m=String(ad||'').trim().match(/^ana\s*s[ıi]n[ıi]f[ıi]\s*[-–]?\s*([a-zçğıöşü])$/i);
+  return m?{c:'Ana Sınıfı',sb:m[1].toLocaleUpperCase('tr')}:{c:String(ad||'').trim(),sb:''}; }
+function goc2(){ var bayrak=null; try{ bayrak=localStorage.getItem(GOC2); }catch(e){ return; } if(bayrak) return;
+  ['dk_prog_goc_20261027','dk_prog_goc_20261026b','dk_prog_goc_20261026'].forEach(function(k){ try{ if(!localStorage.getItem(k)) localStorage.setItem(k,'1'); }catch(e){} });
+  var p=yerel(), periods=(p&&p.periods&&p.periods.length===8)?p.periods:VARS_SAAT, g0=p?kopya(p.grid):[], g=[], degisti=!p;
+  function bul(c,d){ for(var a=0;a<6;a++){ var dd=a===0?d:a-1; if(a>0&&dd===d) continue; var r=g0[dd]||[]; for(var i=0;i<r.length;i++){ var x=r[i]; if(x&&x.c===c) return kopya(x); } } return null; }
+  for(var d=0;d<5;d++){ var r=[], eski=g0[d]||[];
+    for(var i=0;i<periods.length;i++){ var ad=YENI2[d][i]||'', x=eski[i];
+      if(!ad){ r.push(null); continue; }
+      var a=sbAyir(ad), y=(x&&x.c===a.c)?kopya(x):(bul(a.c,d)||{c:a.c,s:SUBJ});
+      if(a.sb) y.sb=a.sb; else delete y.sb; r.push(y); }
+    if(kanon(r)!==kanon(g0[d])) degisti=true; g.push(r); }
+  var yeni={grid:g,periods:periods,ov:(p&&p.ov)||{}};
+  var m=metaOku(); if(degisti) uygula(yeni);
+  metaYaz({t:degisti?Math.max(GOC2_T,((m&&m.t)||0)+1):Math.max(GOC2_T,(m&&m.t)||0),imza:imza(yerel()||yeni)});
+  try{ localStorage.setItem(GOC2,'1'); }catch(e){} }
+
 /* ---- bulut ---- */
 async function baglan(){ if(K.fb) return K.fb; var V='https://www.gstatic.com/firebasejs/11.0.1/';
   var A=await import(V+'firebase-app.js'), F=await import(V+'firebase-firestore.js'), Au=await import(V+'firebase-auth.js');
@@ -7074,7 +7102,7 @@ async function dinle(){ if(K.dinliyor) return; try{ var fb=await baglan(); K.din
   }catch(e){ K.dinliyor=false; } }
 async function yokla(){ if(navigator.onLine===false) return; try{ var fb=await baglan(), sn=await fb.F.getDoc(fb.ref); karar(sn.exists()?sn.data():null); }catch(e){} if(!K.dinliyor) dinle(); }
 
-function basla(){ goc();
+function basla(){ goc(); goc2();
   setInterval(function(){ try{ yerelYakala(); }catch(e){} },2000);
   window.addEventListener('storage',function(e){ if(e.key===KEY) setTimeout(yerelYakala,50); });
   window.addEventListener('online',yokla);
