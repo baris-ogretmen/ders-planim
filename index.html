@@ -5900,7 +5900,7 @@ try{ APP.onceki={surum:'4.7',satir:5449,kb:648}; APP.surum='4.8'; APP.tarih='11.
    SÜRÜM 4.9 — 📋 Yoklama Defteri (Ders Saati’nden, salt okunur rapor)
    + 🏦 baris-kasa · 🔔 bildirim/hatırlatma · 🧰 Araçlar · ℹ️ Hakkında
    ============================================================ */
-var ZSTD_SURUM='5';
+var ZSTD_SURUM='6';
 var KASA_YER='KASA-anahtar-kasada-saklaniyor-00';
 /* ---------- Yoklama kaynağı: Ders Saati hafızası (aynı adres → aynı tarayıcı) ---------- */
 var PYK={t:0,v:null};
@@ -7865,12 +7865,25 @@ function filmPaylasYaz(){ try{ var L=(typeof FILMLER!=='undefined'?FILMLER:[]).m
 setTimeout(filmPaylasYaz,2500); document.addEventListener('visibilitychange',function(){ if(!document.hidden) filmPaylasYaz(); });
 ['filmOzelEkle','filmOzelSil'].forEach(function(ad){ try{ var f=window[ad]; if(typeof f==='function'){ window[ad]=function(){ var r=f.apply(this,arguments); setTimeout(filmPaylasYaz,50); return r; }; } }catch(e){} });
 if(typeof filmDegis==='function'){ var _filmDegisV5=filmDegis; filmDegis=function(){ var r=_filmDegisV5.apply(this,arguments); filmPaylasYaz(); return r; }; }
+function filmGuvenli(f){ if(!f||!f.id) return false; if(f.ozel) return true; if(f.yas!=='G'&&f.yas!=='PG') return false;
+    var t=((f.ger||'')+' '+(f.uyari||'')).toLocaleLowerCase('tr'); return !/argo|kaba|küfür|imalı|öpücük|şiddet|korku|kayb|kayıp|ölüm|kaza(?!n)|silah|savaş|tehlike|dikkat|\+13|\+18|yetişkin/.test(t); }
+/* güvenlik süzgeci Ders Planı'nın kendi film eklemesine de uygulanır + film listesinde “veliye gitmez” etiketi */
+if(typeof filmUygun==='function'){ var _filmUygunV5=filmUygun; filmUygun=function(){ return (_filmUygunV5.apply(this,arguments)||[]).filter(filmGuvenli); }; }
+if(typeof filmCiz==='function'){ var _filmCizV5=filmCiz; filmCiz=function(){ var r=_filmCizV5.apply(this,arguments); try{ var o=document.getElementById('filmEkr'); if(!o) return r; var kart=o.firstChild;
+    if(!kart.querySelector('.fg-bilgi')){ var d=document.createElement('div'); d.className='fg-bilgi oz-adim'; d.style.cssText='border-color:#34d399;background:rgba(16,185,129,.10);font-size:12.5px;line-height:1.5';
+      d.innerHTML='🛡️ <b>Güvenlik süzgeci:</b> +13/+18, argo/kaba dil, öpücük/imalı sahne, şiddet, korku, ölüm/kayıp ya da kaza sahnesi olan filmler <b>onaylasan bile veliye GİTMEZ</b>. Yeşil “✓ veliye uygun” yazanları onayla → Ders Programım’da “✅ İşledim → Önizle” ekranında 🎬 satırı olarak çıkar (orada kutucuğa dokunarak da onaylayabilirsin).';
+      var bas=kart.children[1]; kart.insertBefore(d,bas?bas.nextSibling:null); }
+    var ad=kart.querySelectorAll('.oz-adim:not(.fg-bilgi)'); FILMLER.forEach(function(f,i){ var el=ad[i]; if(!el||el.querySelector('.fg-et')) return; var s=document.createElement('div'); s.className='fg-et';
+      var ok=filmGuvenli(f); s.style.cssText='margin-top:5px;font-size:11.5px;font-weight:900;color:'+(ok?'#34d399':'#f87171'); s.textContent=ok?'✓ veliye uygun (güvenlik süzgecinden geçti)':'⛔ veliye gitmez — güvenlik süzgeci (uyarı/yaş içeriği)'; el.appendChild(s); }); }catch(e){} return r; }; }
 function filmHashAc(){ if(/^#filmler$/.test(location.hash||'')){ setTimeout(function(){ try{ filmAc(); history.replaceState(null,'',location.pathname+location.search); }catch(e){} },1100); } }
 filmHashAc(); window.addEventListener('hashchange',filmHashAc);
-try{ APP.onceki={surum:'4.26',satir:7810,kb:1039}; APP.surum='5'; APP.tarih='23.11.2026'; APP.satir=7876; APP.kb=1048;
+try{ APP.onceki={surum:'4.26',satir:7810,kb:1039}; APP.surum='5'; APP.tarih='23.11.2026'; APP.satir=7886; APP.kb=1050;
   APP.yenilikler.unshift('✅ İşlenen dersler artık listede karşına çıkmaz: her dersin başında “✅ İşlenen N ders · göster” olarak katlanır (👁️ İşlenenleri göster ile açılır)','📘 Ders Programım’daki “✅ dersi işlendi” penceresinden ya da ders kartından tek dokunuşla tam o derse gelirsin (sarı ile vurgulanır)','📅 Ders penceresinde “Ders Programım’da aç” — veliye gönder ve oyunlar için geri dön','🎬 Onayladığın filmler Ders Programım’daki veli kartına “Ailece izlemek isterseniz” olarak eklenebilir (haftada en çok bir; yalnız senin onayladıkların)');
-  MODULLER.push(['İşlenenleri katla','islUygula'],['Ders Programım’a dön','dpUrlPlan'],['Film paylaşımı','filmPaylasYaz'],['Konu adımı → Ders Saati','asamaAd']); }catch(e){}
-try{ ZSTD_SURUM='5'; if(window.ZSTD_AYAR) window.ZSTD_AYAR.surum='5'; }catch(e){}
+  MODULLER.push(['İşlenenleri katla','islUygula'],['Ders Programım’a dön','dpUrlPlan'],['Film paylaşımı','filmPaylasYaz'],['Film güvenlik süzgeci','filmGuvenli'],['Konu adımı → Ders Saati','asamaAd']); }catch(e){}
+
+try{ APP.onceki={surum:'5',satir:7876,kb:1048}; APP.surum='6'; APP.tarih='23.11.2026'; APP.satir=7889; APP.kb=1051;
+  APP.yenilikler.unshift('🛡️ Film güvenlik süzgeci: +13/+18, argo, öpücük/imalı sahne, şiddet, korku, ölüm/kayıp, kaza sahnesi olan film onaylansa bile veliye gitmez; film listesinde “✓ veliye uygun / ⛔ veliye gitmez” etiketi','🪜 Ders Saati’ne ve veli kartına konunun adımı gider: “Notasyon · 2. adım: Uygula”'); }catch(e){}
+try{ ZSTD_SURUM='6'; if(window.ZSTD_AYAR) window.ZSTD_AYAR.surum='6'; }catch(e){}
 </script>
 </body>
 </html>
