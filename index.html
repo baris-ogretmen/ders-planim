@@ -5900,7 +5900,7 @@ try{ APP.onceki={surum:'4.7',satir:5449,kb:648}; APP.surum='4.8'; APP.tarih='11.
    SÜRÜM 4.9 — 📋 Yoklama Defteri (Ders Saati’nden, salt okunur rapor)
    + 🏦 baris-kasa · 🔔 bildirim/hatırlatma · 🧰 Araçlar · ℹ️ Hakkında
    ============================================================ */
-var ZSTD_SURUM='6';
+var ZSTD_SURUM='7';
 var KASA_YER='KASA-anahtar-kasada-saklaniyor-00';
 /* ---------- Yoklama kaynağı: Ders Saati hafızası (aynı adres → aynı tarayıcı) ---------- */
 var PYK={t:0,v:null};
@@ -7858,7 +7858,8 @@ seansAc=function(tid,i){ var r=_seansAcV5.apply(this,arguments); try{ var m=docu
     var b=document.createElement('button'); b.className='btn'; b.setAttribute('data-dpgeri','1'); b.style.cssText='width:100%;justify-content:center;margin:8px 0 2px;background:linear-gradient(135deg,#f59e0b,#ec4899);color:#fff;font-weight:900';
     b.innerHTML='📅 Ders Programım’da aç'+(sn?' · '+esc(sn):'')+' <span style="font-weight:700;opacity:.85">(veliye gönder · oyunlar)</span>';
     b.onclick=function(){ try{ window.open(u+(sn?'#sinif='+encodeURIComponent(sn):''),'dkDersProgramim'); }catch(e){} };
-    var mg=m.querySelector('.mgov')||m; mg.insertBefore(b,mg.firstChild); } }catch(e){} return r; };
+    var mg=m.querySelector('.mgov')||m; mg.insertBefore(b,mg.firstChild); }
+    if(m&&!m.querySelector('.dv-kutu')) dersVideoFilmEkle(m,tid,i); }catch(e){} return r; };
 /* ---- 🎬 Film listesi → Ders Programım (veli kartında “ailece izleyin”) ---- */
 function filmPaylasYaz(){ try{ var L=(typeof FILMLER!=='undefined'?FILMLER:[]).map(function(f){ return {id:f.id,ad:f.ad,yil:f.yil||0,ders:f.ders||[],yas:f.yas||'',ger:f.ger||'',min:+f.min||0,oz:f.oz||'',uyari:f.uyari||'',ozel:!!f.ozel}; });
   localStorage.setItem('dk_film_paylas',JSON.stringify({v:1,t:Date.now(),filmler:L})); }catch(e){} }
@@ -7866,7 +7867,7 @@ setTimeout(filmPaylasYaz,2500); document.addEventListener('visibilitychange',fun
 ['filmOzelEkle','filmOzelSil'].forEach(function(ad){ try{ var f=window[ad]; if(typeof f==='function'){ window[ad]=function(){ var r=f.apply(this,arguments); setTimeout(filmPaylasYaz,50); return r; }; } }catch(e){} });
 if(typeof filmDegis==='function'){ var _filmDegisV5=filmDegis; filmDegis=function(){ var r=_filmDegisV5.apply(this,arguments); filmPaylasYaz(); return r; }; }
 function filmGuvenli(f){ if(!f||!f.id) return false; if(f.ozel) return true; if(f.yas!=='G'&&f.yas!=='PG') return false;
-    var t=((f.ger||'')+' '+(f.uyari||'')).toLocaleLowerCase('tr'); return !/argo|kaba|küfür|imalı|öpücük|şiddet|korku|kayb|kayıp|ölüm|kaza(?!n)|silah|savaş|tehlike|dikkat|\+13|\+18|yetişkin/.test(t); }
+    var t=((f.ger||'')+' '+(f.uyari||'')).toLocaleLowerCase('tr'); return !/argo|kaba|küfür|imalı|öpücük|şiddet|korku|kayb|kayıp|ölüm|kaza(?!n)|silah|savaş|aksiyon|dövüş|tehlike|dikkat|\+13|\+18|yetişkin/.test(t); }
 /* güvenlik süzgeci Ders Planı'nın kendi film eklemesine de uygulanır + film listesinde “veliye gitmez” etiketi */
 if(typeof filmUygun==='function'){ var _filmUygunV5=filmUygun; filmUygun=function(){ return (_filmUygunV5.apply(this,arguments)||[]).filter(filmGuvenli); }; }
 if(typeof filmCiz==='function'){ var _filmCizV5=filmCiz; filmCiz=function(){ var r=_filmCizV5.apply(this,arguments); try{ var o=document.getElementById('filmEkr'); if(!o) return r; var kart=o.firstChild;
@@ -7883,7 +7884,54 @@ try{ APP.onceki={surum:'4.26',satir:7810,kb:1039}; APP.surum='5'; APP.tarih='23.
 
 try{ APP.onceki={surum:'5',satir:7876,kb:1048}; APP.surum='6'; APP.tarih='23.11.2026'; APP.satir=7889; APP.kb=1051;
   APP.yenilikler.unshift('🛡️ Film güvenlik süzgeci: +13/+18, argo, öpücük/imalı sahne, şiddet, korku, ölüm/kayıp, kaza sahnesi olan film onaylansa bile veliye gitmez; film listesinde “✓ veliye uygun / ⛔ veliye gitmez” etiketi','🪜 Ders Saati’ne ve veli kartına konunun adımı gider: “Notasyon · 2. adım: Uygula”'); }catch(e){}
-try{ ZSTD_SURUM='6'; if(window.ZSTD_AYAR) window.ZSTD_AYAR.surum='6'; }catch(e){}
+
+/* =====================================================================
+   SÜRÜM 7 — 📺 Ders penceresinde “Bu dersin videoları” + 🎬 “Aile filmleri · nerede izlenir?”
+   - YouTube: konuya + sınıf düzeyine özel ARAMA bağlantıları (bozuk link olmaz, her zaman güncel) + güvenilir kanallarda konu araması.
+   - Filmler: YALNIZ güvenlik süzgecinden geçen (G / uyarısız PG), derse ve sınıfa uygun filmler. “Nerede izlenir?” → JustWatch Türkiye
+     (Türkiye’deki yasal platformları — Netflix, Disney+, Prime Video, Apple TV, Google Play… — güncel gösterir) + Google + fragman.
+   - Tek dokunuşla “veliye önerilebilir” onayı (Ders Programım’daki veli kartında 🎬 olarak çıkar).
+   ===================================================================== */
+var DV_KANAL={
+  robokod:[['TED-Ed','https://www.youtube.com/@TEDEd/search?query='],['Code.org','https://www.youtube.com/@codeorg/search?query='],['TRT Çocuk','https://www.youtube.com/@trtcocuk/search?query=']],
+  yz:[['Code.org (YZ dizisi)','https://www.youtube.com/@codeorg/search?query='],['TED-Ed','https://www.youtube.com/@TEDEd/search?query='],['TRT Çocuk','https://www.youtube.com/@trtcocuk/search?query=']],
+  satranc:[['ChessKid','https://www.youtube.com/@ChessKid/search?query='],['Saint Louis Chess Club','https://www.youtube.com/@STLChessClub/search?query='],['TED-Ed','https://www.youtube.com/@TEDEd/search?query=']],
+  akil:[['TED-Ed bilmeceleri','https://www.youtube.com/@TEDEd/search?query='],['TRT Çocuk','https://www.youtube.com/@trtcocuk/search?query=']],
+  kocluk:[['TED-Ed','https://www.youtube.com/@TEDEd/search?query=']]
+};
+var DV_EN={robokod:'coding for kids',yz:'artificial intelligence for kids',satranc:'chess for kids',akil:'logic puzzle',kocluk:'study skills'};
+function dvKademe(gi){ return gi===0?'anaokulu çocuklar için':gi<=4?'ilkokul çocuklar için':'ortaokul öğrenciler için'; }
+function dvTemizKonu(se){ var k=String((se&&se.k)||'').replace(/\s·\s(Keşfet|Uygula|Üret & Paylaş|Keşfediyoruz|Oynuyoruz|Üretiyoruz)$/,''); return k.replace(/^Tanışalım:\s*/,'').trim()||k; }
+function dvLink(url,ad,alt,renk){ return '<a class="dv-l" href="'+esc(url)+'" target="_blank" rel="noopener" style="--r:'+(renk||'#ef4444')+'">'+ad+(alt?'<small>'+alt+'</small>':'')+'</a>'; }
+function dersVideoFilmEkle(m,tid,i){ try{ if(!document.getElementById('dvCss')){ var st=document.createElement('style'); st.id='dvCss'; st.textContent=
+  '.dv-kutu{margin:10px 0;border:1px solid rgba(248,113,113,.45);border-radius:14px;padding:10px 12px;background:rgba(239,68,68,.07)}.dv-kutu h4{margin:0 0 8px;font-size:15px}'+
+  '.dv-ls{display:flex;flex-wrap:wrap;gap:8px}.dv-l{display:inline-flex;flex-direction:column;gap:2px;text-decoration:none;color:#fff;background:var(--r);border-radius:12px;padding:9px 12px;font-weight:900;font-size:14px;min-height:44px;justify-content:center}.dv-l small{font-weight:700;opacity:.85;font-size:11.5px}'+
+  '.dv-film{margin-top:8px;border:1px solid rgba(251,191,36,.45);background:rgba(251,191,36,.07);border-radius:12px;padding:9px 11px}.dv-film b{font-size:14.5px}.dv-film .dv-oz{font-size:12.5px;opacity:.9;margin:3px 0 7px}'+
+  '.dv-onay{border:0;border-radius:999px;padding:8px 12px;font-weight:900;cursor:pointer;min-height:40px}.dv-onay.ok{background:#16a34a;color:#fff}.dv-onay.yok{background:#e2e8f0;color:#0f172a}'; document.head.appendChild(st); }
+  var se=null, gi=ST.gradeIdx; giIle(gi,function(){ se=(SEANS[tid]||[])[i]; }); if(!se) return; var konu=dvTemizKonu(se), tr=(typeof TRACKS!=='undefined'?TRACKS.find(function(t){return t.id===tid;}):null), dAd=(tr&&tr.ad)||'';
+  var q1=konu+' '+dAd+' '+dvKademe(gi), q2=konu+' nedir eğitici animasyon', q3=konu+' '+(DV_EN[tid]||'');
+  var h='<div class="dv-kutu"><h4>📺 Bu dersin videoları <span style="font-weight:700;opacity:.75;font-size:12px">— konuya özel arama (her zaman güncel, bozuk bağlantı olmaz)</span></h4><div class="dv-ls">'+
+    dvLink('https://www.youtube.com/results?search_query='+encodeURIComponent(q1),'▶ YouTube: '+esc(konu),esc(dvKademe(gi)),'#dc2626')+
+    dvLink('https://www.youtube.com/results?search_query='+encodeURIComponent(q2),'▶ Animasyonlu anlatım','kısa, eğitici','#b91c1c')+
+    (gi>=3?dvLink('https://www.youtube.com/results?search_query='+encodeURIComponent(q3),'▶ İngilizce kaynaklar','Türkçe altyazı aç','#7f1d1d'):'')+
+    (DV_KANAL[tid]||[]).map(function(k){ return dvLink(k[1]+encodeURIComponent(gi>=3&&/TED|Chess|Code/.test(k[0])?q3:konu),'📺 '+esc(k[0]),'güvenilir kanalda ara','#475569'); }).join('')+
+    '</div><div style="font-size:11.5px;opacity:.75;margin-top:6px">💡 Tahtada göstermeden önce videoyu bir kez kendin izle; reklamsız izlemek için YouTube’da oturum/ YouTube Kids tercih edilebilir.</div>';
+  var onay=filmOnay(), F=(typeof FILMLER!=='undefined'?FILMLER:[]).filter(function(f){ return filmGuvenli(f)&&(f.ders||[]).indexOf(tid)>=0&&gi>=(+f.min||0); });
+  h+='<h4 style="margin-top:12px">🎬 Ailece izlenebilecek filmler <span style="font-weight:700;opacity:.75;font-size:12px">— yalnız güvenlik süzgecinden geçenler (G / uyarısız PG)</span></h4>';
+  if(!F.length) h+='<div style="font-size:13px;opacity:.85">Bu derse ve sınıf düzeyine uygun, güvenlik süzgecinden geçen film yok. (Yanlış film önermektense hiç önermemek daha iyi.)</div>';
+  F.forEach(function(f){ var adEn=((String(f.ad).match(/\(([^)]+)\)/)||[])[1]||String(f.ad).replace(/\s*\(.*\)\s*/,'')).replace(/·/g,'-').replace(/\s*belgesel\s*/i,''); var adTr=String(f.ad).replace(/\s*\(.*\)\s*/,'');
+    h+='<div class="dv-film"><b>'+esc(f.ad)+'</b>'+(f.yil?' <span style="opacity:.75">('+f.yil+')</span>':'')+' <span style="font-size:12px;font-weight:900;color:#34d399">✓ '+(f.yas==='G'?'Genel İzleyici':'Ebeveyn Rehberliği (PG)')+'</span><div class="dv-oz">'+esc(f.oz||'')+'</div><div class="dv-ls">'+
+      dvLink('https://www.justwatch.com/tr/arama?q='+encodeURIComponent(adEn),'📍 Nerede izlenir?','JustWatch Türkiye · yasal platformlar','#d97706')+
+      dvLink('https://www.google.com/search?q='+encodeURIComponent(adTr+' '+(f.yil||'')+' film nerede izlenir'),'🔎 Google’da bak','izleme seçenekleri','#92400e')+
+      dvLink('https://www.youtube.com/results?search_query='+encodeURIComponent(adTr+' '+(f.yil||'')+' fragman türkçe'),'🎞️ Fragman','önce birlikte bakın','#b45309')+
+      '<button class="dv-onay '+(onay[f.id]?'ok':'yok')+'" data-dvf="'+esc(f.id)+'">'+(onay[f.id]?'✅ Veliye önerilebilir (onaylı)':'☐ Veliye önerilebilir yap')+'</button></div></div>'; });
+  h+='</div>';
+  var kap=document.createElement('div'); kap.innerHTML=h; var kutu=kap.firstChild; var mg=m.querySelector('.mgov')||m; var ilk=mg.querySelector('[data-dpgeri]'); mg.insertBefore(kutu, ilk?ilk.nextSibling:mg.firstChild);
+  kutu.querySelectorAll('[data-dvf]').forEach(function(b){ b.onclick=function(ev){ ev.stopPropagation(); var id=b.getAttribute('data-dvf'), o=filmOnay(); if(o[id]) delete o[id]; else o[id]=Date.now(); LS.set('dk_film_onay',o); try{ filmPaylasYaz(); }catch(e){} try{ HP.duzen={}; otoKartYenile(); }catch(e){} var on=!!o[id]; b.className='dv-onay '+(on?'ok':'yok'); b.textContent=on?'✅ Veliye önerilebilir (onaylı)':'☐ Veliye önerilebilir yap'; toast(on?'🎬 Onaylandı — Ders Programım’da veli kartına eklenebilir':'Film onayı kaldırıldı','ok',2600); }; });
+  }catch(e){ try{console.warn('ders video/film',e);}catch(_){} } }
+try{ APP.onceki={surum:'6',satir:7889,kb:1051}; APP.surum='7'; APP.satir=7937; APP.kb=1059;
+  APP.yenilikler.unshift('📺 Ders penceresinde “Bu dersin videoları”: konuya ve sınıf düzeyine özel YouTube aramaları + güvenilir kanallar (TED-Ed, Code.org, ChessKid, TRT Çocuk)','🎬 Ders penceresinde güvenli aile filmleri: “📍 Nerede izlenir?” (JustWatch Türkiye), Google, fragman + tek dokunuşla “veliye önerilebilir” onayı'); MODULLER.push(['Ders videoları & filmler','dersVideoFilmEkle']); }catch(e){}
+try{ ZSTD_SURUM='7'; if(window.ZSTD_AYAR) window.ZSTD_AYAR.surum='7'; }catch(e){}
 </script>
 </body>
 </html>
