@@ -5025,7 +5025,7 @@ function tahtaPaylasYaz(){ try{
 var _ilrToggle43=ilrToggle; ilrToggle=function(){ var r=_ilrToggle43.apply(this,arguments); setTimeout(tahtaPaylasYaz,60); return r; };
 if(typeof hpRehKaydet==='function'){ var _hrk43=hpRehKaydet; hpRehKaydet=function(){ var r=_hrk43.apply(this,arguments); setTimeout(tahtaPaylasYaz,60); return r; }; }
 if(typeof hpAnlKaydet==='function'){ var _hak43=hpAnlKaydet; hpAnlKaydet=function(){ var r=_hak43.apply(this,arguments); setTimeout(tahtaPaylasYaz,60); return r; }; }
-setTimeout(tahtaPaylasYaz,1500); setInterval(tahtaPaylasYaz,60000);
+setTimeout(function(){ tahtaPaylasYaz(); },1500); setInterval(function(){ tahtaPaylasYaz(); },60000);   /* v5: ada göre çağır → sonradan eklenen sarmalayıcılar (adım bilgisi) da çalışsın */
 document.addEventListener('visibilitychange',function(){ if(!document.hidden) tahtaPaylasYaz(); });
 /* Ders Saati'nde "işledim" denince plan da anında güncellensin */
 window.addEventListener('storage',function(e){ if(e.key==='dk_ilr'){ try{ renderNeredeKaldim(); }catch(_){} try{ if(ST.view==='plan') renderPlan(); }catch(_){} tahtaPaylasYaz(); } if(e.key==='barisDersSaati.v1') dsProgramEsitle(true); });
@@ -5900,7 +5900,7 @@ try{ APP.onceki={surum:'4.7',satir:5449,kb:648}; APP.surum='4.8'; APP.tarih='11.
    SÜRÜM 4.9 — 📋 Yoklama Defteri (Ders Saati’nden, salt okunur rapor)
    + 🏦 baris-kasa · 🔔 bildirim/hatırlatma · 🧰 Araçlar · ℹ️ Hakkında
    ============================================================ */
-var ZSTD_SURUM='4.26';
+var ZSTD_SURUM='5';
 var KASA_YER='KASA-anahtar-kasada-saklaniyor-00';
 /* ---------- Yoklama kaynağı: Ders Saati hafızası (aynı adres → aynı tarayıcı) ---------- */
 var PYK={t:0,v:null};
@@ -7805,6 +7805,72 @@ setTimeout(function(){ kvBulutAl(); },6500);
 try{ APP.onceki={surum:'4.25',satir:7707,kb:1023}; APP.surum='4.26'; APP.tarih='13.11.2026'; APP.satir=7782; APP.kb=1037;
   APP.yenilikler.unshift('▶️ Konu videosu: her konuya kendi beğendiğin YouTube videosunu bağla — o konunun hatırlatmasında ve haftalık özetinde veliye düğme olarak gider (arama sonucu asla gitmez)','🎬 Film önerilerine kendi izlediğin filmi ekleyebilirsin · Eğitim Koçluğu için film bölümü');
   MODULLER.push(['Konu videoları','kvAc']); }catch(e){}
+/* =====================================================================
+   SÜRÜM 5 (23 Kasım 2026) — ✅ İŞLENEN DERSLER BİR DAHA KARŞINA ÇIKMAZ · 📘 Ders Saati/Ders Programım’dan tam o derse gel
+   · 🎬 onaylı filmler Ders Programım’a (veli özeti) · 📅 Ders Programım’a geri dön
+   - Yıllık plan listesinde işaretli (✅) dersler katlanır: her dersin başında tek satır “✅ İşlenen N ders · göster”.
+     Aramada ya da “👁️ İşlenenleri göster” açıkken hepsi görünür. Hiçbir işaret silinmez, yalnız görünüm.
+   - #tahta=sınıf|ders|sıra ile gelince o ders satırı vurgulanır (gizliyse açılır).
+   - Film listesi + kendi eklediğin filmler aynı sitedeki Ders Programım’a paylaşılır (dk_film_paylas); veliye yalnız senin onayladığın gider.
+   ===================================================================== */
+var ISL={gizle:(function(){ try{ return localStorage.getItem('dk_isl_gizle')!=='0'; }catch(e){ return true; } })(), hedef:null};
+function islGizleKaydet(v){ ISL.gizle=!!v; try{ localStorage.setItem('dk_isl_gizle',v?'1':'0'); }catch(e){} }
+function islCss(){ if(document.getElementById('islCss')) return; var st=document.createElement('style'); st.id='islCss'; st.textContent=
+  '.isl-kat{margin:2px 0 6px;border:1px dashed rgba(52,211,153,.55);border-radius:12px;background:rgba(16,185,129,.08)}'+
+  '.isl-kat>summary{cursor:pointer;list-style:none;padding:8px 10px;font-weight:900;font-size:13px;color:#6ee7b7;display:flex;align-items:center;gap:8px}'+
+  '.isl-kat>summary::-webkit-details-marker{display:none}.isl-kat>summary .isl-ac{margin-left:auto;font-size:11.5px;color:var(--soluk);font-weight:800}'+
+  '.isl-kat[open]>summary .isl-ac::after{content:" ▲"}.isl-kat:not([open])>summary .isl-ac::after{content:" ▼"}.isl-kat .seans{opacity:.75}'+
+  '.seans.isl-hedef{outline:3px solid #facc15;outline-offset:2px;box-shadow:0 0 0 7px rgba(250,204,21,.28);animation:islNabiz 1.2s ease-in-out 4}'+
+  '@keyframes islNabiz{50%{box-shadow:0 0 0 12px rgba(250,204,21,.08)}}'+
+  '.fbtn.isl-btn.akt{background:linear-gradient(135deg,#059669,#10b981);color:#fff;border-color:#34d399}';
+  document.head.appendChild(st); }
+function islUygula(){ try{ islCss(); var kok=document.getElementById('planIzgara'); if(!kok) return; var ara=(ST.ara||'').trim();
+  kok.querySelectorAll('.seans-liste').forEach(function(li){ if(li.querySelector('.isl-kat')) return; var ok=[].slice.call(li.querySelectorAll(':scope > .seans.ok'));
+    if(!ISL.gizle||ara||ok.length<1) return;
+    var d=document.createElement('details'); d.className='isl-kat'; d.innerHTML='<summary>✅ İşlenen '+ok.length+' ders <span class="isl-ac">göster</span></summary>';
+    li.insertBefore(d,li.firstChild); ok.forEach(function(x){ d.appendChild(x); }); });
+  islHedefVurgula(); islButonGuncelle(); }catch(e){ try{console.warn('işlenen katlama',e);}catch(_){} } }
+function islButonGuncelle(){ var f=document.getElementById('filtre'); if(!f) return; var b=f.querySelector('.isl-btn');
+  if(!b){ b=document.createElement('button'); b.className='fbtn isl-btn'; b.onclick=function(){ islGizleKaydet(!ISL.gizle); renderPlanGrid(); toast(ISL.gizle?'✅ İşlenen dersler katlandı — listede yalnız sıradakiler':'👁️ İşlenen dersler de listede','ok',2400); }; f.appendChild(b); }
+  b.classList.toggle('akt',!ISL.gizle); b.textContent=ISL.gizle?'👁️ İşlenenleri göster':'🙈 İşlenenleri gizle'; }
+/* hedef ders (Ders Saati / Ders Programım’dan gelindiyse) */
+(function(){ try{ var h=decodeURIComponent(location.hash||''); var m=h.match(/^#tahta=(\d+)\|([a-z]+)\|(\d+)/); if(m) ISL.hedef={gi:+m[1],k:m[2],i:+m[3],t:Date.now()}; }catch(e){} })();
+window.addEventListener('hashchange',function(){ try{ var h=decodeURIComponent(location.hash||''); var m=h.match(/^#tahta=(\d+)\|([a-z]+)\|(\d+)/); if(m){ ISL.hedef={gi:+m[1],k:m[2],i:+m[3],t:Date.now()}; setTimeout(function(){ try{ renderPlanGrid(); }catch(e){} },1300); } }catch(e){} });
+function islHedefVurgula(){ var H=ISL.hedef; if(!H||Date.now()-H.t>12000||ST.gradeIdx!==H.gi) return; var kok=document.getElementById('planIzgara'); if(!kok) return;
+  var el=null; kok.querySelectorAll('.seans').forEach(function(s){ var oc=s.getAttribute('onclick')||''; if(oc.indexOf("seansAc('"+H.k+"',"+H.i+")")>=0) el=s; }); if(!el) return;
+  var d=el.closest('details'); if(d) d.open=true; el.classList.add('isl-hedef'); var kalan=Math.max(0,12000-(Date.now()-H.t));
+  if(!H.kaydi){ H.kaydi=1; setTimeout(function(){ try{ el.scrollIntoView({block:'center',behavior:'smooth'}); }catch(e){} },120); }
+  setTimeout(function(){ try{ el.classList.remove('isl-hedef'); }catch(e){} },kalan); }
+var _renderPlanGridV5=renderPlanGrid;
+renderPlanGrid=function(){ var r=_renderPlanGridV5.apply(this,arguments); islUygula(); return r; };
+setTimeout(function(){ try{ if(ST.view==='plan') renderPlanGrid(); }catch(e){} },1400);
+/* ---- 🪜 Ders Saati’ne konunun ADIMI da gitsin (Keşfet → Uygula → Üret & Paylaş): aynı konu adı “tekrar” sanılmasın ---- */
+function asamaAd(se){ var m=String((se&&se.k)||'').match(/\s·\s(Keşfet|Uygula|Üret & Paylaş|Keşfediyoruz|Oynuyoruz|Üretiyoruz)$/); return m?m[1]:''; }
+if(typeof tahtaPaylasYaz==='function'){ var _tahtaPaylasYazV5=tahtaPaylasYaz;
+  tahtaPaylasYaz=function(){ var o=_tahtaPaylasYazV5.apply(this,arguments); try{ if(o&&o.siniflar){ Object.keys(o.siniflar).forEach(function(c){ (o.siniflar[c]||[]).forEach(function(e){ giIle(e.gi,function(){ var l=SEANS[e.k]||[]; e.asama=asamaAd(l[e.idx]); if(e.sonraki) e.sonraki.asama=asamaAd(l[e.idx+1]); }); }); });
+    localStorage.setItem('dk_tahta_paylas',JSON.stringify(o)); } }catch(e){} return o; }; }
+/* ---- 📅 Ders Programım’a geri dön (ders penceresinde) ---- */
+function dpUrlPlan(){ var u=''; try{ u=JSON.parse(localStorage.getItem('dk_dp_url')||'""')||''; }catch(e){ u=localStorage.getItem('dk_dp_url')||''; }
+  if(!/^https?:\/\//.test(u)&&/github\.io$/.test(location.hostname)) u=location.origin+'/dersss-programimm/'; return String(u||'').split('#')[0]; }
+var _seansAcV5=seansAc;
+seansAc=function(tid,i){ var r=_seansAcV5.apply(this,arguments); try{ var m=document.getElementById('haftaModalIc'); var u=dpUrlPlan();
+  if(m&&u&&!m.querySelector('[data-dpgeri]')){ var sn=(typeof tahtaSinifAdi==='function')?tahtaSinifAdi(ST.gradeIdx):'';
+    var b=document.createElement('button'); b.className='btn'; b.setAttribute('data-dpgeri','1'); b.style.cssText='width:100%;justify-content:center;margin:8px 0 2px;background:linear-gradient(135deg,#f59e0b,#ec4899);color:#fff;font-weight:900';
+    b.innerHTML='📅 Ders Programım’da aç'+(sn?' · '+esc(sn):'')+' <span style="font-weight:700;opacity:.85">(veliye gönder · oyunlar)</span>';
+    b.onclick=function(){ try{ window.open(u+(sn?'#sinif='+encodeURIComponent(sn):''),'dkDersProgramim'); }catch(e){} };
+    var mg=m.querySelector('.mgov')||m; mg.insertBefore(b,mg.firstChild); } }catch(e){} return r; };
+/* ---- 🎬 Film listesi → Ders Programım (veli kartında “ailece izleyin”) ---- */
+function filmPaylasYaz(){ try{ var L=(typeof FILMLER!=='undefined'?FILMLER:[]).map(function(f){ return {id:f.id,ad:f.ad,yil:f.yil||0,ders:f.ders||[],yas:f.yas||'',ger:f.ger||'',min:+f.min||0,oz:f.oz||'',uyari:f.uyari||'',ozel:!!f.ozel}; });
+  localStorage.setItem('dk_film_paylas',JSON.stringify({v:1,t:Date.now(),filmler:L})); }catch(e){} }
+setTimeout(filmPaylasYaz,2500); document.addEventListener('visibilitychange',function(){ if(!document.hidden) filmPaylasYaz(); });
+['filmOzelEkle','filmOzelSil'].forEach(function(ad){ try{ var f=window[ad]; if(typeof f==='function'){ window[ad]=function(){ var r=f.apply(this,arguments); setTimeout(filmPaylasYaz,50); return r; }; } }catch(e){} });
+if(typeof filmDegis==='function'){ var _filmDegisV5=filmDegis; filmDegis=function(){ var r=_filmDegisV5.apply(this,arguments); filmPaylasYaz(); return r; }; }
+function filmHashAc(){ if(/^#filmler$/.test(location.hash||'')){ setTimeout(function(){ try{ filmAc(); history.replaceState(null,'',location.pathname+location.search); }catch(e){} },1100); } }
+filmHashAc(); window.addEventListener('hashchange',filmHashAc);
+try{ APP.onceki={surum:'4.26',satir:7810,kb:1039}; APP.surum='5'; APP.tarih='23.11.2026'; APP.satir=7869; APP.kb=1047;
+  APP.yenilikler.unshift('✅ İşlenen dersler artık listede karşına çıkmaz: her dersin başında “✅ İşlenen N ders · göster” olarak katlanır (👁️ İşlenenleri göster ile açılır)','📘 Ders Programım’daki “✅ dersi işlendi” penceresinden ya da ders kartından tek dokunuşla tam o derse gelirsin (sarı ile vurgulanır)','📅 Ders penceresinde “Ders Programım’da aç” — veliye gönder ve oyunlar için geri dön','🎬 Onayladığın filmler Ders Programım’daki veli kartına “Ailece izlemek isterseniz” olarak eklenebilir (haftada en çok bir; yalnız senin onayladıkların)');
+  MODULLER.push(['İşlenenleri katla','islUygula'],['Ders Programım’a dön','dpUrlPlan'],['Film paylaşımı','filmPaylasYaz'],['Konu adımı → Ders Saati','asamaAd']); }catch(e){}
+try{ ZSTD_SURUM='5'; if(window.ZSTD_AYAR) window.ZSTD_AYAR.surum='5'; }catch(e){}
 </script>
 </body>
 </html>
