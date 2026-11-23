@@ -7867,7 +7867,7 @@ setTimeout(filmPaylasYaz,2500); document.addEventListener('visibilitychange',fun
 if(typeof filmDegis==='function'){ var _filmDegisV5=filmDegis; filmDegis=function(){ var r=_filmDegisV5.apply(this,arguments); filmPaylasYaz(); return r; }; }
 function filmHashAc(){ if(/^#filmler$/.test(location.hash||'')){ setTimeout(function(){ try{ filmAc(); history.replaceState(null,'',location.pathname+location.search); }catch(e){} },1100); } }
 filmHashAc(); window.addEventListener('hashchange',filmHashAc);
-try{ APP.onceki={surum:'4.26',satir:7810,kb:1039}; APP.surum='5'; APP.tarih='23.11.2026'; APP.satir=7869; APP.kb=1047;
+try{ APP.onceki={surum:'4.26',satir:7810,kb:1039}; APP.surum='5'; APP.tarih='23.11.2026'; APP.satir=7876; APP.kb=1048;
   APP.yenilikler.unshift('✅ İşlenen dersler artık listede karşına çıkmaz: her dersin başında “✅ İşlenen N ders · göster” olarak katlanır (👁️ İşlenenleri göster ile açılır)','📘 Ders Programım’daki “✅ dersi işlendi” penceresinden ya da ders kartından tek dokunuşla tam o derse gelirsin (sarı ile vurgulanır)','📅 Ders penceresinde “Ders Programım’da aç” — veliye gönder ve oyunlar için geri dön','🎬 Onayladığın filmler Ders Programım’daki veli kartına “Ailece izlemek isterseniz” olarak eklenebilir (haftada en çok bir; yalnız senin onayladıkların)');
   MODULLER.push(['İşlenenleri katla','islUygula'],['Ders Programım’a dön','dpUrlPlan'],['Film paylaşımı','filmPaylasYaz'],['Konu adımı → Ders Saati','asamaAd']); }catch(e){}
 try{ ZSTD_SURUM='5'; if(window.ZSTD_AYAR) window.ZSTD_AYAR.surum='5'; }catch(e){}
