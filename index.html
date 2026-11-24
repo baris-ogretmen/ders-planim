@@ -5900,7 +5900,7 @@ try{ APP.onceki={surum:'4.7',satir:5449,kb:648}; APP.surum='4.8'; APP.tarih='11.
    SÜRÜM 4.9 — 📋 Yoklama Defteri (Ders Saati’nden, salt okunur rapor)
    + 🏦 baris-kasa · 🔔 bildirim/hatırlatma · 🧰 Araçlar · ℹ️ Hakkında
    ============================================================ */
-var ZSTD_SURUM='8';
+var ZSTD_SURUM='9';
 var KASA_YER='KASA-anahtar-kasada-saklaniyor-00';
 /* ---------- Yoklama kaynağı: Ders Saati hafızası (aynı adres → aynı tarayıcı) ---------- */
 var PYK={t:0,v:null};
@@ -7981,6 +7981,40 @@ try{ ZSTD_SURUM='8'; if(window.ZSTD_AYAR) window.ZSTD_AYAR.surum='8'; }catch(e){
   /* yedekten geri yüklerken kilit 30 sn durur ve kalıcı liste yedekteki işaretlerden yeniden kurulur (yedek eski işaretleri geri getirmesin diye değil, yedeğe saygı için) */
   try{ if(typeof yedekYukle==='function'){ var _yy=yedekYukle; window.yedekYukle=yedekYukle=function(){ try{ localStorage.setItem('dk_ilr_kilit_dur',String(Date.now()+30000)); localStorage.removeItem(A); }catch(e){} return _yy.apply(this,arguments); }; } }catch(e){}
   window.ISL_KILIDI={denetle:denetle,kalici:function(){ return oku(A,{}); },gecmis:function(){ return oku('dk_ilr_geriyukleme',[]); }};
+})();
+</script>
+<script id="v9FilmGeriBildirim">
+/* SÜRÜM 9 (24 Kasım 2026) — 🎬 “Ekle” artık görünür geri bildirim verir (bildirimler film ekranının ARKASINDA kalıyordu) · Esc film ekranını kapatır */
+(function(){
+  try{ var st=document.createElement('style'); st.textContent='.toastlar{z-index:2147483000 !important}.foYeni{outline:3px solid #22c55e !important;box-shadow:0 0 0 6px rgba(34,197,94,.25) !important;transition:outline .3s}.foHata{outline:3px solid #ef4444 !important}'; document.head.appendChild(st); }catch(e){}
+  function mesaj(t,ok){ try{ var o=document.getElementById('filmEkr'); if(!o) return; var b=o.querySelector('#foMesaj'); var ad=o.querySelector('#foAd'); if(!b&&ad){ b=document.createElement('div'); b.id='foMesaj'; ad.parentNode.appendChild(b); }
+      if(b){ b.style.cssText='margin-top:8px;padding:9px 12px;border-radius:10px;font-weight:900;font-size:14px;'+(ok?'background:#14532d;color:#bbf7d0':'background:#7f1d1d;color:#fecaca'); b.textContent=t; } }catch(e){} }
+  var eski=window.filmOzelEkle; if(typeof eski==='function'){
+    window.filmOzelEkle=filmOzelEkle=function(){ var o=document.getElementById('filmEkr'), adE=o&&o.querySelector('#foAd'), ad=adE?(adE.value||'').trim():'', n=FILMLER.length;
+      var ds=o?o.querySelectorAll('[data-fod].akt').length:0;
+      if(ad.length<2){ if(adE){ adE.classList.add('foHata'); adE.focus(); } mesaj('✏️ Önce filmin adını yaz',false); return; }
+      if(!ds){ try{ o.querySelector('[data-fod]').parentNode.classList.add('foHata'); }catch(e){} mesaj('👆 Filmin hangi derse uygun olduğunu seç (en az bir ders kutusuna dokun)',false); return; }
+      var r=eski.apply(this,arguments);
+      if(FILMLER.length>n){ var f=FILMLER[FILMLER.length-1];
+        setTimeout(function(){ try{ var o2=document.getElementById('filmEkr'); var k=[].slice.call(o2.querySelectorAll('.oz-adim')).filter(function(e){ return e.textContent.indexOf(f.ad)>=0&&!e.querySelector('#foAd'); })[0];
+          mesaj('✅ “'+f.ad+'” eklendi ve onaylandı — Ders Programım’daki veli önizlemesinde artık seçilebilir. Çıkmak için Esc ya da ✕',true);
+          if(k){ k.classList.add('foYeni'); k.scrollIntoView({behavior:'smooth',block:'center'}); setTimeout(function(){ k.classList.remove('foYeni'); },6000); } }catch(e){} },120); }
+      return r; }; }
+  /* Esc → film ekranını kapat; Ders Planı Ders Saati’nin içinde açıksa ve açık pencere yoksa Ders Saati’ne dön */
+  /* Esc sırası: film ekranı → açık pencere (en üstteki) → [Ders Saati içindeyse] Ders Saati’ne dön. Sunum/konu sahnesi kendi Esc’ini kullanır. */
+  var _escSon=0;
+  document.addEventListener('keydown',function(e){ if(e.key!=='Escape') return; var o=document.getElementById('filmEkr'); if(o){ e.preventDefault(); e.stopImmediatePropagation(); _escSon=Date.now(); try{ filmKapat(); }catch(_){ o.remove(); } return; }
+    try{ if(typeof VBS!=='undefined'&&VBS){ _escSon=Date.now(); return; } }catch(_){}
+    var ka=[].slice.call(document.querySelectorAll('.acik')).filter(function(x){ return x.offsetParent!==null||getComputedStyle(x).position==='fixed'; });
+    if(ka.length){ _escSon=Date.now(); var m=ka.filter(function(x){ return x.classList.contains('modal-bg'); }).pop(); if(m){ e.preventDefault(); try{ modalKapat(m.id); }catch(_){ m.classList.remove('acik'); } } return; } },true);
+  window.addEventListener('keydown',function(e){ if(e.key!=='Escape'||e.defaultPrevented||Date.now()-_escSon<300) return; var t=e.target&&e.target.tagName; if(t==='INPUT'||t==='TEXTAREA'||t==='SELECT') return;
+    try{ if(window.parent&&window.parent!==window) window.parent.postMessage({dsPlanKapat:1},'*'); }catch(_){} });
+  document.addEventListener('input',function(e){ try{ if(e.target.classList.contains('foHata')) e.target.classList.remove('foHata'); }catch(_){} },true);
+  document.addEventListener('click',function(e){ try{ if(e.target.closest&&e.target.closest('[data-fod]')){ var h=document.querySelector('#filmEkr .foHata'); if(h&&!h.id) h.classList.remove('foHata'); } }catch(_){} },true);
+  /* Ders Saati paneli gizlenince konuşmayı/sesi sustur */
+  window.addEventListener('message',function(ev){ try{ if(ev.data&&ev.data.dsPlanGizlendi){ try{ speechSynthesis.cancel(); }catch(_){} [].forEach.call(document.querySelectorAll('audio,video'),function(m){ try{ m.pause(); }catch(_){} }); } }catch(_){} });
+  try{ APP.onceki={surum:'8',satir:7987,kb:1116}; APP.surum='9'; APP.tarih='24.11.2026'; APP.satir=8011; APP.kb=1119;
+    APP.yenilikler.unshift('🎬 Film ekle: “Ekle”ye bastığında artık yeşil onay kutusu çıkar, yeni film listede yeşil çerçeveyle gösterilir; eksik alan kırmızıyla işaretlenir','⌨️ Esc ile film ekranından çık'); ZSTD_SURUM='9'; if(window.ZSTD_AYAR) window.ZSTD_AYAR.surum='9'; }catch(e){}
 })();
 </script>
 </body>
