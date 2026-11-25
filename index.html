@@ -5900,7 +5900,7 @@ try{ APP.onceki={surum:'4.7',satir:5449,kb:648}; APP.surum='4.8'; APP.tarih='11.
    SÜRÜM 4.9 — 📋 Yoklama Defteri (Ders Saati’nden, salt okunur rapor)
    + 🏦 baris-kasa · 🔔 bildirim/hatırlatma · 🧰 Araçlar · ℹ️ Hakkında
    ============================================================ */
-var ZSTD_SURUM='9';
+var ZSTD_SURUM='10';
 var KASA_YER='KASA-anahtar-kasada-saklaniyor-00';
 /* ---------- Yoklama kaynağı: Ders Saati hafızası (aynı adres → aynı tarayıcı) ---------- */
 var PYK={t:0,v:null};
@@ -7928,7 +7928,7 @@ function dersVideoFilmEkle(m,tid,i){ try{ if(!document.getElementById('dvCss')){
   h+='<h4 style="margin-top:12px">🎬 Ailece izlenebilecek filmler <span style="font-weight:700;opacity:.75;font-size:12px">— yalnız güvenlik süzgecinden geçenler (G / uyarısız PG)</span></h4>';
   if(!F.length) h+='<div style="font-size:13px;opacity:.85">Bu derse ve sınıf düzeyine uygun, güvenlik süzgecinden geçen film yok. (Yanlış film önermektense hiç önermemek daha iyi.)</div>';
   F.forEach(function(f){ var adEn=((String(f.ad).match(/\(([^)]+)\)/)||[])[1]||String(f.ad).replace(/\s*\(.*\)\s*/,'')).replace(/·/g,'-').replace(/\s*belgesel\s*/i,''); var adTr=String(f.ad).replace(/\s*\(.*\)\s*/,'');
-    h+='<div class="dv-film"><b>'+esc(f.ad)+'</b>'+(f.yil?' <span style="opacity:.75">('+f.yil+')</span>':'')+' <span style="font-size:12px;font-weight:900;color:#34d399">✓ '+(f.yas==='G'?'Genel İzleyici':'Ebeveyn Rehberliği (PG)')+'</span><div class="dv-oz">'+esc(f.oz||'')+'</div><div class="dv-ls">'+
+    h+='<div class="dv-film"><a href="https://www.justwatch.com/tr/arama?q='+encodeURIComponent(adEn)+'" target="_blank" rel="noopener" style="color:#60a5fa;font-weight:900;text-decoration:underline;text-underline-offset:3px">🎬 '+esc(f.ad)+' ↗</a>'+(f.yil?' <span style="opacity:.75">('+f.yil+')</span>':'')+' <span style="font-size:12px;font-weight:900;color:#34d399">✓ '+(f.yas==='G'?'Genel İzleyici':'Ebeveyn Rehberliği (PG)')+'</span><div class="dv-oz">'+esc(f.oz||'')+'</div><div class="dv-ls">'+
       dvLink('https://www.justwatch.com/tr/arama?q='+encodeURIComponent(adEn),'📍 Nerede izlenir?','JustWatch Türkiye · yasal platformlar','#d97706')+
       dvLink('https://www.google.com/search?q='+encodeURIComponent(adTr+' '+(f.yil||'')+' film nerede izlenir'),'🔎 Google’da bak','izleme seçenekleri','#92400e')+
       dvLink('https://www.youtube.com/results?search_query='+encodeURIComponent(adTr+' '+(f.yil||'')+' fragman türkçe'),'🎞️ Fragman','önce birlikte bakın','#b45309')+
@@ -8016,6 +8016,33 @@ try{ ZSTD_SURUM='8'; if(window.ZSTD_AYAR) window.ZSTD_AYAR.surum='8'; }catch(e){
   try{ APP.onceki={surum:'8',satir:7987,kb:1116}; APP.surum='9'; APP.tarih='24.11.2026'; APP.satir=8021; APP.kb=1121;
     APP.yenilikler.unshift('🎬 Film ekle: “Ekle”ye bastığında artık yeşil onay kutusu çıkar, yeni film listede yeşil çerçeveyle gösterilir; eksik alan kırmızıyla işaretlenir','⌨️ Esc ile film ekranından çık'); ZSTD_SURUM='9'; if(window.ZSTD_AYAR) window.ZSTD_AYAR.surum='9'; }catch(e){}
 })();
+</script>
+<script id="v10VeliVideo">
+/* SÜRÜM 10 (25 Kasım 2026) — 🎬 “Sözün Özü” videosu veliye otomatik eklenir:
+   video bitince bu cihazda (IndexedDB · dk_medya) o derse bağlanır; Ders Programım “veliye bilgi” önizlemesinde ✓ satırı olarak çıkar ve onayınla gider. */
+var DKM={db:null,
+  ac:function(){ if(DKM.db) return Promise.resolve(DKM.db); return new Promise(function(coz,red){ try{ var r=indexedDB.open('dk_medya',1); r.onupgradeneeded=function(){ try{ r.result.createObjectStore('v'); }catch(e){} }; r.onsuccess=function(){ DKM.db=r.result; coz(DKM.db); }; r.onerror=function(){ red(r.error); }; }catch(e){ red(e); } }); },
+  yaz:function(k,v){ return DKM.ac().then(function(db){ return new Promise(function(coz,red){ var t=db.transaction('v','readwrite'); t.objectStore('v').put(v,k); t.oncomplete=function(){ coz(true); }; t.onerror=t.onabort=function(){ red(t.error||new Error('Depolama dolu')); }; }); }); },
+  sil:function(k){ return DKM.ac().then(function(db){ return new Promise(function(coz){ var t=db.transaction('v','readwrite'); t.objectStore('v').delete(k); t.oncomplete=function(){ coz(true); }; t.onerror=t.onabort=function(){ coz(false); }; }); }); },
+  oku:function(k){ return DKM.ac().then(function(db){ return new Promise(function(coz){ var t=db.transaction('v','readonly'), q=t.objectStore('v').get(k); q.onsuccess=function(){ coz(q.result||null); }; q.onerror=function(){ coz(null); }; }); }); } };
+/* 14 günden eski, gönderilmemiş videolar bu cihazdan temizlenir (yer kaplamasın) */
+setTimeout(function(){ try{ DKM.ac().then(function(db){ var t=db.transaction('v','readwrite'), q=t.objectStore('v').openCursor(); q.onsuccess=function(){ var c=q.result; if(!c) return; try{ if(Date.now()-(+(c.value&&c.value.ts)||0)>14*864e5) c.delete(); }catch(e){} c.continue(); }; }).catch(function(){}); }catch(e){} },8000);
+(function(){
+  if(typeof vsSonucCiz!=='function') return; var eski=vsSonucCiz;
+  vsSonucCiz=function(){ var r=eski.apply(this,arguments); try{ if(!VS.blob) return r; var el=document.getElementById('vsSonuc'); if(!el) return r;
+      var k=VS.gi+'|'+VS.tid+'|'+VS.idx, b=document.createElement('div'); b.id='vsVeliNot'; b.style.cssText='margin-top:10px;padding:10px 12px;border-radius:12px;background:#14532d;color:#dcfce7;font-weight:800;font-size:14px;line-height:1.45';
+      b.innerHTML='⏳ Veli bilgisine ekleniyor…'; el.appendChild(b);
+      if(VS.sure>ZVID_MAX_SN+2){ b.style.background='#7c2d12'; b.textContent='⚠️ Video 3 dakikadan uzun — veliye otomatik eklenemez. Kısaltıp yeniden kaydet.'; return r; }
+      var ad=''; try{ ad=vsBilgi().konu||''; }catch(e){}
+      DKM.yaz(k,{blob:VS.blob,mime:VS.mime,sure:VS.sure,ts:Date.now(),konu:ad,gi:VS.gi,tid:VS.tid,idx:VS.idx}).then(function(){
+        b.innerHTML='✅ Bu video <b>'+esc(vbSinifAd(VS.gi))+'</b> velilerine gidecek: Ders Programım’da “✅ İşledim → veliye bilgi” dediğinde önizlemede <b>🎬 Ders videosu</b> satırı işaretli gelir; onaylayınca yazı, oyunlar ve filmle birlikte gider.<div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button class="yk-b" data-vvsil>🗑️ Veliye gitmesin</button></div>';
+        b.querySelector('[data-vvsil]').onclick=function(){ DKM.sil(k).then(function(){ b.style.background='#334155'; b.textContent='Video veli bilgisinden çıkarıldı (dosya yine İndir ile alınabilir).'; }); };
+        try{ var m=LS.get('dk_ders_video',{})||{}; m[k]={ts:Date.now(),sure:Math.round(VS.sure),mb:Math.round(VS.blob.size/104857.6)/10}; LS.set('dk_ders_video',m); }catch(e){}
+      }).catch(function(){ b.style.background='#7c2d12'; b.textContent='⚠️ Bu tarayıcı videoyu saklayamadı — “📤 Okula gönder” ile doğrudan gönderebilirsin.'; });
+    }catch(e){} return r; };
+})();
+try{ APP.onceki={surum:'9',satir:8021,kb:1121}; APP.surum='10'; APP.tarih='25.11.2026'; APP.satir=8048; APP.kb=1125;
+  APP.yenilikler.unshift('🎬 Sözün Özü videosu artık veliye otomatik eklenir: video bitince o derse bağlanır, Ders Programım’daki veli önizlemesinde işaretli gelir','🔵 Film adları mavi ve tıklanabilir (nerede izleneceği açılır)'); ZSTD_SURUM='10'; if(window.ZSTD_AYAR) window.ZSTD_AYAR.surum='10'; }catch(e){}
 </script>
 </body>
 </html>
