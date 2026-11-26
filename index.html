@@ -4786,6 +4786,7 @@ async function ekoDogrudanGonder(parcalar){
     var lk=ekLinkler(); if(lk.length) yeni.forEach(function(y){ if(!y.linkler) y.linkler=lk; });
     if(EK.gorsel){ var gid='g'+ts.toString(36); await F.setDoc(F.doc(fb.db,'maas_config','k12_pgorsel_'+gid),{data:EK.gorsel, ts:ts, guncelleme:Date.now()}); yeni.forEach(function(y){ y.gorselId=gid; }); }
     var vidOk=false; if(EK.video){ try{ toast('🎬 Video yükleniyor…','info',4000); var vidId=await zVideoYaz(EK.video, ekoVidYaz(fb), function(p){ if(p<100) toast('🎬 Video yükleniyor… %'+p,'info',2000); }); yeni.forEach(function(y){ y.videoId=vidId; }); vidOk=true; }catch(ve){ alert('Video yüklenemedi ('+((ve&&ve.message)||ve)+'). Yazı ve diğer ekler yine gönderilecek.'); } }
+    if(window.DK_YAYIN&&window.DK_YAYIN>Date.now()){ yeni.forEach(function(y,i){ y.yayin=window.DK_YAYIN; y.ts=window.DK_YAYIN-i; }); }
     await F.setDoc(F.doc(fb.db,'maas_config','k12_pano'),{liste:F.arrayUnion.apply(null,yeni), guncelleme:Date.now()},{merge:true});
     toast('✅ Okula gönderildi → '+hedefAd.join(', ')+(EK.gorsel?' · 🖼️ kartla':'')+(vidOk?' · 🎬 videoyla':'')+(lk.length?' · 🔗 '+lk.length+' bağlantı':'')+' · veli ve öğrenci “📰 Özetler”de görüyor · süre: '+EKO_SURE_AD[sure],'ok',6500); ekSifirla(); try{ hpEskiTemizle('k12_pano'); }catch(e){}
     return true;
@@ -5900,7 +5901,7 @@ try{ APP.onceki={surum:'4.7',satir:5449,kb:648}; APP.surum='4.8'; APP.tarih='11.
    SÜRÜM 4.9 — 📋 Yoklama Defteri (Ders Saati’nden, salt okunur rapor)
    + 🏦 baris-kasa · 🔔 bildirim/hatırlatma · 🧰 Araçlar · ℹ️ Hakkında
    ============================================================ */
-var ZSTD_SURUM='11';
+var ZSTD_SURUM='12';
 var KASA_YER='KASA-anahtar-kasada-saklaniyor-00';
 /* ---------- Yoklama kaynağı: Ders Saati hafızası (aynı adres → aynı tarayıcı) ---------- */
 var PYK={t:0,v:null};
@@ -8062,6 +8063,32 @@ setTimeout(function(){ try{ DKM.ac().then(function(db){ var t=db.transaction('v'
       }).catch(function(){ b.style.background='#7c2d12'; b.textContent='⚠️ Bu tarayıcı videoyu saklayamadı — “📤 Okula gönder” ile doğrudan gönderebilirsin.'; });
     }catch(e){} return r; };
 })();
+/* ===== Sürüm 12: ⚡ TAM OTOMATİK DERS GÜNÜ HATIRLATMASI — her akşam 19:00 =====
+   Ders bitince (tahtada Ders Planı arka planda bakar; telefonda açmak da yeter) yarının hatırlatmasını hazırlar ve Değişim'e “19:00’da yayınlanacak” diye koyar.
+   Veliler 19:00’dan önce görmez (Değişim Sürüm 82: yayin alanı). Barış’a hemen bildirim gider: “19:00’da şu sınıflara gidecek — durdurmak için dokun”.
+   Metin şablondan (Barış’ın planı + konu adları) üretilir; yapay zekâ yazmaz → uygunsuz içerik çıkma ihtimali yok. Haftalık özet yine onayla gider. */
+var OTO_SAAT=19;
+function otoTamMi(){ var a=otoAyar(); return !!(a&&a.acik&&a.tam!==false); }
+function otoTamAyar(on){ var a=otoAyar()||{acik:true,haric:[]}; a.tam=!!on; if(on) a.acik=true; otoAyarYaz(a); try{ toast(on?'⚡ Tam otomatik açık — her akşam '+OTO_SAAT+':00’da ders günü hatırlatması kendiliğinden gider, sana bildirim gelir':'Tam otomatik kapalı — yine onayına sunacağım','ok',5000); }catch(e){} otoKartYenile(); }
+function otoMetinGuvenli(m){ m=String(m||''); if(m.length<40||m.length>3000) return false; if(/undefined|null|NaN|\[object/i.test(m)) return false; return true; }
+async function otoTamGonder(b){ var kil=+(LS.get('dk_oto_tam_kilit',0)||0); if(Date.now()-kil<90000) return 'mesgul'; LS.set('dk_oto_tam_kilit',Date.now());
+  try{ var z=await otoZatenGiden(b.d), adlar=b.sinif.filter(function(s){ if(!otoMetinGuvenli(s.metin)) return false; var okul=ekoSinifEsle(s.gi,z.okulS); return !(okul.length&&okul.every(function(x){ return z.giden[x]; })); }).map(function(s){ return s.ad; });
+    if(!adlar.length){ otoIsaretle(b.key,b.d); return 'zaten'; }
+    var n=new Date(), y=new Date(n); y.setHours(OTO_SAAT,0,0,0); window.DK_YAYIN=(!b.bugun&&n<y)?y.getTime():0;
+    var r; try{ r=await otoHatGonder(b,adlar); } finally{ window.DK_YAYIN=0; }
+    if(r==='gonderildi'){ var saat=(!b.bugun&&n<y)?OTO_SAAT+':00’da':'şimdi'; otoPush('✅ Ders günü hatırlatması hazır',(b.bugun?'Bugün':otoGunYazi(b.d))+' için → '+adlar.join(', ')+' · velilere '+saat+' otomatik gidecek. Durdurmak/düzeltmek için dokun → Gönderdiklerim.');
+      try{ var g=LS.get('dk_oto_tam_gunluk',[])||[]; g.unshift({t:Date.now(),key:b.key,yayin:window.DK_YAYIN||Date.now(),sinif:adlar}); LS.set('dk_oto_tam_gunluk',g.slice(0,30)); }catch(e){} }
+    else if(r&&r.indexOf('hata')===0){ otoPush('⚠️ Hatırlatma gönderilemedi','Otomatik gönderim yapılamadı ('+r.slice(5,60)+') — dokun, tek dokunuşla gönder.'); }
+    return r; } finally{ LS.set('dk_oto_tam_kilit',0); } }
+(function(){ if(typeof otoHazirla!=='function') return; var eskiH=otoHazirla;
+  otoHazirla=async function(){ var L=await eskiH.apply(this,arguments); if(!otoTamMi()) return L; var kalan=[];
+    for(var i=0;i<L.length;i++){ var b=L[i]; if(b.tur!=='hat'){ kalan.push(b); continue; } var r='hata'; try{ r=await otoTamGonder(b); }catch(e){ r='hata:'+((e&&e.message)||e); } if(r==='mesgul'||(r&&r.indexOf('hata')===0)) kalan.push(b); }
+    OTO.bek=kalan; return kalan; };
+  if(typeof otoKartHTML==='function'){ var eskiK=otoKartHTML; otoKartHTML=function(){ var h=eskiK.apply(this,arguments); if(!otoAcikMi()) return h; var t=otoTamMi(), son=(LS.get('dk_oto_tam_gunluk',[])||[])[0];
+      return h+'<div style="margin-top:10px;padding:10px;border-radius:12px;background:'+(t?'rgba(34,197,94,.15)':'rgba(255,255,255,.06)')+';border:1px solid '+(t?'#22c55e':'var(--cizgi)')+'"><div style="display:flex;gap:8px;align-items:center"><div style="flex:1;font-size:13px;line-height:1.45"><b>⚡ Tam otomatik (her akşam '+OTO_SAAT+':00)</b><br><span style="color:var(--soluk)">'+(t?'Ders günü hatırlatması sormadan hazırlanır ve '+OTO_SAAT+':00’da velilere gider; hazırlandığında sana bildirim gelir. Haftalık özet yine onayla.':'Kapalı: hatırlatmayı onayına sunarım.')+'</span>'+(son?'<br><span style="font-size:12px">Son: '+esc(new Date(son.yayin).toLocaleString('tr-TR',{weekday:'short',hour:'2-digit',minute:'2-digit'}))+' → '+esc((son.sinif||[]).join(', '))+'</span>':'')+'</div><button class="btn '+(t?'g':'y')+'" style="padding:8px 12px" onclick="otoTamAyar('+(t?'false':'true')+')">'+(t?'Kapat':'Aç')+'</button></div></div>'; }; }
+  /* Barış istedi (26 Kasım 2026): tam otomatik varsayılan AÇIK — bir kez kurulur, sonra onun seçimine dokunulmaz */
+  setTimeout(function(){ try{ if(LS.get('dk_oto_tam_kuruldu',0)) return; var a=otoAyar()||{haric:[]}; a.acik=true; if(a.tam==null) a.tam=true; otoAyarYaz(a); LS.set('dk_oto_tam_kuruldu',Date.now()); }catch(e){} },2500);
+})();
 /* Sürüm 11: “📤 Okula gönder” artık TEK PAKET: video + o dersin oyunları, evde denenecek araç, konu videosu, film → Ders Programım’ın veli önizlemesi bu ekranda açılır, ders işlendi sayılır, onaylayınca hepsi birlikte gider */
 (function(){ if(typeof vsOkulaGonder!=='function') return; var eskiOG=vsOkulaGonder;
   vsOkulaGonder=function(){ var A=arguments, T=this; try{ if(!A[0]||A[3]||!VS) return eskiOG.apply(T,A); if((+A[2]||VS.sure||0)>ZVID_MAX_SN+2) return eskiOG.apply(T,A);
@@ -8099,8 +8126,8 @@ setTimeout(function(){ try{ DKM.ac().then(function(db){ var t=db.transaction('v'
 setTimeout(function(){ try{ var th=LS.get('dk_film_onay_tohum',[])||[], o=filmOnay(), d=false; FILMLER.forEach(function(f){ if(f&&f.ok&&th.indexOf(f.id)<0){ th.push(f.id); if(!o[f.id]) o[f.id]=Date.now(); d=true; } }); if(d){ LS.set('dk_film_onay',o); LS.set('dk_film_onay_tohum',th); try{ filmPaylasYaz(); }catch(e){} } }catch(e){} },1800);
 /* Sürüm 11: video hazır olunca (Ders Programım içinden açıldıysa) haber ver; Ders Saati köprüsüne her dersin seçilmiş İLHAM videoları */
 try{ if(typeof tahtaPaylasYaz==='function'){ var _tpy11=tahtaPaylasYaz; tahtaPaylasYaz=function(){ var out=_tpy11.apply(this,arguments); try{ if(out&&out.siniflar){ Object.keys(out.siniflar).forEach(function(c){ (out.siniflar[c]||[]).forEach(function(e){ try{ var L=dvSeciliAl(e.k,dvTemizKonu({k:e.konu}),e.gi); e.ilham=L.slice(0,3).map(function(v){ return {v:v.v,b:v.b,k:v.k,dil:v.dil}; }); }catch(_){} }); }); localStorage.setItem('dk_tahta_paylas',JSON.stringify(out)); } }catch(e){} return out; }; setTimeout(function(){ try{ tahtaPaylasYaz(); }catch(e){} },2500); } }catch(e){}
-try{ APP.onceki={surum:'10',satir:8048,kb:1125}; APP.surum='11'; APP.tarih='25.11.2026'; APP.satir=8106; APP.kb=1198; APP.yenilikler.unshift('📤 Okula gönder artık tek paket: video + oyunlar + evde denenecek araç + konu videosu + film; ders işlendi sayılır','📌 Bugünkü Dersler: Ders Saati’nin gerçek programı, 1-2-3-4 sırasıyla, sınıf renkleriyle; plan açılınca kendiliğinden gelir','💡 İlham düğmeleri bu derse ve sınıfa seçilmiş videoyu doğrudan açar (267 konu)','🎬 20 yeni güvenli film — öneriler her derste değişir');
-  APP.yenilikler.unshift('🎬 Sözün Özü videosu artık veliye otomatik eklenir: video bitince o derse bağlanır, Ders Programım’daki veli önizlemesinde işaretli gelir','🔵 Film adları mavi ve tıklanabilir (nerede izleneceği açılır)'); ZSTD_SURUM='11'; if(window.ZSTD_AYAR) window.ZSTD_AYAR.surum='11'; }catch(e){}
+try{ APP.onceki={surum:'11',satir:8106,kb:1198}; APP.surum='12'; APP.tarih='25.11.2026'; APP.satir=8126; APP.kb=1204; APP.yenilikler.unshift('⚡ Tam otomatik ders günü hatırlatması: her akşam 19:00’da sormadan velilere gider, hazırlanınca sana bildirim gelir','📤 Okula gönder artık tek paket: video + oyunlar + evde denenecek araç + konu videosu + film; ders işlendi sayılır','📌 Bugünkü Dersler: Ders Saati’nin gerçek programı, 1-2-3-4 sırasıyla, sınıf renkleriyle; plan açılınca kendiliğinden gelir','💡 İlham düğmeleri bu derse ve sınıfa seçilmiş videoyu doğrudan açar (267 konu)','🎬 20 yeni güvenli film — öneriler her derste değişir');
+  APP.yenilikler.unshift('🎬 Sözün Özü videosu artık veliye otomatik eklenir: video bitince o derse bağlanır, Ders Programım’daki veli önizlemesinde işaretli gelir','🔵 Film adları mavi ve tıklanabilir (nerede izleneceği açılır)'); ZSTD_SURUM='12'; if(window.ZSTD_AYAR) window.ZSTD_AYAR.surum='12'; }catch(e){}
 </script>
 </body>
 </html>
