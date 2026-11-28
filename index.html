@@ -8157,5 +8157,181 @@ try{ if(typeof tahtaPaylasYaz==='function'){ var _tpy11=tahtaPaylasYaz; tahtaPay
 try{ APP.onceki={surum:'13',satir:8135,kb:1204}; APP.surum='14'; APP.tarih='26.11.2026'; APP.satir=8161; APP.kb=1209; APP.yenilikler.unshift('📅 Hatırlatma ders gününden önceki akşam 19:00’da gider (Pazartesi → Pazar akşamı); resmî tatil ve ara tatillerde gitmez; 🌨️ “okul kapalı” ile planlanan hatırlatma iptal edilir','🚫 7A’ya ders günü hatırlatması gönderilmez (Otomatik Pilot → “Hiç sorulmasın” listesinde; istersen oradan açarsın)','⚡ Tam otomatik ders günü hatırlatması: her akşam 19:00’da sormadan velilere gider, hazırlanınca sana bildirim gelir','📤 Okula gönder artık tek paket: video + oyunlar + evde denenecek araç + konu videosu + film; ders işlendi sayılır','📌 Bugünkü Dersler: Ders Saati’nin gerçek programı, 1-2-3-4 sırasıyla, sınıf renkleriyle; plan açılınca kendiliğinden gelir','💡 İlham düğmeleri bu derse ve sınıfa seçilmiş videoyu doğrudan açar (267 konu)','🎬 20 yeni güvenli film — öneriler her derste değişir');
   APP.yenilikler.unshift('🎬 Sözün Özü videosu artık veliye otomatik eklenir: video bitince o derse bağlanır, Ders Programım’daki veli önizlemesinde işaretli gelir','🔵 Film adları mavi ve tıklanabilir (nerede izleneceği açılır)'); ZSTD_SURUM='14'; if(window.ZSTD_AYAR) window.ZSTD_AYAR.surum='14'; }catch(e){}
 </script>
+<style id="fkStil">
+/* Sürüm 15 — 💡 Fikirlerim */
+#v-fikir{max-width:980px;margin:0 auto;padding:4px 2px 40px}
+.fk-kart{background:var(--panel);border:1px solid var(--cizgi);border-radius:16px;padding:16px;margin:0 0 14px}
+.fk-kart h3{margin:0 0 6px;font-size:18px}
+.fk-ac{color:var(--soluk);font-size:14px;line-height:1.5;margin:0 0 10px}
+#fkMetin{width:100%;min-height:74px;box-sizing:border-box;border-radius:12px;border:1px solid var(--cizgi);background:var(--panel2);color:var(--metin);padding:10px;font:inherit;font-size:15px}
+.fk-sat{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:10px 0 0}
+.fk-sat>b{font-size:13px;color:var(--soluk);min-width:62px}
+.fk-cip{cursor:pointer;border:1px solid var(--cizgi);background:var(--panel2);color:var(--soluk);border-radius:999px;padding:6px 11px;font-size:13px;font-weight:700;user-select:none}
+.fk-cip.sec{background:linear-gradient(135deg,#f59e0b,#ec4899);color:#fff;border-color:transparent}
+.fk-dug{cursor:pointer;border:0;border-radius:12px;padding:9px 13px;font-weight:800;font-size:13px;background:var(--panel2);color:var(--metin);border:1px solid var(--cizgi)}
+.fk-dug.y{background:linear-gradient(135deg,#f59e0b,#ec4899);color:#fff;border:0}
+.fk-dug.m{background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff;border:0}
+.fk-oge{background:var(--panel2);border:1px solid var(--cizgi);border-radius:14px;padding:12px;margin:10px 0}
+.fk-oge .fk-ust{display:flex;gap:8px;align-items:flex-start}
+.fk-oge .fk-yazi{flex:1;font-size:15px;font-weight:700;line-height:1.45;white-space:pre-wrap}
+.fk-etk{display:inline-block;font-size:12px;font-weight:800;border-radius:8px;padding:2px 7px;margin:4px 4px 0 0;background:#1e2b4d;color:#cbd5ff}
+.fk-etk.ok{background:#064e3b;color:#a7f3d0}
+.fk-detay{font-size:13px;color:var(--soluk);line-height:1.5;margin:8px 0 0;white-space:pre-wrap}
+.fk-alt{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}
+.fk-derste{border:2px solid #f59e0b;background:linear-gradient(135deg,rgba(245,158,11,.14),rgba(236,72,153,.12));border-radius:14px;padding:12px;margin:0 0 12px}
+.fk-derste .fk-bas{font-weight:900;font-size:15px;margin:0 0 4px}
+.fk-say{display:inline-block;min-width:18px;padding:0 5px;margin-left:4px;border-radius:9px;background:#ec4899;color:#fff;font-size:11px;font-weight:900;text-align:center}
+</style>
+<script id="fikirlerim">
+/* ============================================================
+   Sürüm 15 — 💡 FİKİRLERİM (Barış, 28 Kasım 2026)
+   • Aklına gelen ders fikrini (ör. "robotla şekil çizelim", "yapay zekâya kod yazdıralım") yaz,
+     ders + sınıf seç. O sınıfın o dersinde SIRADAKİ ders açıldığında ders penceresinin en üstünde çıkar.
+   • İki türlü: "Ek etkinlik" (planlı konunun içine) · "Ayrı ders" (o gün planın yerine; plan bir sonraki derse kayar —
+     İşledim işareti konuya değil fikre konur, plan sırası BOZULMAZ).
+   • Yapay zekâ ile "derse dönüştür": sınıfın yaşına göre 3 adımlı (Keşfet → Uygula → Üret) ders akışı.
+   • Hiçbir fikir silinmez: "Arşivle" gizler, arşivden geri alınır.
+   • Kayıt: cihazda dk_fikirler + bulutta maas_config/ders_fikirleri_baris (yalnız bu belge; en yeni kazanır).
+   ============================================================ */
+(function(){
+  var ANAH='dk_fikirler', BELGE='ders_fikirleri_baris';
+  var DERS=[['robokod','🤖 Robotik-Kodlama'],['yz','🧠 Yapay Zekâ'],['satranc','♟️ Satranç'],['akil','🧩 Akıl-Zekâ'],['kocluk','🎯 Koçluk'],['genel','🌈 Hepsi']];
+  var SNF=SINIF_LISTE.map(function(s,gi){ return [gi, s.g==='Ana'?'Ana':s.g]; });
+  function e(s){ return esc(String(s==null?'':s)); }
+  function oku(){ var o=LS.get(ANAH,null); return (o&&Array.isArray(o.liste))?o:{liste:[],t:0}; }
+  function yaz(o,bulut){ o.t=Date.now(); LS.set(ANAH,o); if(bulut!==false) buluta(o); sayGuncelle(); }
+  async function buluta(o){ try{ var fb=await ekoFb(), F=fb.F; await F.setDoc(F.doc(fb.db,'maas_config',BELGE),{veri:JSON.stringify(o.liste),t:o.t,guncelleme:Date.now()}); }catch(err){} }
+  async function buluttan(){ try{ var fb=await ekoFb(), F=fb.F, sn=await F.getDoc(F.doc(fb.db,'maas_config',BELGE)); if(!sn.exists()) { var y=oku(); if(y.liste.length) buluta(y); return; }
+      var d=sn.data(), b={liste:JSON.parse(d.veri||'[]'),t:+d.t||0}, y=oku();
+      if(b.t>y.t){ LS.set(ANAH,b); sayGuncelle(); if(ST.view==='fikir') ciz(); } else if(y.t>b.t && y.liste.length) buluta(y);
+    }catch(err){} }
+  function dersAd(t){ var d=DERS.filter(function(x){return x[0]===t;})[0]; return d?d[1]:t; }
+  function sinifAd(gi){ var s=SINIF_LISTE[gi]; return s? (s.g==='Ana'?'Anaokulu':s.g+'. sınıf'):''; }
+  function aktifler(){ return oku().liste.filter(function(f){ return !f.arsiv; }); }
+  function bekleyen(f){ return (f.gis||[]).filter(function(gi){ return !(f.islendi&&f.islendi[gi]); }); }
+
+  /* ---- hazır öneriler (Barış'ın iki fikri + plandaki boşlukları kapatan iki ek) ---- */
+  var HAZIR=[
+    {id:'h-sekil', metin:'🤖 Robotla şekil çizelim', tid:'robokod', gis:[0,1,2,3,4,5,6,7], nasil:'ders',
+     detay:'Anaokulu–2. sınıf: Önce çocuk yerde "robot" olur, arkadaşı "2 adım ileri, sağa dön" der; yürüyerek kare çizer. Sonra tahtadaki sanal robota aynı komutlarla kare ve üçgen çizdirir.\n3–4. sınıf: Scratch kalem eklentisi: kare, üçgen, yıldız. "Aynı komutu 4 kez yazdık — kısaltabilir miyiz?" → tekrar bloğu.\n5–8. sınıf: Döngü + açı: dönüş açısı = 360 ÷ kenar sayısı. Çokgen, spiral, kendi "şekil çiz" bloğu (fonksiyon).\nBağlandığı konu: Döngüler / Tekrar. Sitedeki "Kaplumbağa Çizer" oyunu evde tekrar için.'},
+    {id:'h-yzkod', metin:'🧠 Yapay zekâya kod yazdıralım', tid:'yz', gis:[3,4,5,6,7,8], nasil:'ders',
+     detay:'Kural: Yapay zekâ ÖĞRETMENİN ekranında kullanılır; çocuk adı, fotoğrafı girilmez (13 yaş altına kendi hesabı açılmaz).\n3–4. sınıf: Çocuklar ne istediğini tek cümleyle söyler ("kedi yıldızları toplasın"). Yapay zekâ Scratch adımlarını yazar; blokları çocuklar KENDİLERİ kurar, çalışmayan adımı bulur: "Yapay zekâ her zaman doğru mu?"\n5–6. sınıf: Yapay zekâya MakeCode/Python için kısa kod yazdır. Çocuk her satırın ne yaptığını tahmin eder, bir sayıyı değiştirip sonucu önceden söyler, sonra dener.\n7–8. sınıf: Eşli programlama: önce kendi planını yazar, sonra yapay zekâya sorar; "açıklayamadığın kodu kullanma" kuralı; hatalı kodu bulup düzeltir.\nAmaç: kodu yapay zekâ yazsa da anlayan, sorgulayan ve düzelten çocuk.'},
+    {id:'h-mac', metin:'♟️ Ders sonu 10 dakika gerçek oyun', tid:'satranc', gis:[0,1,2,3,4,5,6,7,8], nasil:'ek',
+     detay:'Satrançta öğrenilen kuralın kalıcı olması için oynamak gerekir. Dersin son 10 dakikası eşli oyun: anaokulu ve 1-2. sınıfta yalnız o gün öğrenilen taşla mini oyun (ör. "piyon yarışı"), büyüklerde tam oyun veya verilen konumdan devam.\nÖzellikle Satranç ve Akıl-Zekâ\'nın aynı saati paylaştığı sınıflarda pratik süresi kısa kalıyor; bu ek onu dengeler.'},
+    {id:'h-cikis', metin:'🎯 Çıkış sorusu: Öğrendik mi?', tid:'genel', gis:[0,1,2,3,4,5,6,7,8], nasil:'ek',
+     detay:'Dersin son 3 dakikası: konuyla ilgili TEK soru (tahtada). Çocuklar başparmakla gösterir: 👍 biliyorum · ✋ emin değilim · 👎 bilmiyorum.\nÇoğu 👎 ise bir sonraki dersin ilk 5 dakikası kısa tekrar. Böylece "işledik" ile "öğrendiler" arasındaki farkı görürsün.\n✨ "Derse dönüştür" düğmesi her konu için soruyu yapay zekâyla hazırlar.'}
+  ];
+
+  var FORM={tid:'robokod',gis:[],nasil:'ek',duz:null};
+  function formCiz(){
+    var f=FORM;
+    return '<div class="fk-kart"><h3>💡 Fikirlerim</h3><p class="fk-ac">Aklına gelen ders fikrini yaz, dersi ve sınıfları seç. O sınıfın o dersinde <b>sıradaki ders açıldığında</b> ders penceresinin en üstünde karşına çıkar. Yıllık planın sırası bozulmaz.</p>'+
+      '<textarea id="fkMetin" placeholder="ör. Robotla şekil çizelim · Yapay zekâya kod yazdıralım · Satranç taşlarıyla hikâye">'+e(f.duz?f.duz.metin:'')+'</textarea>'+
+      '<div class="fk-sat"><b>Ders</b>'+DERS.map(function(d){ return '<span class="fk-cip'+(f.tid===d[0]?' sec':'')+'" data-fktid="'+d[0]+'">'+d[1]+'</span>'; }).join('')+'</div>'+
+      '<div class="fk-sat"><b>Sınıf</b>'+SNF.map(function(s){ return '<span class="fk-cip'+(f.gis.indexOf(s[0])>=0?' sec':'')+'" data-fkgi="'+s[0]+'">'+s[1]+'</span>'; }).join('')+'<span class="fk-cip" data-fkgi="hepsi">Hepsi</span></div>'+
+      '<div class="fk-sat"><b>Nasıl?</b><span class="fk-cip'+(f.nasil==='ek'?' sec':'')+'" data-fkn="ek">➕ Planlı derse ek etkinlik</span><span class="fk-cip'+(f.nasil==='ders'?' sec':'')+'" data-fkn="ders">📌 Ayrı ders (o gün planın yerine)</span></div>'+
+      '<div class="fk-alt"><button class="fk-dug y" data-fk="kaydet">💾 '+(f.duz?'Değişikliği kaydet':'Fikri kaydet')+'</button>'+(f.duz?'<button class="fk-dug" data-fk="vazgec">Vazgeç</button>':'')+'</div></div>';
+  }
+  function ogeCiz(f,hazir){
+    var etk='<span class="fk-etk">'+e(dersAd(f.tid))+'</span><span class="fk-etk">'+(f.nasil==='ders'?'📌 Ayrı ders':'➕ Ek etkinlik')+'</span>'+
+      (f.gis||[]).map(function(gi){ var ok=f.islendi&&f.islendi[gi]; return '<span class="fk-etk'+(ok?' ok':'')+'">'+(ok?'✓ ':'')+e(SNF[gi]?SNF[gi][1]:gi)+'</span>'; }).join('');
+    var alt = hazir ? '<button class="fk-dug y" data-fk="hazirEkle" data-id="'+f.id+'">➕ Fikirlerime ekle</button>'
+      : '<button class="fk-dug m" data-fk="ai" data-id="'+f.id+'">✨ Derse dönüştür</button><button class="fk-dug" data-fk="duz" data-id="'+f.id+'">✏️ Düzenle</button>'+
+        (f.arsiv?'<button class="fk-dug" data-fk="geri" data-id="'+f.id+'">↩️ Arşivden çıkar</button>':'<button class="fk-dug" data-fk="arsiv" data-id="'+f.id+'">📦 Arşivle</button>');
+    return '<div class="fk-oge"><div class="fk-ust"><div class="fk-yazi">'+e(f.metin)+'</div></div><div>'+etk+'</div>'+(f.detay?'<div class="fk-detay">'+e(f.detay)+'</div>':'')+'<div class="fk-alt">'+alt+'</div></div>';
+  }
+  var ARSIV_GOSTER=false;
+  function ciz(){
+    var host=document.getElementById('v-fikir'); if(!host) return;
+    var L=oku().liste, akt=L.filter(function(f){return !f.arsiv;}), ars=L.filter(function(f){return f.arsiv;});
+    var eklenen=L.map(function(f){return f.kaynak;});
+    var hz=HAZIR.filter(function(h){ return eklenen.indexOf(h.id)<0; });
+    host.innerHTML=formCiz()+
+      '<div class="fk-kart"><h3>📋 Fikirlerim ('+akt.length+')</h3>'+(akt.length?akt.map(function(f){return ogeCiz(f);}).join(''):'<p class="fk-ac">Henüz fikir yok. Yukarıdan yaz ya da aşağıdaki hazır önerilerden ekle.</p>')+
+      (ars.length?'<div class="fk-alt"><button class="fk-dug" data-fk="arsivGoster">📦 Arşiv ('+ars.length+') '+(ARSIV_GOSTER?'gizle':'göster')+'</button></div>'+(ARSIV_GOSTER?ars.map(function(f){return ogeCiz(f);}).join(''):''):'')+'</div>'+
+      (hz.length?'<div class="fk-kart"><h3>✨ Hazır öneriler</h3><p class="fk-ac">İlk ikisi senin fikrin, ders ders ve yaşa göre açıldı. Son ikisi planın incelemesinde gördüğüm iki eksiği kapatır.</p>'+hz.map(function(h){return ogeCiz(h,true);}).join('')+'</div>':'');
+  }
+  function bul(id){ return oku().liste.filter(function(f){return f.id===id;})[0]; }
+  function guncelle(id,fn){ var o=oku(); o.liste.forEach(function(f){ if(f.id===id) fn(f); }); yaz(o); }
+
+  document.addEventListener('click',function(ev){
+    var t=ev.target.closest&&ev.target.closest('[data-fktid],[data-fkgi],[data-fkn],[data-fk]'); if(!t) return;
+    var host=document.getElementById('v-fikir'), icinde=host&&host.contains(t), m=document.getElementById('haftaModalIc'), modalda=m&&m.contains(t);
+    if(!icinde && !modalda) return;
+    var metinEl=document.getElementById('fkMetin'); if(metinEl&&FORM) FORM.metinTaslak=metinEl.value;
+    if(t.dataset.fktid){ FORM.tid=t.dataset.fktid; }
+    else if(t.dataset.fkgi){ var g=t.dataset.fkgi; if(g==='hepsi') FORM.gis=FORM.gis.length===SNF.length?[]:SNF.map(function(s){return s[0];}); else { g=+g; var i=FORM.gis.indexOf(g); if(i>=0) FORM.gis.splice(i,1); else FORM.gis.push(g); FORM.gis.sort(function(a,b){return a-b;}); } }
+    else if(t.dataset.fkn){ FORM.nasil=t.dataset.fkn; }
+    else {
+      var k=t.dataset.fk, id=t.dataset.id;
+      if(k==='kaydet'){ var mt=(FORM.metinTaslak||'').trim(); if(!mt){ toast('✍️ Önce fikri yaz','warn'); return; } if(!FORM.gis.length){ toast('🏫 En az bir sınıf seç','warn'); return; }
+        var o=oku();
+        if(FORM.duz){ o.liste.forEach(function(f){ if(f.id===FORM.duz.id){ f.metin=mt; f.tid=FORM.tid; f.gis=FORM.gis.slice(); f.nasil=FORM.nasil; } }); }
+        else o.liste.unshift({id:'f'+Date.now().toString(36), metin:mt, tid:FORM.tid, gis:FORM.gis.slice(), nasil:FORM.nasil, islendi:{}, t:Date.now()});
+        yaz(o); toast(FORM.duz?'💾 Fikir güncellendi':'💡 Fikir kaydedildi · seçtiğin sınıfların sıradaki dersinde çıkacak','ok',3500);
+        FORM={tid:FORM.tid,gis:[],nasil:'ek',duz:null,metinTaslak:''}; }
+      else if(k==='vazgec'){ FORM={tid:'robokod',gis:[],nasil:'ek',duz:null,metinTaslak:''}; }
+      else if(k==='duz'){ var f=bul(id); if(f){ FORM={tid:f.tid,gis:(f.gis||[]).slice(),nasil:f.nasil||'ek',duz:f,metinTaslak:f.metin}; window.scrollTo({top:host.offsetTop-10,behavior:'smooth'}); } }
+      else if(k==='arsiv'){ guncelle(id,function(f){f.arsiv=true;}); toast('📦 Arşive alındı (silinmedi)','ok'); }
+      else if(k==='geri'){ guncelle(id,function(f){f.arsiv=false;}); toast('↩️ Arşivden çıkarıldı','ok'); }
+      else if(k==='arsivGoster'){ ARSIV_GOSTER=!ARSIV_GOSTER; }
+      else if(k==='hazirEkle'){ var h=HAZIR.filter(function(x){return x.id===id;})[0]; if(h){ var o2=oku(); o2.liste.unshift({id:'f'+Date.now().toString(36), kaynak:h.id, metin:h.metin, detay:h.detay, tid:h.tid, gis:h.gis.slice(), nasil:h.nasil, islendi:{}, t:Date.now()}); yaz(o2); toast('💡 Eklendi · sınıflarda sıradaki derste çıkacak','ok',3000); } }
+      else if(k==='ai'){ aiDonustur(bul(id), t.dataset.gi!=null?+t.dataset.gi:null); return; }
+      else if(k==='isle'){ var gi2=+t.dataset.gi; guncelle(id,function(f){ f.islendi=f.islendi||{}; f.islendi[gi2]=Date.now(); }); toast('✅ '+sinifAd(gi2)+': fikir işlendi olarak işaretlendi · yıllık plan sırası değişmedi','ok',3500); var kutu=t.closest('.fk-derste'); if(kutu) kutu.remove(); return; }
+      else if(k==='sonra'){ var kutu2=t.closest('.fk-derste'); if(kutu2) kutu2.remove(); return; }
+    }
+    if(t.dataset.fkn||t.dataset.fktid||t.dataset.fkgi||k) ciz();
+    var yeni=document.getElementById('fkMetin'); if(yeni&&FORM.metinTaslak!=null) yeni.value=FORM.metinTaslak;
+  });
+
+  function aiDonustur(f,gi){
+    if(!f) return;
+    var giler=gi!=null?[gi]:(f.gis||[]);
+    var yaslar=giler.map(function(g){ var s=SINIF_LISTE[g]; var dz=(typeof DUZEY_YAKLASIM!=='undefined')?'':''; return sinifAd(g); }).join(', ');
+    var bag='Öğretmen Barış’ın ders fikri: "'+f.metin+'". '+(f.detay?'Ayrıntı: '+f.detay+' ':'')+'Ders: '+dersAd(f.tid)+'. Sınıf(lar): '+yaslar+'. Kullanım: '+(f.nasil==='ders'?'o gün planlı konunun yerine AYRI BİR DERS (40 dk)':'planlı dersin içine 10-15 dakikalık EK ETKİNLİK')+'.';
+    if(gi!=null){ try{ var n=SEANS[f.tid==='genel'?'robokod':f.tid]; }catch(err){} }
+    var istek=f.nasil==='ders'
+      ? 'Bu fikri sınıfın yaşına uygun 40 dakikalık bir derse dönüştür: 1) Keşfet (merak sorusu, ekransız giriş) 2) Uygula (adım adım etkinlik) 3) Üret (çocuğun kendi ürünü) + süreler, malzeme, kısa kazanım, velilere tek cümlelik "bu ders çocuğa ne katar" (abartısız, bilimsel), dersin sonunda TEK çıkış sorusu. Birden çok sınıf varsa her kademe için farkı kısaca belirt.'
+      : 'Bu fikri planlı dersin içine 10-15 dakikalık bir ek etkinlik olarak tasarla: adım adım uygulama, malzeme, yaşa uygunluk, dersin sonunda TEK çıkış sorusu. Birden çok sınıf varsa her kademe için farkı kısaca belirt.';
+    var sistem='Sen Barış Öğretmen’in Robotik-Kodlama, Yapay Zekâ, Satranç ve Akıl-Zekâ dersleri asistanısın. KISA, NET, TÜRKÇE, sınıfta hemen uygulanabilir yaz. Okul öncesi için ekransız ve oyunla başla. Abartılı fayda iddiası, "öğrenme stilleri" yok. Şiddet çağrıştıran kelime yok ("savaş" kullanma). Yapay zekâ etkinliklerinde: araç öğretmenin ekranında kullanılır, çocuğun adı/fotoğrafı girilmez. Renkli vurgu için <span style="color:#RENK;font-weight:700">. Tablo en fazla 3 sütun.';
+    try{ modalKapat('haftaModal'); }catch(err){}
+    aiSor(istek,{sistem:sistem,on:bag+' GÖREV: '+istek,baslik:'💡 '+f.metin});
+  }
+
+  /* ders penceresi: o sınıfın o dersinde SIRADAKİ derste fikir kartı */
+  if(typeof seansAc==='function'){ var _seansAcFk=seansAc;
+    seansAc=function(tid,i){ var r=_seansAcFk.apply(this,arguments);
+      try{ var m=document.getElementById('haftaModalIc'), gi=ST.gradeIdx; if(!m||m.querySelector('.fk-derste')) return r;
+        var n=SEANS[tid].length, sira=trackSonraki(gi,tid,n); if(i!==sira) return r;
+        var L=aktifler().filter(function(f){ return (f.tid===tid||f.tid==='genel') && (f.gis||[]).indexOf(gi)>=0 && !(f.islendi&&f.islendi[gi]); });
+        if(!L.length) return r;
+        var d=document.createElement('div'); d.className='fk-derste';
+        d.innerHTML='<div class="fk-bas">💡 Bu derste deneyebileceğin fikrin'+(L.length>1?'ler ('+L.length+')':'')+'</div>'+L.map(function(f){
+          return '<div style="margin:8px 0 0"><div style="font-weight:800">'+e(f.metin)+' <span class="fk-etk">'+(f.nasil==='ders'?'📌 Ayrı ders':'➕ Ek etkinlik')+'</span></div>'+
+            (f.nasil==='ders'?'<div class="fk-detay">Bugün planın yerine bunu işlersen konuya ✅ koyma; plan bir sonraki derse kayar.</div>':'')+
+            '<div class="fk-alt"><button class="fk-dug m" data-fk="ai" data-id="'+f.id+'" data-gi="'+gi+'">✨ Derse dönüştür</button><button class="fk-dug y" data-fk="isle" data-id="'+f.id+'" data-gi="'+gi+'">✅ '+e(sinifAd(gi))+': işledim</button><button class="fk-dug" data-fk="sonra" data-id="'+f.id+'">⏭ Sonra</button></div></div>'; }).join('');
+        var ref=m.querySelector('.mgov')||m; ref.insertBefore(d,ref.firstChild);
+      }catch(err){} return r; };
+  }
+
+  /* menü + görünüm */
+  function sayGuncelle(){ var s=document.querySelector('#seritler .seri[data-v="fikir"]'); if(!s) return; var n=aktifler().filter(function(f){return bekleyen(f).length;}).length; s.innerHTML='💡 Fikirlerim'+(n?'<span class="fk-say">'+n+'</span>':''); }
+  try{
+    var ser=document.getElementById('seritler'), gear=ser&&ser.querySelector('.seri-gear');
+    if(ser&&!ser.querySelector('[data-v="fikir"]')){ var s=document.createElement('div'); s.className='seri'; s.dataset.v='fikir'; s.textContent='💡 Fikirlerim'; s.onclick=function(){ viewDegis('fikir'); }; ser.insertBefore(s,gear||null); }
+    var vv=document.getElementById('v-video'); if(!document.getElementById('v-fikir')){ var h=document.createElement('div'); h.id='v-fikir'; h.style.display='none'; (vv&&vv.parentNode||document.body).insertBefore(h,vv?vv.nextSibling:null); }
+    var _viewDegisFk=viewDegis;
+    viewDegis=function(v){ var hf=document.getElementById('v-fikir'); if(v==='fikir'){ _viewDegisFk('__yok__'); ST.view='fikir'; try{stKaydet();}catch(err){} $$('#seritler .seri').forEach(function(x){ x.classList.toggle('aktif',x.dataset.v==='fikir'); }); if(hf){ hf.style.display='block'; ciz(); } buluttan(); return; }
+      if(hf) hf.style.display='none'; return _viewDegisFk(v); };
+    sayGuncelle(); setTimeout(buluttan,4000);
+    if(ST.view==='fikir') viewDegis('fikir');
+  }catch(err){}
+  window.DK_FIKIR={oku:oku, ciz:ciz, hazir:HAZIR};
+})();
+try{ APP.onceki={surum:'14',satir:8161,kb:1209}; APP.surum='15'; APP.tarih='28.11.2026'; APP.satir=8337; APP.kb=1229;
+  APP.yenilikler.unshift('💡 Fikirlerim: aklına gelen ders fikrini yaz, ders + sınıf seç → o sınıfın sıradaki dersinde ders penceresinin en üstünde çıkar; ✨ yapay zekâyla 3 adımlı derse dönüşür; plan sırası bozulmaz. Hazır öneriler: Robotla şekil çizelim · Yapay zekâya kod yazdıralım · Ders sonu 10 dk oyun · Çıkış sorusu');
+  ZSTD_SURUM='15'; if(window.ZSTD_AYAR) window.ZSTD_AYAR.surum='15'; }catch(e){}
+</script>
+
 </body>
 </html>
